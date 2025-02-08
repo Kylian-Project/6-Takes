@@ -1,0 +1,30 @@
+# === Python (Pygame) ===
+__pycache__/
+*.pyc
+*.pyo
+venv/
+*.log
+*.db
+
+# === Godot ===
+.import/
+.godot/
+export/
+*.godot
+*.import
+*.log
+
+# === Unity ===
+/Library/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/UserSettings/
+
+# === Global exclusions ===
+*.swp
+*.swo
+*.bak
+*.tmp
+*.~*
