@@ -6,20 +6,25 @@
 
 # 6 Qui Prend !
 
-##### Un jeu de société multijoueur en ligne où stratégie et rapidité se mêlent pour offrir une expérience fun et immersive, disponible sur PC, (mobile / web) !
+**Un jeu de société multijoueur en ligne où stratégie et rapidité se mêlent pour offrir une expérience fun et immersive, disponible sur PC, (mobile / web) !**
 
 
 </div>
 
 ---
 
-## Table des matières
-<summary></summary>
+## 📃 Table des matières
 
 - [6 Qui Prend !](#6-qui-prend-)
-  - [À propos du projet](#about-the-project)
-  - [Fonctionnalités](#features)
-  - [License](#license)
+  - [📃 Table des matières](#-table-des-matières)
+  - [📌 À propos du projet](#-à-propos-du-projet)
+  - [⭐️ Fonctionnalités](#️-fonctionnalités)
+  - [🛠 Stack Tech](#-stack-tech)
+  - [⚙️ Configuration](#️-configuration)
+    - [Installation](#installation)
+    - [Utilisation](#utilisation)
+  - [👨🏻‍ Auteurs](#-auteurs)
+  - [🔑 License](#-license)
 
 ---
 
@@ -52,6 +57,10 @@
 
 Working Progress
 
+### Utilisation
+
+Working Progress
+
 ---
 
 ## 👨🏻‍ Auteurs
@@ -66,7 +75,7 @@ Working Progress
 
 ---
 
-## License
+## 🔑 License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
