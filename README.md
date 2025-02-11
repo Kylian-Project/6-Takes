@@ -1,7 +1,5 @@
 # 📂 Branch REPORTS
 
----
-
 Welcome to the **REPORTS** branch of the project. This branch is dedicated to centralizing the evidence of the work completed by the team. It contains various documents and files that serve to justify the progress of the project.
 
 ---
