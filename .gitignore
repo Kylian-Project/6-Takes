@@ -1,17 +1,3 @@
-# === Godot ===
-.import/
-.godot/
-export/
-export_presets.cfg
-*.godot
-*.import
-*.log
-*.mono/
-.cache/
-.editor_settings-*
-*.tres
-*.tscn
-
 # === Node.js (Server) ===
 node_modules/
 npm-debug.log*
