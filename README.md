@@ -30,7 +30,7 @@
 
 ## 📌 À propos du projet
 
-6 qui prend ! est un jeu de société revisité pour être joué en ligne en mode multijoueur. L’objectif est de proposer une expérience de jeu en temps réel où les joueurs interagiront avec un serveur central. Le projet sera développé en utilisant **** pour la version PC, et un serveur en ****. Une version mobile ou web est également prévue pour permettre une expérience fluide sur différents appareils.
+6 qui prend ! est un jeu de société revisité pour être joué en ligne en mode multijoueur. L’objectif est de proposer une expérience de jeu en temps réel où les joueurs interagiront avec un serveur central. Le projet sera développé en utilisant Godot pour la version PC, et un serveur en Node JS. Une version mobile ou web est également prévue pour permettre une expérience fluide sur différents appareils.
 
 ---
 
@@ -44,8 +44,8 @@
 
 ## 🛠 Stack Tech
 
-- **____** pour la version PC
-- **____** pour le serveur
+- **Godot** pour la version PC
+- **Node JS** pour le serveur
 - **MySQL** pour la gestion des comptes et des scores
 - **Version web/mobile à venir**
 
