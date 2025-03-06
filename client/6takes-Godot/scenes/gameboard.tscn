@@ -1,0 +1,119 @@
+[gd_scene load_steps=6 format=3 uid="uid://duifho84rqy3k"]
+
+[ext_resource type="Texture2D" uid="uid://cdb7i6gq0dkjh" path="res://Capture d’écran du 2025-03-03 12-03-39.png" id="1_d7tf7"]
+[ext_resource type="Script" path="res://gameboard.gd" id="1_wxuna"]
+[ext_resource type="Texture2D" uid="uid://f1080hicrs0r" path="res://Capture d’écran du 2025-03-03 12-48-48.png" id="2_ano4s"]
+[ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://card_ui.tscn" id="3_8mab6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
+size = Vector2(731.75, 444)
+
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container")]
+script = ExtResource("1_wxuna")
+vbox_container = NodePath("hand_colom/rangeofcard")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="background_board" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_d7tf7")
+stretch_mode = 4
+metadata/_edit_lock_ = true
+
+[node name="hand_colom" type="HBoxContainer" parent="."]
+show_behind_parent = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 232.0
+offset_top = 66.0
+offset_right = 962.0
+offset_bottom = 513.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="hand_colom"]
+layer = -1
+
+[node name="background_depose" type="TextureRect" parent="hand_colom/CanvasLayer"]
+offset_left = 207.0
+offset_top = 42.0
+offset_right = 955.0
+offset_bottom = 511.0
+texture = ExtResource("2_ano4s")
+
+[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
+layout_mode = 2
+
+[node name="CardUI" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI2" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI3" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI4" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(586, 279)
+shape = SubResource("RectangleShape2D_au8mm")
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2"]
+custom_minimum_size = Vector2(75, 80)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = 207.0
+offset_right = 407.0
+offset_bottom = 307.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI2" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI3" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI4" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI5" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI6" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI7" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI8" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI9" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="CardUI10" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
+layout_mode = 2
