@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://crec84jwmidu7"]
+
+[ext_resource type="Script" path="res://card_vbox.gd" id="1_1041d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ix1gl"]
+size = Vector2(76, 101)
+
+[node name="Card_vbox" type="Control"]
+custom_minimum_size = Vector2(75, 100)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_1041d")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(75, 100)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.113725, 0.909804, 1, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(38, 49.5)
+shape = SubResource("RectangleShape2D_ix1gl")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(75, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
