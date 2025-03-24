@@ -1,5 +1,6 @@
-
+class_name CardUI
 extends Control
+
 
 # Méthode pour assigner les données de la carte
 func set_card_data(image_path):
@@ -13,8 +14,7 @@ func set_card_data(image_path):
 
 signal reparent_requested(which_card_ui:CardUI)
 
-@onready var color: ColorRect = $color
-@onready var state: Label = $state
+
 @onready var drop_point: Area2D=$detector
 
 

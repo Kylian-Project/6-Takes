@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Texture2D" uid="uid://yell3rqto1t5" path="res://Capture d’écran du 2025-03-03 12-03-39.png" id="1_d7tf7"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_jjao2"]
-[ext_resource type="Texture2D" uid="uid://dn7o7rxq51rpb" path="res://Capture d’écran du 2025-03-03 12-48-48.png" id="2_ano4s"]
+[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="2_f2b3k"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
+[ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="3_254vd"]
 [ext_resource type="PackedScene" uid="uid://crec84jwmidu7" path="res://scenes/card_vbox.tscn" id="4_s6h2c"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rl5u3"]
@@ -11,8 +11,10 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(753.5, 423)
 
-[node name="gameboard" type="Node2D"]
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
 script = ExtResource("1_jjao2")
+vbox_container = NodePath("hand_colom/rangeofcard")
+hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -23,7 +25,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_d7tf7")
+texture = ExtResource("2_f2b3k")
 expand_mode = 1
 
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
@@ -104,7 +106,7 @@ offset_right = 379.0
 offset_bottom = 178.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_ano4s")
+texture = ExtResource("3_254vd")
 
 [node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
 custom_minimum_size = Vector2(75, 100)

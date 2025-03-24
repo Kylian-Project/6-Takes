@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dn7o7rxq51rpb"
-path="res://.godot/imported/Capture d’écran du 2025-03-03 12-48-48.png-1900bd2cfc7251ca0c3ff7dd4b404d87.ctex"
+uid="uid://dhyaayrlq4gdq"
+path="res://.godot/imported/bleu.png-eeb95c487ff839d4c2562f80f51edc73.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Capture d’écran du 2025-03-03 12-48-48.png"
-dest_files=["res://.godot/imported/Capture d’écran du 2025-03-03 12-48-48.png-1900bd2cfc7251ca0c3ff7dd4b404d87.ctex"]
+source_file="res://bleu.png"
+dest_files=["res://.godot/imported/bleu.png-eeb95c487ff839d4c2562f80f51edc73.ctex"]
 
 [params]
 
