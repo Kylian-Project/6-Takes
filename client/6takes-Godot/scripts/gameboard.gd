@@ -20,7 +20,7 @@ func _ready():
 
 # Charger toutes les cartes disponibles dans res://cartes/
 func _load_cards():
-	var dir = DirAccess.open("res://cartes/")
+	var dir = DirAccess.open("res://assets/images/cartes/")
 	if dir == null:
 		print(" Erreur : Impossible d'ouvrir le dossier des cartes. Vérifiez le chemin !")
 		return

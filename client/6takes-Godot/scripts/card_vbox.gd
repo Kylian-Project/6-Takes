@@ -9,4 +9,4 @@ func set_card_data(image_path):
 		# J'assigne la texture au TextureRect enfant
 		$TextureRect.texture = texture  
 	else:
-		print("❌ Erreur : Impossible de charger l'image", image_path)
+		print("Erreur : Impossible de charger l'image", image_path)

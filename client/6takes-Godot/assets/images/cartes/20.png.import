@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4ykoluhqpuqw"
-path="res://.godot/imported/20.png-03622552761553cfe0013bacc3e3ebe0.ctex"
+path="res://.godot/imported/20.png-6ad31bd2ef766a23ec63b271ad420643.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://cartes/20.png"
-dest_files=["res://.godot/imported/20.png-03622552761553cfe0013bacc3e3ebe0.ctex"]
+source_file="res://assets/images/cartes/20.png"
+dest_files=["res://.godot/imported/20.png-6ad31bd2ef766a23ec63b271ad420643.ctex"]
 
 [params]
 

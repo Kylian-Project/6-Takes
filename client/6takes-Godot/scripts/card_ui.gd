@@ -1,4 +1,4 @@
-class_name CardUI
+
 extends Control
 
 # Méthode pour assigner les données de la carte
