@@ -9,8 +9,8 @@ size = Vector2(66.0163, 93.7534)
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 75.0
-offset_bottom = 100.0
+offset_right = 149.0
+offset_bottom = 191.0
 scale = Vector2(0.848276, 0.797814)
 script = ExtResource("1_ncoce")
 

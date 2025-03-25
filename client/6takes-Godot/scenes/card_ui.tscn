@@ -11,31 +11,19 @@ font = ExtResource("1_8c31k")
 font_size = 17
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1peor"]
-size = Vector2(75.5602, 103.361)
+size = Vector2(149.5, 191.056)
 
 [node name="CardUI" type="Control"]
-custom_minimum_size = Vector2(75, 100)
+custom_minimum_size = Vector2(100, 191)
 layout_mode = 3
 anchors_preset = 0
 offset_left = 29.0
 offset_top = 23.0
-offset_right = 104.0
-offset_bottom = 123.0
+offset_right = 178.0
+offset_bottom = 214.0
 scale = Vector2(0.892617, 0.878049)
 theme = SubResource("Theme_hcot1")
 script = ExtResource("2_bopc5")
-
-[node name="color" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(75, 100)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1.1203
-offset_right = -1.1203
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.101961, 0.133333, 1, 1)
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -58,7 +46,7 @@ label_settings = SubResource("LabelSettings_3qqsp")
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
-position = Vector2(37.2801, 49.6805)
+position = Vector2(74.25, 93.5278)
 shape = SubResource("RectangleShape2D_1peor")
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -69,8 +57,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 1.1203
 offset_top = -3.41667
-offset_right = 1.1203
-offset_bottom = -3.41667
+offset_right = -17.8797
+offset_bottom = -14.4167
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1

@@ -1,19 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=7 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_jjao2"]
 [ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="2_f2b3k"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="3_254vd"]
-[ext_resource type="PackedScene" uid="uid://crec84jwmidu7" path="res://scenes/card_vbox.tscn" id="4_s6h2c"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rl5u3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
-size = Vector2(753.5, 423)
+size = Vector2(1192, 714)
 
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
 script = ExtResource("1_jjao2")
-vbox_container = NodePath("hand_colom/rangeofcard")
+vbox_container = NodePath("hand_colom/VBoxContainer")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -83,10 +82,10 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 203.0
-offset_top = 76.0
-offset_right = 951.0
-offset_bottom = 488.0
+offset_left = 399.0
+offset_top = 152.0
+offset_right = 1559.0
+offset_bottom = 802.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -100,40 +99,46 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -392.0
-offset_top = -263.0
-offset_right = 379.0
-offset_bottom = 178.0
+offset_left = -650.0
+offset_top = -478.0
+offset_right = 622.0
+offset_bottom = 285.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_254vd")
 
-[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
-custom_minimum_size = Vector2(75, 100)
+[node name="VBoxContainer" type="VBoxContainer" parent="hand_colom"]
 layout_mode = 2
-alignment = 1
 
-[node name="Card_vbox" parent="hand_colom/rangeofcard" instance=ExtResource("4_s6h2c")]
+[node name="HBoxContainer" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
 layout_mode = 2
-script = null
 
-[node name="Card_vbox2" parent="hand_colom/rangeofcard" instance=ExtResource("4_s6h2c")]
+[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2
-script = null
 
-[node name="Card_vbox3" parent="hand_colom/rangeofcard" instance=ExtResource("4_s6h2c")]
+[node name="HBoxContainer2" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
 layout_mode = 2
-script = null
 
-[node name="Card_vbox4" parent="hand_colom/rangeofcard" instance=ExtResource("4_s6h2c")]
+[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer2" instance=ExtResource("3_8mab6")]
 layout_mode = 2
-script = null
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+layout_mode = 2
+
+[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer3" instance=ExtResource("3_8mab6")]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+layout_mode = 2
+
+[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer4" instance=ExtResource("3_8mab6")]
+layout_mode = 2
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(571.25, 289)
+position = Vector2(956, 444)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
@@ -145,10 +150,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -442.5
-offset_top = -121.0
-offset_right = 442.5
-offset_bottom = -20.9999
+offset_left = -508.0
+offset_top = -220.0
+offset_right = 508.0
+offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(1.00562, 1.00201)

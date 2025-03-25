@@ -1,4 +1,4 @@
-class_name CardUI
+class_name TCardUI
 extends Control
 
 
