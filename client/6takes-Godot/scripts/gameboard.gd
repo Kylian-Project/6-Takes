@@ -7,7 +7,7 @@ var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
 
 # Charger les scènes de cartes
-var card_scene = preload("res://scenes/card_vbox.tscn")  
+ 
 var card_ui_scene = preload("res://scenes/card_ui.tscn")  
 
 func _ready():
@@ -47,6 +47,7 @@ func _load_cards():
 	all_cards.shuffle()  # Mélanger les cartes aléatoirement
 
 # Assigner 4 cartes à la rangée (VBox)
+# Assigner 4 cartes à la rangée (VBox)
 func _assign_vbox_cards():
 	if all_cards.size() < 4:
 		print("❌ Erreur : Pas assez de cartes pour la rangée !")
@@ -57,8 +58,8 @@ func _assign_vbox_cards():
 		child.queue_free()
 	
 	for i in range(4):
-		var card_instance = card_scene.instantiate()  # Instancier une nouvelle carte
-		vbox_container.add_child(card_instance)  # Ajouter au VBoxContainer
+		var card_instance = card_ui_scene.instantiate()  # ✅ Correction ici
+		vbox_container.add_child(card_instance)
 		
 		if card_instance.has_method("set_card_data"):
 			var card = all_cards.pop_front()

@@ -1,18 +1,18 @@
 [gd_scene load_steps=7 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_jjao2"]
-[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="2_f2b3k"]
+[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
+[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="2_a73j3"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
-[ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="3_254vd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rl5u3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
-size = Vector2(1192, 714)
+size = Vector2(942, 761.5)
 
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
-script = ExtResource("1_jjao2")
-vbox_container = NodePath("hand_colom/VBoxContainer")
+script = ExtResource("1_yvybn")
+vbox_container = NodePath("hand_colom/rangeofcard")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -22,9 +22,10 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 4.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_f2b3k")
+texture = ExtResource("1_3p33s")
 expand_mode = 1
 
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
@@ -82,10 +83,10 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 399.0
-offset_top = 152.0
-offset_right = 1559.0
-offset_bottom = 802.0
+offset_left = 481.0
+offset_top = 74.0
+offset_right = 1787.0
+offset_bottom = 786.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -99,46 +100,40 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -650.0
-offset_top = -478.0
-offset_right = 622.0
-offset_bottom = 285.0
+offset_left = -495.0
+offset_top = -453.0
+offset_right = 547.0
+offset_bottom = 304.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_254vd")
+texture = ExtResource("2_a73j3")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="hand_colom"]
+[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
+custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
+alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+[node name="CardUI" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer" instance=ExtResource("3_8mab6")]
+[node name="CardUI2" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+[node name="CardUI3" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer2" instance=ExtResource("3_8mab6")]
+[node name="CardUI4" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
-layout_mode = 2
-
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer3" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
-layout_mode = 2
-
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer4" instance=ExtResource("3_8mab6")]
-layout_mode = 2
+script = null
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(956, 444)
+position = Vector2(949, 479.75)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
@@ -150,10 +145,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -508.0
-offset_top = -220.0
-offset_right = 508.0
-offset_bottom = -14.0
+offset_left = -589.0
+offset_top = -167.0
+offset_right = 582.0
+offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(1.00562, 1.00201)
