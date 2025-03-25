@@ -181,6 +181,7 @@ CREATE TABLE `players` (
   `id` int NOT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `first_login` tinyint(1) DEFAULT '1',
   `icon` int DEFAULT NULL,
