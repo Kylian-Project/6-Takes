@@ -1,14 +1,32 @@
-[gd_scene load_steps=7 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=12 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="2_a73j3"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
+[ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_rl5u3"]
+[sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
+line_spacing = 30.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_5oo11"]
+line_spacing = 16.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_7rt8c"]
+font = ExtResource("3_r0b0d")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_8de43"]
+font = ExtResource("3_r0b0d")
+font_size = 30
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
-size = Vector2(942, 761.5)
+size = Vector2(1011, 761.5)
 
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
 script = ExtResource("1_yvybn")
@@ -22,7 +40,6 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_3p33s")
@@ -31,62 +48,62 @@ expand_mode = 1
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 5.0
-offset_bottom = 61.0
+offset_top = 12.0
+offset_right = -1492.0
+offset_bottom = 77.0
 grow_horizontal = 2
-
-[node name="heads" type="HBoxContainer" parent="CanvasLayer/top_bar"]
-custom_minimum_size = Vector2(150, 56)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/heads"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "heads"
-label_settings = SubResource("LabelSettings_rl5u3")
-horizontal_alignment = 1
-
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/heads"]
-layout_mode = 2
-text = "0"
-
-[node name="round_player_time" type="HBoxContainer" parent="CanvasLayer/top_bar"]
-layout_mode = 2
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/top_bar/round_player_time"]
+[node name="heads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
+text = "Heads          "
+label_settings = SubResource("LabelSettings_bf7xg")
 
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer"]
+[node name="nbheads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
-text = "Rounds                                     "
-horizontal_alignment = 1
+text = "        int"
+label_settings = SubResource("LabelSettings_5oo11")
+horizontal_alignment = 2
 
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer"]
-layout_mode = 2
-text = "2/34"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/top_bar/round_player_time"]
-layout_mode = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_left = 648.0
+offset_top = 8.0
+offset_right = 1008.0
+offset_bottom = 73.0
 alignment = 1
 
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer2"]
+[node name="Label" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "player choosing stack..."
+text = "Turn 1/10"
+label_settings = SubResource("LabelSettings_7rt8c")
 
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer2"]
+[node name="Label2" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "25s"
+text = "              Waiting for players
+"
+label_settings = SubResource("LabelSettings_8de43")
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+offset_left = 1754.0
+offset_top = -5.0
+offset_right = 1865.0
+offset_bottom = 137.0
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer3"]
+layout_mode = 2
+texture = ExtResource("4_7flow")
 
 [node name="hand_colom" type="HBoxContainer" parent="."]
 show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 481.0
-offset_top = 74.0
-offset_right = 1787.0
-offset_bottom = 786.0
+offset_left = 483.0
+offset_top = 91.0
+offset_right = 1493.0
+offset_bottom = 803.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -101,8 +118,8 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -495.0
-offset_top = -453.0
-offset_right = 547.0
+offset_top = -423.0
+offset_right = 539.0
 offset_bottom = 304.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -133,7 +150,7 @@ script = null
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(949, 479.75)
+position = Vector2(983.5, 479.75)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]

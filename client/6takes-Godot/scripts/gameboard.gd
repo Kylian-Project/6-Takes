@@ -2,7 +2,7 @@ extends Node2D
 
 @export var vbox_container: VBoxContainer  # Conteneur des cartes de la rangée
 @export var hbox_container: HBoxContainer  # Conteneur des cartes du joueur
-
+@export var top_bar: HBoxContainer  # Conteneur HBox pour les labels
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
 

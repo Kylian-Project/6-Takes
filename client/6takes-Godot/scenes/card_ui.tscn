@@ -14,7 +14,7 @@ font_size = 17
 size = Vector2(137.865, 191)
 
 [node name="CardUI" type="Control"]
-custom_minimum_size = Vector2(100, 175)
+custom_minimum_size = Vector2(100, 170)
 layout_mode = 3
 anchors_preset = 0
 offset_left = 29.0
@@ -52,7 +52,7 @@ position = Vector2(70.7292, 94.8843)
 shape = SubResource("RectangleShape2D_1peor")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(149, 175)
+custom_minimum_size = Vector2(149, 170)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
