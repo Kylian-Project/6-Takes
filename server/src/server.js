@@ -1,23 +1,44 @@
-const WebSocket = require("ws");
+const http = require("http");
+require("dotenv").config();
+const { Server } = require("socket.io");
 
-const server = new WebSocket.Server({ port: 10001 }, () => {
-    console.log("WebSocket server running 10001...");
+const express = require("express");
+const app = express();
+
+
+// Add les routes HTTP 
+
+
+// Creation server HTTP
+const server = http.createServer(app);
+
+// Initialisation de Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["POST"]   // for now, w/out "GET"
+  }
 });
 
-server.on("connection", (socket) => {
-    console.log("New client connected!");
+// WebSocket
+io.on("connection", (socket) => {
+  console.log("Un joueur s'est connecté :", socket.id);
 
-    socket.on("message", (message) => {
-        console.log("Message reçu du client:", message.toString());
+  socket.on("createRoom", (data) => {
+    console.log("Création d’un salon :", data);
+  });
 
-        // Réponse personnalisée en fonction du message reçu
-        if (message.toString().toLowerCase() === "hello") {
-            socket.send("Salut, client !");
-        } else {
-            socket.send(`Tu as envoyé: "${message}"`);
-        }
-    });
+  socket.on("joinRoom", (roomCode) => {
+    socket.join(roomCode);
+    console.log(`${socket.id} a rejoint la salle ${roomCode}`);
+  });
 
-    socket.on("close", () => console.log("Client déconnecté"));
-    socket.on("error", (error) => console.error("Erreur serveur:", error));
+  socket.on("disconnect", () => {
+    console.log("Déconnexion de :", socket.id);
+  });
+});
+
+const PORT = process.env.PORT || 3000;      // indicated the correct port on .env , in case it fails use 3000
+server.listen(PORT, () => {
+  console.log(`Serveur WebSocket en écoute sur le port ${PORT}`);
 });
