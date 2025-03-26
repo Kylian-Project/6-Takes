@@ -324,9 +324,10 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jsm2")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_udiwy")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_iww2l")
-current_tab = 0
+current_tab = 1
 
 [node name="Main Settings" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -344,39 +345,39 @@ offset_bottom = 124.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
+[node name="VLabels" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 5
 
-[node name="Display" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer"]
+[node name="Display" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Display"
 
-[node name="Resolution" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer"]
+[node name="Resolution" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "Resolution"
 
-[node name="VSync" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer"]
+[node name="VSync" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "VSync"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
+[node name="VSettings" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="DisplayOption" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer2"]
+[node name="DisplayOption" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
@@ -389,7 +390,7 @@ popup/item_1/id = 1
 popup/item_2/text = "Borderless"
 popup/item_2/id = 2
 
-[node name="Resolution Options" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer2"]
+[node name="Resolution Options" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
@@ -400,7 +401,7 @@ popup/item_0/text = "1920x1080"
 popup/item_1/text = "1152x648"
 popup/item_1/id = 1
 
-[node name="VSync Options2" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VBoxContainer2"]
+[node name="VSync Options2" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
@@ -412,6 +413,43 @@ popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
 [node name="Audio Settings" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Audio Settings"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 77.0
+grow_horizontal = 2
+
+[node name="VLabels" type="VBoxContainer" parent="TabContainer/Audio Settings/HBoxContainer"]
+layout_mode = 2
+
+[node name="Master" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+layout_mode = 2
+text = "Master Volume"
+
+[node name="Music" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+layout_mode = 2
+text = "Music Volume"
+
+[node name="SFX" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+layout_mode = 2
+text = "SFX Volume"
+
+[node name="VSettings" type="VBoxContainer" parent="TabContainer/Audio Settings/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="MsterSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="MusicSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="SFXSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+layout_mode = 2
+size_flags_vertical = 2
