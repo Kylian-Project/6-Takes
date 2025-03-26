@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3 uid="uid://2knir2d25nhb"]
+
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="1_gofa2"]
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 180.0
+offset_top = 87.0
+offset_right = 980.0
+offset_bottom = 587.0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 500.0
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 500.0
+texture = ExtResource("1_gofa2")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 504.0
+offset_bottom = 124.0
