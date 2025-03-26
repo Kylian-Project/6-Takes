@@ -1,7 +1,39 @@
-[gd_scene load_steps=3 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=7 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
+[ext_resource type="FontFile" uid="uid://bdyjbfwknae2t" path="res://assets/kenvector_future.ttf" id="3_y4pek"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yjo8o"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vs32j"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -35,24 +67,55 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 403.0
-offset_top = 334.0
-offset_right = 753.0
-offset_bottom = 609.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = -244.0
+offset_right = 175.0
+offset_bottom = -33.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 20
 
 [node name="Create Lobby" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Create a Lobby"
 
 [node name="Join Lobby" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Join a Lobby"
 
 [node name="Return" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Return
-"
+size_flags_vertical = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
+text = "Return"
 
 [node name="Settings" type="TextureButton" parent="."]
 layout_mode = 0
