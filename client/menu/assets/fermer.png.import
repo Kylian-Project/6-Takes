@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfg2gxa7nrxkn"
-path="res://.godot/imported/profile.png-3780a9560d4edaf3147cf4613965eaff.ctex"
+uid="uid://bu1jy0clvmo3y"
+path="res://.godot/imported/fermer.png-41f92bb9f584aa487c08c4d7b0e18e4c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/profile.png"
-dest_files=["res://.godot/imported/profile.png-3780a9560d4edaf3147cf4613965eaff.ctex"]
+source_file="res://assets/fermer.png"
+dest_files=["res://.godot/imported/fermer.png-41f92bb9f584aa487c08c4d7b0e18e4c.ctex"]
 
 [params]
 

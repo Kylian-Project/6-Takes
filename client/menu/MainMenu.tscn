@@ -1,5 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://qkxbd688ps0g"]
 
+[ext_resource type="Script" path="res://main_menu.gd" id="1_0mm3e"]
 [ext_resource type="Texture2D" uid="uid://bc43qekvdjteb" path="res://assets/title.png" id="1_882gx"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="2_4gvwp"]
 [ext_resource type="Texture2D" uid="uid://5utgaquucxq4" path="res://assets/welcome.png" id="2_px1u1"]
@@ -7,8 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://dfu11p6muhw0d" path="res://assets/setting.png" id="5_5sd1g"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/icon.png" id="7_r14rk"]
-
-[sub_resource type="Theme" id="Theme_b5vk0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lowi6"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -52,25 +51,19 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [node name="MainMenu" type="Control"]
+z_index = -10
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
-
-[node name="Label" type="Label" parent="."]
-custom_minimum_size = Vector2(200, 200)
-layout_mode = 1
-anchors_preset = -1
-offset_right = 1154.0
-offset_bottom = 199.0
+script = ExtResource("1_0mm3e")
 
 [node name="LogoRect" type="TextureRect" parent="."]
-z_index = 7
 layout_mode = 0
-offset_left = 180.0
-offset_top = 45.0
-offset_right = 964.0
-offset_bottom = 339.0
+offset_left = 240.0
+offset_top = 27.0
+offset_right = 956.0
+offset_bottom = 292.0
 texture = ExtResource("1_882gx")
 expand_mode = 1
 
@@ -93,7 +86,8 @@ expand_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -1
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
 offset_right = 1172.0
 offset_bottom = 648.0
 color = Color(0, 0.305882, 0.596078, 1)
@@ -110,10 +104,10 @@ theme_override_constants/separation = 18
 [node name="SinglePlayerButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
-theme = SubResource("Theme_b5vk0")
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_lowi6")
 text = "Single Player"
 
@@ -123,9 +117,9 @@ layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_ufbv3")
-text = "Multi-Player
-"
+text = "Multi-Player"
 
 [node name="QuitButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
@@ -133,6 +127,7 @@ layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_ufbv3")
 text = "QUIT
 "
@@ -239,14 +234,14 @@ offset_right = 83.0
 offset_bottom = 80.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 
-[node name="Control2" type="Control" parent="."]
+[node name="profileControl" type="Control" parent="."]
 anchors_preset = 0
 offset_left = 1050.0
 offset_top = 450.0
 offset_right = 1132.0
 offset_bottom = 526.0
 
-[node name="SettingsButton" type="Button" parent="Control2"]
+[node name="SettingsButton" type="Button" parent="profileControl"]
 z_index = 2
 layout_mode = 0
 offset_left = 2.0
@@ -258,14 +253,14 @@ icon = ExtResource("7_r14rk")
 flat = true
 expand_icon = true
 
-[node name="Panel" type="Panel" parent="Control2"]
+[node name="Panel" type="Panel" parent="profileControl"]
 layout_mode = 0
 offset_right = 76.0
 offset_bottom = 72.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_44fvc")
 
-[node name="ShadeLabel4" type="Label" parent="Control2"]
+[node name="ShadeLabel4" type="Label" parent="profileControl"]
 z_index = -1
 layout_mode = 0
 offset_left = 3.0
@@ -273,3 +268,7 @@ offset_top = -2.0
 offset_right = 83.0
 offset_bottom = 80.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
+
+[connection signal="pressed" from="VButtons/SinglePlayerButton" to="." method="_on_single_player_button_pressed"]
+[connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
+[connection signal="pressed" from="VButtons/QuitButton" to="." method="_on_quit_button_pressed"]
