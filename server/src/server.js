@@ -1,36 +1,42 @@
-const http = require("http");
+// server.js
 require("dotenv").config();
+const express = require("express");
+const http = require("http");
+const cors = require("cors");
 const { Server } = require("socket.io");
 
-const express = require("express");
+const db = require("./config/db"); // Sequelize DB
+const utilisateurRoutes = require("./routes/utilisateur_route");
+
 const app = express();
+app.use(cors());
+app.use(express.json());
 
+// API REST
+app.use("/api/utilisateur", utilisateurRoutes);
 
-// Add les routes HTTP 
-
-
-// Creation server HTTP
+// Server HTTP
 const server = http.createServer(app);
 
-// Initialisation de Socket.io
+// WebSocket
 const io = new Server(server, {
   cors: {
     origin: "*",
-    methods: ["POST"]   // for now, w/out "GET"
+    methods: ["GET", "POST"]
   }
 });
 
-// WebSocket
 io.on("connection", (socket) => {
   console.log("Un joueur s'est connecté :", socket.id);
 
   socket.on("createRoom", (data) => {
-    console.log("Création d’un salon :", data);
+    console.log("Salon créé :", data);
+    // À relier à la logique de partie
   });
 
   socket.on("joinRoom", (roomCode) => {
     socket.join(roomCode);
-    console.log(`${socket.id} a rejoint la salle ${roomCode}`);
+    console.log(`${socket.id} a rejoint le salon ${roomCode}`);
   });
 
   socket.on("disconnect", () => {
@@ -38,7 +44,10 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;      // indicated the correct port on .env , in case it fails use 3000
-server.listen(PORT, () => {
-  console.log(`Serveur WebSocket en écoute sur le port ${PORT}`);
+// Lancer l'app
+const PORT = process.env.PORT || 3000;
+db.sync().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Serveur lancé sur http://localhost:${PORT}`);
+  });
 });
