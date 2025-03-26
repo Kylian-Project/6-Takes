@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=13 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
 [ext_resource type="FontFile" uid="uid://bdyjbfwknae2t" path="res://assets/kenvector_future.ttf" id="3_y4pek"]
+[ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/settings.png" id="4_8ywmt"]
+[ext_resource type="Texture2D" uid="uid://sudtg5i4mwe5" path="res://assets/icon.png" id="5_4cr6n"]
+[ext_resource type="Texture2D" uid="uid://k6qrmqnkcqxv" path="res://assets/rules.png" id="6_kcnsc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -28,6 +31,48 @@ shadow_offset = Vector2(0, 10)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vs32j"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fe82j"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b2r32"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hk44s"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -66,17 +111,27 @@ texture = ExtResource("2_8fj2n")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="Welcome Title" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -81.0
+offset_right = 1154.0
+offset_bottom = 394.0
+texture = ExtResource("2_8fj2n")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.811
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -175.0
-offset_top = -244.0
-offset_right = 175.0
-offset_bottom = -33.0
+anchor_bottom = 0.811
+offset_left = -183.0
+offset_top = -157.528
+offset_right = 183.0
+offset_bottom = 87.472
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 20
@@ -117,41 +172,41 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Return"
 
-[node name="Settings" type="TextureButton" parent="."]
+[node name="Settings" type="Button" parent="."]
 layout_mode = 0
 offset_left = 1019.0
 offset_top = 517.0
 offset_right = 1115.0
 offset_bottom = 613.0
+theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+icon = ExtResource("4_8ywmt")
+icon_alignment = 1
+expand_icon = true
 
-[node name="ColorRect" type="ColorRect" parent="Settings"]
-layout_mode = 0
-offset_right = 96.0
-offset_bottom = 96.0
-color = Color(0.85098, 0.85098, 0.85098, 1)
-
-[node name="Account" type="TextureButton" parent="."]
+[node name="Profile" type="Button" parent="."]
 layout_mode = 0
 offset_left = 1019.0
-offset_top = 377.0
+offset_top = 397.0
 offset_right = 1115.0
-offset_bottom = 473.0
+offset_bottom = 493.0
+theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+icon = ExtResource("5_4cr6n")
+icon_alignment = 1
+expand_icon = true
 
-[node name="ColorRect" type="ColorRect" parent="Account"]
+[node name="Rules" type="Button" parent="."]
 layout_mode = 0
-offset_right = 96.0
-offset_bottom = 96.0
-color = Color(0.85098, 0.85098, 0.85098, 1)
-
-[node name="Rules" type="TextureButton" parent="."]
-layout_mode = 0
-offset_left = 32.0
-offset_top = 511.0
-offset_right = 128.0
-offset_bottom = 607.0
-
-[node name="ColorRect" type="ColorRect" parent="Rules"]
-layout_mode = 0
-offset_right = 96.0
-offset_bottom = 96.0
-color = Color(0.85098, 0.85098, 0.85098, 1)
+offset_left = 37.0
+offset_top = 517.0
+offset_right = 133.0
+offset_bottom = 613.0
+theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+icon = ExtResource("6_kcnsc")
+icon_alignment = 1
+expand_icon = true
