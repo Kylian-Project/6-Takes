@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://qkxbd688ps0g"]
 
-[ext_resource type="Script" path="res://main_menu.gd" id="1_0mm3e"]
 [ext_resource type="Texture2D" uid="uid://bc43qekvdjteb" path="res://assets/title.png" id="1_882gx"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="2_4gvwp"]
 [ext_resource type="Texture2D" uid="uid://5utgaquucxq4" path="res://assets/welcome.png" id="2_px1u1"]
 [ext_resource type="FontFile" uid="uid://c7iocrhqqb6pi" path="res://assets/kenvector_future.ttf" id="4_0m83s"]
@@ -56,16 +56,15 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
-script = ExtResource("1_0mm3e")
+script = ExtResource("1_wwhcw")
 
-[node name="LogoRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 240.0
-offset_top = 27.0
-offset_right = 956.0
-offset_bottom = 292.0
-texture = ExtResource("1_882gx")
-expand_mode = 1
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+offset_right = 1172.0
+offset_bottom = 648.0
+color = Color(0, 0.305882, 0.596078, 1)
 
 [node name="WelcomeRect" type="TextureRect" parent="."]
 layout_mode = 0
@@ -84,13 +83,14 @@ offset_bottom = 649.0
 texture = ExtResource("2_4gvwp")
 expand_mode = 1
 
-[node name="ColorRect" type="ColorRect" parent="."]
-z_index = -1
-layout_mode = 1
-anchors_preset = -1
-offset_right = 1172.0
-offset_bottom = 648.0
-color = Color(0, 0.305882, 0.596078, 1)
+[node name="LogoRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 27.0
+offset_right = 956.0
+offset_bottom = 292.0
+texture = ExtResource("1_882gx")
+expand_mode = 1
 
 [node name="VButtons" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(300, 200)
@@ -193,9 +193,9 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_c4ew1")
 [node name="ShadeLabel4" type="Label" parent="RulesControl"]
 z_index = -1
 layout_mode = 0
-offset_left = 1.0
+offset_left = 9.0
 offset_top = 3.0
-offset_right = 86.0
+offset_right = 94.0
 offset_bottom = 108.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 

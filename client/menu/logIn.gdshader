@@ -11,7 +11,7 @@ void vertex() {
 void fragment() {
 	vec4 color = texture(SCREEN_TEXTURE, SCREEN_UV, lod);
 	COLOR = color
-	
+
 }
 
 //void light() {

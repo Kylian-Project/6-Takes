@@ -1,6 +1,6 @@
 extends Control
 
-var login_scene = preload("res://logIn.tscn") # Load the login scene
+var login_scene = preload("res://scenes/logIn.tscn") # Load the login scene
 
 
 # Called when the node enters the scene tree for the first time.
