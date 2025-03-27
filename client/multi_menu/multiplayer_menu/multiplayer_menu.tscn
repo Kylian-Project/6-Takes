@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=24 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/settings.png" id="4_8ywmt"]
 [ext_resource type="Texture2D" uid="uid://sudtg5i4mwe5" path="res://assets/icon.png" id="5_4cr6n"]
 [ext_resource type="Texture2D" uid="uid://k6qrmqnkcqxv" path="res://assets/rules.png" id="6_kcnsc"]
+[ext_resource type="Script" path="res://main_settings.gd" id="8_db6nl"]
+[ext_resource type="Script" path="res://audio_settings.gd" id="9_n02ju"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -135,6 +137,20 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2rhfm"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r6c6f"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -295,7 +311,17 @@ icon = ExtResource("6_kcnsc")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Main Menu Dimming" type="ColorRect" parent="."]
+[node name="SettingsOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Main Menu Dimming" type="ColorRect" parent="SettingsOverlay"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -304,17 +330,18 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="TabContainer" type="TabContainer" parent="SettingsOverlay"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -250.0
-offset_right = 200.0
-offset_bottom = 250.0
+offset_left = 356.0
+offset_top = 157.0
+offset_right = 756.0
+offset_bottom = 448.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -324,14 +351,14 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jsm2")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_udiwy")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_iww2l")
-current_tab = 1
+current_tab = 0
 
-[node name="Main Settings" type="TabBar" parent="TabContainer"]
-visible = false
+[node name="MainSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
 layout_mode = 2
+script = ExtResource("8_db6nl")
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Main Settings"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -339,46 +366,50 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -157.0
-offset_top = -226.5
+offset_top = -115.0
 offset_right = 158.0
-offset_bottom = 124.5
+offset_bottom = 125.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VLabels" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
+[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 5
 
-[node name="Display" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
+[node name="Display" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Display"
 
-[node name="Resolution" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
+[node name="Resolution" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "Resolution"
 
-[node name="VSync" type="Label" parent="TabContainer/Main Settings/HBoxContainer/VLabels"]
+[node name="VSync" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "VSync"
 
-[node name="VSettings" type="VBoxContainer" parent="TabContainer/Main Settings/HBoxContainer"]
+[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="DisplayOption" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
+[node name="DisplayOption" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
@@ -390,8 +421,9 @@ popup/item_1/id = 1
 popup/item_2/text = "Borderless"
 popup/item_2/id = 2
 
-[node name="Resolution Options" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
+[node name="Resolution Options" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
@@ -401,8 +433,9 @@ popup/item_0/text = "1920x1080"
 popup/item_1/text = "1152x648"
 popup/item_1/id = 1
 
-[node name="VSync Options2" type="OptionButton" parent="TabContainer/Main Settings/HBoxContainer/VSettings"]
+[node name="VSync Options2" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
@@ -412,44 +445,106 @@ popup/item_0/text = "Enabled"
 popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
-[node name="Audio Settings" type="TabBar" parent="TabContainer"]
+[node name="Audio Settings" type="TabBar" parent="SettingsOverlay/TabContainer"]
+visible = false
 layout_mode = 2
+script = ExtResource("9_n02ju")
 metadata/_tab_index = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Audio Settings"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 77.0
+offset_left = -1.0
+offset_top = 17.0
+offset_right = -1.0
+offset_bottom = 139.0
 grow_horizontal = 2
+alignment = 1
 
-[node name="VLabels" type="VBoxContainer" parent="TabContainer/Audio Settings/HBoxContainer"]
+[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer"]
 layout_mode = 2
+alignment = 1
 
-[node name="Master" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="Master" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "Master Volume"
 
-[node name="Music" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="Music" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "Music Volume"
 
-[node name="SFX" type="Label" parent="TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="SFX" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "SFX Volume"
 
-[node name="VSettings" type="VBoxContainer" parent="TabContainer/Audio Settings/HBoxContainer"]
+[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+alignment = 1
 
-[node name="MsterSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="MsterSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.05
 
-[node name="MusicSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="MusicSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.05
 
-[node name="SFXSlider" type="HSlider" parent="TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="SFXSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.05
+
+[node name="CreateLobbyOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Main Menu Dimming2" type="ColorRect" parent="CreateLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="PanelContainer" type="PanelContainer" parent="CreateLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -239.0
+offset_top = -224.0
+offset_right = 234.0
+offset_bottom = 295.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r6c6f")
+
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/VSync Options2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
