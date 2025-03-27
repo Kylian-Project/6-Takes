@@ -150,7 +150,8 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r6c6f"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whri7"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -534,13 +535,86 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -239.0
-offset_top = -224.0
-offset_right = 234.0
-offset_bottom = 295.0
+offset_left = -236.5
+offset_top = -259.5
+offset_right = 236.5
+offset_bottom = 259.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_r6c6f")
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
+
+[node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer"]
+visible = false
+self_modulate = Color(1, 1, 1, 0.227451)
+layout_mode = 2
+texture = ExtResource("1_pfnuq")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer"]
+layout_mode = 2
+
+[node name="AvailableOptions" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+
+[node name="Options" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="LobbyName" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+text = "Lobby Name"
+
+[node name="PlayerLimit" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+text = "Player Limit"
+
+[node name="NumberCards" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+text = "Number of Cards"
+
+[node name="RoundTimer" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+text = "Round Timer"
+
+[node name="EndByPoints" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+text = "End by Points"
+
+[node name="Choices" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="EditLobbyName" type="LineEdit" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+
+[node name="PlayerLimitDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+
+[node name="CardNumberDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+
+[node name="RoundTimerDropdown2" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+
+[node name="EndPointsDropdown3" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+
+[node name="PublicPrivate" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Private" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
+layout_mode = 2
+text = "Private"
+
+[node name="Public" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
+layout_mode = 2
+text = "Public"
+
+[node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+text = "Create Lobby"
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
