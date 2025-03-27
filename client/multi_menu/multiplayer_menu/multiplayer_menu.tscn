@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=30 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
@@ -152,6 +152,82 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whri7"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2spsn"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_07n4x"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c60qq"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdh8"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x57a0"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_el0pc"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 10)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -322,7 +398,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Main Menu Dimming" type="ColorRect" parent="SettingsOverlay"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -332,17 +407,16 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
 
 [node name="TabContainer" type="TabContainer" parent="SettingsOverlay"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 356.0
-offset_top = 157.0
-offset_right = 756.0
-offset_bottom = 448.0
+offset_left = -200.0
+offset_top = -145.5
+offset_right = 200.0
+offset_bottom = 145.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -536,9 +610,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -236.5
-offset_top = -259.5
+offset_top = -217.5
 offset_right = 236.5
-offset_bottom = 259.5
+offset_bottom = 217.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -546,7 +620,6 @@ size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
 
 [node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer"]
-visible = false
 self_modulate = Color(1, 1, 1, 0.227451)
 layout_mode = 2
 texture = ExtResource("1_pfnuq")
@@ -555,6 +628,7 @@ stretch_mode = 1
 
 [node name="MainVertical" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 
 [node name="AvailableOptions" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
@@ -564,22 +638,42 @@ layout_mode = 2
 
 [node name="LobbyName" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Lobby Name"
 
 [node name="PlayerLimit" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Player Limit"
 
 [node name="NumberCards" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Number of Cards"
 
 [node name="RoundTimer" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Round Timer"
 
-[node name="EndByPoints" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+[node name="NumberCards3" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "End by Points"
 
 [node name="Choices" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
@@ -587,9 +681,15 @@ layout_mode = 2
 
 [node name="EditLobbyName" type="LineEdit" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_2spsn")
 
 [node name="PlayerLimitDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
 selected = 8
 item_count = 9
 popup/item_0/text = "2"
@@ -612,6 +712,10 @@ popup/item_8/id = 8
 
 [node name="CardNumberDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
 selected = 9
 item_count = 10
 popup/item_0/text = "1"
@@ -636,6 +740,10 @@ popup/item_9/id = 9
 
 [node name="RoundTimerDropdown2" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
 selected = 1
 item_count = 3
 popup/item_0/text = "30"
@@ -646,6 +754,10 @@ popup/item_2/id = 2
 
 [node name="EndPointsDropdown3" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
 selected = 0
 item_count = 2
 popup/item_0/text = "No"
@@ -658,14 +770,30 @@ size_flags_vertical = 4
 
 [node name="Private" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_c60qq")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
 text = "Private"
 
 [node name="Public" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_x57a0")
+theme_override_styles/normal = SubResource("StyleBoxFlat_el0pc")
 text = "Public"
 
 [node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 text = "Create Lobby"
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
