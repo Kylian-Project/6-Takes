@@ -10,17 +10,12 @@ config_version=5
 
 [application]
 
-config/name="Menu"
-run/main_scene="res://scenes/MainMenu.tscn"
+config/name="gamebordcard"
+run/main_scene="res://card_ui.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
-[display]
+[layer_names]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-
-[rendering]
-
-window/stretch/mode="viewport"
-window/stretch/aspect="expand"
+2d_physics/layer_1="card_selector"
+2d_physics/layer_2="card_table"
