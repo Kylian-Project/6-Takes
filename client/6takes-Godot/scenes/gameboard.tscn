@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
+[ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -157,6 +158,7 @@ position = Vector2(957.75, 488.125)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
+layer = -1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2"]
 custom_minimum_size = Vector2(75, 80)
@@ -171,7 +173,6 @@ offset_right = 610.0
 offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(1.00562, 1.00201)
 alignment = 1
 
 [node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
@@ -213,3 +214,13 @@ script = null
 [node name="CardUI10" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
+
+[node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
+offset_left = 367.0
+offset_top = 101.0
+offset_right = 1564.0
+offset_bottom = 952.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]
