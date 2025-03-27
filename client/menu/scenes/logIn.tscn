@@ -56,10 +56,10 @@ script = ExtResource("1_8677d")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = -167.0
-offset_top = -67.0
-offset_right = 981.0
-offset_bottom = 578.0
+offset_left = -211.0
+offset_top = -97.0
+offset_right = 1033.0
+offset_bottom = 615.0
 color = Color(0.180392, 0.180392, 0.180392, 0.52549)
 
 [node name="ShadowBox" type="Label" parent="."]
@@ -187,7 +187,7 @@ theme_override_fonts/font = ExtResource("1_enwme")
 theme_override_font_sizes/font_size = 90
 text = "WELCOME"
 
-[node name="Button" type="Button" parent="."]
+[node name="ForgotPassword" type="Button" parent="."]
 layout_mode = 0
 offset_left = 300.0
 offset_top = 440.0
@@ -215,4 +215,5 @@ text = "Sign up !"
 flat = true
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]
 [connection signal="pressed" from="SignUp" to="." method="_on_sign_up_pressed"]

@@ -1,0 +1,175 @@
+[gd_scene load_steps=12 format=3 uid="uid://c8k8ev10fto0h"]
+
+[ext_resource type="Script" path="res://scripts/forgot_password.gd" id="1_to88p"]
+[ext_resource type="FontFile" uid="uid://c3r1cyslat6vj" path="res://assets/fonts/kenvector_future.ttf" id="2_0flr6"]
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="3_7slrr"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/clown.png" id="4_b7b22"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/fermer.png" id="5_6eo4e"]
+[ext_resource type="FontFile" uid="uid://bxbdicw87pps" path="res://assets/fonts/Lobster 1.4.otf" id="6_loq0b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vd4fy"]
+bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n23bi"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 0.952941)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.10748, 0.10748, 0.10748, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(5, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xum7"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_bottom_left = 7
+shadow_color = Color(0.144063, 0.144063, 0.144063, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(-2, 2)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_ikj0v"]
+color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dxl1w"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 2
+shadow_offset = Vector2(4, 4)
+
+[node name="Control" type="Control"]
+process_mode = 3
+z_index = 5
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 170.0
+offset_top = 70.0
+offset_right = 990.0
+offset_bottom = 590.0
+script = ExtResource("1_to88p")
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -105.0
+offset_right = 1043.0
+offset_bottom = 633.0
+color = Color(0.180392, 0.180392, 0.180392, 0.52549)
+
+[node name="ShadowBox" type="Label" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 1.0
+offset_right = 830.0
+offset_bottom = 530.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(100, 20)
+layout_mode = 2
+offset_left = 225.0
+offset_top = 300.0
+offset_right = 578.0
+offset_bottom = 348.0
+theme_override_constants/separation = 8
+
+[node name="email" type="LineEdit" parent="VBoxContainer"]
+z_index = 1
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/clear_button_color_pressed = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
+placeholder_text = "     Email"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+offset_right = 820.0
+offset_bottom = 520.0
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(200, 300)
+layout_mode = 2
+offset_right = 820.0
+offset_bottom = 520.0
+texture = ExtResource("3_7slrr")
+expand_mode = 1
+
+[node name="logo" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 0
+offset_left = 300.0
+offset_top = 23.0
+offset_right = 507.0
+offset_bottom = 193.0
+texture = ExtResource("4_b7b22")
+expand_mode = 1
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 781.0
+offset_right = 821.0
+offset_bottom = 38.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4xum7")
+
+[node name="CancelButton" type="Button" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+icon = ExtResource("5_6eo4e")
+flat = true
+expand_icon = true
+
+[node name="title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 223.0
+offset_top = 190.0
+offset_right = 588.0
+offset_bottom = 253.0
+theme_override_colors/font_color = Color(0.051971, 0.051971, 0.051971, 0.831373)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 18
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("6_loq0b")
+theme_override_font_sizes/font_size = 50
+text = "Account Recovery !"
+
+[node name="Cancel" type="Button" parent="."]
+layout_mode = 0
+offset_left = 367.0
+offset_top = 480.0
+offset_right = 431.0
+offset_bottom = 512.0
+theme_override_styles/hover = SubResource("StyleBoxLine_ikj0v")
+text = "Cancel"
+flat = true
+
+[node name="Enter" type="Button" parent="."]
+layout_mode = 2
+offset_left = 300.0
+offset_top = 390.0
+offset_right = 500.0
+offset_bottom = 436.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_0flr6")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dxl1w")
+text = "Enter"
+
+[connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="Enter" to="." method="_on_enter_pressed"]

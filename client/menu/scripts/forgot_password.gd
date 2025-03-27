@@ -1,5 +1,6 @@
 extends Control
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.visible = false
@@ -9,14 +10,17 @@ func show_overlay():
 	
 func hide_overlay():
 	self.visible = false 
-	
-	
-func _on_log_in_pressed() -> void:
+
+
+
+func _on_cancel_pressed() -> void:
 	var login_scene = load("res://scenes/logIn.tscn")
+	
 	if login_scene == null:
 		print("couldn't load scene")
 		
 	var login_instance = login_scene.instantiate()
+	
 	if login_instance== null :
 		print("couldn't instanciate scene ")
 	
@@ -27,5 +31,14 @@ func _on_log_in_pressed() -> void:
 	queue_free()
 
 
+
 func _on_cancel_button_pressed() -> void:
-	queue_free() 
+	queue_free()
+
+
+func _on_send_code_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_enter_pressed() -> void:
+	pass # Replace with function body.
