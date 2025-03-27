@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://2knir2d25nhb"]
+[gd_scene load_steps=11 format=3 uid="uid://2knir2d25nhb"]
 
 [ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
 [ext_resource type="FontFile" uid="uid://bxbdicw87pps" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
@@ -12,18 +12,6 @@ bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjyc3"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2ubi"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0.0562916, 0.0562916, 0.0562916, 0.6)
-shadow_size = 2
-shadow_offset = Vector2(4, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n23bi"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 0.952941)
@@ -41,6 +29,16 @@ corner_radius_bottom_left = 7
 shadow_color = Color(0.144063, 0.144063, 0.144063, 0.6)
 shadow_size = 3
 shadow_offset = Vector2(-2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2ubi"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.0562916, 0.0562916, 0.0562916, 0.6)
+shadow_size = 2
+shadow_offset = Vector2(4, 4)
 
 [node name="Control" type="Control"]
 process_mode = 3
@@ -60,6 +58,7 @@ offset_left = -211.0
 offset_top = -97.0
 offset_right = 1033.0
 offset_bottom = 615.0
+mouse_filter = 2
 color = Color(0.180392, 0.180392, 0.180392, 0.52549)
 
 [node name="ShadowBox" type="Label" parent="."]
@@ -69,20 +68,6 @@ offset_top = 1.0
 offset_right = 830.0
 offset_bottom = 530.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
-
-[node name="LoginButton" type="Button" parent="."]
-z_index = 1
-layout_mode = 2
-offset_left = 300.0
-offset_top = 390.0
-offset_right = 498.0
-offset_bottom = 436.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_js3f7")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_hjyc3")
-theme_override_styles/normal = SubResource("StyleBoxFlat_u2ubi")
-text = "Log In"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(100, 100)
@@ -116,6 +101,7 @@ custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 offset_right = 820.0
 offset_bottom = 520.0
+mouse_filter = 2
 color = Color(0.729412, 0.215686, 0.215686, 1)
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -123,6 +109,7 @@ custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 offset_right = 820.0
 offset_bottom = 520.0
+mouse_filter = 2
 texture = ExtResource("1_gofa2")
 expand_mode = 1
 
@@ -193,6 +180,7 @@ offset_left = 300.0
 offset_top = 440.0
 offset_right = 501.0
 offset_bottom = 471.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 14
 text = "Forgot your Password ?"
 flat = true
@@ -211,8 +199,23 @@ offset_left = 411.0
 offset_top = 482.0
 offset_right = 485.0
 offset_bottom = 513.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 text = "Sign up !"
 flat = true
+
+[node name="LoginButton" type="Button" parent="."]
+z_index = 1
+layout_mode = 2
+offset_left = 300.0
+offset_top = 390.0
+offset_right = 498.0
+offset_bottom = 436.0
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_js3f7")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2ubi")
+text = "Log In"
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]

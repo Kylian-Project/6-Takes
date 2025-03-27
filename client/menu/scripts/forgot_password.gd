@@ -37,8 +37,52 @@ func _on_cancel_button_pressed() -> void:
 
 
 func _on_send_code_pressed() -> void:
-	pass # Replace with function body.
+	var sendCode_scene = load("res://scenes/sendCode.tscn")
+	if sendCode_scene == null:
+		print("couldn't load scene")
+		
+	var sendCode_instance = sendCode_scene.instantiate()
+	if sendCode_instance== null :
+		print("couldn't instanciate scene ")
+	
+	#queue_free()
+	get_tree().current_scene.add_child(sendCode_instance)
+	sendCode_instance.show_overlay()
+	
+	queue_free()
 
 
 func _on_enter_pressed() -> void:
-	pass # Replace with function body.
+	var newPass_scene = load("res://scenes/newPassword.tscn")
+	if newPass_scene == null:
+		print("couldn't load new pass scene")
+	
+	var newPass_instance = newPass_scene.instantiate()
+	if newPass_instance == null :
+		print("couldn't istantiate new pass scene ")
+	
+	get_tree().current_scene.add_child(newPass_instance)
+	newPass_instance.show_overlay()
+	
+	queue_free()
+
+	
+
+
+func _on_resend_code_pressed() -> void:
+	var forgotPass_scene = load("res://scenes/ForgotPassword.tscn")
+	if forgotPass_scene == null:
+		print("couldn't load scene")
+	
+	var forgotPass_instance = forgotPass_scene.instantiate()
+	if forgotPass_instance == null :
+		print("couldn't istantiate forgot pass scene ")
+	
+	get_tree().current_scene.add_child(forgotPass_instance)
+	forgotPass_instance.show_overlay()
+	
+	queue_free()
+
+
+func _on_confirm_pressed() -> void:
+	_on_cancel_pressed()
