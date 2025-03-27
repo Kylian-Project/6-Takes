@@ -116,10 +116,10 @@ expand_mode = 1
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 0
-offset_left = 499.0
-offset_top = 24.0
-offset_right = 698.0
-offset_bottom = 186.0
+offset_left = 516.0
+offset_top = 37.0
+offset_right = 721.0
+offset_bottom = 204.0
 texture = ExtResource("5_5g1vb")
 expand_mode = 1
 
@@ -149,15 +149,15 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_4xum7")
 
 [node name="back" type="Label" parent="."]
 layout_mode = 0
-offset_left = 261.0
-offset_top = 159.0
-offset_right = 398.0
+offset_left = 271.0
+offset_top = 151.0
+offset_right = 420.0
 offset_bottom = 227.0
 theme_override_colors/font_color = Color(0.129558, 0.129558, 0.129558, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 0.92549)
 theme_override_constants/outline_size = 13
 theme_override_fonts/font = ExtResource("1_enwme")
-theme_override_font_sizes/font_size = 37
+theme_override_font_sizes/font_size = 50
 text = "BACK"
 
 [node name="welcome2" type="Label" parent="."]
