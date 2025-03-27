@@ -68,10 +68,10 @@ color = Color(0, 0.305882, 0.596078, 1)
 
 [node name="WelcomeRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 430.0
-offset_top = 200.0
-offset_right = 719.0
-offset_bottom = 351.0
+offset_left = 415.0
+offset_top = 180.0
+offset_right = 745.0
+offset_bottom = 359.0
 texture = ExtResource("2_px1u1")
 expand_mode = 1
 
@@ -272,3 +272,4 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 [connection signal="pressed" from="VButtons/SinglePlayerButton" to="." method="_on_single_player_button_pressed"]
 [connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
 [connection signal="pressed" from="VButtons/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="RulesControl/RulesButton" to="." method="_on_rules_button_pressed"]
