@@ -10,11 +10,12 @@ config_version=5
 
 [application]
 
-config/name="6Takes"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/name="Menu"
+run/main_scene="res://scenes/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
-[rendering]
+[display]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"

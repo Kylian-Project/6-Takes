@@ -1,0 +1,250 @@
+[gd_scene load_steps=8 format=3 uid="uid://nfe65astjsxy"]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_nsqho"]
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="2_qwy8h"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/clown.png" id="3_vj88w"]
+[ext_resource type="FontFile" uid="uid://bxbdicw87pps" path="res://assets/fonts/Lobster 1.4.otf" id="4_oyd2o"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/fermer.png" id="5_uitwj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vd4fy"]
+bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c267g"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_bottom_left = 7
+shadow_color = Color(0.144063, 0.144063, 0.144063, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(-2, 2)
+
+[node name="Control" type="Control"]
+process_mode = 3
+z_index = 5
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 170.0
+offset_top = 70.0
+offset_right = 990.0
+offset_bottom = 590.0
+script = ExtResource("1_nsqho")
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -105.0
+offset_right = 1043.0
+offset_bottom = 633.0
+mouse_filter = 2
+color = Color(0.180392, 0.180392, 0.180392, 0.52549)
+
+[node name="ShadowBox" type="Label" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 1.0
+offset_right = 830.0
+offset_bottom = 530.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+offset_right = 820.0
+offset_bottom = 520.0
+mouse_filter = 2
+color = Color(0.715548, 0.209551, 0.209908, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.4)
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+offset_right = 820.0
+offset_bottom = 520.0
+mouse_filter = 2
+texture = ExtResource("2_qwy8h")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 17.0
+offset_right = 793.0
+offset_bottom = 506.0
+theme_override_constants/separation = 11
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Objective"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "Avoid collecting jester heads (penalty points) by strategically playing your cards.
+The player with the fewest points at the end wins."
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Game Setup"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "- Each player is dealt 5 - 10 cards from a deck of 104 (numbered 1–104).  
+- Four cards are placed face-up on the table to form the initial rows."
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Round Play"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "- Every round, players secretly choose one card from their hand.  
+- All chosen cards are revealed simultaneously."
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer4"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Card Ordering & Placement"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer4"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "- Revealed cards are automatically sorted in ascending order.  
+- Each card is placed at the end of the row where the last card is the highest number
+   lower than the played card."
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer5"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Row Overflow"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer5"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "- If placing a card would make a row exceed five cards (i.e., become the 6th card), that row “bursts.” 
+- The player who played the card collects the five cards from that row
+   (adding their bullheads to their score), and the played card becomes the new row starter."
+
+[node name="VBoxContainer6" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer6"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_oyd2o")
+text = "      Special Placement Rule"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer6"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 7
+theme_override_font_sizes/font_size = 13
+text = "- If your played card is lower than the last card in every row,  you must choose one row to collect.  
+- Your card then becomes the starting card for that row."
+
+[node name="logo" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 0
+offset_left = 654.0
+offset_top = 40.0
+offset_right = 769.0
+offset_bottom = 140.0
+texture = ExtResource("3_vj88w")
+expand_mode = 1
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 781.0
+offset_right = 821.0
+offset_bottom = 38.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_right = 38.0
+offset_bottom = 36.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c267g")
+
+[node name="CancelButton" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 3.0
+offset_right = 40.0
+offset_bottom = 33.0
+icon = ExtResource("5_uitwj")
+flat = true
+expand_icon = true
+
+[connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
