@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0cmgjgbawo0q"
-path="res://.godot/imported/rules.png-346a3be023e70b3cbd343cc71456a72e.ctex"
+path="res://.godot/imported/rules.png-2716b357f2c3db8b9889d27348ee0352.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/rules.png"
-dest_files=["res://.godot/imported/rules.png-346a3be023e70b3cbd343cc71456a72e.ctex"]
+source_file="res://assets/images/rules.png"
+dest_files=["res://.godot/imported/rules.png-2716b357f2c3db8b9889d27348ee0352.ctex"]
 
 [params]
 

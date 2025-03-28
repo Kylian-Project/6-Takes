@@ -4,10 +4,16 @@ extends Control
 func _ready() -> void:
 	self.visible = false
 
+var overlay_opened = false
+func _proces():
+	get_tree().paused = overlay_opened
+	
 func show_overlay():
+	overlay_opened = true
 	self.visible = true 
 	
 func hide_overlay():
+	overlay_opened = false
 	self.visible = false 
 	
 	

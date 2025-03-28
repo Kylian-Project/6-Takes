@@ -1,11 +1,11 @@
 [gd_scene load_steps=11 format=3 uid="uid://8wuccexryhno"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
-[ext_resource type="FontFile" uid="uid://c3r1cyslat6vj" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
-[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/back.png" id="3_aaacw"]
-[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/clown.png" id="4_e6cq5"]
-[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/fermer.png" id="5_pos6h"]
-[ext_resource type="FontFile" uid="uid://bxbdicw87pps" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="3_aaacw"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="4_e6cq5"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="5_pos6h"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vd4fy"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -14,14 +14,14 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n23bi"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 0.952941)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 shadow_color = Color(0.10748, 0.10748, 0.10748, 0.6)
-shadow_size = 3
-shadow_offset = Vector2(5, 4)
+shadow_size = 8
+shadow_offset = Vector2(5, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xum7"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -46,37 +46,54 @@ z_index = 5
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 3
 anchors_preset = 0
-offset_left = 170.0
-offset_top = 70.0
-offset_right = 990.0
-offset_bottom = 590.0
+offset_left = 320.0
+offset_top = 130.0
+offset_right = 1595.0
+offset_bottom = 930.0
 script = ExtResource("1_rkjvu")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = -203.0
-offset_top = -105.0
-offset_right = 1043.0
-offset_bottom = 633.0
+offset_left = -392.0
+offset_top = -179.0
+offset_right = 1688.0
+offset_bottom = 1010.0
 mouse_filter = 2
-color = Color(0.180392, 0.180392, 0.180392, 0.52549)
+color = Color(0.180392, 0.180392, 0.180392, 0.262745)
 
 [node name="ShadowBox" type="Label" parent="."]
 layout_mode = 0
-offset_left = 5.0
+offset_left = 11.0
 offset_top = 1.0
-offset_right = 830.0
-offset_bottom = 530.0
+offset_right = 1291.0
+offset_bottom = 821.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+offset_right = 1275.0
+offset_bottom = 800.0
+mouse_filter = 2
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+offset_right = 1275.0
+offset_bottom = 800.0
+mouse_filter = 2
+texture = ExtResource("3_aaacw")
+expand_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-offset_left = 230.0
-offset_top = 220.0
-offset_right = 583.0
-offset_bottom = 379.0
-theme_override_constants/separation = 8
+offset_left = 385.0
+offset_top = 309.0
+offset_right = 890.0
+offset_bottom = 608.0
+theme_override_constants/separation = 15
 
 [node name="username" type="LineEdit" parent="VBoxContainer"]
 z_index = 1
@@ -84,6 +101,8 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/clear_button_color_pressed = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Username"
 
@@ -93,6 +112,8 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/clear_button_color_pressed = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Email"
 
@@ -101,6 +122,8 @@ z_index = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Password"
 secret = true
@@ -110,106 +133,91 @@ z_index = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Confirm Password"
 secret = true
 
-[node name="ColorRect" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
-offset_right = 820.0
-offset_bottom = 520.0
-mouse_filter = 2
-color = Color(0.729412, 0.215686, 0.215686, 1)
-
-[node name="TextureRect" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
-offset_right = 820.0
-offset_bottom = 520.0
-mouse_filter = 2
-texture = ExtResource("3_aaacw")
-expand_mode = 1
-
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 0
-offset_left = 528.0
+offset_left = 823.0
 offset_top = 32.0
-offset_right = 727.0
-offset_bottom = 194.0
+offset_right = 1139.0
+offset_bottom = 302.0
 texture = ExtResource("4_e6cq5")
 expand_mode = 1
 
 [node name="Control" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 781.0
-offset_right = 821.0
-offset_bottom = 38.0
+offset_left = 1225.0
+offset_right = 1276.0
+offset_bottom = 50.0
 
 [node name="CancelButton" type="Button" parent="Control"]
 z_index = 3
 layout_mode = 0
-offset_left = 1.0
-offset_top = -1.0
-offset_right = 42.0
-offset_bottom = 39.0
+offset_right = 50.0
+offset_bottom = 50.0
 icon = ExtResource("5_pos6h")
 flat = true
 expand_icon = true
 
 [node name="Panel" type="Panel" parent="Control"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 50.0
+offset_bottom = 50.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4xum7")
 
 [node name="welcome2" type="Label" parent="."]
 layout_mode = 0
-offset_left = 95.0
-offset_top = 49.0
-offset_right = 516.0
-offset_bottom = 162.0
+offset_left = 200.0
+offset_top = 61.0
+offset_right = 809.0
+offset_bottom = 224.0
 theme_override_colors/font_color = Color(0.051971, 0.051971, 0.051971, 0.831373)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 30
 theme_override_constants/shadow_outline_size = 10
 theme_override_fonts/font = ExtResource("6_yv1ox")
-theme_override_font_sizes/font_size = 90
+theme_override_font_sizes/font_size = 130
 text = "WELCOME !"
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = 294.0
-offset_top = 477.0
-offset_right = 436.0
-offset_bottom = 501.0
-text = "Have an account ?"
 
 [node name="signup" type="Button" parent="."]
 z_index = 1
 layout_mode = 2
-offset_left = 300.0
-offset_top = 405.0
-offset_right = 498.0
-offset_bottom = 451.0
+offset_left = 490.0
+offset_top = 640.0
+offset_right = 776.0
+offset_bottom = 715.0
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_g1w5t")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_u2ubi")
 text = "Sign up"
 
-[node name="LogIn" type="Button" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 433.0
-offset_top = 472.0
-offset_right = 507.0
-offset_bottom = 503.0
+offset_left = 489.0
+offset_top = 752.0
+offset_right = 787.0
+offset_bottom = 798.0
+theme_override_constants/separation = 3
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Have an account ?"
+
+[node name="LogIn" type="Button" parent="HBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-text = "Log In !"
+theme_override_font_sizes/font_size = 24
+text = "Log In "
 flat = true
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
-[connection signal="pressed" from="LogIn" to="." method="_on_log_in_pressed"]
+[connection signal="pressed" from="HBoxContainer/LogIn" to="." method="_on_log_in_pressed"]
