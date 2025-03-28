@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://2knir2d25nhb"]
+[gd_scene load_steps=11 format=3 uid="uid://dgmgtvwq04hk7"]
 
 [ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
@@ -61,7 +61,6 @@ offset_left = -337.0
 offset_top = -163.0
 offset_right = 1806.0
 offset_bottom = 1019.0
-mouse_filter = 2
 color = Color(0.180392, 0.180392, 0.180392, 0.262745)
 
 [node name="ShadowBox" type="Label" parent="."]

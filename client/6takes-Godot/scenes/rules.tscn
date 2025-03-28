@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://nfe65astjsxy"]
+[gd_scene load_steps=8 format=3 uid="uid://bi73u3o3qngk5"]
 
-[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_nsqho"]
+[ext_resource type="Script" path="res://scripts/rules.gd" id="1_7sap1"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_qwy8h"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="3_vj88w"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="4_oyd2o"]
@@ -22,39 +22,37 @@ shadow_offset = Vector2(-2, 2)
 [node name="Control" type="Control"]
 process_mode = 3
 z_index = 5
-custom_minimum_size = Vector2(300, 300)
 layout_mode = 3
-anchors_preset = 0
-offset_left = 168.0
-offset_top = 66.0
-offset_right = 990.0
-offset_bottom = 590.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource("1_nsqho")
+anchor_right = 1.042
+anchor_bottom = 1.044
+offset_left = 200.0
+offset_top = 70.0
+offset_right = -1800.64
+offset_bottom = -1057.52
+script = ExtResource("1_7sap1")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = -194.0
-offset_top = -94.0
-offset_right = 1994.0
-offset_bottom = 1098.0
+offset_left = -251.0
+offset_top = -163.0
+offset_right = 2164.0
+offset_bottom = 1217.0
 color = Color(0.180392, 0.180392, 0.180392, 0.262745)
 
 [node name="ShadowBox" type="Label" parent="."]
 layout_mode = 0
 offset_left = 60.0
 offset_top = 42.0
-offset_right = 1570.0
+offset_right = 1470.0
 offset_bottom = 908.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
+layout_mode = 0
 offset_left = 50.0
 offset_top = 42.0
-offset_right = 1550.0
+offset_right = 1450.0
 offset_bottom = 892.0
 mouse_filter = 2
 color = Color(0.715548, 0.209551, 0.209908, 1)
@@ -62,10 +60,10 @@ color = Color(0.715548, 0.209551, 0.209908, 1)
 [node name="TextureRect" type="TextureRect" parent="."]
 modulate = Color(1, 1, 1, 0.4)
 custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
+layout_mode = 0
 offset_left = 50.0
 offset_top = 42.0
-offset_right = 1550.0
+offset_right = 1450.0
 offset_bottom = 892.0
 mouse_filter = 2
 texture = ExtResource("2_qwy8h")
@@ -234,19 +232,19 @@ text = "- If your played card is lower than the last card in every row,  you mus
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 0
-offset_left = 1248.0
-offset_top = 76.0
-offset_right = 1448.0
-offset_bottom = 246.0
+offset_left = 1134.0
+offset_top = 80.0
+offset_right = 1347.0
+offset_bottom = 256.0
 texture = ExtResource("3_vj88w")
 expand_mode = 1
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 747.0
+offset_left = 647.0
 offset_top = 27.0
-offset_right = 802.0
+offset_right = 702.0
 offset_bottom = 77.0
 
 [node name="Panel" type="Panel" parent="Control"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://qkxbd688ps0g"]
+[gd_scene load_steps=17 format=3 uid="uid://btyeei16grxj"]
 
 [ext_resource type="Texture2D" uid="uid://bc43qekvdjteb" path="res://assets/images/title.png" id="1_882gx"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dfu11p6muhw0d" path="res://assets/images/setting.png" id="5_5sd1g"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
+[ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lowi6"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -45,15 +46,16 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4ew1"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1w07j"]
+bg_color = Color(0.920995, 0.920995, 0.920995, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 10
+corner_radius_bottom_right = 20
+shadow_color = Color(0.169245, 0.169245, 0.169245, 1)
+shadow_size = 8
+shadow_offset = Vector2(8, 8)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_emifo"]
-bg_color = Color(0.141176, 0.219608, 0.294118, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qipfa"]
 
 [node name="MainMenu" type="Control"]
 z_index = -10
@@ -87,6 +89,7 @@ texture = ExtResource("2_4gvwp")
 expand_mode = 1
 
 [node name="LogoRect" type="TextureRect" parent="."]
+z_index = -5
 layout_mode = 0
 offset_left = 454.0
 offset_top = 43.0
@@ -96,6 +99,7 @@ texture = ExtResource("1_882gx")
 expand_mode = 1
 
 [node name="WelcomeRect" type="TextureRect" parent="."]
+z_index = -5
 layout_mode = 0
 offset_left = 761.0
 offset_top = 260.0
@@ -105,6 +109,7 @@ texture = ExtResource("2_px1u1")
 expand_mode = 1
 
 [node name="VButtons" type="VBoxContainer" parent="."]
+z_index = -5
 custom_minimum_size = Vector2(300, 200)
 layout_mode = 0
 offset_left = 735.0
@@ -148,6 +153,7 @@ text = "QUIT
 "
 
 [node name="Control" type="Control" parent="."]
+z_index = -5
 anchors_preset = 0
 offset_left = 1760.0
 offset_top = 900.0
@@ -184,6 +190,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 
 [node name="profileControl" type="Control" parent="."]
 visible = false
+z_index = -5
 anchors_preset = 0
 offset_left = 1760.0
 offset_top = 750.0
@@ -220,47 +227,44 @@ offset_right = 122.0
 offset_bottom = 120.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 
-[node name="RulesControl" type="Control" parent="."]
-show_behind_parent = true
-z_index = -2
+[node name="Control3" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 60.0
-offset_top = 840.0
-offset_right = 204.0
-offset_bottom = 991.0
-
-[node name="ShadeLabel4" type="Label" parent="RulesControl"]
-top_level = true
-layout_mode = 0
 offset_left = 80.0
-offset_top = 858.0
-offset_right = 220.0
-offset_bottom = 1018.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
+offset_top = 800.0
+offset_right = 240.0
+offset_bottom = 970.0
 
-[node name="Panel" type="Panel" parent="RulesControl"]
-top_level = true
+[node name="Label" type="Label" parent="Control3"]
 layout_mode = 0
-offset_left = 84.0
-offset_top = 851.0
-offset_right = 206.0
-offset_bottom = 1003.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_c4ew1")
+offset_left = 20.0
+offset_top = 4.0
+offset_right = 140.0
+offset_bottom = 150.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_1w07j")
 
-[node name="RulesButton" type="Button" parent="RulesControl"]
-top_level = true
+[node name="Button" type="Button" parent="Control3"]
 layout_mode = 0
-offset_left = 64.0
-offset_top = 839.0
-offset_right = 226.0
-offset_bottom = 1016.0
-theme_override_styles/hover = SubResource("StyleBoxFlat_emifo")
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_qipfa")
 icon = ExtResource("6_s440s")
 flat = true
 expand_icon = true
 
+[node name="rules" parent="." instance=ExtResource("9_jaad2")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = 78.0
+offset_right = 212.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [connection signal="pressed" from="VButtons/SinglePlayerButton" to="." method="_on_single_player_button_pressed"]
 [connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
 [connection signal="pressed" from="VButtons/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="pressed" from="RulesControl/RulesButton" to="." method="_on_rules_button_pressed"]
+[connection signal="pressed" from="Control3/Button" to="." method="_on_button_pressed"]

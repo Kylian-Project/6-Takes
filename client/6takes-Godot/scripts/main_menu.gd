@@ -1,37 +1,34 @@
 extends Control
 
-var login_scene = preload("res://scenes/logIn.tscn") # Load the login scene
+@onready var rules = preload("res://scenes/rules.tscn")
+@onready var login_scene = preload("res://scenes/logIn.tscn")
 
-@onready var rules = get_node("rules")
+@onready var rules_overlay = $rules
+
+var login_instance = null
+var rules_instance = null 
+
 
 func _ready() -> void:
-	pass
-	
-
-func _on_single_player_button_pressed() -> void:
-	pass # Replace with function body.
+	rules_overlay.visible = false
 
 
 func _on_multi_player_button_pressed() -> void:
-	var login_instance = login_scene.instantiate() # Create instance
-	get_tree().current_scene.add_child(login_instance) # Add it to the scene
-	login_instance.show_overlay() # Show the overlay
+	if login_instance == null:
+		login_instance = login_scene.instantiate()
+		add_child(login_instance)
 
-
-func _on_quit_button_pressed() -> void:
-	pass # Replace with function body.
-
-
-func _on_rules_button_pressed() -> void:
-	#rules.visible = true
-	#get_tree().paused = true
-	var rules_scene = load("res://scenes/rules.tscn")
-	var rules_instance = rules_scene.instantiate()
-	get_tree().current_scene.add_child(rules_instance)
+		# Centrer l'écran de pause
+		await get_tree().process_frame  
+		
+	login_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
+	login_instance.visible = true  # Afficher la pause
 	
 
 
 func _on_cancel_button_pressed() -> void:
-	queue_free()
-	#rules.visible = false
-	#get_tree().paused = false
+	rules_overlay.visible = false
+
+
+func _on_button_pressed() -> void:
+	rules_overlay.visible = true
