@@ -5,7 +5,7 @@ const ID_LENGTH = 5;
 const NB_PLAYERS_MAX_IN_LOBBY = 10;
 
 class LobbyUser {
-  constructor(username, idSocketUser) {
+    constructor(username, idSocketUser) {
     this.username = username;
     this.idSocketUser = idSocketUser;
   }

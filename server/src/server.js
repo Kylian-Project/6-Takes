@@ -1,8 +1,8 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { PlayGame } from "./utils/partie";
-import { roomHandler } from "./utils/rooms";
+import { PlayGame } from "./utils/partie.js";
+import { roomHandler } from "./utils/lobbies.js";
 
 const app = express();
 const server = http.createServer(app);
