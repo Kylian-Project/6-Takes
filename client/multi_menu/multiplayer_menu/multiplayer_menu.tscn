@@ -1,5 +1,6 @@
-[gd_scene load_steps=32 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=33 format=3 uid="uid://br3bj5eyu1ssi"]
 
+[ext_resource type="Script" path="res://multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
 [ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/title_screen_welcome_v2.png" id="3_wbbcl"]
@@ -10,7 +11,6 @@
 [ext_resource type="Script" path="res://main_settings.gd" id="8_db6nl"]
 [ext_resource type="Script" path="res://audio_settings.gd" id="9_n02ju"]
 [ext_resource type="FontFile" uid="uid://0qcy2y2ox0xt" path="res://assets/Lobster 1.4.otf" id="10_pajrb"]
-[ext_resource type="Texture2D" uid="uid://b15uv32utsdhl" path="res://assets/title_screen_createlobby.png" id="10_w3kml"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -68,8 +68,8 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-shadow_size = 5
-shadow_offset = Vector2(0, 10)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hk44s"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -82,26 +82,26 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-shadow_size = 5
-shadow_offset = Vector2(0, 10)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5jsm2"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_udiwy"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
 border_color = Color(0.729412, 0.215686, 0.215686, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iww2l"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qegko"]
@@ -152,8 +152,18 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b45p8"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whri7"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2spsn"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -234,21 +244,28 @@ shadow_offset = Vector2(0, 10)
 [node name="Control" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 size_flags_stretch_ratio = 0.0
+script = ExtResource("1_dp3rm")
 
 [node name="Backgroundcolour" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0.305882, 0.596078, 1)
 
 [node name="Background" type="TextureRect" parent="."]
 self_modulate = Color(1, 1, 1, 0.294118)
-layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("1_pfnuq")
 expand_mode = 1
 
@@ -256,13 +273,13 @@ expand_mode = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.231
+anchor_top = 0.254
 anchor_right = 0.5
-anchor_bottom = 0.231
-offset_left = -576.0
-offset_top = -237.688
-offset_right = 576.0
-offset_bottom = 237.312
+anchor_bottom = 0.254
+offset_left = -771.0
+offset_top = -381.32
+offset_right = 771.0
+offset_bottom = 381.68
 grow_horizontal = 2
 texture = ExtResource("2_8fj2n")
 expand_mode = 1
@@ -272,13 +289,13 @@ stretch_mode = 5
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.467
+anchor_top = 0.458
 anchor_right = 0.5
-anchor_bottom = 0.467
-offset_left = -180.5
-offset_top = -81.616
-offset_right = 180.5
-offset_bottom = 67.384
+anchor_bottom = 0.458
+offset_left = -344.5
+offset_top = -141.64
+offset_right = 344.5
+offset_bottom = 142.36
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_wbbcl")
@@ -287,17 +304,18 @@ stretch_mode = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 0.757
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.757
-offset_left = -183.0
-offset_top = -122.536
-offset_right = 183.0
-offset_bottom = 122.464
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 151.0
+offset_right = 200.0
+offset_bottom = 451.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
 [node name="Create Lobby" type="Button" parent="VBoxContainer"]
@@ -345,8 +363,8 @@ anchor_right = 0.926
 anchor_bottom = 0.872
 offset_left = -47.7521
 offset_top = -48.056
-offset_right = 48.2479
-offset_bottom = 47.944
+offset_right = 102.248
+offset_bottom = 101.944
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
@@ -363,8 +381,8 @@ anchor_right = 0.926
 anchor_bottom = 0.687
 offset_left = -47.7521
 offset_top = -48.176
-offset_right = 48.2479
-offset_bottom = 47.824
+offset_right = 102.248
+offset_bottom = 101.824
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
@@ -381,8 +399,8 @@ anchor_right = 0.074
 anchor_bottom = 0.872
 offset_left = -48.248
 offset_top = -48.056
-offset_right = 47.752
-offset_bottom = 47.944
+offset_right = 101.752
+offset_bottom = 101.944
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
@@ -415,16 +433,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -145.5
-offset_right = 200.0
-offset_bottom = 145.5
+offset_left = -391.0
+offset_top = -409.0
+offset_right = 391.0
+offset_bottom = 409.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 35
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jsm2")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_udiwy")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_iww2l")
@@ -437,21 +455,15 @@ metadata/_tab_index = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -157.0
-offset_top = -115.0
-offset_right = 158.0
-offset_bottom = 125.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+alignment = 1
 
 [node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 5
 
@@ -587,7 +599,26 @@ size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
 
+[node name="Close" type="Button" parent="SettingsOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 352.0
+offset_top = -339.0
+offset_right = 391.0
+offset_bottom = -290.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
+text = "X"
+
 [node name="CreateLobbyOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -596,7 +627,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="CreateLobbyOverlay"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -634,7 +664,7 @@ clip_contents = true
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Label" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+[node name="CreateLobbyLabel" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -642,19 +672,11 @@ theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("10_pajrb")
 theme_override_font_sizes/font_size = 60
-text = "Create a Lobby"
-
-[node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.9
-texture = ExtResource("10_w3kml")
-expand_mode = 1
-stretch_mode = 6
+text = "Create a Lobby!"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
+alignment = 1
 
 [node name="Options" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
 layout_mode = 2
@@ -790,6 +812,7 @@ popup/item_1/id = 1
 [node name="PublicPrivate" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
 size_flags_vertical = 4
+alignment = 1
 
 [node name="Private" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
@@ -818,6 +841,139 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 text = "Create Lobby"
+
+[node name="Close" type="Button" parent="CreateLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 199.0
+offset_top = -272.0
+offset_right = 238.0
+offset_bottom = -223.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
+text = "X"
+
+[node name="JoinLobbyOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Main Menu Dimming2" type="ColorRect" parent="JoinLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="PanelContainer" type="PanelContainer" parent="JoinLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -236.5
+offset_top = -272.0
+offset_right = 236.5
+offset_bottom = 272.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
+
+[node name="TextureRect" type="TextureRect" parent="JoinLobbyOverlay/PanelContainer"]
+self_modulate = Color(1, 1, 1, 0.227451)
+layout_mode = 2
+texture = ExtResource("1_pfnuq")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="JoinLobbyOverlay/PanelContainer"]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="JoinLobbyTitle" type="Label" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_constants/outline_size = 25
+theme_override_fonts/font = ExtResource("10_pajrb")
+theme_override_font_sizes/font_size = 60
+text = "Join a Lobby!"
+
+[node name="JoinCodeContainer" type="HBoxContainer" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+alignment = 1
+
+[node name="JoinByCodeLabel" type="Label" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
+text = "Join by code"
+
+[node name="SpinBox" type="SpinBox" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+layout_mode = 2
+
+[node name="JoinCodeButton" type="Button" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+text = "Join"
+
+[node name="AvailableOptions" type="HBoxContainer" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+text = "Create Lobby"
+
+[node name="Close" type="Button" parent="JoinLobbyOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 198.0
+offset_top = -272.0
+offset_right = 237.0
+offset_bottom = -223.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
+text = "X"
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
