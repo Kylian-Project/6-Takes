@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=32 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/Title_screen_title_c2.png" id="2_8fj2n"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://k6qrmqnkcqxv" path="res://assets/rules.png" id="6_kcnsc"]
 [ext_resource type="Script" path="res://main_settings.gd" id="8_db6nl"]
 [ext_resource type="Script" path="res://audio_settings.gd" id="9_n02ju"]
+[ext_resource type="FontFile" uid="uid://0qcy2y2ox0xt" path="res://assets/Lobster 1.4.otf" id="10_pajrb"]
+[ext_resource type="Texture2D" uid="uid://b15uv32utsdhl" path="res://assets/title_screen_createlobby.png" id="10_w3kml"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -594,6 +596,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="CreateLobbyOverlay"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -610,9 +613,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -236.5
-offset_top = -217.5
+offset_top = -272.0
 offset_right = 236.5
-offset_bottom = 217.5
+offset_bottom = 272.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -627,8 +630,28 @@ expand_mode = 1
 stretch_mode = 1
 
 [node name="MainVertical" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer"]
+clip_contents = true
 layout_mode = 2
 theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_constants/outline_size = 25
+theme_override_fonts/font = ExtResource("10_pajrb")
+theme_override_font_sizes/font_size = 60
+text = "Create a Lobby"
+
+[node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
+texture = ExtResource("10_w3kml")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="AvailableOptions" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
