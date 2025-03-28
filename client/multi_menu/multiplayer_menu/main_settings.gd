@@ -3,7 +3,7 @@ extends TabBar
 func _ready() -> void:
 	# Set default mode to Fullscreen
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-	DisplayServer.window_set_size(Vector2i(1152, 648))  # Default resolution
+	DisplayServer.window_set_size(Vector2i(1920, 1080))  # Default resolution
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)  # Default VSync ON
 	
 func _on_display_option_item_selected(index: int) -> void:

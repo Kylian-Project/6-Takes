@@ -4,14 +4,14 @@ extends Control
 @onready var create_lobby_overlay = $CreateLobbyOverlay
 @onready var join_lobby_overlay = $JoinLobbyOverlay
 
-@onready var create_lobby_button = $VBoxContainer/CreateLobby
-@onready var join_lobby_button = $VBoxContainer/JoinLobby
-@onready var settings_button = $VBoxContainer/Settings
+@onready var create_lobby_button = $MainButtonsBox/Create_Lobby
+@onready var join_lobby_button = $MainButtonsBox/Join_Lobby
+@onready var settings_button = $Settings
 
 @onready var close_buttons = [
-	$SettingsOverlay/CloseButton,
-	$CreateLobbyOverlay/CloseButton,
-	$JoinLobbyOverlay/CloseButton
+	$SettingsOverlay/Close,
+	$CreateLobbyOverlay/Close,
+	$JoinLobbyOverlay/Close
 ]
 
 func _ready():
