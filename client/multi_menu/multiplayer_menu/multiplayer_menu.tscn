@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=34 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Script" path="res://multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://main_settings.gd" id="8_db6nl"]
 [ext_resource type="Script" path="res://audio_settings.gd" id="9_n02ju"]
 [ext_resource type="FontFile" uid="uid://0qcy2y2ox0xt" path="res://assets/Lobster 1.4.otf" id="10_pajrb"]
+[ext_resource type="Script" path="res://line_edit_check.gd" id="12_3t6wc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -417,7 +418,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Main Menu Dimming" type="ColorRect" parent="SettingsOverlay"]
+[node name="MainMenuDimming" type="ColorRect" parent="SettingsOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -440,6 +441,7 @@ offset_bottom = 247.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hovered_color = Color(1, 1, 1, 1)
 theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 35
@@ -453,7 +455,7 @@ layout_mode = 2
 script = ExtResource("8_db6nl")
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings"]
+[node name="HorzontalAlign" type="HBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -467,13 +469,13 @@ grow_vertical = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer"]
+[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/separation = 5
 
-[node name="Display" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
+[node name="Display" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -481,7 +483,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Display"
 
-[node name="Resolution" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
+[node name="Resolution" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -489,7 +491,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "Resolution"
 
-[node name="VSync" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VLabels"]
+[node name="VSync" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -497,16 +499,18 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "VSync"
 
-[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer"]
+[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
-[node name="DisplayOption" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
+[node name="DisplayOption" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/pressed = SubResource("StyleBoxFlat_6wyjx")
@@ -519,9 +523,11 @@ popup/item_1/id = 1
 popup/item_2/text = "Borderless"
 popup/item_2/id = 2
 
-[node name="Resolution Options" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
+[node name="Resolution Options" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
@@ -531,9 +537,11 @@ popup/item_0/text = "1920x1080"
 popup/item_1/text = "1152x648"
 popup/item_1/id = 1
 
-[node name="VSync Options2" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings"]
+[node name="VSyncOptions2" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
@@ -549,7 +557,7 @@ layout_mode = 2
 script = ExtResource("9_n02ju")
 metadata/_tab_index = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings"]
+[node name="HorizontalAlign" type="HBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -560,49 +568,49 @@ offset_bottom = 139.0
 grow_horizontal = 2
 alignment = 1
 
-[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer"]
+[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign"]
 layout_mode = 2
 alignment = 1
 
-[node name="Master" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="Master" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "Master Volume"
 
-[node name="Music" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="Music" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "Music Volume"
 
-[node name="SFX" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VLabels"]
+[node name="SFX" type="Label" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
 text = "SFX Volume"
 
-[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer"]
+[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 alignment = 1
 
-[node name="MsterSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="MsterSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
 
-[node name="MusicSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="MusicSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
 
-[node name="SFXSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings"]
+[node name="SFXSlider" type="HSlider" parent="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings"]
 layout_mode = 2
 size_flags_vertical = 3
 max_value = 1.0
@@ -870,13 +878,13 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="JoinLobbyOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("12_3t6wc")
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="JoinLobbyOverlay"]
 layout_mode = 1
@@ -887,7 +895,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
 
-[node name="PanelContainer" type="PanelContainer" parent="JoinLobbyOverlay"]
+[node name="JoinPanel" type="PanelContainer" parent="JoinLobbyOverlay"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -904,19 +912,19 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
 
-[node name="TextureRect" type="TextureRect" parent="JoinLobbyOverlay/PanelContainer"]
+[node name="BGTexture" type="TextureRect" parent="JoinLobbyOverlay/JoinPanel"]
 self_modulate = Color(1, 1, 1, 0.227451)
 layout_mode = 2
 texture = ExtResource("1_pfnuq")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="MainVertical" type="VBoxContainer" parent="JoinLobbyOverlay/PanelContainer"]
+[node name="MainVertical" type="VBoxContainer" parent="JoinLobbyOverlay/JoinPanel"]
 clip_contents = true
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="JoinLobbyTitle" type="Label" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+[node name="JoinLobbyTitle" type="Label" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -926,11 +934,11 @@ theme_override_fonts/font = ExtResource("10_pajrb")
 theme_override_font_sizes/font_size = 60
 text = "Join a Lobby!"
 
-[node name="JoinCodeContainer" type="HBoxContainer" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+[node name="JoinCodeContainer" type="HBoxContainer" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 layout_mode = 2
 alignment = 1
 
-[node name="JoinByCodeLabel" type="Label" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+[node name="JoinByCodeLabel" type="Label" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -938,10 +946,11 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Join by code"
 
-[node name="SpinBox" type="SpinBox" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+[node name="SpinBox" type="LineEdit" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
 layout_mode = 2
+max_length = 4
 
-[node name="JoinCodeButton" type="Button" parent="JoinLobbyOverlay/PanelContainer/MainVertical/JoinCodeContainer"]
+[node name="JoinCodeButton" type="Button" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -951,11 +960,11 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 text = "Join"
 
-[node name="AvailableOptions" type="HBoxContainer" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+[node name="AvailableOptions" type="HBoxContainer" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 layout_mode = 2
 alignment = 1
 
-[node name="Button" type="Button" parent="JoinLobbyOverlay/PanelContainer/MainVertical"]
+[node name="Button" type="Button" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
@@ -984,9 +993,9 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HBoxContainer/VSettings/VSync Options2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HBoxContainer/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
