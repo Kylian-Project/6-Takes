@@ -6,14 +6,14 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 
 const db = require("./config/db"); // Sequelize DB
-const utilisateurRoutes = require("./routes/utilisateur_route");
+const playerRoutes = require("./routes/player_route");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // API REST
-app.use("/api/utilisateur", utilisateurRoutes);
+app.use("/api/player", playerRoutes);
 
 // Server HTTP
 const server = http.createServer(app);
