@@ -1,24 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbs4uy1a3a52t"]
+[gd_scene load_steps=8 format=3 uid="uid://dbs4uy1a3a52t"]
 
 [ext_resource type="Script" path="res://scenes/screen_pause.gd" id="1_lsxjp"]
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
 [ext_resource type="Texture2D" uid="uid://cwse4voc3wfn0" path="res://assets/images/exit overlay.png" id="3_7r1o5"]
+[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_amim0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5stk2"]
+shadow_color = Color(0.118581, 0.118581, 0.118581, 0.6)
+shadow_size = 10
+shadow_offset = Vector2(15, 15)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_01bx1"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 50
-border_width_right = 50
-border_color = Color(1, 1, 1, 1)
+bg_color = Color(0.920995, 0.920995, 0.920995, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-expand_margin_left = 50.0
-expand_margin_top = 10.0
-expand_margin_right = 50.0
-expand_margin_bottom = 10.0
-shadow_size = 2
+shadow_size = 10
+shadow_offset = Vector2(8, 8)
 
 [node name="ScreenPause" type="PanelContainer"]
 anchors_preset = 8
@@ -32,6 +32,7 @@ offset_right = 598.5
 offset_bottom = 425.5
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5stk2")
 script = ExtResource("1_lsxjp")
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -51,10 +52,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -143.5
-offset_top = -413.5
-offset_right = 128.5
-offset_bottom = -144.5
+offset_left = -167.5
+offset_top = -412.5
+offset_right = 160.5
+offset_bottom = -126.5
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_tw1er")
@@ -67,23 +68,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -259.0
+offset_left = -258.5
 offset_top = 227.5
-offset_right = 259.0
+offset_right = 259.5
 offset_bottom = 330.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-
-[node name="Button" type="Button" parent="Control/HBoxContainer4"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 75
-theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = "   LEAVES     "
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="Control"]
 layout_mode = 1
@@ -92,24 +84,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -199.0
+offset_left = -257.5
 offset_top = -112.5
-offset_right = 199.0
+offset_right = 257.5
 offset_bottom = -9.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-
-[node name="Button" type="Button" parent="Control/HBoxContainer5"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 75
-theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = "   RESUME   "
-alignment = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control"]
 layout_mode = 1
@@ -127,15 +109,6 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Button" type="Button" parent="Control/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 75
-theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = " SETTINGS   "
-
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 1
@@ -152,5 +125,43 @@ layout_mode = 2
 icon = ExtResource("3_7r1o5")
 flat = true
 
-[connection signal="pressed" from="Control/HBoxContainer5/Button" to="." method="_on_button_pressed_resume"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+layout_mode = 2
+offset_left = 322.0
+offset_top = 363.0
+offset_right = 851.0
+offset_bottom = 767.0
+theme_override_constants/separation = 50
+
+[node name="resume" type="Button" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
+text = "RESUME   "
+
+[node name="settings" type="Button" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
+text = "SETTINGS   "
+
+[node name="leave" type="Button" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
+text = "LEAVE"
+
 [connection signal="pressed" from="Control/HBoxContainer2/Button" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="Control/VBoxContainer/resume" to="." method="_on_button_pressed_resume"]

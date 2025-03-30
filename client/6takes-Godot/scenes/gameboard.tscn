@@ -103,10 +103,10 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 421.0
-offset_top = 94.0
-offset_right = 1528.0
-offset_bottom = 815.0
+offset_left = 430.0
+offset_top = 122.0
+offset_right = 1537.0
+offset_bottom = 835.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -216,6 +216,7 @@ layout_mode = 2
 script = null
 
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
+visible = false
 offset_left = 367.0
 offset_top = 101.0
 offset_right = 1564.0
