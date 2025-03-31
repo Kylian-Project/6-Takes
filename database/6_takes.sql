@@ -44,7 +44,7 @@ CREATE TABLE `audit_log` (
 CREATE TABLE `cards` (
   `card_number` int NOT NULL,
   `heads` int NOT NULL,
-  `file_path` varchar(255) NOT NULL
+  `file_path` varchar(255) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
