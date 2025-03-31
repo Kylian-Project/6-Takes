@@ -2,6 +2,8 @@
 const Player = require("../models/player");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Session = require("../models/session");
+
 
 const inscription = async (req, res) => {
   const { username, email, password } = req.body;
@@ -43,13 +45,28 @@ const login = async (req, res) => {
     if (!player) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
     // Comparaison of entered password and password in db
-    const isValid = await bcrypt.compare(password, player.password);
-    if (!isValid) return res.status(401).json({ message: "Mot de passe incorrect" });
+    const isValid = await bcrypt.compare(hashedPassword, player.password);
+    if (!isValid) return res.status(401).json({ message: "Mot de passe incorrect WUHAHHA\n mdp" });
 
-    const token = jwt.sign({ id: player.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    const tokenDuration = 2 * 60 ; // 120 Seconds
+    const token = jwt.sign({
+      id: player.id,
+      username: player.username
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: tokenDuration });
 
-    //   Response for the client
-    // # Modify if frontend needs anything about Player.. #
+    const now = new Date();
+    const expireAt = new Date(now.getTime() + tokenDuration * 1000);
+
+    // Stocker la session dans la BDD
+    await Session.create({
+      id_player: player.id,
+      token,
+      created_at: now,
+      expire_at: expireAt
+    });
+
     res.status(200).json({
       message: "Connexion réussie",
       token,
@@ -63,7 +80,7 @@ const login = async (req, res) => {
         total_won: player.total_won,
         score: player.score
       }
-    });    
+    });
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur", error: err });
   }

@@ -1,55 +1,44 @@
+// test_signin-up.js
+require("dotenv").config();
 const axios = require("axios");
 
-const BASE_URL = "http://185.155.93.105:14001/api/player";
+const BASE_URL = `http://${process.env.SRV_URL}:${process.env.SRV_PORT}/api/player`;
 
-const testPlayer = {
-  username: "client9Test",
-  email: "client9@test.com",
+
+const testCredentials = {
+  username: "client9Test", 
   password: "azerty99"
 };
 
-async function register() {
+// CONNEXION UNIQUEMENT
+async function login() {
+  console.log("Tentative de connexion avec :", testCredentials);
   try {
-    const res = await axios.post(`${BASE_URL}/inscription`, testPlayer);
-    console.log("Inscription réussie :", res.data);
-  } catch (err) {
-    console.error("Erreur inscription :", err.response?.data || err.message);
-  }
-}
+    const res = await axios.post(`${BASE_URL}/connexion`, testCredentials);
 
-async function accessProfile(token) {
-    try {
-      const res = await axios.get(`${BASE_URL}/profile`, {
-        headers: {
-          Authorization: `dioV ${token}`
-        }
-      });
-      console.log("Accès profil :", res.data);
-    } catch (err) {
-      console.error("Erreur accès profil :", err.response?.data || err.message);
+    const player = res.data.player;
+    const token = res.data.token;
+
+    console.log("Connexion réussie !");
+    console.log("Infos joueur :", player);
+    console.log("Token JWT :", token);
+
+    return token;
+  } catch (err) {
+    const errorData = err.response?.data || err.message;
+    console.error("Erreur lors de la connexion :", errorData);
+
+    if (err.response?.status === 404) {
+      console.error("Aucun utilisateur trouvé avec ce nom.");
+    } else if (err.response?.status === 401) {
+      console.error("Mot de passe incorrect.");
+    } else if (err.response?.status === 500) {
+      console.error("Erreur serveur côté backend.");
     }
   }
-  
-
-async function login() {
-  try {
-    const res = await axios.post(`${BASE_URL}/connexion`, {
-      username: testPlayer.username,
-      password: testPlayer.password
-    });
-    console.log("Connexion réussie :", res.data);
-    return res.data;
-  } catch (err) {
-    console.error("Erreur connexion :", err.response?.data || err.message);
-  }
 }
 
-async function runTest() {
-  await register();
-  const loginRes = await login();
-  if (loginRes?.token) {
-    await accessProfile(loginRes.token);
-  }
-}
-
-runTest();
+// Lancer uniquement la connexion
+login().catch((err) => {
+  console.error("Erreur globale inattendue :", err);
+});

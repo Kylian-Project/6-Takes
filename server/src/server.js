@@ -7,6 +7,7 @@ const { Server } = require("socket.io");
 
 const db = require("./config/db"); // Sequelize DB
 const playerRoutes = require("./routes/player_route");
+const verifySocketToken = require("./middleware/auth");
 
 const app = express();
 app.use(cors());
@@ -26,28 +27,37 @@ const io = new Server(server, {
   }
 });
 
-io.on("connection", (socket) => {
-  console.log("Un joueur s'est connecté :", socket.id);
+io.on("connection", async (socket) => {
+  console.log("Une personne essaie de se connecter :", socket.id);
 
-  socket.on("createRoom", (data) => {
-    console.log("Salon créé :", data);
-    // À relier à la logique de partie
-  });
+  try {
+    const playerId = await verifySocketToken(socket);
+    socket.playerId = playerId;
 
-  socket.on("joinRoom", (roomCode) => {
-    socket.join(roomCode);
-    console.log(`${socket.id} a rejoint le salon ${roomCode}`);
-  });
+    console.log(`Joueur ${playerId} connecté via WebSocket`);
 
-  socket.on("disconnect", () => {
-    console.log("Déconnexion de :", socket.id);
-  });
+    socket.on("signin", () => {
+      console.log("Connexion d'un joueur :", socket.playerId);
+    });
+
+    socket.on("signup", () => {
+      console.log("Sign up nouveau joueur :", socket.playerId);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Joueur déconnecté :", socket.playerId);
+    });
+
+  } catch (err) {
+    console.log("Connexion refusée :", err.message);
+    socket.disconnect();
+  }
 });
 
 // Lancer l'app
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 db.sync().then(() => {
   server.listen(PORT, () => {
-    console.log(`Serveur lancé sur http://localhost:${PORT}`);
+    console.log(`Serveur lancé sur le port : ${PORT}`);
   });
 });
