@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=18 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Texture2D" uid="uid://dkxvrskjlp86a" path="res://assets/bg.png" id="1_1m3tj"]
 [ext_resource type="Texture2D" uid="uid://cifce8iom6mxg" path="res://assets/title_screen_singleplayer.png" id="2_r0nog"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/bot.png" id="4_02jiw"]
 [ext_resource type="Texture2D" uid="uid://ch031uua5nurl" path="res://assets/minus-sign.png" id="5_6jb2w"]
 [ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/crown.png" id="5_af7nj"]
+[ext_resource type="Texture2D" uid="uid://e3nomb8wp8lc" path="res://assets/plus.png" id="8_aqqtp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ihlhx"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -33,13 +34,24 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i7mao"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chmpr"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+border_width_left = 15
+border_width_top = 35
+border_width_right = 15
+border_width_bottom = 35
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n444u"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 20
 border_width_right = 20
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ra2v"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rj0uf"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -54,6 +66,12 @@ bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 20
 border_width_right = 20
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2hocg"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 20
+border_width_right = 20
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -177,6 +195,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
 theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_chmpr")
 text = "Player Name"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -208,23 +227,23 @@ theme_override_constants/h_separation = 50
 theme_override_constants/v_separation = 20
 columns = 3
 
-[node name="BotPanel" type="PanelContainer" parent="GridContainer"]
+[node name="BotPanel1" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel1"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel1/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel1/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -234,32 +253,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel1/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel1"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel1/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel1/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel1/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel2" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel2"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel2"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel2/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel2/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel2/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel2/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -269,32 +318,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel2/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel2/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel2"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel2/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel2/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel2/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel3" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel3"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel3"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel3/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel3/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel3/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel3/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -304,32 +383,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel3/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel3/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel3"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel3/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel3/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel3/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel4" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel4"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel4"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel4/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel4/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel4/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel4/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -339,32 +448,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel4/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel4/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel4"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel4/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel4/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel4/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel5" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel5"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel5"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel5/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel5/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel5/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel5/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -374,32 +513,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel5/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel5/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel5"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel5/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel5/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel5/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel6" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel6"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel6"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel6/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel6/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel6/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel6/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -409,32 +578,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel6/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel6/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel6"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel6/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel6/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel6/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel7" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel7"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel7"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel7/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel7/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel7/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel7/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -444,32 +643,62 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel7/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel7/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel7"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel7/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel7/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel7/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
 
 [node name="BotPanel8" type="PanelContainer" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
 
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel8"]
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel8"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel8/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel8/DefaultBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel8/BotHGroup"]
+[node name="BotText" type="Label" parent="GridContainer/BotPanel8/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -479,7 +708,7 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel8/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel8/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
@@ -488,23 +717,53 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
 icon_alignment = 1
 
-[node name="BotPanel9" type="PanelContainer" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
-
-[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel9"]
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel8"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel9/BotHGroup"]
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel8/AddBot"]
 layout_mode = 2
 texture = ExtResource("4_02jiw")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="GridContainer/BotPanel9/BotHGroup"]
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel8/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel8/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
+icon_alignment = 1
+
+[node name="BotPanel9" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ra2v")
+
+[node name="DefaultBot" type="HBoxContainer" parent="GridContainer/BotPanel9"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel9/DefaultBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="BotText" type="Label" parent="GridContainer/BotPanel9/DefaultBot"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_1bgrr")
@@ -514,11 +773,41 @@ text = "Bot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AddRemove" type="Button" parent="GridContainer/BotPanel9/BotHGroup"]
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel9/DefaultBot"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
 icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="AddBot" type="HBoxContainer" parent="GridContainer/BotPanel9"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel9/AddBot"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="AddBotText" type="Label" parent="GridContainer/BotPanel9/AddBot"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 40
+text = "Add a Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel9/AddBot"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
+icon = ExtResource("8_aqqtp")
 icon_alignment = 1
