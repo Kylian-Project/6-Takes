@@ -5,20 +5,42 @@ extends Control
 @onready var login_button = $LoginButton
 @onready var http_request = $HTTPRequest_auth
 
-const SERVER_URL = "http://your_server_ip_or_domain/api"
+var ws = WebSocketPeer.new()
+var ws_connected = false
+const SERVER_URL = "ws://185.155.93.105:14001/profile"
 
 var overlay_opened = false
 var regex = RegEx.new()
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.visible = false
 	login_button.pressed.connect(_on_login_button_pressed)
-	http_request.request_completed.connect(_on_request_completed)
+	#http_request.request_completed.connect(_on_request_completed)
+	
+	_connect_to_websocket()
 
 
 func _proces():
 	get_tree().paused = overlay_opened
+	ws.poll() 
+	
+	match ws.get_ready_state():
+		WebSocketPeer.STATE_OPEN:
+			if not ws_connected:
+				ws_connected = true
+				print(" WebSocket connecté !")
+		WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED:
+			if ws_connected:
+				ws_connected = false
+				print(" WebSocket déconnecté.")
+				_connect_to_websocket()  # Reconnexion automatique
+
+	if ws.get_available_packet_count() > 0:
+		var data = ws.get_packet().get_string_from_utf8()
+		print("Data received from WebSocket:", data)
+		_on_ws_data(data)
 	
 func show_overlay():
 	overlay_opened = true
@@ -64,14 +86,14 @@ func _on_forgot_password_pressed() -> void:
 
 
 func _on_login_button_pressed() -> void:
+	if not ws_connected:
+		print(" WebSocket n'est pas encore connecté !")
+		return
+		
 	var body = null 
 	var headers = ["Content-Type: application/json"]
 	
 	var password = password_input.text.strip_edges()
-	if password.length() <8:
-		print("PASSWORD TOO SHORT ")
-		return
-		
 	var username_email = username_email_input.text.strip_edges()
 	
 	if username_email.is_empty() or password.is_empty():
@@ -99,7 +121,39 @@ func _on_login_button_pressed() -> void:
 	
 	print(body)
 	password_input.text = ""
-	http_request.request(SERVER_URL + "/login", headers, HTTPClient.METHOD_POST, body)
+	var error = http_request.request(SERVER_URL + "/profile", headers, HTTPClient.METHOD_POST, body)
+	if error != OK:
+		print("HTTP REQUEST NOT SENT: ", error)
+	
+	
+func _on_request_completed(result, response_code, headers, body):
+	print("Réponse reçue:", response_code)
+	print("Headers reçus:", headers)
+	
+	print(" Corps de la réponse:", body.get_string_from_utf8())
+	var response = JSON.parse_string(body.get_string_from_utf8())
+	if response == null:
+		print(" Invalid response from server")
+		return
+
+	if response_code == 200:  # Success
+		print(" Success:", response["message"])
+
+		if "token" in response:
+			var token = response["token"]
+			_save_token(token)
+
+	else:  # Error
+		print(" Error:", response["message"])
+
+
+#not tested yet
+func _save_token(token: String):
+	pass
+	#var file = FileAccess.open("user://auth_token.txt", FileAccess.WRITE)
+	#file.store_string(token)
+	#file.close()
+	#print("🔑 Token saved!")
 
 
 func detect_input_type(input_text: String) -> String:
@@ -118,29 +172,29 @@ func detect_input_type(input_text: String) -> String:
 		
 	else:
 		return "invalid"
-		
-		
-func _on_request_completed(result, response_code, headers, body):
-	var response = JSON.parse_string(body.get_string_from_utf8())
-	if response == null:
-		print("❌ Invalid response from server")
+
+
+func _connect_to_websocket():
+	var err = ws.connect_to_url(SERVER_URL)
+	if err != OK:
+		print("Échec de connexion WebSocket:", err)
 		return
 
-	if response_code == 200:  # Success
-		print("✅ Success:", response["message"])
+	print("WebSocket initialisé, en attente de connexion...")
+	ws_connected = false 
+	
+	
+func _on_ws_data(data):
+	print(" Données reçues :", data)
 
-		if "token" in response:
-			var token = response["token"]
-			_save_token(token)
+	# Vérifier si la réponse est bien du JSON
+	var response = JSON.parse_string(data)
+	if response == null:
+		print("Réponse non JSON :", data)
+		return  # Empêche le crash
 
-	else:  # Error
-		print("❌ Error:", response["message"])
-
-
-#not tested yet
-func _save_token(token: String):
-	pass
-	#var file = FileAccess.open("user://auth_token.txt", FileAccess.WRITE)
-	#file.store_string(token)
-	#file.close()
-	#print("🔑 Token saved!")
+	# Vérification de la connexion réussie
+	if "token" in response:
+		print("Connexion réussie ! Token:", response["token"])
+	else:
+		print(" Connexion échouée:", response.get("login", "Erreur inconnue"))
