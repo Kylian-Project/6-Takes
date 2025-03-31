@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djrircdlr04ck"
-path="res://.godot/imported/icon_darkgray.png-ec48c111ec1b44e7d5c457d849b21b4d.ctex"
+uid="uid://dkxvrskjlp86a"
+path="res://.godot/imported/bg.png-f8ce7f9a4d7a191bf3f2551f95f68423.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icon_darkgray.png"
-dest_files=["res://.godot/imported/icon_darkgray.png-ec48c111ec1b44e7d5c457d849b21b4d.ctex"]
+source_file="res://assets/images/bg.png"
+dest_files=["res://.godot/imported/bg.png-f8ce7f9a4d7a191bf3f2551f95f68423.ctex"]
 
 [params]
 

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://dtcrcvyyjbwgg"
-path="res://.godot/imported/Lobster 1.4.otf-1373cf2e406867dbaa7d1d9307ed4fb5.fontdata"
+uid="uid://d1uj8qnncgtkr"
+path="res://.godot/imported/kenvector_future.ttf-60fe615a61aeb798b1520cfd02e7bfc0.fontdata"
 
 [deps]
 
-source_file="res://assets/Lobster 1.4.otf"
-dest_files=["res://.godot/imported/Lobster 1.4.otf-1373cf2e406867dbaa7d1d9307ed4fb5.fontdata"]
+source_file="res://assets/fonts/kenvector_future.ttf"
+dest_files=["res://.godot/imported/kenvector_future.ttf-60fe615a61aeb798b1520cfd02e7bfc0.fontdata"]
 
 [params]
 

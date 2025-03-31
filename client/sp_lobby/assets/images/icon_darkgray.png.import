@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch031uua5nurl"
-path="res://.godot/imported/minus-sign.png-793c3d3be22bb7458727c23a5276da7e.ctex"
+uid="uid://djrircdlr04ck"
+path="res://.godot/imported/icon_darkgray.png-e7ac384d129ce626c9fa7ae0ae9c9a27.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/minus-sign.png"
-dest_files=["res://.godot/imported/minus-sign.png-793c3d3be22bb7458727c23a5276da7e.ctex"]
+source_file="res://assets/images/icon_darkgray.png"
+dest_files=["res://.godot/imported/icon_darkgray.png-e7ac384d129ce626c9fa7ae0ae9c9a27.ctex"]
 
 [params]
 
