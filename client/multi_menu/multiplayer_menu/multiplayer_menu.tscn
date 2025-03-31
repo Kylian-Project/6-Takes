@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://br3bj5eyu1ssi"]
+[gd_scene load_steps=33 format=3 uid="uid://br3bj5eyu1ssi"]
 
 [ext_resource type="Script" path="res://multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/bg.png" id="1_pfnuq"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://main_settings.gd" id="8_db6nl"]
 [ext_resource type="Script" path="res://audio_settings.gd" id="9_n02ju"]
 [ext_resource type="FontFile" uid="uid://0qcy2y2ox0xt" path="res://assets/Lobster 1.4.otf" id="10_pajrb"]
+[ext_resource type="Script" path="res://create_lobby.gd" id="11_md0s3"]
 [ext_resource type="Script" path="res://line_edit_check.gd" id="12_3t6wc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
@@ -204,32 +205,6 @@ corner_radius_bottom_left = 10
 shadow_offset = Vector2(0, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdh8"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_offset = Vector2(0, 10)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x57a0"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_offset = Vector2(0, 10)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_el0pc"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 10
 border_width_top = 10
@@ -635,12 +610,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="CreateLobbyOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("11_md0s3")
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="CreateLobbyOverlay"]
 layout_mode = 1
@@ -746,6 +723,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Rounds"
 
 [node name="MaxPoints" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -815,7 +793,7 @@ popup/item_8/id = 8
 popup/item_9/text = "10"
 popup/item_9/id = 9
 
-[node name="RoundTimerDropdown2" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+[node name="RoundTimerDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -829,7 +807,7 @@ popup/item_1/id = 1
 popup/item_2/text = "60"
 popup/item_2/id = 2
 
-[node name="EndPointsDropdown3" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+[node name="EndPointsDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -841,7 +819,7 @@ popup/item_0/text = "No"
 popup/item_1/text = "Yes"
 popup/item_1/id = 1
 
-[node name="RoundsDropdown4" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+[node name="RoundsDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -859,7 +837,8 @@ popup/item_3/id = 3
 popup/item_4/text = "5"
 popup/item_4/id = 4
 
-[node name="MaxPointsDropdown4" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+[node name="MaxPointsDropdown" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
@@ -876,22 +855,13 @@ layout_mode = 2
 size_flags_vertical = 4
 alignment = 1
 
-[node name="Private" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
+[node name="PrivateCheckButton" type="CheckButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_c60qq")
 theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
-text = "Private"
-
-[node name="Public" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_x57a0")
-theme_override_styles/normal = SubResource("StyleBoxFlat_el0pc")
 text = "Public"
 
 [node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
@@ -923,7 +893,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="JoinLobbyOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
