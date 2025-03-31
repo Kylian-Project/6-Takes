@@ -1,6 +1,59 @@
-[gd_scene load_steps=2 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=14 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Texture2D" uid="uid://dkxvrskjlp86a" path="res://assets/bg.png" id="1_1m3tj"]
+[ext_resource type="Texture2D" uid="uid://cifce8iom6mxg" path="res://assets/title_screen_singleplayer.png" id="2_r0nog"]
+[ext_resource type="FontFile" uid="uid://d1uj8qnncgtkr" path="res://assets/kenvector_future.ttf" id="3_1bgrr"]
+[ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/icon_darkgray.png" id="4_0mnkw"]
+[ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/bot.png" id="4_02jiw"]
+[ext_resource type="Texture2D" uid="uid://ch031uua5nurl" path="res://assets/minus-sign.png" id="5_6jb2w"]
+[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/crown.png" id="5_af7nj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ihlhx"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_udt75"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i7mao"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n444u"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 20
+border_width_right = 20
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rj0uf"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6x6xd"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 20
+border_width_right = 20
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -19,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.305882, 0.596078, 1)
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="JesterBG" type="TextureRect" parent="."]
 self_modulate = Color(1, 1, 1, 0.294118)
 layout_mode = 1
 anchors_preset = 15
@@ -29,9 +82,443 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_1m3tj")
 
-[node name="TextureRect2" type="TextureRect" parent="."]
+[node name="SP_title" type="TextureRect" parent="."]
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 303.0
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.179
+anchor_right = 0.5
+anchor_bottom = 0.179
+offset_left = -740.0
+offset_top = -364.32
+offset_right = 775.0
+offset_bottom = 363.68
 grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_r0nog")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="BottomButtons" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.919
+anchor_right = 0.5
+anchor_bottom = 0.919
+offset_left = -640.0
+offset_top = -57.52
+offset_right = 640.0
+offset_bottom = 58.48
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 200
+
+[node name="start" type="Button" parent="BottomButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
+theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+text = "Start"
+
+[node name="settings" type="Button" parent="BottomButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
+theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+text = "Settings"
+
+[node name="return" type="Button" parent="BottomButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
+theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+text = "Return
+"
+
+[node name="HostPlayer" type="PanelContainer" parent="."]
+layout_mode = 2
+anchor_left = 0.227
+anchor_top = 0.431
+anchor_right = 0.227
+anchor_bottom = 0.431
+offset_left = -236.84
+offset_top = -51.48
+offset_right = 237.16
+offset_bottom = 52.52
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="PlayerHGroup" type="HBoxContainer" parent="HostPlayer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PlayerIcon" type="TextureRect" parent="HostPlayer/PlayerHGroup"]
+layout_mode = 2
+texture = ExtResource("4_0mnkw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="HostPlayer/PlayerHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 30
+text = "Player Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="HostPlayer/PlayerHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_n444u")
+button_mask = 0
+icon = ExtResource("5_af7nj")
+icon_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.661
+anchor_right = 0.5
+anchor_bottom = 0.661
+offset_left = -761.5
+offset_top = -175.88
+offset_right = 761.5
+offset_bottom = 176.12
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="BotPanel" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel2" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel2"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel2/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel2/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel2/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel3" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel3"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel3/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel3/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel3/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel4" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel4"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel4/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel4/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel4/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel5" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel5"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel5/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel5/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel5/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel6" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel6"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel6/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel6/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel6/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel7" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel7"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel7/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel7/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel7/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel8" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel8"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel8/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel8/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel8/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
+
+[node name="BotPanel9" type="PanelContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i7mao")
+
+[node name="BotHGroup" type="HBoxContainer" parent="GridContainer/BotPanel9"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Bot Icon" type="TextureRect" parent="GridContainer/BotPanel9/BotHGroup"]
+layout_mode = 2
+texture = ExtResource("4_02jiw")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="GridContainer/BotPanel9/BotHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_1bgrr")
+theme_override_font_sizes/font_size = 65
+theme_override_styles/normal = SubResource("StyleBoxFlat_rj0uf")
+text = "Bot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="GridContainer/BotPanel9/BotHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6x6xd")
+icon = ExtResource("5_6jb2w")
+icon_alignment = 1
