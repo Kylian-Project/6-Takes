@@ -635,7 +635,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="CreateLobbyOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -730,13 +729,29 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Round Timer"
 
-[node name="NumberCards3" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+[node name="EndByPoints" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "End by Points"
+
+[node name="Rounds" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
+text = "Rounds"
+
+[node name="MaxPoints" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
+text = "Maximum Points"
 
 [node name="Choices" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
 layout_mode = 2
@@ -826,6 +841,36 @@ popup/item_0/text = "No"
 popup/item_1/text = "Yes"
 popup/item_1/id = 1
 
+[node name="RoundsDropdown4" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+selected = 0
+item_count = 5
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+
+[node name="MaxPointsDropdown4" type="OptionButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("3_y4pek")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+selected = 0
+item_count = 2
+popup/item_0/text = "60"
+popup/item_1/text = "80"
+popup/item_1/id = 1
+
 [node name="PublicPrivate" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
 size_flags_vertical = 4
@@ -878,6 +923,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="JoinLobbyOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
