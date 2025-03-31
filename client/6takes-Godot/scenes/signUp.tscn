@@ -218,5 +218,7 @@ theme_override_font_sizes/font_size = 24
 text = "Log In "
 flat = true
 
+[node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
+
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/LogIn" to="." method="_on_log_in_pressed"]

@@ -5,43 +5,98 @@ extends Control
 @onready var login_button = $LoginButton
 @onready var http_request = $HTTPRequest_auth
 
+var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
-const SERVER_URL = "ws://185.155.93.105:14001/profile"
 
-var overlay_opened = false
-var regex = RegEx.new()
+const WS_SERVER_URL = "ws://185.155.93.105:14001"
+const API_URL = "http://185.155.93.105:14001/api/player/connexion"
 
+func _ready():
+	self.visible = true
+	#login_button.pressed.connect(_on_login_button_pressed)
+	http_request.request_completed.connect(_on_http_request_completed)
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	self.visible = false
-	login_button.pressed.connect(_on_login_button_pressed)
-	#http_request.request_completed.connect(_on_request_completed)
+func _on_login_button_pressed():
+	var username_email = username_email_input.text.strip_edges()
+	var password = password_input.text.strip_edges()
+
+	if username_email.is_empty() or password.is_empty():
+		print("❌ Les champs ne peuvent pas être vides")
+		return
+
+	var payload = {
+		"username": username_email,
+		"password": password
+	}
+
+	var json_body = JSON.stringify(payload)
+	var headers = ["Content-Type: application/json"]
+
+	print("📡 Envoi de la requête HTTP de connexion à:", API_URL)
+	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
+
+func _on_http_request_completed(result, response_code, headers, body):
+	print("🔁 Réponse HTTP reçue : code =", response_code)
+	print("🔁 Contenu brut:", body.get_string_from_utf8())
+
+	if response_code != 200:
+		print("❌ Erreur serveur ou identifiants invalides.")
+		return
+
+	var json = JSON.parse_string(body.get_string_from_utf8())
+	if json.error != OK:
+		print("❌ Erreur JSON :", json.error_string)
+		return
+
+	var response = json.result
+	if "token" in response:
+		jwt_token = response["token"]
+		print("✅ Connexion réussie ! Token :", jwt_token)
+		_connect_to_websocket()
+	else:
+		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
+
+func _connect_to_websocket():
+	if jwt_token == null:
+		print("❌ Aucun token pour la connexion WebSocket")
+		return
+
+	var ws_url = WS_SERVER_URL + "?token=" + jwt_token
+	print("🔌 Connexion WebSocket à :", ws_url)
+	var err = ws.connect_to_url(ws_url)
+	if err != OK:
+		print("❌ Erreur de connexion WebSocket :", err)
+		return
+
+	print("✅ WebSocket initialisé, en attente de connexion...")
+	ws_connected = false
+
+func _process(_delta):
+	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
+		ws_connected = true
+		print("✅ WebSocket connecté avec succès !")
+
+	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
+		if ws_connected:
+			ws_connected = false
+			print("🔌 WebSocket déconnecté.")
 	
-	_connect_to_websocket()
-
-
-func _proces():
-	get_tree().paused = overlay_opened
-	ws.poll() 
-	
-	match ws.get_ready_state():
-		WebSocketPeer.STATE_OPEN:
-			if not ws_connected:
-				ws_connected = true
-				print(" WebSocket connecté !")
-		WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED:
-			if ws_connected:
-				ws_connected = false
-				print(" WebSocket déconnecté.")
-				_connect_to_websocket()  # Reconnexion automatique
+	ws.poll()
 
 	if ws.get_available_packet_count() > 0:
 		var data = ws.get_packet().get_string_from_utf8()
-		print("Data received from WebSocket:", data)
 		_on_ws_data(data)
-	
+
+func _on_ws_data(data):
+	print("📩 Données reçues :", data)
+	var response = JSON.parse_string(data)
+	if response == null:
+		print("⚠️ Donnée non-JSON :", data)
+		return
+
+
+var overlay_opened = false
 func show_overlay():
 	overlay_opened = true
 	self.visible = true 
@@ -83,118 +138,3 @@ func _on_forgot_password_pressed() -> void:
 	forgotPass_instance.show_overlay()
 	
 	queue_free()
-
-
-func _on_login_button_pressed() -> void:
-	if not ws_connected:
-		print(" WebSocket n'est pas encore connecté !")
-		return
-		
-	var body = null 
-	var headers = ["Content-Type: application/json"]
-	
-	var password = password_input.text.strip_edges()
-	var username_email = username_email_input.text.strip_edges()
-	
-	if username_email.is_empty() or password.is_empty():
-		print(" CANNOT BE EMPTY")
-		return 
-	
-	#detect entry type 
-	var username = null
-	var email = null 
-	
-	var res = detect_input_type(username_email)
-	
-	if res == "invalid":
-		print("INVALID ENTRY")
-		return
-	else:
-		if res == "email":
-			email = username_email
-			body = JSON.stringify({"email": email, "password": password})
-			
-		elif res == "username":
-			username = username_email
-			body = JSON.stringify({"username": username, "password": password})
-
-	
-	print(body)
-	password_input.text = ""
-	var error = http_request.request(SERVER_URL + "/profile", headers, HTTPClient.METHOD_POST, body)
-	if error != OK:
-		print("HTTP REQUEST NOT SENT: ", error)
-	
-	
-func _on_request_completed(result, response_code, headers, body):
-	print("Réponse reçue:", response_code)
-	print("Headers reçus:", headers)
-	
-	print(" Corps de la réponse:", body.get_string_from_utf8())
-	var response = JSON.parse_string(body.get_string_from_utf8())
-	if response == null:
-		print(" Invalid response from server")
-		return
-
-	if response_code == 200:  # Success
-		print(" Success:", response["message"])
-
-		if "token" in response:
-			var token = response["token"]
-			_save_token(token)
-
-	else:  # Error
-		print(" Error:", response["message"])
-
-
-#not tested yet
-func _save_token(token: String):
-	pass
-	#var file = FileAccess.open("user://auth_token.txt", FileAccess.WRITE)
-	#file.store_string(token)
-	#file.close()
-	#print("🔑 Token saved!")
-
-
-func detect_input_type(input_text: String) -> String:
-	if not regex.is_valid():
-		regex.compile("")
-	
-	#email regex 
-	regex.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-	if regex.search(input_text):
-		return "email"
-	
-	#username regex
-	regex.compile("^[a-zA-Z0-9_]+$")
-	if regex.search(input_text):
-		return "username"
-		
-	else:
-		return "invalid"
-
-
-func _connect_to_websocket():
-	var err = ws.connect_to_url(SERVER_URL)
-	if err != OK:
-		print("Échec de connexion WebSocket:", err)
-		return
-
-	print("WebSocket initialisé, en attente de connexion...")
-	ws_connected = false 
-	
-	
-func _on_ws_data(data):
-	print(" Données reçues :", data)
-
-	# Vérifier si la réponse est bien du JSON
-	var response = JSON.parse_string(data)
-	if response == null:
-		print("Réponse non JSON :", data)
-		return  # Empêche le crash
-
-	# Vérification de la connexion réussie
-	if "token" in response:
-		print("Connexion réussie ! Token:", response["token"])
-	else:
-		print(" Connexion échouée:", response.get("login", "Erreur inconnue"))
