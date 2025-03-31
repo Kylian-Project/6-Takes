@@ -99,8 +99,7 @@ func _on_login_button_pressed() -> void:
 	
 	print(body)
 	password_input.text = ""
-	#http_request.request(SERVER_URL + "/login", headers, HTTPClient.METHOD_POST, body)
-
+	http_request.request(SERVER_URL + "/login", headers, HTTPClient.METHOD_POST, body)
 
 
 func detect_input_type(input_text: String) -> String:
@@ -138,8 +137,10 @@ func _on_request_completed(result, response_code, headers, body):
 		print("❌ Error:", response["message"])
 
 
+#not tested yet
 func _save_token(token: String):
-	var file = FileAccess.open("user://auth_token.txt", FileAccess.WRITE)
-	file.store_string(token)
-	file.close()
-	print("🔑 Token saved!")
+	pass
+	#var file = FileAccess.open("user://auth_token.txt", FileAccess.WRITE)
+	#file.store_string(token)
+	#file.close()
+	#print("🔑 Token saved!")
