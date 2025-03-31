@@ -1037,6 +1037,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="ShadowBox" type="Label" parent="RulesOverlay"]
+layout_mode = 0
 offset_left = 304.0
 offset_top = 100.0
 offset_right = 1714.0
@@ -1045,6 +1046,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_q8eac")
 
 [node name="ColorRect" type="ColorRect" parent="RulesOverlay"]
 custom_minimum_size = Vector2(300, 300)
+layout_mode = 0
 offset_left = 294.0
 offset_top = 100.0
 offset_right = 1694.0
@@ -1055,6 +1057,7 @@ color = Color(0.715548, 0.209551, 0.209908, 1)
 [node name="TextureRect" type="TextureRect" parent="RulesOverlay"]
 modulate = Color(1, 1, 1, 0.4)
 custom_minimum_size = Vector2(300, 300)
+layout_mode = 0
 offset_left = 294.0
 offset_top = 100.0
 offset_right = 1694.0
@@ -1064,6 +1067,7 @@ texture = ExtResource("14_gfuy5")
 expand_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RulesOverlay"]
+layout_mode = 0
 offset_left = 344.0
 offset_top = 130.0
 offset_right = 1558.0
@@ -1224,6 +1228,7 @@ text = "- If your played card is lower than the last card in every row,  you mus
 
 [node name="logo" type="TextureRect" parent="RulesOverlay"]
 custom_minimum_size = Vector2(100, 100)
+layout_mode = 0
 offset_left = 1378.0
 offset_top = 138.0
 offset_right = 1591.0
