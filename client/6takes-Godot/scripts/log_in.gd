@@ -59,6 +59,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 		jwt_token = response["token"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
 		_connect_to_websocket()
+		_move_to_multiplayer_pressed()
 	else:
 		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
 
