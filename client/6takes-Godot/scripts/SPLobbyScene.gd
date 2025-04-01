@@ -4,6 +4,9 @@ extends Control
 @onready var add_bot_button = $MainVbox/AddBotButton
 @onready var sp_start_button = $BottomButtons/SPStartButton
 @onready var sp_return_button = $BottomButtons/SPReturnButton
+@onready var sp_settings_button = $BottomButtons/SPSettingsButton
+@onready var settings_overlay = $SettingsOverlay
+@onready var settings_close_button = $SettingsOverlay/Close
 @export var bot_scene: PackedScene
 
 var bot_count = 1  # Start with 1 bot minimum
@@ -12,6 +15,9 @@ func _ready():
 	add_bot_button.pressed.connect(add_bot)
 	sp_start_button.pressed.connect(start_game)
 	sp_return_button.pressed.connect(return_to_main_menu)
+	sp_settings_button.pressed.connect(show_settings)
+	settings_close_button.pressed.connect(hide_settings)
+	settings_overlay.visible = false
 	update_bot_slots()
 
 func add_bot():
@@ -50,3 +56,9 @@ func start_game():
 
 func return_to_main_menu():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func show_settings():
+	settings_overlay.visible = true
+
+func hide_settings():
+	settings_overlay.visible = false

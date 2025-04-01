@@ -1,15 +1,16 @@
-[gd_scene load_steps=21 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=27 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
-[ext_resource type="Texture2D" uid="uid://dkxvrskjlp86a" path="res://assets/images/bg.png" id="2_1ebn2"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
 [ext_resource type="PackedScene" uid="uid://bhageui8vimvr" path="res://scenes/BotSlot.tscn" id="2_kjaad"]
 [ext_resource type="Texture2D" uid="uid://cifce8iom6mxg" path="res://assets/images/title_screen_singleplayer.png" id="3_h2et4"]
-[ext_resource type="FontFile" uid="uid://d1uj8qnncgtkr" path="res://assets/fonts/kenvector_future.ttf" id="4_kadam"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_kadam"]
 [ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="5_w3hn7"]
 [ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="6_x25hd"]
 [ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/images/bot.png" id="7_2ogde"]
 [ext_resource type="Texture2D" uid="uid://ch031uua5nurl" path="res://assets/images/minus-sign.png" id="8_3ynqv"]
 [ext_resource type="Texture2D" uid="uid://e3nomb8wp8lc" path="res://assets/images/plus.png" id="9_eoxuu"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="11_ew5dc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ihlhx"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -52,6 +53,18 @@ border_width_left = 20
 border_width_right = 20
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_72bti"]
+bg_color = Color(0.12549, 0.12549, 0.12549, 0.435294)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6klth"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 20
@@ -86,6 +99,43 @@ bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 20
 border_width_right = 20
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m6oe"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dpdfb"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tv7b"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qewfh"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [node name="LobbyScene" type="Control"]
 layout_mode = 3
@@ -242,9 +292,11 @@ columns = 3
 [node name="AddBotButton" type="Button" parent="MainVbox"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_kadam")
 theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_72bti")
 theme_override_styles/normal = SubResource("StyleBoxFlat_6klth")
 text = "Add a Bot"
 
@@ -838,3 +890,248 @@ theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_2hocg")
 icon = ExtResource("9_eoxuu")
 icon_alignment = 1
+
+[node name="SettingsOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Main Menu Dimming2" type="ColorRect" parent="SettingsOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="PanelContainer" type="PanelContainer" parent="SettingsOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -318.5
+offset_top = -366.0
+offset_right = 318.5
+offset_bottom = 366.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_7m6oe")
+
+[node name="TextureRect" type="TextureRect" parent="SettingsOverlay/PanelContainer"]
+self_modulate = Color(1, 1, 1, 0.227451)
+layout_mode = 2
+texture = ExtResource("2_1ebn2")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="SettingsOverlay/PanelContainer"]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LobbySettingsLabel" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_constants/outline_size = 25
+theme_override_fonts/font = ExtResource("11_ew5dc")
+theme_override_font_sizes/font_size = 60
+text = "Lobby Settings!"
+
+[node name="AvailableOptions" type="HBoxContainer" parent="SettingsOverlay/PanelContainer/MainVertical"]
+layout_mode = 2
+alignment = 1
+
+[node name="Options" type="VBoxContainer" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="PlayerLimit" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "Player Limit"
+
+[node name="NumberCards" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "Number of Cards"
+
+[node name="RoundTimer" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "Round Timer"
+
+[node name="EndByPoints" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "End by Points"
+
+[node name="Rounds" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "Rounds"
+
+[node name="MaxPoints" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dpdfb")
+text = "Maximum Points"
+
+[node name="Choices" type="VBoxContainer" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="PlayerLimitDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 8
+item_count = 9
+popup/item_0/text = "2"
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "4"
+popup/item_2/id = 2
+popup/item_3/text = "5"
+popup/item_3/id = 3
+popup/item_4/text = "6"
+popup/item_4/id = 4
+popup/item_5/text = "7"
+popup/item_5/id = 5
+popup/item_6/text = "8"
+popup/item_6/id = 6
+popup/item_7/text = "9"
+popup/item_7/id = 7
+popup/item_8/text = "10"
+popup/item_8/id = 8
+
+[node name="CardNumberDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 9
+item_count = 10
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+popup/item_5/text = "6"
+popup/item_5/id = 5
+popup/item_6/text = "7"
+popup/item_6/id = 6
+popup/item_7/text = "8"
+popup/item_7/id = 7
+popup/item_8/text = "9"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+
+[node name="RoundTimerDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 1
+item_count = 3
+popup/item_0/text = "30"
+popup/item_1/text = "45"
+popup/item_1/id = 1
+popup/item_2/text = "60"
+popup/item_2/id = 2
+
+[node name="EndPointsDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 0
+item_count = 2
+popup/item_0/text = "No"
+popup/item_1/text = "Yes"
+popup/item_1/id = 1
+
+[node name="RoundsDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 0
+item_count = 5
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+
+[node name="MaxPointsDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2tv7b")
+selected = 0
+item_count = 2
+popup/item_0/text = "60"
+popup/item_1/text = "80"
+popup/item_1/id = 1
+
+[node name="Close" type="Button" parent="SettingsOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.656
+anchor_top = 0.183
+anchor_right = 0.656
+anchor_bottom = 0.183
+offset_left = -19.52
+offset_top = -24.64
+offset_right = 19.48
+offset_bottom = 24.36
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_qewfh")
+text = "X"

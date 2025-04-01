@@ -1,8 +1,10 @@
 extends Control
 
+@onready var login_button = $LoginButton
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.visible = false
+	login_button.pressed.connect(_move_to_multiplayer_pressed)
 
 var overlay_opened = false
 func _proces():
@@ -19,6 +21,8 @@ func hide_overlay():
 func _on_cancel_button_pressed() -> void:
 	queue_free() 
 
+func _move_to_multiplayer_pressed():
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 func _on_sign_up_pressed() -> void:
 	var signup_scene = load("res://scenes/signUp.tscn")
