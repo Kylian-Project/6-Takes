@@ -1,5 +1,6 @@
 extends Control
 
+
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
@@ -100,6 +101,8 @@ func _on_ws_data(data):
 		return
 
 
+
+
 var overlay_opened = false
 func show_overlay():
 	overlay_opened = true
@@ -112,6 +115,8 @@ func hide_overlay():
 func _on_cancel_button_pressed() -> void:
 	queue_free() 
 
+func _move_to_multiplayer_pressed():
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 func _on_sign_up_pressed() -> void:
 	var signup_scene = load("res://scenes/signUp.tscn")
