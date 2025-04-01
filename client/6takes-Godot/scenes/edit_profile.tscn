@@ -1,0 +1,306 @@
+[gd_scene load_steps=16 format=3 uid="uid://fwrwwy8t1e2u"]
+
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_j4jnn"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="2_36ldt"]
+[ext_resource type="Texture2D" uid="uid://dcce2v100uuvl" path="res://assets/images/pen.png" id="3_dgrom"]
+[ext_resource type="Texture2D" uid="uid://37odsmen4csr" path="res://assets/images/icons/blue.png" id="4_obr0q"]
+[ext_resource type="Texture2D" uid="uid://dgw6tpjhv361t" path="res://assets/images/icons/brown.png" id="5_ccydh"]
+[ext_resource type="Texture2D" uid="uid://bnk6njs2oh0g7" path="res://assets/images/icons/cyan.png" id="6_rdku4"]
+[ext_resource type="Texture2D" uid="uid://tt7wfagqj1uj" path="res://assets/images/icons/green.png" id="7_hcyuq"]
+[ext_resource type="Texture2D" uid="uid://bovf1axc4cld0" path="res://assets/images/icons/orange.png" id="8_baqp4"]
+[ext_resource type="Texture2D" uid="uid://c6qp4rmmjmur2" path="res://assets/images/icons/pink.png" id="9_vjj5g"]
+[ext_resource type="Texture2D" uid="uid://dd4vryvdrgh46" path="res://assets/images/icons/purple.png" id="10_6x2j2"]
+[ext_resource type="Texture2D" uid="uid://bd3hjj6g501tk" path="res://assets/images/icons/red.png" id="11_xedm2"]
+[ext_resource type="Texture2D" uid="uid://7xyuwb4nkftu" path="res://assets/images/icons/reversed.png" id="12_p4wal"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h4os1"]
+bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fyne0"]
+bg_color = Color(0.6, 0.6, 0.6, 0.0156863)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+shadow_color = Color(0.309804, 0.309804, 0.309804, 0.176471)
+shadow_size = 2
+shadow_offset = Vector2(8, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3df5"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="EditProfile" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 300.0
+offset_top = 130.0
+offset_right = -345.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.264
+anchor_top = -0.204
+anchor_right = 1.307
+anchor_bottom = 1.274
+offset_left = -0.399994
+offset_top = 0.200012
+offset_right = -0.425049
+offset_bottom = -0.200012
+color = Color(0.180392, 0.180392, 0.180392, 0.262745)
+
+[node name="ShadowBox" type="Label" parent="."]
+z_index = -1
+layout_mode = 0
+offset_left = 11.0
+offset_top = 1.0
+offset_right = 1291.0
+offset_bottom = 821.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_h4os1")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = 1.0
+offset_right = 11.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_j4jnn")
+expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 50.0
+offset_right = 1200.0
+offset_bottom = 236.0
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+texture = ExtResource("2_36ldt")
+expand_mode = 1
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+placeholder_text = "username_XYZ"
+
+[node name="Button" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 26
+text = "edit"
+icon = ExtResource("3_dgrom")
+flat = true
+icon_alignment = 2
+expand_icon = true
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 246.0
+offset_right = 1288.0
+offset_bottom = 800.0
+current_tab = 1
+
+[node name="Stats" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Panel" type="Panel" parent="TabContainer/Stats"]
+layout_mode = 2
+
+[node name="Control3" type="Control" parent="TabContainer/Stats/Panel"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 314.0
+offset_top = 100.0
+offset_right = 876.0
+offset_bottom = 251.0
+
+[node name="Panel" type="Panel" parent="TabContainer/Stats/Panel/Control3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.948
+anchor_bottom = 0.844
+offset_right = 0.223938
+offset_bottom = 6.748
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fyne0")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Stats/Panel/Control3"]
+layout_mode = 0
+offset_left = 7.0
+offset_right = 546.0
+offset_bottom = 124.0
+
+[node name="scoreBox" type="VBoxContainer" parent="TabContainer/Stats/Panel/Control3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_constants/separation = 26
+
+[node name="score" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/scoreBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "score"
+
+[node name="score_int" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/scoreBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 33
+text = "1"
+
+[node name="gamesBox" type="VBoxContainer" parent="TabContainer/Stats/Panel/Control3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 26
+
+[node name="games" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/gamesBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Games"
+
+[node name="games_int" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/gamesBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "1"
+
+[node name="winsBox" type="VBoxContainer" parent="TabContainer/Stats/Panel/Control3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 26
+
+[node name="wins" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/winsBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "wins"
+
+[node name="wins_int" type="Label" parent="TabContainer/Stats/Panel/Control3/HBoxContainer/winsBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "1"
+
+[node name="icon" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Panel" type="Panel" parent="TabContainer/icon"]
+custom_minimum_size = Vector2(300, 400)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_q3df5")
+
+[node name="GridContainer" type="GridContainer" parent="TabContainer/icon/Panel"]
+custom_minimum_size = Vector2(600, 300)
+layout_mode = 2
+offset_left = 62.0
+offset_top = 74.0
+offset_right = 662.0
+offset_bottom = 374.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 5
+
+[node name="TextureRect" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("4_obr0q")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("5_ccydh")
+expand_mode = 1
+
+[node name="TextureRect3" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("6_rdku4")
+expand_mode = 1
+
+[node name="TextureRect4" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("7_hcyuq")
+expand_mode = 1
+
+[node name="TextureRect5" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("8_baqp4")
+expand_mode = 1
+
+[node name="TextureRect6" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("9_vjj5g")
+expand_mode = 1
+
+[node name="TextureRect7" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("10_6x2j2")
+expand_mode = 1
+
+[node name="TextureRect8" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("11_xedm2")
+expand_mode = 1
+
+[node name="TextureRect9" type="TextureRect" parent="TabContainer/icon/Panel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("12_p4wal")
+expand_mode = 1
+
+[node name="Account" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2

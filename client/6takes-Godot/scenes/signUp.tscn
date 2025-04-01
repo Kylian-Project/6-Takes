@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://8wuccexryhno"]
+[gd_scene load_steps=11 format=3 uid="uid://cqxyv033jupcq"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]

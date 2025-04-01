@@ -29,6 +29,7 @@ func hash_password(password: String) -> String:
 	
 	return hashed_password.hex_encode()
 	
+	
 func _on_signup_pressed():
 	var username = username_input.text.strip_edges()
 	var email = email_input.text.strip_edges()
@@ -75,6 +76,8 @@ func _on_http_request_completed(result, response_code, headers, body):
 		jwt_token = response["token"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
 		_connect_to_websocket()
+		_move_to_multiplayer_pressed()
+		
 	else:
 		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
 
@@ -148,3 +151,7 @@ func _on_log_in_pressed() -> void:
 
 func _on_cancel_button_pressed() -> void:
 	queue_free() 
+
+
+func _move_to_multiplayer_pressed():
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
