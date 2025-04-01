@@ -1,33 +1,112 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8080"); // Change si tu utilises un autre port
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-socket.on("connect", () => {
-  console.log("✅ Connecté au serveur avec ID :", socket.id);
+const testScenario = async () => {
 
-  // 👇 Test 1 : créer une room
-  socket.emit("create-room", "Alice");
 
-  // 👇 Quand la room est créée, simule un autre joueur
-  socket.on("private-room-created", (roomId) => {
-    console.log("📦 Room créée :", roomId);
+  const socketAlice = io("http://localhost:8080");
 
-    // Nouvelle "connexion" simulée (autre joueur)
-    const socket2 = io("http://localhost:8080");
+  socketAlice.on("connect", () => {
+    console.log("✅ Alice connectée :", socketAlice.id);
 
-    socket2.on("connect", () => {
-      console.log("🔗 2e joueur connecté :", socket2.id);
-      socket2.emit("join-room", { roomId, username: "Bob" });
+    // Alice crée une room PRIVÉE
+    socketAlice.emit("create-room", { username: "Alice", isPrivate: true });
 
-      socket2.on("private-room-joined", (users) => {
-        console.log("🧑‍🤝‍🧑 Joueurs dans la room :", users);
+    socketAlice.on("private-room-created", async (roomId) => {
+      console.log("🔒 Room privée créée par Alice :", roomId);
+
+      // Bob se connecte et rejoint la room d'Alice
+      const socketBob = io("http://localhost:8080");
+      socketBob.on("connect", () => {
+        console.log("👤 Bob connecté :", socketBob.id);
+        socketBob.emit("join-room", { roomId, username: "Bob" });
+
+        socketBob.on("private-room-joined", (users) => {
+          console.log("👥 Bob a rejoint la room d'Alice. Users:", users);
+        });
+
+        socketBob.emit("users-in-private-room", roomId);
+        socketBob.on("users-in-your-private-room", (users) => {
+          console.log("📋 Utilisateurs (room Alice) :", users);
+        });
+
+        // Bob quitte après 3s
+        setTimeout(() => {
+          socketBob.emit("leave-room", {
+            roomId,
+            host: false,
+            socketId: socketBob.id
+          });
+          console.log("👋 Bob quitte la room");
+        }, 3000);
       });
 
-      // Voir la liste des joueurs de la salle
-      socket2.emit("users-in-private-room", roomId);
-      socket2.on("users-in-your-private-room", (users) => {
-        console.log("👥 Liste actuelle :", users);
+      // Alice quitte après 6s
+      setTimeout(() => {
+        socketAlice.emit("leave-room", {
+          roomId,
+          host: true,
+          socketId: socketAlice.id
+        });
+        console.log("🧑‍✈️ Alice (host) quitte la room (elle sera supprimée)");
+      }, 6000);
+    });
+
+    // Création de la room PUBLIQUE par Charlie
+    setTimeout(() => {
+      const socketCharlie = io("http://localhost:8080");
+      socketCharlie.on("connect", () => {
+        console.log("🧑 Charlie connecté :", socketCharlie.id);
+        socketCharlie.emit("create-room", {
+          username: "Charlie",
+          isPrivate: false
+        });
+
+        socketCharlie.on("public-room-created", (roomId) => {
+          console.log("🌍 Room publique créée par Charlie :", roomId);
+
+          // Dave rejoint la room publique
+          const socketDave = io("http://localhost:8080");
+          socketDave.on("connect", () => {
+            console.log("👤 Dave connecté :", socketDave.id);
+            socketDave.emit("join-room", { roomId, username: "Dave" });
+
+            socketDave.on("private-room-joined", (users) => {
+              console.log("👥 Dave a rejoint la room publique. Users:", users);
+            });
+
+            socketDave.emit("users-in-private-room", roomId);
+            socketDave.on("users-in-your-private-room", (users) => {
+              console.log("📋 Utilisateurs (room Charlie) :", users);
+            });
+
+            // Dave quitte après 5s
+            setTimeout(() => {
+              socketDave.emit("leave-room", {
+                roomId,
+                host: false,
+                socketId: socketDave.id
+              });
+              console.log("👋 Dave quitte la room publique");
+            }, 5000);
+          });
+        });
       });
+    }, 2000);
+  });
+
+  // 🔁 Observer la liste des rooms disponibles toutes les 2s
+  const observer = io("http://localhost:8080");
+  observer.on("connect", () => {
+    setInterval(() => {
+      observer.emit("available-rooms");
+    }, 2000);
+
+    observer.on("available-rooms", (rooms) => {
+      console.log("📡 Rooms disponibles :", rooms);
     });
   });
-});
+};
+
+testScenario();
