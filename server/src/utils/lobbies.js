@@ -12,7 +12,7 @@ class RoomUser {
 }
 
 class Room {
-    constructor(id, host, idSocketHost, isPrivate = false) {
+    constructor(id, host, idSocketHost, isPrivate) {
     this.id = id;
     this.host = host;
     this.idSocketHost = idSocketHost;
@@ -33,7 +33,7 @@ class Room {
     }
 
     isFull() {
-        return this.users.length >= NB_PLAYERS_MAX_IN_Room;
+        return this.users.length >= NB_PLAYERS_MAX_IN_ROOM;
     }
 }
 
@@ -43,7 +43,7 @@ export const roomHandler = (socket, io) =>
 {   
         //fonction utile 
     const getAvailableRooms = () => {
-        return rooms.filter(room => room.isPrivate === false).map(room => room.id);
+        return rooms.filter(room => room.private === false).map(room => room.id);
     };
 
 
@@ -69,7 +69,6 @@ export const roomHandler = (socket, io) =>
         {
             socket.emit("public-room-created", roomId);
         }
-        socket.emit("private-room-created", roomId);
     };
 
     const removeRoom = (roomId) => 
@@ -79,7 +78,7 @@ export const roomHandler = (socket, io) =>
         rooms = rooms.filter(r => r.id !== roomId);
         if (room.isPrivate) 
         {
-            io.to(roomId).emit("remove-private-room");
+            io.to(roomId).emit("remove-private-room");  //pour tout les membres
         } 
         else 
         {
@@ -104,32 +103,25 @@ export const roomHandler = (socket, io) =>
         return room;
     };
 
-    const leaveRoom = ({ roomId, host, socketId }) => 
+    const leaveRoom = ({ roomId }) => 
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
-    
-        if (host) 
+        const isHost = room.idSocketHost === socket.id;
+        if (isHost) 
         {
             removeRoom(roomId);
+            socket.to(roomId).emit("remove-room");
             socket.leave(roomId);
-            socket.emit("room-lefted");
+            socket.emit("room-left");
             return;
         }
-        room.removeUser(socketId);
+        room.removeUser(socket.id);
+        socket.to(roomId).emit("user-left", getUsers(roomId));
         socket.leave(roomId);
-        socket.emit("room-lefted");
-    
-        const users = getUsers(roomId);
-        if (room.isPrivate)
-        {
-            socket.to(roomId).emit("user-left-private", users);
-        } 
-        else 
-        {
-            socket.to(roomId).emit("user-left-public", users);
-        }
-    };
+        socket.emit("room-left");
+      };
+      
 
     const leaveRoomWithSocketId = (socketId) => 
         {
@@ -166,7 +158,6 @@ export const roomHandler = (socket, io) =>
     socket.on("create-room", createRoom);
     socket.on("leave-room", leaveRoom);
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
-
     socket.on("users-in-private-room", (roomId) => {
         socket.emit("users-in-your-private-room", getUsers(roomId));});
 
