@@ -45,22 +45,31 @@ process_mode = 3
 z_index = 5
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 320.0
 offset_top = 130.0
-offset_right = 1595.0
-offset_bottom = 930.0
+offset_right = -325.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_8677d")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 z_index = -1
-layout_mode = 0
-offset_left = -337.0
-offset_top = -163.0
-offset_right = 1806.0
-offset_bottom = 1019.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.264
+anchor_top = -0.204
+anchor_right = 1.307
+anchor_bottom = 1.274
+offset_left = -0.399994
+offset_top = 0.200012
+offset_right = -0.425049
+offset_bottom = -0.200012
 color = Color(0.180392, 0.180392, 0.180392, 0.262745)
 
 [node name="ShadowBox" type="Label" parent="."]
@@ -76,8 +85,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_vd4fy")
 z_index = -1
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-offset_right = 1275.0
-offset_bottom = 800.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.729412, 0.215686, 0.215686, 1)
 
@@ -85,8 +94,8 @@ color = Color(0.729412, 0.215686, 0.215686, 1)
 z_index = -1
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-offset_right = 1275.0
-offset_bottom = 800.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource("1_gofa2")
 expand_mode = 1
@@ -100,7 +109,7 @@ offset_right = 910.0
 offset_bottom = 577.0
 theme_override_constants/separation = 29
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer"]
+[node name="username_email_input" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/clear_button_color_pressed = Color(0.85098, 0.85098, 0.85098, 1)
@@ -110,7 +119,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "  Username or email"
 
-[node name="LineEdit2" type="LineEdit" parent="VBoxContainer"]
+[node name="password_input" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
@@ -131,10 +140,13 @@ texture = ExtResource("5_5g1vb")
 expand_mode = 1
 
 [node name="Control" type="Control" parent="."]
-anchors_preset = 0
-offset_left = 1225.0
-offset_right = 1275.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
 offset_bottom = 50.0
+grow_horizontal = 0
 
 [node name="CancelButton" type="Button" parent="Control"]
 z_index = 3
@@ -226,6 +238,9 @@ theme_override_font_sizes/font_size = 24
 text = "Sign up !"
 flat = true
 
+[node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
+
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]
+[connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/SignUp" to="." method="_on_sign_up_pressed"]

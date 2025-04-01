@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 [gd_scene load_steps=36 format=3 uid="uid://bbahvi0sfykso"]
+=======
+[gd_scene load_steps=36 format=3 uid="uid://l45fppjtlnsl"]
+>>>>>>> develop
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
