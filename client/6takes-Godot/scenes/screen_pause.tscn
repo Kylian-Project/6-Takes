@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
 [ext_resource type="Texture2D" uid="uid://cwse4voc3wfn0" path="res://assets/images/exit overlay.png" id="3_7r1o5"]
-[ext_resource type="FontFile" uid="uid://cq25shrfchedd" path="res://kenvector_future.ttf" id="4_yksmy"]
+[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="4_yksmy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_01bx1"]
 bg_color = Color(1, 1, 1, 1)
