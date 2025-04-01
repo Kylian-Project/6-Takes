@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://8wuccexryhno"]
+[gd_scene load_steps=11 format=3 uid="uid://cqxyv033jupcq"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
@@ -127,7 +127,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Password"
 secret = true
 
-[node name="conformPassword" type="LineEdit" parent="VBoxContainer"]
+[node name="confirmPassword" type="LineEdit" parent="VBoxContainer"]
 z_index = 1
 layout_mode = 2
 size_flags_vertical = 3
@@ -217,6 +217,8 @@ theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 24
 text = "Log In "
 flat = true
+
+[node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/LogIn" to="." method="_on_log_in_pressed"]
