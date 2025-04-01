@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
@@ -43,7 +43,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_3p33s")
+texture = ExtResource("2_jdcid")
 expand_mode = 1
 
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]

@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbs4uy1a3a52t"]
+[gd_scene load_steps=7 format=3 uid="uid://dbs4uy1a3a52t"]
 
 [ext_resource type="Script" path="res://scenes/screen_pause.gd" id="1_lsxjp"]
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
 [ext_resource type="Texture2D" uid="uid://cwse4voc3wfn0" path="res://assets/images/exit overlay.png" id="3_7r1o5"]
+[ext_resource type="FontFile" uid="uid://cq25shrfchedd" path="res://kenvector_future.ttf" id="4_yksmy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_01bx1"]
 bg_color = Color(1, 1, 1, 1)
@@ -67,10 +68,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -259.0
-offset_top = 227.5
-offset_right = 259.0
-offset_bottom = 330.5
+offset_left = -184.0
+offset_top = 196.5
+offset_right = 184.0
+offset_bottom = 299.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -81,9 +82,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_yksmy")
 theme_override_font_sizes/font_size = 75
 theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = "   LEAVES     "
+text = "   Quit"
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="Control"]
 layout_mode = 1
@@ -92,10 +94,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -199.0
-offset_top = -112.5
-offset_right = 199.0
-offset_bottom = -9.5
+offset_left = -246.5
+offset_top = -91.5
+offset_right = 246.5
+offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -106,9 +108,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_yksmy")
 theme_override_font_sizes/font_size = 75
 theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = "   RESUME   "
+text = "RESUME"
 alignment = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control"]
@@ -118,10 +121,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -202.0
-offset_top = 58.5
-offset_right = 202.0
-offset_bottom = 161.5
+offset_left = -281.0
+offset_top = 43.5
+offset_right = 281.0
+offset_bottom = 146.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -132,9 +135,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_yksmy")
 theme_override_font_sizes/font_size = 75
 theme_override_styles/normal = SubResource("StyleBoxFlat_01bx1")
-text = " SETTINGS   "
+text = "SETTINGS"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control"]
 layout_mode = 1
