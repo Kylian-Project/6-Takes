@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 
 const db = require("./config/db"); // Sequelize DB
 const playerRoutes = require("./routes/player_route");
-const verifySocketToken = require("./middleware/auth");
+const verifySocketToken = require("./middleware/authWS");
 
 const app = express();
 app.use(cors());
@@ -19,7 +19,7 @@ app.use("/api/player", playerRoutes);
 // Server HTTP
 const server = http.createServer(app);
 
-// WebSocket
+// WebSocket Server
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -28,20 +28,22 @@ const io = new Server(server, {
 });
 
 io.on("connection", async (socket) => {
-  console.log("Une personne essaie de se connecter :", socket.id);
+  console.log("Nouvelle connexion WebSocket :", socket.id);
+  console.log("Paramètres d'authentification :", socket.handshake.query);
 
   try {
-    const playerId = await verifySocketToken(socket);
+    const playerId = await verifySocketToken(socket); // Vérifie le token dans l'URL
+
     socket.playerId = playerId;
+    console.log(`Authentification réussie pour le joueur ID ${playerId} via WebSocket`);
 
-    console.log(`Joueur ${playerId} connecté via WebSocket`);
-
+    // Écoute des événements
     socket.on("signin", () => {
-      console.log("Connexion d'un joueur :", socket.playerId);
+      console.log("Joueur connecté :", socket.playerId);
     });
 
     socket.on("signup", () => {
-      console.log("Sign up nouveau joueur :", socket.playerId);
+      console.log("Inscription joueur :", socket.playerId);
     });
 
     socket.on("disconnect", () => {
@@ -50,14 +52,16 @@ io.on("connection", async (socket) => {
 
   } catch (err) {
     console.log("Connexion refusée :", err.message);
+    socket.emit("error", { message: "Token invalide ou expiré" });
     socket.disconnect();
   }
 });
 
 // Lancer l'app
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 14001;
 db.sync().then(() => {
   server.listen(PORT, () => {
-    console.log(`Serveur lancé sur le port : ${PORT}`);
+    console.log(`🚀 Serveur lancé sur le port : ${PORT}`);
+    console.log(`🌐 WebSocket accessible sur ws://<host>:${PORT}/?token=<jwt>`);
   });
 });

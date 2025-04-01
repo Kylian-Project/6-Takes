@@ -6,7 +6,7 @@ const BASE_URL = `http://${process.env.SRV_URL}:${process.env.SRV_PORT}/api/play
 
 
 const testCredentials = {
-  username: "client9Test", 
+  username: "clientTest", 
   password: "azerty99"
 };
 
