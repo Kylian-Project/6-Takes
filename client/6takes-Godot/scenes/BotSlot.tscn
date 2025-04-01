@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bhageui8vimvr"]
+[gd_scene load_steps=7 format=3 uid="uid://cf4pld53wviao"]
 
 [ext_resource type="Script" path="res://scripts/BotSlot.gd" id="1_16d0h"]
 [ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/images/bot.png" id="1_g2vy7"]
-[ext_resource type="FontFile" uid="uid://d1uj8qnncgtkr" path="res://assets/fonts/kenvector_future.ttf" id="3_xsa0i"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="3_xsa0i"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f21i5"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)

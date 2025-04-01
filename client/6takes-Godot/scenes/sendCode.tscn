@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://3taf6nj7o55v"]
+[gd_scene load_steps=12 format=3 uid="uid://dulmwmrvgwljq"]
 
 [ext_resource type="Script" path="res://scripts/forgot_password.gd" id="1_to88p"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_0flr6"]

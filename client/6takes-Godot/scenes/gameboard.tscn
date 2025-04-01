@@ -41,6 +41,7 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_jdcid")
@@ -87,10 +88,10 @@ horizontal_alignment = 3
 vertical_alignment = 1
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
-offset_left = 1742.0
-offset_top = -5.0
-offset_right = 1852.0
-offset_bottom = 145.0
+offset_left = 1828.0
+offset_top = -13.0
+offset_right = 1938.0
+offset_bottom = 137.0
 
 [node name="Button" type="Button" parent="HBoxContainer3"]
 layout_mode = 2
@@ -103,10 +104,10 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 430.0
-offset_top = 122.0
-offset_right = 1537.0
-offset_bottom = 835.0
+offset_left = 485.0
+offset_top = 128.0
+offset_right = 1684.0
+offset_bottom = 850.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
