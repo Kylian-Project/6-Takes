@@ -54,10 +54,10 @@ border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6klth"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -243,7 +243,8 @@ columns = 3
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 25
+theme_override_fonts/font = ExtResource("4_kadam")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_6klth")
 text = "Add a Bot"
 
