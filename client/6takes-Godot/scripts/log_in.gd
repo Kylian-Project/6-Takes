@@ -20,14 +20,18 @@ func _ready():
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
+	var password_hashed = hash_password(password)
+	
+	print("HASHED PASSWORD : \n", password_hashed)
 
 	if username_email.is_empty() or password.is_empty():
 		print("❌ Les champs ne peuvent pas être vides")
 		return
-
+	
+	print("	PASSWORD DEBUG ", password)
 	var payload = {
 		"username": username_email,
-		"password": password
+		"password": password_hashed
 	}
 
 	var json_body = JSON.stringify(payload)
@@ -45,11 +49,11 @@ func _on_http_request_completed(result, response_code, headers, body):
 		return
 
 	var json = JSON.parse_string(body.get_string_from_utf8())
-	if json.error != OK:
-		print("❌ Erreur JSON :", json.error_string)
-		return
+	#if json.error != OK:
+		#print("❌ Erreur JSON :", json.error_string)
+		#return
 
-	var response = json.result
+	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
@@ -124,7 +128,16 @@ func _on_sign_up_pressed() -> void:
 	
 	queue_free()
 
-
+#
+func hash_password(password: String) -> String:
+	var ctx = HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(password.to_utf8_buffer())  # Convertit en buffer binaire UTF-8
+	var hashed_password = ctx.finish()
+	
+	return hashed_password.hex_encode()  #
+	
+	
 func _on_forgot_password_pressed() -> void:
 	var forgotPass_scene = load("res://scenes/ForgotPassword.tscn")
 	if forgotPass_scene == null:

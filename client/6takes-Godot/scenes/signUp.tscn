@@ -127,7 +127,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "     Password"
 secret = true
 
-[node name="conformPassword" type="LineEdit" parent="VBoxContainer"]
+[node name="confirmPassword" type="LineEdit" parent="VBoxContainer"]
 z_index = 1
 layout_mode = 2
 size_flags_vertical = 3

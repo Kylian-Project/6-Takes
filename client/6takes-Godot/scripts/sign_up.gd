@@ -21,24 +21,34 @@ func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
 
 
+func hash_password(password: String) -> String:
+	var ctx = HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(password.to_utf8_buffer())  # Convertit en buffer binaire UTF-8
+	var hashed_password = ctx.finish()
+	
+	return hashed_password.hex_encode()
+	
 func _on_signup_pressed():
 	var username = username_input.text.strip_edges()
 	var email = email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
-	#var password_confirm = confirmPassword_input.text.strip_edges()
+	var password_confirm = confirmPassword_input.text.strip_edges()
 #
 	if username.is_empty() or password.is_empty() or email.is_empty():# or password_confirm.is_empty():
 		print("Fill in all fields")
 		return
 #	
-	#if password != password_confirm:
-		#print("passwords don't match")
-		#return 
-		
+	if password != password_confirm:
+		print("passwords don't match")
+		return 
+	
+	var hashed_password = hash_password(password)
+	
 	var payload = {
 		"username": username,
 		"email": email,
-		"password": password
+		"password": hashed_password #password
 	}
 
 	var json_body = JSON.stringify(payload)
@@ -60,7 +70,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 		print(" Erreur JSON :", json.error_string)
 		return
 
-	var response = json.result
+	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
