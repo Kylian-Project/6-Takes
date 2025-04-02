@@ -37,7 +37,7 @@ offset_left = -251.0
 offset_top = -163.0
 offset_right = 2164.0
 offset_bottom = 1217.0
-color = Color(0.180392, 0.180392, 0.180392, 0.262745)
+color = Color(0, 0, 0, 0.501961)
 
 [node name="ShadowBox" type="Label" parent="."]
 layout_mode = 0
