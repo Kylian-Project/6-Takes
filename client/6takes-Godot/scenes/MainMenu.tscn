@@ -161,6 +161,10 @@ shadow_offset = Vector2(0, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ms7p3"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -170,10 +174,10 @@ shadow_offset = Vector2(6, 6)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2rj5"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -622,10 +626,10 @@ anchor_left = 0.926
 anchor_top = 0.872
 anchor_right = 0.926
 anchor_bottom = 0.872
-offset_left = -47.7521
-offset_top = -48.056
-offset_right = 102.248
-offset_bottom = 101.944
+offset_left = -47.698
+offset_top = -48.376
+offset_right = 102.302
+offset_bottom = 101.624
 mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_x52x6")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ms7p3")
