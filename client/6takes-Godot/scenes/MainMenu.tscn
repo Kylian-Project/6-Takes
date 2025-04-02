@@ -14,10 +14,10 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
 bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 shadow_size = 6
 shadow_offset = Vector2(6, 6)
 
@@ -26,7 +26,7 @@ bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
-corner_radius_bottom_left = 12
+corner_radius_bottom_left = 10
 shadow_color = Color(0, 0, 0, 0.537255)
 shadow_size = 6
 shadow_offset = Vector2(6, 6)
@@ -199,8 +199,8 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 corner_detail = 2
-shadow_size = 6
-shadow_offset = Vector2(6, 6)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uyiyq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -213,8 +213,8 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-shadow_size = 6
-shadow_offset = Vector2(6, 6)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
 
 [node name="MainMenu" type="Control"]
 z_index = -10

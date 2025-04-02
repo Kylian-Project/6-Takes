@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=37 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -16,28 +16,28 @@
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="14_gfuy5"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="15_cnsdq"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_djfxv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yjo8o"]
+bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-shadow_size = 5
-shadow_offset = Vector2(0, 10)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yjo8o"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
 shadow_color = Color(0, 0, 0, 0.8)
-shadow_size = 5
-shadow_offset = Vector2(0, 10)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vs32j"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d15vq"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
 corner_radius_top_left = 10
@@ -63,11 +63,10 @@ shadow_offset = Vector2(0, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b2r32"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -307,11 +306,12 @@ theme_override_constants/separation = 20
 [node name="Create_Lobby" type="Button" parent="MainButtonsBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 22
-theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_djfxv")
 theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Create a Lobby"
@@ -319,11 +319,11 @@ text = "Create a Lobby"
 [node name="Join_Lobby" type="Button" parent="MainButtonsBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 22
-theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
 theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Join a Lobby"
@@ -331,7 +331,8 @@ text = "Join a Lobby"
 [node name="ReturnButton" type="Button" parent="MainButtonsBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 22
@@ -351,6 +352,7 @@ offset_left = -47.7521
 offset_top = -48.056
 offset_right = 102.248
 offset_bottom = 101.944
+mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
@@ -369,7 +371,7 @@ offset_left = -47.7521
 offset_top = -48.176
 offset_right = 102.248
 offset_bottom = 101.824
-theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
+mouse_default_cursor_shape = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 icon = ExtResource("5_4cr6n")
@@ -387,6 +389,7 @@ offset_left = -48.248
 offset_top = -48.056
 offset_right = 101.752
 offset_bottom = 101.944
+mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
