@@ -1,15 +1,15 @@
-[gd_scene load_steps=29 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=33 format=3 uid="uid://btyeei16grxj"]
 
-[ext_resource type="Texture2D" uid="uid://bc43qekvdjteb" path="res://assets/images/title.png" id="1_882gx"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
-[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_4gvwp"]
-[ext_resource type="Texture2D" uid="uid://5utgaquucxq4" path="res://assets/images/welcome.png" id="2_px1u1"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
+[ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/images/Title_screen_title_c2.png" id="3_jsxgc"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_0m83s"]
-[ext_resource type="Texture2D" uid="uid://dfu11p6muhw0d" path="res://assets/images/setting.png" id="5_5sd1g"]
+[ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/images/title_screen_welcome_v2.png" id="4_7q4f1"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
 [ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
+[ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
@@ -18,8 +18,8 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-shadow_size = 8
-shadow_offset = Vector2(8, 8)
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lowi6"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -28,8 +28,8 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.537255)
-shadow_size = 8
-shadow_offset = Vector2(8, 8)
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ufbv3"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -71,18 +71,6 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1w07j"]
-bg_color = Color(0.920995, 0.920995, 0.920995, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 10
-corner_radius_bottom_right = 23
-corner_radius_bottom_left = 8
-shadow_color = Color(0.169245, 0.169245, 0.169245, 1)
-shadow_size = 8
-shadow_offset = Vector2(8, 8)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qipfa"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_umhtq"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -157,6 +145,77 @@ border_width_left = 5
 border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x52x6"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ms7p3"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2rj5"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6kpx0"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_trsrx"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 2
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uyiyq"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 6
+shadow_offset = Vector2(6, 6)
+
 [node name="MainMenu" type="Control"]
 z_index = -10
 layout_mode = 3
@@ -169,8 +228,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wwhcw")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-z_index = -5
+[node name="Backgroundcolour" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -179,46 +237,64 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.305882, 0.596078, 1)
 
-[node name="backGroundRect" type="TextureRect" parent="."]
-z_index = -5
-custom_minimum_size = Vector2(1152, 648)
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.294118)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_4gvwp")
+texture = ExtResource("2_eqybt")
 expand_mode = 1
 
-[node name="LogoRect" type="TextureRect" parent="."]
-z_index = -5
-layout_mode = 0
-offset_left = 454.0
-offset_top = 43.0
-offset_right = 1478.0
-offset_bottom = 434.0
-texture = ExtResource("1_882gx")
+[node name="Title" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.254
+anchor_right = 0.5
+anchor_bottom = 0.254
+offset_left = -771.0
+offset_top = -381.32
+offset_right = 771.0
+offset_bottom = 381.68
+grow_horizontal = 2
+texture = ExtResource("3_jsxgc")
 expand_mode = 1
+stretch_mode = 5
 
-[node name="WelcomeRect" type="TextureRect" parent="."]
-z_index = -5
-layout_mode = 0
-offset_left = 761.0
-offset_top = 260.0
-offset_right = 1230.0
-offset_bottom = 491.0
-texture = ExtResource("2_px1u1")
+[node name="Welcome Title" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.458
+anchor_right = 0.5
+anchor_bottom = 0.458
+offset_left = -344.5
+offset_top = -141.64
+offset_right = 344.5
+offset_bottom = 142.36
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_7q4f1")
 expand_mode = 1
+stretch_mode = 5
 
 [node name="VButtons" type="VBoxContainer" parent="."]
-z_index = -5
 custom_minimum_size = Vector2(300, 200)
-layout_mode = 0
-offset_left = 735.0
-offset_top = 648.0
-offset_right = 1240.0
-offset_bottom = 959.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -201.5
+offset_top = 149.5
+offset_right = 198.5
+offset_bottom = 449.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 18
 
 [node name="SinglePlayerButton" type="Button" parent="VButtons"]
@@ -261,41 +337,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_ufbv3")
 text = "QUIT
 "
 
-[node name="Control" type="Control" parent="."]
-z_index = -5
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 1700.0
-offset_top = 815.0
-offset_right = -74.0
-offset_bottom = -98.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="SettingsButton" type="Button" parent="Control"]
-z_index = 2
-layout_mode = 0
-offset_left = 8.0
-offset_top = 27.0
-offset_right = 125.0
-offset_bottom = 149.0
-mouse_default_cursor_shape = 2
-theme_override_styles/hover = SubResource("StyleBoxFlat_e7gl1")
-icon = ExtResource("5_5sd1g")
-flat = true
-expand_icon = true
-
-[node name="Panel" type="Panel" parent="Control"]
-layout_mode = 0
-offset_left = -6.0
-offset_top = 21.0
-offset_right = 138.0
-offset_bottom = 156.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_44fvc")
-
 [node name="profileControl" type="Control" parent="."]
 visible = false
 z_index = -5
@@ -335,40 +376,7 @@ offset_right = 122.0
 offset_bottom = 120.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_i7qbx")
 
-[node name="Control3" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 80.0
-offset_top = 815.0
-offset_right = -1683.0
-offset_bottom = -98.0
-
-[node name="Label" type="Label" parent="Control3"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.031
-anchor_top = -0.053
-anchor_right = 0.031
-anchor_bottom = -0.053
-offset_left = 0.04
-offset_top = 0.0100002
-offset_right = 144.04
-offset_bottom = 164.01
-theme_override_styles/normal = SubResource("StyleBoxFlat_1w07j")
-
-[node name="Button" type="Button" parent="Control3"]
-layout_mode = 0
-offset_right = 156.0
-offset_bottom = 147.0
-mouse_default_cursor_shape = 2
-theme_override_styles/hover = SubResource("StyleBoxFlat_qipfa")
-icon = ExtResource("6_s440s")
-flat = true
-expand_icon = true
-
-[node name="rules" parent="." instance=ExtResource("9_jaad2")]
+[node name="RulesOverlay" parent="." instance=ExtResource("9_jaad2")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -606,13 +614,51 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_82t6k")
 text = "X"
 
+[node name="SettingsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.926
+anchor_top = 0.872
+anchor_right = 0.926
+anchor_bottom = 0.872
+offset_left = -47.7521
+offset_top = -48.056
+offset_right = 102.248
+offset_bottom = 101.944
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_x52x6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ms7p3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_y2rj5")
+icon = ExtResource("10_mcrd4")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Rules" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.074
+anchor_top = 0.872
+anchor_right = 0.074
+anchor_bottom = 0.872
+offset_left = -48.248
+offset_top = -48.056
+offset_right = 101.752
+offset_bottom = 101.944
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_6kpx0")
+theme_override_styles/hover = SubResource("StyleBoxFlat_trsrx")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uyiyq")
+icon = ExtResource("6_s440s")
+icon_alignment = 1
+expand_icon = true
+
 [connection signal="pressed" from="VButtons/SinglePlayerButton" to="." method="_on_single_player_button_pressed"]
 [connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
 [connection signal="pressed" from="VButtons/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="pressed" from="Control3/Button" to="." method="_on_button_pressed"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
+[connection signal="pressed" from="Rules" to="." method="_on_rules_pressed"]
