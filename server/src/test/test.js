@@ -1,4 +1,4 @@
-import { Jeu6Takes } from "./6takesgame.js";
+import { Jeu6Takes } from "../algo/6takesgame.js";
 
 const joueurs = ["Alice", "Bob", "Charlie"];
 const jeu = new Jeu6Takes(joueurs.length, joueurs);
