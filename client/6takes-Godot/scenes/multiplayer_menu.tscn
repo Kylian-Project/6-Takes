@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=38 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="14_gfuy5"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="14_w4cnf"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="15_cnsdq"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="15_oy2mf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_djfxv"]
 
@@ -185,11 +186,6 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdh8"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -856,18 +852,19 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = ExtResource("14_w4cnf")
 theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
 text = "Public"
 
 [node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
-theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+theme_override_styles/hover = ExtResource("14_w4cnf")
+theme_override_styles/normal = ExtResource("15_oy2mf")
 text = "Create Lobby"
 
 [node name="Close" type="Button" parent="CreateLobbyOverlay"]
