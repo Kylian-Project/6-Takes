@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://fwrwwy8t1e2u"]
+[gd_scene load_steps=10 format=3 uid="uid://fwrwwy8t1e2u"]
 
 [ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
@@ -11,6 +11,48 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p88d8"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snw1d"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ilxc5"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_6wto1"]
+default_font = ExtResource("4_lv30f")
+Button/styles/hover = SubResource("StyleBoxFlat_p88d8")
+Button/styles/normal = SubResource("StyleBoxFlat_snw1d")
+Button/styles/pressed = SubResource("StyleBoxFlat_ilxc5")
 
 [node name="EditProfile" type="Control"]
 layout_mode = 3
@@ -83,6 +125,7 @@ text = "LogOut"
 [node name="IconSelection" type="GridContainer" parent="EditProfilePanel/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme = SubResource("Theme_6wto1")
 columns = 5
 
 [node name="SaveIconButton" type="Button" parent="EditProfilePanel/MainVertical"]
