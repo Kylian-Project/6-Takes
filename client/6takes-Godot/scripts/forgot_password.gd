@@ -1,12 +1,19 @@
 extends Control
 
+@onready var new_password = $VBoxContainer/password
+@onready var password_confirm = $VBoxContainer/confirmPassword
+@onready var confirm_button = $confirm
 
+#pop Up panel 
+@onready var popup_overlay = $popUp_error
+@onready var popup_clear = $popUp_error/Button
+@onready var popup_message = $popUp_error/message
+
+var overlay_opened = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.visible = false
-	
-	
-var overlay_opened = false
+
 func _proces():
 	get_tree().paused = overlay_opened
 	
@@ -42,6 +49,7 @@ func _on_cancel_button_pressed() -> void:
 
 
 func _on_send_code_pressed() -> void:
+	
 	var sendCode_scene = load("res://scenes/sendCode.tscn")
 	if sendCode_scene == null:
 		print("couldn't load scene")
@@ -71,8 +79,6 @@ func _on_enter_pressed() -> void:
 	
 	queue_free()
 
-	
-
 
 func _on_resend_code_pressed() -> void:
 	var forgotPass_scene = load("res://scenes/ForgotPassword.tscn")
@@ -90,4 +96,9 @@ func _on_resend_code_pressed() -> void:
 
 
 func _on_confirm_pressed() -> void:
-	_on_cancel_pressed()
+	if new_password == password_confirm :
+		_on_cancel_pressed()
+	else:
+		popup_message.text = "Passwords don't match"
+		popup_overlay.visible = true
+		return  
