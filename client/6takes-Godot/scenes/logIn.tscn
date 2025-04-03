@@ -78,6 +78,7 @@ color = Color(0, 0, 0, 0.501961)
 
 [node name="ShadowBox" type="Label" parent="."]
 z_index = -1
+layout_mode = 0
 offset_left = -3.0
 offset_top = 1.0
 offset_right = 1283.0
