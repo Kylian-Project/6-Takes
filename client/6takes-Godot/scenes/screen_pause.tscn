@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://dbs4uy1a3a52t"]
 
-[ext_resource type="Script" path="res://scenes/screen_pause.gd" id="1_lsxjp"]
+[ext_resource type="Script" path="res://scripts/screen_pause.gd" id="1_lsxjp"]
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
 [ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_amim0"]

@@ -13,7 +13,9 @@
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_pajrb"]
 [ext_resource type="Script" path="res://scripts/create_lobby.gd" id="11_md0s3"]
 [ext_resource type="Script" path="res://scripts/line_edit_check.gd" id="12_3t6wc"]
+[ext_resource type="StyleBox" uid="uid://cclwcahso1h12" path="res://assets/styleBox/settings_menu_dropdown_nroma.tres" id="13_n1yxg"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="14_gfuy5"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="14_w4cnf"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="15_cnsdq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_djfxv"]
@@ -180,31 +182,6 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_07n4x"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c60qq"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_offset = Vector2(0, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdh8"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -458,14 +435,14 @@ offset_right = -49.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_override_constants/separation = 5
+theme_override_constants/separation = 8
 
 [node name="Display" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
@@ -495,6 +472,7 @@ text = "VSync"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_constants/separation = 8
 
 [node name="DisplayOption" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings"]
 layout_mode = 2
@@ -627,7 +605,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="CreateLobbyOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -663,7 +640,7 @@ size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
 
 [node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer"]
-self_modulate = Color(1, 1, 1, 0.227451)
+self_modulate = Color(1, 1, 1, 0.0901961)
 layout_mode = 2
 texture = ExtResource("1_pfnuq")
 expand_mode = 1
@@ -672,7 +649,7 @@ stretch_mode = 1
 [node name="MainVertical" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer"]
 clip_contents = true
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 30
 
 [node name="CreateLobbyLabel" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
@@ -690,6 +667,7 @@ alignment = 1
 
 [node name="Options" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="LobbyName" type="Label" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
@@ -761,7 +739,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/pressed = ExtResource("13_n1yxg")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 8
 item_count = 9
 popup/item_0/text = "2"
@@ -787,7 +766,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 9
 item_count = 10
 popup/item_0/text = "1"
@@ -815,7 +794,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 1
 item_count = 3
 popup/item_0/text = "30"
@@ -829,7 +808,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 0
 item_count = 2
 popup/item_0/text = "No"
@@ -841,7 +820,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 0
 item_count = 5
 popup/item_0/text = "1"
@@ -860,7 +839,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_07n4x")
+theme_override_styles/normal = ExtResource("13_n1yxg")
 selected = 0
 item_count = 2
 popup/item_0/text = "60"
@@ -877,7 +856,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_c60qq")
+theme_override_styles/hover = ExtResource("14_w4cnf")
 theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
 text = "Public"
 
