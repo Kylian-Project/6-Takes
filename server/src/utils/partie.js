@@ -1,5 +1,5 @@
-//import {Server , socket } from "socket.io";
-//import { Jeu6Takes ,Joueur } from "../algo/6takesgame.js";
+import {Server , socket } from "socket.io";
+import { Jeu6Takes ,Joueur } from "../algo/6takesgame.js";
 import { rooms } from "./lobbies.js";
 
 const NB_CARTES = 10;
@@ -74,4 +74,42 @@ export const PlayGame = (socket, io) =>
 
 		console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
   });
+
+
+
+
+  	//////////////////////////////////////////////////
+	// squellette a avoir en cours d'implementation //
+  	//////////////////////////////////////////////////
+
+
+	// 2. Jouer une carte
+	socket.on("play-card", ({ roomId, card, username }) => {
+	  // TODO
+	});
+  
+	// 3. Choix d'une rangée si la carte est trop faible
+	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => {
+	});
+  
+	// 4. Restaurer le jeu si besoin
+	socket.on("restore-game", ({ roomId, username }) => {
+	});
+  
+	// 5. Nouvelle manche
+	socket.on("new-round", (roomId) => {
+	});
+  
+	// 6. Nouvelle partie
+	socket.on("new-game", (roomId) => {
+	});
+  
+	// 7. Quitter la room volontairement
+	socket.on("leave-room", (roomId) => {
+	});
+  
+	// 8. Déconnexion (abandon ou fermeture de navigateur)
+	socket.on("disconnect", () => {
+	});
+
 };
