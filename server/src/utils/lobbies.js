@@ -1,5 +1,7 @@
 import { Server } from "socket.io";
 import randomstring from "randomstring";
+import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
+
 
 const ID_LENGTH = 5;
 const NB_PLAYERS_MAX_IN_ROOM = 10;
@@ -53,22 +55,34 @@ export const roomHandler = (socket, io) =>
     };
 
     //fonctions principales
-    const createRoom = ({ username, isPrivate=false }) => 
+
+
+    const createRoom = async ({ username, isPrivate = false }) => 
     {
+        //async pour attendre la promesse
         const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
-        const newRoom = new Room(roomId, username, socket.id, isPrivate); //on crée une instance de Room
-        newRoom.addUser(username, socket.id);       //on ajoute un user(host) dessus
+        const newRoom = new Room(roomId, username, socket.id, isPrivate);      //on crée une instance de Room
+        newRoom.addUser(username, socket.id);   //on ajoute un user(host) dessus
         rooms.push(newRoom);    //on push la nouvelle room (Room) dans le tableau des rooms globales
+      
+        try
+        {
+            //une fois le syteme d'auth terminé je peux remplacer par "id_creator: socket.playerId"
+            await Lobby.create(
+            {
+                id_creator: 1,      //temporraire
+                name: roomId,
+                state: isPrivate ? "PRIVATE" : "PUBLIC",
+            });
+          console.log("✅ Room enregistrée en BDD :", roomId);    //test
+        } 
+        catch (err) {
+            console.error("❌ Erreur BDD :", err.message);
+        }
+      
         socket.join(roomId);
         io.emit("available-rooms", getAvailableRooms());
-        if(isPrivate)
-        {
-            socket.emit("private-room-created", roomId);
-        }
-        else
-        {
-            socket.emit("public-room-created", roomId);
-        }
+        socket.emit(isPrivate ? "private-room-created" : "public-room-created", roomId);
     };
 
     const removeRoom = (roomId) => 
@@ -155,7 +169,16 @@ export const roomHandler = (socket, io) =>
 
 
     //sockets listenners
-    socket.on("create-room", createRoom);
+    //socket.on("create-room", createRoom);
+    socket.on("create-room", (data) => {
+        if (data && typeof data === 'object') {
+          createRoom(data);
+        } else {
+          console.warn("[create-room] Format invalide reçu :", data);
+          socket.emit("room-creation-failed", "Invalid data format.");
+        }
+      });
+      
     socket.on("leave-room", leaveRoom);
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
     socket.on("users-in-private-room", (roomId) => {

@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const db = require("../config/db");
+import { DataTypes } from "sequelize";
+import db from "../config/db.js";
 
 const Lobby = db.define("lobby", {
   id: {
@@ -24,4 +24,4 @@ const Lobby = db.define("lobby", {
   tableName: "lobbies"
 });
 
-module.exports = Lobby;
+export default Lobby;
