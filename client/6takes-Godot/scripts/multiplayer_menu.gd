@@ -9,8 +9,10 @@ extends Control
 
 @onready var create_lobby_button = $MainButtonsBox/Create_Lobby
 @onready var join_lobby_button = $MainButtonsBox/Join_Lobby
+@onready var profile_button = $Profile
 @onready var settings_button = $Settings
 @onready var rules_button = $Rules
+@onready var overlay_layer = $OverlayLayer
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -32,10 +34,14 @@ func _ready():
 	join_lobby_button.pressed.connect(_on_join_lobby_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	rules_button.pressed.connect(_on_rules_pressed)
+	profile_button.pressed.connect(_on_profile_pressed)
 
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+
+func _process(_delta):
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
 
 func _on_return_pressed():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")  # Change scene
@@ -66,3 +72,10 @@ func _on_close_overlay_pressed():
 	create_lobby_overlay.visible = false
 	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
+	
+func _on_profile_pressed():
+	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
+	var edit_profile_instance = edit_profile_scene.instantiate()
+	
+	overlay_layer.add_child(edit_profile_instance)
+	overlay_layer.visible = true
