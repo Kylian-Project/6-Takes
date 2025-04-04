@@ -18,7 +18,9 @@ var selected_icon = "dark_grey.png"  # Default icon
 func _ready():
 	populate_icon_selection()
 	save_button.connect("pressed", _on_save_icon)
-	close_button.connect("pressed", _on_close_pressed)
+	close_button.pressed.connect(func():
+		self.queue_free()
+	)
 	logout_button.connect("pressed", _on_logout_pressed)
 
 func populate_icon_selection():

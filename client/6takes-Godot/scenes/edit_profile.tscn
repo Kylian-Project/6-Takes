@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://fwrwwy8t1e2u"]
+[gd_scene load_steps=19 format=3 uid="uid://fwrwwy8t1e2u"]
 
 [ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
@@ -11,6 +11,14 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xtysa"]
+bg_color = Color(0, 0.305882, 0.596078, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0, 0.305882, 0.596078, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hxclo"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -167,7 +175,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.180392, 0.180392, 0.180392, 0.262745)
+color = Color(0.180392, 0.180392, 0.180392, 0.560784)
 
 [node name="EditProfilePanel" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -210,7 +218,10 @@ custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_xtysa")
 text = "UserNameFromDB"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="LogOutButton" type="Button" parent="EditProfilePanel/MainVertical/HRow"]
 layout_mode = 2
