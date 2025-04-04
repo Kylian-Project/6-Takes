@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=16 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
@@ -7,6 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" uid="uid://bjl2bpjgyf6ay" path="res://scenes/LeftPlayer.tscn" id="8_dw1mf"]
+[ext_resource type="PackedScene" uid="uid://cj2hahq7pm165" path="res://scenes/RightPlayer.tscn" id="9_yri1u"]
+[ext_resource type="Texture2D" uid="uid://bafmy430fpok4" path="res://assets/images/CardBack.resized.png" id="10_i38ta"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -103,9 +106,9 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 430.0
-offset_top = 122.0
-offset_right = 1537.0
+offset_left = 428.0
+offset_top = 143.0
+offset_right = 1551.0
 offset_bottom = 835.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -223,5 +226,44 @@ offset_right = 1564.0
 offset_bottom = 952.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="LeftPlayersContainer" type="VBoxContainer" parent="."]
+offset_left = -2.0
+offset_top = 290.0
+offset_right = 196.0
+offset_bottom = 654.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Control" parent="LeftPlayersContainer" instance=ExtResource("8_dw1mf")]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+
+[node name="RightPanelContainer" type="VBoxContainer" parent="."]
+offset_left = 1700.0
+offset_top = 288.0
+offset_right = 1910.0
+offset_bottom = 648.0
+
+[node name="Control" parent="RightPanelContainer" instance=ExtResource("9_yri1u")]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 1580.0
+offset_top = 500.0
+offset_right = 1722.0
+offset_bottom = 632.0
+texture = ExtResource("10_i38ta")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+offset_left = 196.0
+offset_top = 506.0
+offset_right = 338.0
+offset_bottom = 638.0
+texture = ExtResource("10_i38ta")
+expand_mode = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

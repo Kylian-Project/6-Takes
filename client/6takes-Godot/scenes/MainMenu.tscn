@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=36 format=3 uid="uid://btyeei16grxj"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -11,6 +11,9 @@
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
+[ext_resource type="Texture2D" uid="uid://cs6sternte2t8" path="res://assets/images/accessibilite_.png" id="12_b77q5"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="13_7july"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="14_6rc0j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
 bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
@@ -650,6 +653,36 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_6kpx0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_trsrx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uyiyq")
 icon = ExtResource("6_s440s")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 1780.0
+offset_top = 20.0
+offset_right = 1902.0
+offset_bottom = 122.0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 1795.0
+offset_top = 29.0
+offset_right = 1887.0
+offset_bottom = 113.0
+texture = ExtResource("12_b77q5")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1792.0
+offset_top = 31.0
+offset_right = 1890.0
+offset_bottom = 115.0
+theme_override_styles/hover = ExtResource("13_7july")
+theme_override_styles/normal = ExtResource("14_6rc0j")
+icon = ExtResource("12_b77q5")
 icon_alignment = 1
 expand_icon = true
 

@@ -1,0 +1,52 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj2hahq7pm165"]
+
+[ext_resource type="Texture2D" uid="uid://37odsmen4csr" path="res://assets/images/icons/blue.png" id="1_3gt4k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ebbv"]
+bg_color = Color(0.74978, 0.74978, 0.74978, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uhyiq"]
+bg_color = Color(0.6, 1, 0.6, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 203.0
+offset_bottom = 173.0
+
+[node name="icon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 30.0
+offset_top = -2.0
+offset_right = 190.0
+offset_bottom = 141.0
+texture = ExtResource("1_3gt4k")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 130.0
+offset_right = 200.0
+offset_bottom = 164.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_7ebbv")
+text = "You"
+horizontal_alignment = 1
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 92.0
+offset_right = 48.0
+offset_bottom = 132.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_uhyiq")
