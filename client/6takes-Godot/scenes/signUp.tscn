@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cqxyv033jupcq"]
+[gd_scene load_steps=14 format=3 uid="uid://cqxyv033jupcq"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" uid="uid://cbkuxplawvtce" path="res://assets/styleBox/signUp_input.tres" id="4_mfcmv"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="5_pos6h"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_ysitm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nhx8b"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -241,6 +242,14 @@ text = "Log In "
 flat = true
 
 [node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
+
+[node name="popUp_error" parent="." instance=ExtResource("9_ysitm")]
+visible = false
+z_index = 1
+offset_left = 290.0
+offset_top = 344.0
+offset_right = 990.0
+offset_bottom = 564.0
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/LogIn" to="." method="_on_log_in_pressed"]

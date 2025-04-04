@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dgmgtvwq04hk7"]
+[gd_scene load_steps=14 format=3 uid="uid://dgmgtvwq04hk7"]
 
 [ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="7_ruq61"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="8_emcms"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="8_xgmbc"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_17sna"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aphmc"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -210,7 +211,6 @@ text = "Forgot your Password ?"
 flat = true
 
 [node name="LoginButton" type="Button" parent="."]
-z_index = 1
 layout_mode = 2
 offset_left = 526.0
 offset_top = 609.0
@@ -249,6 +249,12 @@ text = "Sign up !"
 flat = true
 
 [node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
+
+[node name="popUp_error" parent="." instance=ExtResource("9_17sna")]
+offset_left = 294.0
+offset_top = 356.0
+offset_right = 994.0
+offset_bottom = 576.0
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]

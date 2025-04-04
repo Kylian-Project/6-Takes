@@ -15,6 +15,17 @@ const WS_SERVER_URL = "ws://185.155.93.105:14001"
 const API_URL = "http://185.155.93.105:14001/api/player/inscription"
 
 
+#new password
+@onready var new_password = $VBoxContainer/password
+@onready var password_confirm = $VBoxContainer/confirmPassword
+@onready var confirm_button = $signup
+
+#pop Up panel 
+@onready var popup_overlay = $popUp_error
+@onready var popup_clear = $popUp_error/Button
+@onready var popup_message = $popUp_error/message
+
+
 func _ready():
 	self.visible = false
 	signup_button.pressed.connect(_on_signup_pressed)
@@ -36,12 +47,13 @@ func _on_signup_pressed():
 	var password = password_input.text.strip_edges()
 	var password_confirm = confirmPassword_input.text.strip_edges()
 #
-	if username.is_empty() or password.is_empty() or email.is_empty():# or password_confirm.is_empty():
-		print("Fill in all fields")
+	if username.is_empty() or password.is_empty() or email.is_empty() or password_confirm.is_empty():
+		popup_overlay.visible = true
 		return
 #	
-	if password != password_confirm:
-		print("passwords don't match")
+	if password != password_confirm :
+		popup_message.text = "Passwords don't match"
+		popup_overlay.visible = true
 		return 
 	
 	var hashed_password = hash_password(password)

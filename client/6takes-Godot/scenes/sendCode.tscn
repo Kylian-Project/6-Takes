@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://3taf6nj7o55v"]
+[gd_scene load_steps=15 format=3 uid="uid://3taf6nj7o55v"]
 
 [ext_resource type="Script" path="res://scripts/forgot_password.gd" id="1_to88p"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_0flr6"]
@@ -10,6 +10,7 @@
 [ext_resource type="StyleBox" uid="uid://wem08rsh1cos" path="res://assets/styleBox/signUp_input_focus.tres" id="6_r6e7w"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="8_dtbr3"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="9_mv6e1"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="11_0dcu2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0omyn"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -37,8 +38,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 320.0
 offset_top = 170.0
-offset_right = 320.0
-offset_bottom = 170.0
+offset_right = -320.0
+offset_bottom = -108.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_to88p")
@@ -56,14 +57,12 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_0omyn")
 z_index = -1
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.168
-anchor_top = -0.157
-anchor_right = 0.833
-anchor_bottom = 0.845
-offset_left = 0.560028
-offset_top = -0.439987
-offset_right = 0.640015
-offset_bottom = 23.4
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -343.0
+offset_top = -181.0
+offset_right = 343.0
+offset_bottom = 131.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
@@ -214,6 +213,23 @@ theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 25
 text = "Receive no code?"
 flat = true
+
+[node name="timer_label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 449.0
+offset_top = 406.0
+offset_right = 832.0
+offset_bottom = 448.0
+theme_override_font_sizes/font_size = 34
+text = "00:59"
+horizontal_alignment = 1
+
+[node name="Control2" parent="." instance=ExtResource("11_0dcu2")]
+visible = false
+offset_left = 296.0
+offset_top = 447.0
+offset_right = 996.0
+offset_bottom = 667.0
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="Cancel" to="." method="_on_cancel_pressed"]

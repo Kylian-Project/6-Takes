@@ -55,10 +55,10 @@ anchor_left = -0.248
 anchor_top = -0.21
 anchor_right = 1.256
 anchor_bottom = 1.14
-offset_left = -476.4
-offset_top = -391.8
-offset_right = 417.8
-offset_bottom = 423.2
+offset_left = -828.4
+offset_top = -837.8
+offset_right = 1021.8
+offset_bottom = 547.2
 color = Color(0, 0, 0, 0.0392157)
 
 [node name="Panel2" type="Panel" parent="."]
@@ -97,7 +97,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 32
-text = "Please Fill all the fields"
+text = "Please Fill in all the fields"
 horizontal_alignment = 1
 vertical_alignment = 1
 
