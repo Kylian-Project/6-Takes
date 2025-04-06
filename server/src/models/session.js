@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const db = require("../config/db");
+import { DataTypes } from "sequelize";
+import db from "../config/db.js";
 
 const Session = db.define("session", {
   id_player: {
@@ -23,4 +23,4 @@ const Session = db.define("session", {
   tableName: "sessions"
 });
 
-module.exports = Session;
+export default Session;

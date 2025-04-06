@@ -1,67 +1,95 @@
 // server.js
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const cors = require("cors");
-const { Server } = require("socket.io");
+import dotenv from "dotenv";
+dotenv.config();
 
-const db = require("./config/db"); // Sequelize DB
-const playerRoutes = require("./routes/player_route");
-const verifySocketToken = require("./middleware/authWS");
+import express from "express";
+import cors from "cors";
+import http from "http";
+import jwt from "jsonwebtoken";
+import { WebSocketServer } from "ws";
 
+import db from "./config/db.js";
+import playerRoutes from "./routes/player_route.js";
+import Session from "./models/session.js";
+import Player from "./models/player.js";
+
+// ------------------------
+// ?? EXPRESS API REST
+// ------------------------
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API REST
 app.use("/api/player", playerRoutes);
 
-// Server HTTP
+// Serveur HTTP (Express + WebSocket)
 const server = http.createServer(app);
 
-// WebSocket Server
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+// ------------------------
+// WebSocket tbc...
+// ------------------------
 
-io.on("connection", async (socket) => {
-  console.log("Nouvelle connexion WebSocket :", socket.id);
-  console.log("Paramètres d'authentification :", socket.handshake.query);
+const wss = new WebSocketServer({ server });
+
+wss.on("connection", async (ws, request) => {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const token = url.searchParams.get("token");
+
+  if (!token) {
+    ws.send(JSON.stringify({ error: "Token manquant" }));
+    return ws.close();
+  }
 
   try {
-    const playerId = await verifySocketToken(socket); // Vérifie le token dans l'URL
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    socket.playerId = playerId;
-    console.log(`Authentification réussie pour le joueur ID ${playerId} via WebSocket`);
-
-    // Écoute des événements
-    socket.on("signin", () => {
-      console.log("Joueur connecté :", socket.playerId);
+    const session = await Session.findOne({
+      where: {
+        id_player: decoded.id,
+        token
+      }
     });
 
-    socket.on("signup", () => {
-      console.log("Inscription joueur :", socket.playerId);
+    if (!session || new Date() > session.expire_at) {
+      ws.send(JSON.stringify({ error: "Session expirée ou invalide" }));
+      return ws.close();
+    }
+
+    ws.playerId = decoded.id;
+
+    const player = await Player.findByPk(ws.playerId);
+    const username = player?.username || "Inconnu";
+
+    console.log(`?? [WS] Connecté : ${username} (ID ${ws.playerId})`);
+    ws.send(JSON.stringify({ message: "Connexion WebSocket réussie", playerId: ws.playerId }));
+
+    ws.on("message", (msg) => {
+      console.log("?? WS - Message reçu :", msg.toString());
     });
 
-    socket.on("disconnect", () => {
-      console.log("Joueur déconnecté :", socket.playerId);
+    ws.on("close", async () => {
+      const player = await Player.findByPk(ws.playerId);
+      const username = player?.username || "Inconnu";
+      console.log(`? [WS] Déconnecté : ${username} (ID ${ws.playerId})`);
     });
 
   } catch (err) {
-    console.log("Connexion refusée :", err.message);
-    socket.emit("error", { message: "Token invalide ou expiré" });
-    socket.disconnect();
+    ws.send(JSON.stringify({ error: "Token invalide" }));
+    ws.close();
   }
 });
 
-// Lancer l'app
-const PORT = process.env.PORT || 14001;
+// ------------------------
+// ?? LANCEMENT
+// ------------------------
+const PORT = process.env.PORT;
+
 db.sync().then(() => {
   server.listen(PORT, () => {
-    console.log(`🚀 Serveur lancé sur le port : ${PORT}`);
-    console.log(`🌐 WebSocket accessible sur ws://<host>:${PORT}/?token=<jwt>`);
+    console.log(`? Serveur HTTP & WebSocket en ligne sur le port ${PORT}`);
+    console.log(`?? API: http://localhost:${PORT}/api/player`);
+    console.log(`?? WS : ws://localhost:${PORT}/?token=<JWT>`);
   });
+}).catch((err) => {
+  console.error("? Erreur de connexion à la base de données :", err);
 });

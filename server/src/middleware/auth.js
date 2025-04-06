@@ -1,11 +1,13 @@
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const Session = require("../models/session");
+import jwt from "jsonwebtoken";
+import Session from "../models/session.js";
 
+/**
+ * Vérifie le token pour les requêtes HTTP protégées (Express)
+ */
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
 
-  if (!authHeader || !authHeader.startsWith(`${process.env.AUTHEADER} `)) {     // verif que le authHeaderHTTP commence par ..
+  if (!authHeader || !authHeader.startsWith(`${process.env.AUTH_HEADER_PREFIX} `)) {
     return res.status(401).json({ message: "Token manquant ou mal formé" });
   }
 
@@ -14,28 +16,48 @@ const verifyToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Vérifier que le token existe bien dans la table `sessions`
     const session = await Session.findOne({
       where: {
         id_player: decoded.id,
-        token: token
+        token
       }
     });
 
-    if (!session) {
-      return res.status(403).json({ message: "Session non trouvée ou invalide" });
-    }
-
-    const now = new Date();
-    if (now > session.expire_at) {
-      return res.status(403).json({ message: "Session expirée" });
+    if (!session || new Date() > session.expire_at) {
+      return res.status(403).json({ message: "Session expirée ou invalide" });
     }
 
     req.userId = decoded.id;
-    next(); // Tout est OK, on continue
+    next();
   } catch (err) {
-    return res.status(403).json({ message: "Token invalide ou expiré", error: err });
+    return res.status(403).json({ message: "Token invalide ou expiré" });
   }
 };
 
-module.exports = verifyToken;
+/**
+ * Vérifie le token pour les connexions WebSocket (Socket.IO)
+ */
+const verifySocketToken = async (socket) => {
+  const token = socket.handshake.query.token;
+
+  if (!token) {
+    throw new Error("Token manquant");
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  const session = await Session.findOne({
+    where: {
+      id_player: decoded.id,
+      token
+    }
+  });
+
+  if (!session || new Date() > session.expire_at) {
+    throw new Error("Session expirée ou invalide");
+  }
+
+  return decoded.id;
+};
+
+export { verifyToken, verifySocketToken };

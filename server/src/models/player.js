@@ -1,8 +1,8 @@
 // models/player.js
-const { DataTypes } = require("sequelize");
-const db = require("../config/db");
+import { DataTypes } from "sequelize";
+import db from "../config/db.js";
 
-const Player = db.define("Player", {
+const Player = db.define("player", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -49,4 +49,4 @@ const Player = db.define("Player", {
   updatedAt: false
 });
 
-module.exports = Player;
+export default Player;
