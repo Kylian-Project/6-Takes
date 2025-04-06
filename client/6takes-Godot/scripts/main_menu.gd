@@ -28,15 +28,13 @@ func _ready() -> void:
 
 
 func _on_multi_player_button_pressed() -> void:
-	var check = get_node("/root/Global").check_login_status()
-	print("\n AFTER CHECKING / ", check)
+	get_node("/root/Global").check_login_status()
+	#print("\n AFTER CHECKING / ", check)
 	var logged_in = get_node("/root/Global").getLogged_in()
-	print("\n what is the newlogged in variable ", logged_in)
-	if  check == true or logged_in == true:
+	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
 	else:
-		
 		if login_instance == null:
 			login_instance = login_scene.instantiate()
 			add_child(login_instance)

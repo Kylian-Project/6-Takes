@@ -74,6 +74,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 		player_data = response["player"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
 		
+		get_node("/root/Global").save_session(jwt_token, date_parts)
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
