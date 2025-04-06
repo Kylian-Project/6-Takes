@@ -28,15 +28,24 @@ func _ready() -> void:
 
 
 func _on_multi_player_button_pressed() -> void:
-	if login_instance == null:
-		login_instance = login_scene.instantiate()
-		add_child(login_instance)
-
-		# Centrer l'écran de pause
-		await get_tree().process_frame  
+	var check = get_node("/root/Global").check_login_status()
+	print("\n AFTER CHECKING / ", check)
+	var logged_in = get_node("/root/Global").getLogged_in()
+	print("\n what is the newlogged in variable ", logged_in)
+	if  check == true or logged_in == true:
+		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
-	login_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
-	login_instance.visible = true  # Afficher la pause
+	else:
+		
+		if login_instance == null:
+			login_instance = login_scene.instantiate()
+			add_child(login_instance)
+
+			# Centrer l'écran de pause
+			await get_tree().process_frame  
+			
+		login_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
+		login_instance.visible = true  # Afficher la pause
 	
 
 func go_to_singleplayer():

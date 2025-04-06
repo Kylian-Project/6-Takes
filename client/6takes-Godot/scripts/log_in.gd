@@ -6,6 +6,7 @@ extends Control
 @onready var http_request = $HTTPRequest_auth
 
 var jwt_token = null
+var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
@@ -21,7 +22,6 @@ const API_URL = "http://185.155.93.105:14001/api/player/connexion"
 
 func _ready():
 	self.visible = true
-	#login_button.pressed.connect(_on_login_button_pressed)
 	http_request.request_completed.connect(_on_http_request_completed)
 
 func _on_login_button_pressed():
@@ -29,13 +29,10 @@ func _on_login_button_pressed():
 	var password = password_input.text.strip_edges()
 	var password_hashed = hash_password(password)
 	
-	print("HASHED PASSWORD : \n", password_hashed)
-
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
 		return
 	
-	print("	PASSWORD DEBUG ", password)
 	var payload = {
 		"username": username_email,
 		"password": password_hashed
@@ -44,38 +41,50 @@ func _on_login_button_pressed():
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
 
-	print("📡 Envoi de la requête HTTP de connexion à:", API_URL)
+	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
+
 func _on_http_request_completed(result, response_code, headers, body):
-	print("🔁 Réponse HTTP reçue : code =", response_code)
-	print("🔁 Contenu brut:", body.get_string_from_utf8())
+	print("Réponse HTTP reçue : code =", response_code)
+	print("Contenu brut:", body.get_string_from_utf8())
+	
+	#here we get the token created after loggin in and we update th eglobal xpiration dat eof the session
+	var raw_response = body.get_string_from_utf8()
+	var result_string = JSON.parse_string(raw_response)
+	var expire_at_string = result_string["expire_at"]
+	
+	#verify token
+	var date_string = expire_at_string.strip_edges() 
+	if date_string.ends_with("Z"):
+		date_string = date_string.substr(0, date_string.length() - 1)
+	var date_parts = date_string.split("T")
+
+	get_node("/root/Global").setToken_expiration(date_parts)
 
 	if response_code != 200:
-		print("❌ Erreur serveur ou identifiants invalides.")
+		print(" Erreur serveur ou identifiants invalides.")
 		return
 
 	var json = JSON.parse_string(body.get_string_from_utf8())
-	#if json.error != OK:
-		#print("❌ Erreur JSON :", json.error_string)
-		#return
 
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
+		player_data = response["player"]
 		print("✅ Connexion réussie ! Token :", jwt_token)
+		
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
-		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
+		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
 
 func _connect_to_websocket():
 	if jwt_token == null:
-		print("❌ Aucun token pour la connexion WebSocket")
+		print(" Aucun token pour la connexion WebSocket")
 		return
 
-	var ws_url = WS_SERVER_URL + "?token=" + jwt_token
-	print("🔌 Connexion WebSocket à :", ws_url)
+	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
 	var err = ws.connect_to_url(ws_url)
 	if err != OK:
 		print("❌ Erreur de connexion WebSocket :", err)
@@ -92,7 +101,7 @@ func _process(_delta):
 	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
 		if ws_connected:
 			ws_connected = false
-			print("🔌 WebSocket déconnecté.")
+			print(" WebSocket déconnecté.")
 	
 	ws.poll()
 
@@ -101,10 +110,10 @@ func _process(_delta):
 		_on_ws_data(data)
 
 func _on_ws_data(data):
-	print("📩 Données reçues :", data)
+	print(" Données reçues :", data)
 	var response = JSON.parse_string(data)
 	if response == null:
-		print("⚠️ Donnée non-JSON :", data)
+		print(" Donnée non-JSON :", data)
 		return
 
 
