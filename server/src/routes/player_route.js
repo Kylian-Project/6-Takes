@@ -9,14 +9,12 @@ import {verifyToken} from "../middleware/auth.js"
 router.post("/inscription", inscription);
 router.post("/connexion", login);
 router.post("/logout", verifyToken, logout);
-
-
 // other routes gonna be added, DO NOT FORGET! 
 
 router.get("/profile", verifyToken, (req, res) => {
   res.status(200).json({
-    message: "AccÃ¨s autorisÃ© au profil",
-    userId: req.userId // InjectÃ© par le token JWT
+    message: "Acces autorise au profil",
+    userId: req.userId // Injecte par le token JWT
   });
 });
 

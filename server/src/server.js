@@ -12,6 +12,8 @@ import db from "./config/db.js";
 import playerRoutes from "./routes/player_route.js";
 import Session from "./models/session.js";
 import Player from "./models/player.js";
+import lobbyRoutes from "./routes/lobby_route.js";
+
 
 // ------------------------
 // ?? EXPRESS API REST
@@ -21,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/player", playerRoutes);
+app.use("/api/lobbies", lobbyRoutes);
 
 // Serveur HTTP (Express + WebSocket)
 const server = http.createServer(app);
