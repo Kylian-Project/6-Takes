@@ -2,12 +2,14 @@
 
 import express from "express";
 const router = express.Router();
-import {inscription, login} from "../controllers/player.controller.js";
+import {inscription, login, logout} from "../controllers/player.controller.js";
 import {verifyToken} from "../middleware/auth.js"
 
 // Routes d'authentification
 router.post("/inscription", inscription);
 router.post("/connexion", login);
+router.post("/logout", verifyToken, logout);
+
 
 // other routes gonna be added, DO NOT FORGET! 
 

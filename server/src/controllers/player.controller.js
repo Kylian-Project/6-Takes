@@ -111,4 +111,30 @@ const login = async (req, res) => {
   }
 };
 
-export { inscription, login };
+// ? DECONNEXION Volontairement
+const logout = async (req, res) => {
+  const userId = req.userId;
+  const token = req.token; // On récupère le token utilisé pour la requête
+
+  try {
+    const deleted = await Session.destroy({
+      where: {
+        id_player: userId,
+        token
+      }
+    });
+
+    if (deleted === 0) {
+      return res.status(404).json({ message: "Session non trouvée" });
+    }
+
+    console.log(`[EXPRESS] Déconnexion : ID ${userId}`);
+    return res.status(200).json({ message: "Déconnexion réussie" });
+
+  } catch (err) {
+    return res.status(500).json({ message: "Erreur lors de la déconnexion", error: err });
+  }
+};
+
+
+export { inscription, login, logout };
