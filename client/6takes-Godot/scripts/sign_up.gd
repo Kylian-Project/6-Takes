@@ -70,41 +70,35 @@ func _on_signup_pressed():
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
+
 func _on_http_request_completed(result, response_code, headers, body):
 	print(" Réponse HTTP reçue : code =", response_code)
 	print(" Contenu brut:", body.get_string_from_utf8())
-	
-	
-	##added code for token 
-	#var date_string = expire_at_string.strip_edges() 
-	#if date_string.ends_with("Z"):
-		#date_string = date_string.substr(0, date_string.length() - 1)
-	#var date_parts = date_string.split("T")
-#
-	#get_node("/root/Global").setToken_expiration(date_parts)
-	
-	#
-	
+	var response
+
 	if response_code != 200:
 		print(" Erreur serveur ou identifiants invalides.")
 		return
-
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	if json.error != OK:
-		print(" Erreur JSON :", json.error_string)
-		return
-
-	var response = json
-	if "token" in response:
-		jwt_token = response["token"]
-		print(" Connexion réussie ! Token :", jwt_token)
-		
-		#get_node("/root/Global").save_session(jwt_token, date_parts)
-		_connect_to_websocket()
-		_move_to_multiplayer_pressed()
-		
 	else:
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		response = json
+		hide_overlay()
+		_on_log_in_pressed()
+		return
+	#if json.error != OK:
+		#print(" Erreur JSON :", json.error_string)
+		#return
+
+		
+	#if "token" in response:
+		#jwt_token = response["token"]
+		#print(" Connexion réussie ! Token :", jwt_token)
+		#
+		#_connect_to_websocket()
+		#_move_to_multiplayer_pressed()
+
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
+
 
 func _connect_to_websocket():
 	if jwt_token == null:
