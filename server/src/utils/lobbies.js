@@ -57,14 +57,14 @@ export const roomHandler = (socket, io) =>
     //fonctions principales
 
 
-    const createRoom = async ({ username, isPrivate = false }) => 
+    /*const createRoom = async ({ username, isPrivate }) => 
     {
         //async pour attendre la promesse
         const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
         const newRoom = new Room(roomId, username, socket.id, isPrivate);      //on crée une instance de Room
         newRoom.addUser(username, socket.id);   //on ajoute un user(host) dessus
         rooms.push(newRoom);    //on push la nouvelle room (Room) dans le tableau des rooms globales
-      
+        
         try
         {
             //une fois le syteme d'auth terminé je peux remplacer par "id_creator: socket.playerId"
@@ -83,7 +83,53 @@ export const roomHandler = (socket, io) =>
         socket.join(roomId);
         io.emit("available-rooms", getAvailableRooms());
         socket.emit(isPrivate ? "private-room-created" : "public-room-created", roomId);
-    };
+    };*/
+
+    const createRoom = async ({
+        username,
+        lobbyName,
+        playerLimit = 10,
+        numberOfCards = 10,
+        roundTimer = 45,
+        endByPoints = 66,
+        rounds = 1,
+        isPrivate
+      }) => {
+        const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
+      
+        // Création de la room avec les paramètres
+        const newRoom = new Room(roomId, username, socket.id, isPrivate);
+        newRoom.addUser(username, socket.id);
+        console.log("✅ Room créee : " , RoomId);
+        // Ajout des paramètres personnalisés
+        newRoom.settings = {
+          lobbyName,
+          playerLimit,
+          numberOfCards,
+          roundTimer,
+          endByPoints,
+          rounds
+        };
+      
+        rooms.push(newRoom);
+      
+        try {
+          await Lobby.create({
+            id_creator: 1, // Remplacer plus tard par socket.playerId
+            name: lobbyName || roomId, // si aucun nom fourni, fallback au roomId
+            state: isPrivate ? "PRIVATE" : "PUBLIC",
+          });
+      
+          console.log("✅ Room enregistrée en BDD :", lobbyName || roomId);
+        } catch (err) {
+          console.error("❌ Erreur BDD :", err.message);
+        }
+      
+        socket.join(roomId);
+        io.emit("available-rooms", getAvailableRooms());
+      
+        socket.emit(isPrivate ? "private-room-created" : "public-room-created", roomId);
+      };
 
     const removeRoom = (roomId) => 
     {
@@ -170,6 +216,7 @@ export const roomHandler = (socket, io) =>
 
     //sockets listenners
     //socket.on("create-room", createRoom);
+/*
     socket.on("create-room", (data) => {
         if (data && typeof data === 'object') {
           createRoom(data);
@@ -178,7 +225,13 @@ export const roomHandler = (socket, io) =>
           socket.emit("room-creation-failed", "Invalid data format.");
         }
       });
-      
+*/
+    socket.on("create-room", (data) => {
+        console.log("format recu :", data);
+        createRoom(data);
+      });
+    //socket.on("create-room", createRoom);
+    
     socket.on("leave-room", leaveRoom);
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
     socket.on("users-in-private-room", (roomId) => {
