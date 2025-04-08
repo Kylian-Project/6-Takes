@@ -25,7 +25,9 @@ func _on_end_points_selected(index: int):
 		max_points_dropdown.visible = false
 		rounds_label.visible = true
 		round_dropdown.visible = true
-
+	
+	end_points_dropdown.button_pressed = false 
+	
 # Toggles between Private (checked) and Public (unchecked)
 func _on_privacy_toggled(pressed: bool):
 	if pressed:

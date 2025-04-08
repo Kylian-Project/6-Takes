@@ -1,6 +1,5 @@
 extends Control
 
-
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
@@ -12,6 +11,13 @@ var ws_connected = false
 
 const WS_SERVER_URL = "ws://185.155.93.105:14001"
 const API_URL = "http://185.155.93.105:14001/api/player/connexion"
+
+
+#pop Up panel 
+@onready var popup_overlay = $popUp_error
+@onready var popup_clear = $popUp_error/Button
+@onready var popup_message = $popUp_error/message
+
 
 func _ready():
 	self.visible = true
@@ -26,7 +32,7 @@ func _on_login_button_pressed():
 	print("HASHED PASSWORD : \n", password_hashed)
 
 	if username_email.is_empty() or password.is_empty():
-		print("❌ Les champs ne peuvent pas être vides")
+		popup_overlay.visible = true
 		return
 	
 	print("	PASSWORD DEBUG ", password)
@@ -100,8 +106,6 @@ func _on_ws_data(data):
 	if response == null:
 		print("⚠️ Donnée non-JSON :", data)
 		return
-
-
 
 
 var overlay_opened = false

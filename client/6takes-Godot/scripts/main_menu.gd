@@ -4,8 +4,8 @@ extends Control
 @onready var login_scene = preload("res://scenes/logIn.tscn")
 
 @onready var settings_overlay = $SettingsOverlay
-@onready var settings_button = $Control/SettingsButton
-@onready var rules_overlay = $rules
+@onready var settings_button = $SettingsButton
+@onready var rules_overlay = $RulesOverlay
 @onready var singleplayer_button = $VButtons/SinglePlayerButton
 @onready var quit_button = $VButtons/QuitButton
 
@@ -55,8 +55,10 @@ func _on_settings_pressed():
 func _on_close_overlay_pressed():
 	settings_overlay.visible = false
 
-func _on_button_pressed() -> void:
-	rules_overlay.visible = true
 	
 func quit_game():
 	get_tree().quit()
+
+
+func _on_rules_pressed() -> void:
+	rules_overlay.visible = true
