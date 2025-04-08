@@ -8,6 +8,7 @@ extends Control
 @onready var rules_overlay = $RulesOverlay
 @onready var singleplayer_button = $VButtons/SinglePlayerButton
 @onready var quit_button = $VButtons/QuitButton
+@onready var multiplayer_button = $VButtons/MultiPlayerButton
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close
@@ -15,7 +16,7 @@ extends Control
 
 var login_instance = null
 var rules_instance = null 
-
+var logged_in 
 
 func _ready() -> void:
 	rules_overlay.visible = false
@@ -25,12 +26,19 @@ func _ready() -> void:
 	quit_button.pressed.connect(quit_game)
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+		
+	get_node("/root/Global").check_login_status()
+	logged_in = get_node("/root/Global").getLogged_in()
+	
+	if logged_in == false:
+		singleplayer_button.text ="Play As A Guest"
+		multiplayer_button.text = "Log In"
+	else :
+		singleplayer_button.text ="Single Player"
+		multiplayer_button.text = "Multi-Player"
 
 
 func _on_multi_player_button_pressed() -> void:
-	get_node("/root/Global").check_login_status()
-	#print("\n AFTER CHECKING / ", check)
-	var logged_in = get_node("/root/Global").getLogged_in()
 	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
