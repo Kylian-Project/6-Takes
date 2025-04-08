@@ -8,6 +8,8 @@ extends Control
 @onready var rules_overlay = $RulesOverlay
 @onready var singleplayer_button = $VButtons/SinglePlayerButton
 @onready var quit_button = $VButtons/QuitButton
+@onready var profile_button = $Profile
+@onready var overlay_layer = $OverlayLayer
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close
@@ -22,10 +24,13 @@ func _ready() -> void:
 	settings_overlay.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
 	settings_button.pressed.connect(_on_settings_pressed)
+	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
 
+func _process(_delta):
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
 
 func _on_multi_player_button_pressed() -> void:
 	if login_instance == null:
@@ -62,3 +67,10 @@ func quit_game():
 
 func _on_rules_pressed() -> void:
 	rules_overlay.visible = true
+	
+func _on_profile_pressed():
+	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
+	var edit_profile_instance = edit_profile_scene.instantiate()
+	
+	overlay_layer.add_child(edit_profile_instance)
+	overlay_layer.visible = true
