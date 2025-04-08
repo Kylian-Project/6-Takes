@@ -1,40 +1,27 @@
+<<<<<<< HEAD
 [gd_scene load_steps=27 format=3 uid="uid://by1kyndsdhh5x"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
 [ext_resource type="PackedScene" uid="uid://cf4pld53wviao" path="res://scenes/BotSlot.tscn" id="2_kjaad"]
+=======
+[gd_scene load_steps=28 format=3 uid="uid://cypa8pvu3mhfe"]
+
+[ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
+[ext_resource type="PackedScene" uid="uid://dopa4fttjck5f" path="res://scenes/BotSlot.tscn" id="2_kjaad"]
+>>>>>>> develop
 [ext_resource type="Texture2D" uid="uid://cifce8iom6mxg" path="res://assets/images/title_screen_singleplayer.png" id="3_h2et4"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_kadam"]
 [ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="5_w3hn7"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="6_cqekj"]
 [ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="6_x25hd"]
 [ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/images/bot.png" id="7_2ogde"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="7_plale"]
 [ext_resource type="Texture2D" uid="uid://ch031uua5nurl" path="res://assets/images/minus-sign.png" id="8_3ynqv"]
 [ext_resource type="Texture2D" uid="uid://e3nomb8wp8lc" path="res://assets/images/plus.png" id="9_eoxuu"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="11_ew5dc"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ihlhx"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_udt75"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[ext_resource type="Script" path="res://scripts/sp_settings.gd" id="13_esrap"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i7mao"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -193,7 +180,7 @@ anchor_bottom = 0.919
 offset_left = -640.0
 offset_top = -57.52
 offset_right = 640.0
-offset_bottom = 58.48
+offset_bottom = 42.48
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 200
@@ -201,34 +188,37 @@ theme_override_constants/separation = 200
 [node name="SPStartButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_kadam")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
-theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+theme_override_styles/hover = ExtResource("6_cqekj")
+theme_override_styles/normal = ExtResource("7_plale")
 text = "Start"
 
 [node name="SPSettingsButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_kadam")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
-theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+theme_override_styles/hover = ExtResource("6_cqekj")
+theme_override_styles/normal = ExtResource("7_plale")
 text = "Settings"
 
 [node name="SPReturnButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_kadam")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = SubResource("StyleBoxFlat_ihlhx")
-theme_override_styles/normal = SubResource("StyleBoxFlat_udt75")
+theme_override_styles/hover = ExtResource("6_cqekj")
+theme_override_styles/normal = ExtResource("7_plale")
 text = "Return
 "
 
@@ -242,7 +232,7 @@ anchor_bottom = 0.587
 offset_left = -808.0
 offset_top = -255.96
 offset_right = 808.0
-offset_bottom = 257.04
+offset_bottom = 249.04
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -293,6 +283,7 @@ columns = 3
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_kadam")
 theme_override_font_sizes/font_size = 30
@@ -899,6 +890,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("13_esrap")
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="SettingsOverlay"]
 layout_mode = 1
@@ -917,9 +909,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -318.5
-offset_top = -366.0
+offset_top = -217.5
 offset_right = 318.5
-offset_bottom = 366.0
+offset_bottom = 217.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -946,7 +938,7 @@ theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("11_ew5dc")
 theme_override_font_sizes/font_size = 60
-text = "Lobby Settings!"
+text = "Game Settings!"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="SettingsOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
@@ -1122,13 +1114,13 @@ popup/item_1/id = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.656
-anchor_top = 0.183
+anchor_top = 0.322
 anchor_right = 0.656
-anchor_bottom = 0.183
+anchor_bottom = 0.322
 offset_left = -19.52
-offset_top = -24.64
+offset_top = -24.76
 offset_right = 19.48
-offset_bottom = 24.36
+offset_bottom = 24.24
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)

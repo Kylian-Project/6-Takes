@@ -1,12 +1,24 @@
 extends Control
 
+#send code
+@onready var email = $email
+@onready var send_code_button = $sendCode
 
+#new password
+@onready var new_password = $VBoxContainer/password
+@onready var password_confirm = $VBoxContainer/confirmPassword
+@onready var confirm_button = $confirm
+
+#pop Up panel 
+@onready var popup_overlay = $popUp_error
+@onready var popup_clear = $popUp_error/Button
+@onready var popup_message = $popUp_error/message
+
+var overlay_opened = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.visible = false
-	
-	
-var overlay_opened = false
+
 func _proces():
 	get_tree().paused = overlay_opened
 	
@@ -42,19 +54,24 @@ func _on_cancel_button_pressed() -> void:
 
 
 func _on_send_code_pressed() -> void:
-	var sendCode_scene = load("res://scenes/sendCode.tscn")
-	if sendCode_scene == null:
-		print("couldn't load scene")
+	if email.text.is_empty():
+		popup_overlay.visible = true 
+		return 
+	else:
 		
-	var sendCode_instance = sendCode_scene.instantiate()
-	if sendCode_instance== null :
-		print("couldn't instanciate scene ")
-	
-	#queue_free()
-	get_tree().current_scene.add_child(sendCode_instance)
-	sendCode_instance.show_overlay()
-	
-	queue_free()
+		var sendCode_scene = load("res://scenes/sendCode.tscn")
+		if sendCode_scene == null:
+			print("couldn't load scene")
+			
+		var sendCode_instance = sendCode_scene.instantiate()
+		if sendCode_instance== null :
+			print("couldn't instanciate scene ")
+		
+		#queue_free()
+		get_tree().current_scene.add_child(sendCode_instance)
+		sendCode_instance.show_overlay()
+		
+		queue_free()
 
 
 func _on_enter_pressed() -> void:
@@ -70,8 +87,6 @@ func _on_enter_pressed() -> void:
 	newPass_instance.show_overlay()
 	
 	queue_free()
-
-	
 
 
 func _on_resend_code_pressed() -> void:
@@ -90,4 +105,9 @@ func _on_resend_code_pressed() -> void:
 
 
 func _on_confirm_pressed() -> void:
-	_on_cancel_pressed()
+	if new_password.text.strip_edges() == password_confirm.text.strip_edges() :
+		_on_cancel_pressed()
+	else:
+		popup_message.text = "Passwords don't match"
+		popup_overlay.visible = true
+		return  
