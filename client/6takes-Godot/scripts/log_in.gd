@@ -88,16 +88,16 @@ func _connect_to_websocket():
 	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
 	var err = ws.connect_to_url(ws_url)
 	if err != OK:
-		print("❌ Erreur de connexion WebSocket :", err)
+		print("!! Erreur de connexion WebSocket :", err)
 		return
 
-	print("✅ WebSocket initialisé, en attente de connexion...")
+	print("WebSocket initialisé, en attente de connexion...")
 	ws_connected = false
 
 func _process(_delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
 		ws_connected = true
-		print("✅ WebSocket connecté avec succès !")
+		print(" WebSocket connecté avec succès !")
 
 	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
 		if ws_connected:

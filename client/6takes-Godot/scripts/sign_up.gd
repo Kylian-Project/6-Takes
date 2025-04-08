@@ -73,7 +73,18 @@ func _on_signup_pressed():
 func _on_http_request_completed(result, response_code, headers, body):
 	print(" Réponse HTTP reçue : code =", response_code)
 	print(" Contenu brut:", body.get_string_from_utf8())
-
+	
+	
+	##added code for token 
+	#var date_string = expire_at_string.strip_edges() 
+	#if date_string.ends_with("Z"):
+		#date_string = date_string.substr(0, date_string.length() - 1)
+	#var date_parts = date_string.split("T")
+#
+	#get_node("/root/Global").setToken_expiration(date_parts)
+	
+	#
+	
 	if response_code != 200:
 		print(" Erreur serveur ou identifiants invalides.")
 		return
@@ -86,38 +97,39 @@ func _on_http_request_completed(result, response_code, headers, body):
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
-		print("✅ Connexion réussie ! Token :", jwt_token)
+		print(" Connexion réussie ! Token :", jwt_token)
+		
+		#get_node("/root/Global").save_session(jwt_token, date_parts)
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 		
 	else:
-		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
+		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
 
 func _connect_to_websocket():
 	if jwt_token == null:
-		print("❌ Aucun token pour la connexion WebSocket")
+		print(" Aucun token pour la connexion WebSocket")
 		return
 
-	var ws_url = WS_SERVER_URL + "?token=" + jwt_token
-	print("🔌 Connexion WebSocket à :", ws_url)
+	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
 	var err = ws.connect_to_url(ws_url)
 	if err != OK:
-		print("❌ Erreur de connexion WebSocket :", err)
+		print("!! Erreur de connexion WebSocket :", err)
 		return
 
-	print("✅ WebSocket initialisé, en attente de connexion...")
+	print(" WebSocket initialisé, en attente de connexion...")
 	ws_connected = false
 
 
 func _process(_delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
 		ws_connected = true
-		print("✅ WebSocket connecté avec succès !")
+		print(" WebSocket connecté avec succès !")
 
 	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
 		if ws_connected:
 			ws_connected = false
-			print("🔌 WebSocket déconnecté.")
+			print("WebSocket déconnecté.")
 	
 	ws.poll()
 
@@ -126,10 +138,10 @@ func _process(_delta):
 		_on_ws_data(data)
 
 func _on_ws_data(data):
-	print("📩 Données reçues :", data)
+	print(" Données reçues :", data)
 	var response = JSON.parse_string(data)
 	if response == null:
-		print("⚠️ Donnée non-JSON :", data)
+		print(" Donnée non-JSON :", data)
 		return
 
 
