@@ -52,15 +52,8 @@ func _on_http_request_completed(result, response_code, headers, body):
 	#here we get the token created after loggin in and we update th eglobal xpiration dat eof the session
 	var raw_response = body.get_string_from_utf8()
 	var result_string = JSON.parse_string(raw_response)
-	var expire_at_string = result_string["expire_at"]
-	
-	#verify token
-	var date_string = expire_at_string.strip_edges() 
-	if date_string.ends_with("Z"):
-		date_string = date_string.substr(0, date_string.length() - 1)
-	var date_parts = date_string.split("T")
+	#var response_token = result_string["token"]
 
-	get_node("/root/Global").setToken_expiration(date_parts)
 
 	if response_code != 200:
 		print(" Erreur serveur ou identifiants invalides.")
@@ -72,13 +65,15 @@ func _on_http_request_completed(result, response_code, headers, body):
 	if "token" in response:
 		jwt_token = response["token"]
 		player_data = response["player"]
-		print("✅ Connexion réussie ! Token :", jwt_token)
+		print(" Connexion réussie ! Token :", jwt_token)
 		
-		get_node("/root/Global").save_session(jwt_token, date_parts)
+		get_node("/root/Global").save_session(jwt_token)
+		
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
+
 
 func _connect_to_websocket():
 	if jwt_token == null:

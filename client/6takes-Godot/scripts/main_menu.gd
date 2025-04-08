@@ -14,6 +14,9 @@ extends Control
 	$SettingsOverlay/Close
 ]
 
+#validate token 
+const API_URL = "http://185.155.93.105:14001/api/player/connexion"
+
 var login_instance = null
 var rules_instance = null 
 var logged_in 
@@ -27,7 +30,8 @@ func _ready() -> void:
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
 		
-	get_node("/root/Global").check_login_status()
+	#get_node("/root/Global").check_login_status()
+	get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
 	
 	if logged_in == false:
@@ -39,6 +43,9 @@ func _ready() -> void:
 
 
 func _on_multi_player_button_pressed() -> void:
+	get_node("/root/Global").load_session()
+	logged_in = get_node("/root/Global").getLogged_in()
+	
 	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
