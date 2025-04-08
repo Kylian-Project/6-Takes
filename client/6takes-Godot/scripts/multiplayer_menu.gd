@@ -1,7 +1,7 @@
 extends Control
 
 @onready var return_button = $MainButtonsBox/ReturnButton
-
+@onready var client: SocketIO = $SocketIO
 @onready var settings_overlay = $SettingsOverlay
 @onready var create_lobby_overlay = $CreateLobbyOverlay
 @onready var join_lobby_overlay = $JoinLobbyOverlay
@@ -21,6 +21,7 @@ extends Control
 
 func _ready():
 	return_button.pressed.connect(_on_return_pressed)
+	client.event_received.connect(_on_socket_io_event_received)
 	# Ensure all overlays are hidden at the start
 	settings_overlay.visible = false
 	create_lobby_overlay.visible = false
@@ -36,7 +37,9 @@ func _ready():
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
-
+func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
+	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
+	
 func _on_return_pressed():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")  # Change scene
 # Function to open a specific overlay and hide the others
@@ -50,6 +53,7 @@ func open_overlay(overlay: Control):
 # Button functions
 func _on_create_lobby_pressed():
 	open_overlay(create_lobby_overlay)
+	client.connect_socket()
 
 func _on_join_lobby_pressed():
 	open_overlay(join_lobby_overlay)

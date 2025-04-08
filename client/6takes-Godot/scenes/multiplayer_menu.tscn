@@ -1,12 +1,9 @@
-<<<<<<< HEAD
-[gd_scene load_steps=36 format=3 uid="uid://bbahvi0sfykso"]
-=======
-[gd_scene load_steps=36 format=3 uid="uid://l45fppjtlnsl"]
->>>>>>> develop
+[gd_scene load_steps=37 format=3 uid="uid://bncf0d7gcafll"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/images/Title_screen_title_c2.png" id="2_8fj2n"]
+[ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="2_75ips"]
 [ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/images/title_screen_welcome_v2.png" id="3_wbbcl"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="3_y4pek"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="4_8ywmt"]
@@ -238,6 +235,11 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_stretch_ratio = 0.0
 script = ExtResource("1_dp3rm")
+
+[node name="SocketIO" type="Node" parent="."]
+script = ExtResource("2_75ips")
+autoconnect = false
+base_url = "http://185.155.93.105:14001"
 
 [node name="Backgroundcolour" type="ColorRect" parent="."]
 layout_mode = 1
@@ -1260,9 +1262,11 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
+[connection signal="pressed" from="MainButtonsBox/Create_Lobby" to="." method="_on_create_lobby_pressed"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
+[connection signal="pressed" from="CreateLobbyOverlay/PanelContainer/MainVertical/Button" to="CreateLobbyOverlay" method="_on_create_lobby"]

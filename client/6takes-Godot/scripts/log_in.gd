@@ -121,18 +121,22 @@ func _move_to_multiplayer_pressed():
 
 func _on_sign_up_pressed() -> void:
 	var signup_scene = load("res://scenes/signUp.tscn")
-	if signup_scene == null:
-		print("couldn't load signup scene")
-		
-	var signup_instance = signup_scene.instantiate() 
-	if signup_instance == null :
-		print("couldn't instanciate sign up scene")
 	
-	#queue_free()
-	get_tree().current_scene.add_child(signup_instance) # Add it to the scene
+	if signup_scene == null:
+		print("❌ Erreur : Impossible de charger la scène SignUp")
+		return  # Stop l'exécution ici
+
+	var signup_instance = signup_scene.instantiate()
+	
+	if signup_instance == null:
+		print("❌ Erreur : Impossible d'instancier la scène SignUp")
+		return  # Stop l'exécution ici
+
+	get_tree().current_scene.add_child(signup_instance)
 	signup_instance.show_overlay()
 	
 	queue_free()
+
 
 #
 func hash_password(password: String) -> String:
