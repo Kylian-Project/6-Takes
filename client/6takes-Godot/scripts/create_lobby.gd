@@ -27,20 +27,20 @@ func _ready():
 
 # Fonction pour créer un lobby
 func _on_create_lobby():
-	# Créer le message avec les informations minimales
+	var is_private = private_check_button.button_pressed  # ✅ la vraie valeur booléenne
+
+	# Créer le message avec les infos réelles
 	var message = {
 		"event": "create-room",
-		"username": "Player1",  # Laisse cette valeur ou récupère un vrai nom de joueur
-		"isPrivate": private_check_button.pressed  # Utilise l'état du bouton pour déterminer la valeur de "isPrivate"
+		"username": "Player1",
+		"isPrivate": is_private  # vaudra true ou false
 	}
 
-	# Convertir le message en JSON et l'envoyer via Socket.IO
 	client.emit("create-room", JSON.stringify(message))
 	print("📤 Demande de création de salle envoyée :", JSON.stringify(message))
 
-	# Changer de scène après avoir envoyé la demande
-	# Remplacer par la scène suivante une fois que tu l'auras définie
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+
 
 # Fonction appelée lorsque la connexion est prête (optionnel)
 func _on_socket_ready():
