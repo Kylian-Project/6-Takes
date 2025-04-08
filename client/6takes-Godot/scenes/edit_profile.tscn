@@ -1,9 +1,11 @@
-[gd_scene load_steps=19 format=3 uid="uid://fwrwwy8t1e2u"]
+[gd_scene load_steps=14 format=3 uid="uid://fwrwwy8t1e2u"]
 
 [ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="2_36ldt"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_lv30f"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_n3637"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_do1go"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6hv8q"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -13,60 +15,18 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xtysa"]
-bg_color = Color(0, 0.305882, 0.596078, 1)
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 20
 border_width_top = 20
 border_width_right = 20
 border_width_bottom = 20
-border_color = Color(0, 0.305882, 0.596078, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hxclo"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
 border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upkui"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_om6fn"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dvgqu"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p88d8"]
 bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
@@ -110,53 +70,11 @@ Button/styles/hover = SubResource("StyleBoxFlat_p88d8")
 Button/styles/normal = SubResource("StyleBoxFlat_snw1d")
 Button/styles/pressed = SubResource("StyleBoxFlat_ilxc5")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d06ky"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8x7t0"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4e8et"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n332a"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
+border_width_left = 5
+border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c66eb"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
 
 [node name="EditProfile" type="Control"]
 layout_mode = 3
@@ -175,7 +93,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.180392, 0.180392, 0.180392, 0.560784)
+color = Color(0.180392, 0.180392, 0.180392, 0.592157)
 
 [node name="EditProfilePanel" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -227,15 +145,14 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_hxclo")
-theme_override_styles/hover = SubResource("StyleBoxFlat_upkui")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_om6fn")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dvgqu")
+theme_override_styles/hover = ExtResource("5_n3637")
+theme_override_styles/pressed = ExtResource("6_do1go")
+theme_override_styles/normal = ExtResource("6_do1go")
 text = "LogOut"
 
 [node name="IconSelection" type="GridContainer" parent="EditProfilePanel/MainVertical"]
@@ -247,22 +164,28 @@ columns = 5
 [node name="SaveIconButton" type="Button" parent="EditProfilePanel/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_d06ky")
-theme_override_styles/hover = SubResource("StyleBoxFlat_4e8et")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_n332a")
-theme_override_styles/normal = SubResource("StyleBoxFlat_c66eb")
+theme_override_styles/hover = ExtResource("5_n3637")
+theme_override_styles/pressed = ExtResource("6_do1go")
+theme_override_styles/normal = ExtResource("6_do1go")
 text = "Save Icon"
 
 [node name="Close" type="Button" parent="."]
 layout_mode = 2
-offset_left = 1688.0
-offset_top = 108.0
-offset_right = 1718.0
-offset_bottom = 166.0
+anchor_left = 0.887
+anchor_top = 0.127
+anchor_right = 0.887
+anchor_bottom = 0.127
+offset_left = -15.04
+offset_top = -29.16
+offset_right = 14.96
+offset_bottom = 28.84
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_8x7t0")
 text = "X"
