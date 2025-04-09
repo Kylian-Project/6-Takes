@@ -1,7 +1,8 @@
 extends Node
 
-var logged_in
+var logged_in = false
 var saved_token 
+var player_id
 
 var config = ConfigFile.new()
 var file_path = "res://config/env.cfg"
@@ -30,9 +31,8 @@ func get_base_url():
 func getLogged_in():
 	return logged_in
 	
-func update_token(token ):
-	#check_login_status()
-	saved_token = token
+func get_player_id():
+	return player_id
 
 #script to save sessions token globally (for after quit)
 func save_session(token: String):
@@ -55,12 +55,11 @@ func load_session():
 		print("saved token ", saved_token)
 		#add send token to server for validation
 		print("successfully loaded session, now validating")
-		return session_validation(saved_token)
+		session_validation(saved_token)
 	
 	else:
 		logged_in = false #no valid session found
-		return logged_in
-
+		
 		
 func session_validation(token : String):
 	var http_request = HTTPRequest.new()
@@ -83,11 +82,17 @@ func _on_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
 	
+	var raw_response = body.get_string_from_utf8()
+	var result_string = JSON.parse_string(raw_response)
+	
 	if response_code == 200:
 		logged_in = true
+		#var data = result_string.result
+		var playerIid = result_string["player"]["id"]
+		player_id =  playerIid
 		print("Session validated!")
-		return logged_in
+		
 	else:
 		print("Session invalid. Forcing logout.")
 		logged_in = false
-		return logged_in
+		
