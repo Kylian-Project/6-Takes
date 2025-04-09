@@ -10,8 +10,8 @@ var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-const WS_SERVER_URL = "ws://185.155.93.105:14001"
-const API_URL = "http://185.155.93.105:14001/api/player/connexion"
+var WS_SERVER_URL  # "ws://185.155.93.105:14001"
+var API_URL  #"http://185.155.93.105:14001/api/player/connexion"
 
 
 #pop Up panel 
@@ -23,6 +23,11 @@ const API_URL = "http://185.155.93.105:14001/api/player/connexion"
 func _ready():
 	self.visible = true
 	http_request.request_completed.connect(_on_http_request_completed)
+	
+	var base_url = get_node("/root/Global").get_base_url()
+	API_URL = "http://" + base_url + "/api/player/connexion"
+	WS_SERVER_URL = "ws://" + base_url
+	
 
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
@@ -49,11 +54,8 @@ func _on_http_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
 	
-	#here we get the token created after loggin in and we update th eglobal xpiration dat eof the session
 	var raw_response = body.get_string_from_utf8()
 	var result_string = JSON.parse_string(raw_response)
-	#var response_token = result_string["token"]
-
 
 	if response_code != 200:
 		print(" Erreur serveur ou identifiants invalides.")
@@ -68,7 +70,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 		print(" Connexion réussie ! Token :", jwt_token)
 		
 		get_node("/root/Global").save_session(jwt_token)
-		
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:

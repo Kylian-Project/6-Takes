@@ -11,9 +11,8 @@ var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-const WS_SERVER_URL = "ws://185.155.93.105:14001"
-const API_URL = "http://185.155.93.105:14001/api/player/inscription"
-
+var WS_SERVER_URL
+var API_URL
 
 #new password
 @onready var new_password = $VBoxContainer/password
@@ -30,6 +29,10 @@ func _ready():
 	self.visible = false
 	signup_button.pressed.connect(_on_signup_pressed)
 	http_request.request_completed.connect(_on_http_request_completed)
+	
+	var base_url = get_node("/root/Global").get_base_url()
+	API_URL = "http://" + base_url + "/api/player/inscription"
+	WS_SERVER_URL = "ws://" + base_url
 
 
 func hash_password(password: String) -> String:
@@ -82,22 +85,11 @@ func _on_http_request_completed(result, response_code, headers, body):
 	else:
 		var json = JSON.parse_string(body.get_string_from_utf8())
 		response = json
-		hide_overlay()
-		_on_log_in_pressed()
+		self.hide_overlay()
+		self._on_log_in_pressed()
 		return
-	#if json.error != OK:
-		#print(" Erreur JSON :", json.error_string)
-		#return
 
-		
-	#if "token" in response:
-		#jwt_token = response["token"]
-		#print(" Connexion réussie ! Token :", jwt_token)
-		#
-		#_connect_to_websocket()
-		#_move_to_multiplayer_pressed()
-
-		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
+	print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
 
 
 func _connect_to_websocket():

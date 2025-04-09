@@ -3,11 +3,30 @@ extends Node
 var logged_in
 var saved_token 
 
+var config = ConfigFile.new()
+var file_path = "res://config/env.cfg"
+var response_load = config.load(file_path)
+
+var BASE_URL := ""
+
 func _ready():
-	print("Script is running!")
+	if response_load != OK:
+		print("Config error load result: ", response_load)
+		return 
+		
+	var db_host = config.get_value("DEFAULT", "DB_HOST", null)
+	var db_user = config.get_value("DEFAULT", "DB_USER", "")
+	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
+	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
+	
+	BASE_URL = srv_url + ":" + srv_port 
+	print("BASE URL ", BASE_URL)
 	load_session()
 	
-
+	
+func get_base_url():
+	return BASE_URL 
+	
 func getLogged_in():
 	return logged_in
 	
@@ -41,20 +60,20 @@ func load_session():
 	else:
 		logged_in = false #no valid session found
 		return logged_in
-		
+
 		
 func session_validation(token : String):
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	
 	http_request.request_completed.connect(_on_request_completed)
-	
-	var url = "http://185.155.93.105:14001/api/player/reconnect"
+
 	var headers = ["Authorization: Bearer " + token]
-	
 	var json_body = JSON.stringify(token)
 	print("TOKEN DEBUG AFFICHAGE \n", json_body)
-	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_body)
+	
+	var url = "http://" + BASE_URL+ "/api/player/reconnect"
+	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	
 	if error != OK:
 		print("An error occurred sending the session validation request.")
