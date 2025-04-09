@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=28 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://ch031uua5nurl" path="res://assets/images/minus-sign.png" id="8_3ynqv"]
 [ext_resource type="Texture2D" uid="uid://e3nomb8wp8lc" path="res://assets/images/plus.png" id="9_eoxuu"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="11_ew5dc"]
+[ext_resource type="Script" path="res://scripts/sp_settings.gd" id="13_esrap"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i7mao"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -874,12 +875,14 @@ icon = ExtResource("9_eoxuu")
 icon_alignment = 1
 
 [node name="SettingsOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("13_esrap")
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="SettingsOverlay"]
 layout_mode = 1
@@ -898,9 +901,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -318.5
-offset_top = -366.0
+offset_top = -217.5
 offset_right = 318.5
-offset_bottom = 366.0
+offset_bottom = 217.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -927,7 +930,7 @@ theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("11_ew5dc")
 theme_override_font_sizes/font_size = 60
-text = "Lobby Settings!"
+text = "Game Settings!"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="SettingsOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
@@ -1103,13 +1106,13 @@ popup/item_1/id = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.656
-anchor_top = 0.183
+anchor_top = 0.322
 anchor_right = 0.656
-anchor_bottom = 0.183
+anchor_bottom = 0.322
 offset_left = -19.52
-offset_top = -24.64
+offset_top = -24.76
 offset_right = 19.48
-offset_bottom = 24.36
+offset_bottom = 24.24
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)

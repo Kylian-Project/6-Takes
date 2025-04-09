@@ -201,3 +201,5 @@ class Jeu6Takes {
         joueur.updateScore(penalite);
     }
 }
+
+export { Jeu6Takes };
