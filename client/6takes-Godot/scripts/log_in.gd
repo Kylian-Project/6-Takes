@@ -10,9 +10,8 @@ var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-var WS_SERVER_URL  # "ws://185.155.93.105:14001"
-var API_URL  #"http://185.155.93.105:14001/api/player/connexion"
-
+var WS_SERVER_URL 
+var API_URL  
 
 #pop Up panel 
 @onready var popup_overlay = $popUp_error
@@ -53,9 +52,6 @@ func _on_login_button_pressed():
 func _on_http_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
-	
-	var raw_response = body.get_string_from_utf8()
-	var result_string = JSON.parse_string(raw_response)
 
 	if response_code != 200:
 		print(" Erreur serveur ou identifiants invalides.")

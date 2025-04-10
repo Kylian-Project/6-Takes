@@ -21,6 +21,8 @@ const ICON_FILES = [
 var selected_icon = "dark_grey.png"  # Default icon
 
 func _ready():
+	http_request.request_completed.connect(_on_http_request_completed)
+
 	populate_icon_selection()
 	save_button.connect("pressed", _on_save_icon)
 	close_button.pressed.connect(func():
@@ -28,7 +30,7 @@ func _ready():
 	)
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/disconnect"
+	API_URL = "http://" + base_url + "/api/player/logout"
 	WS_SERVER_URL = "ws://" + base_url
 	
 	player_id = get_node("/root/Global").get_player_id()
@@ -63,13 +65,15 @@ func _on_close_pressed():
 
 
 func _on_log_out_button_pressed() -> void:
-	var payload = {
-		"id":player_id
-	}
-
-	var json_body = JSON.stringify(payload)
-	var headers = ["Content-Type: application/json"]
-
+	#var payload = {player_id}
+	get_node("/root/Global").load_session()
+	var user_token = get_node("/root/Global").get_saved_token()
+	var json_body = JSON.stringify(user_token)
+	print("JSON BODY LOG OUT ", json_body)
+	
+	#var headers = ["Content-Type: application/json"]
+	var headers = ["Authorization: Bearer " + user_token]
+	
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 

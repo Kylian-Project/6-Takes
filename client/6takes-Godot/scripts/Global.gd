@@ -33,6 +33,9 @@ func getLogged_in():
 	
 func get_player_id():
 	return player_id
+	
+func get_saved_token():
+	return saved_token
 
 #script to save sessions token globally (for after quit)
 func save_session(token: String):
@@ -69,7 +72,6 @@ func session_validation(token : String):
 
 	var headers = ["Authorization: Bearer " + token]
 	var json_body = JSON.stringify(token)
-	print("TOKEN DEBUG AFFICHAGE \n", json_body)
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
