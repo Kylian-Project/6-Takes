@@ -251,6 +251,7 @@ flat = true
 [node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
 
 [node name="popUp_error" parent="." instance=ExtResource("9_17sna")]
+visible = false
 offset_left = 294.0
 offset_top = 356.0
 offset_right = 994.0
