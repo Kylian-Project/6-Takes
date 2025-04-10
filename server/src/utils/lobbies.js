@@ -3,7 +3,7 @@ import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 
 
-const ID_LENGTH = 5;
+const ID_LENGTH = 4;
 const NB_PLAYERS_MAX_IN_ROOM = 10;
 
 class RoomUser {
@@ -51,66 +51,72 @@ export const roomHandler = (socket, io) =>
 
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        return room ? room.getUsernames() : [];
-    };
-
+        if (!room) return { count: 0, usernames: [] };
+      
+        const usernames = room.getUsernames();
+        return {
+          count: usernames.length$"/10",
+          usernames
+        };
+      };
+      
     //fonctions principales
 
-const createRoom = async (rawData) => 
-{
-    //on parse le string en JSON
-    let data;
-    try 
+    const createRoom = async (rawData) => 
     {
-        data = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
-    } 
-    catch (err)
-    {
-        console.error("❌ Erreur JSON parsing :", err.message);
-        return;
-    }
-    //dé-structuration de l'objet en des variables
-    const 
-    {
-        username = "Anonyme",
-        lobbyName = "",
-        playerLimit = 10,
-        numberOfCards = 10,
-        roundTimer = 45,
-        endByPoints = 66,
-        rounds = 1,
-        isPrivate = "PRIVATE" // Valeur par défaut
-    } = data;
+        //on parse le string en JSON
+        let data;
+        try 
+        {
+            data = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+        } 
+        catch (err)
+        {
+            console.error("❌ Erreur JSON parsing :", err.message);
+            return;
+        }
+        //dé-structuration de l'objet en des variables
+        const 
+        {
+            username = "Anonyme",
+            lobbyName = "",
+            playerLimit = 10,
+            numberOfCards = 10,
+            roundTimer = 45,
+            endByPoints = 66,
+            rounds = 1,
+            isPrivate = "PRIVATE" // Valeur par défaut
+        } = data;
 
-    const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
-    const isPrivateBool = isPrivate === "PRIVATE";  // Convertir la valeur de isPrivate en booleen
+        const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
+        const isPrivateBool = isPrivate === "PRIVATE";  // Convertir la valeur de isPrivate en booleen
 
-    const newRoom = new Room(roomId, username, socket.id, isPrivateBool);
-    newRoom.addUser(username, socket.id);
-    rooms.push(newRoom);
+        const newRoom = new Room(roomId, username, socket.id, isPrivateBool);
+        newRoom.addUser(username, socket.id);
+        rooms.push(newRoom);
 
-    try {
-        await Lobby.create({
-        id_creator: 1, // temporairement socket.playerId
-        name: roomId,
-        state: isPrivate
-        });
-        console.log("✅ Room enregistrée en BDD :", roomId);
-    } catch (err) {
-        console.error("❌ Erreur BDD :", err.message);
-    }
+        try {
+            await Lobby.create({
+            id_creator: 1, // temporairement socket.playerId
+            name: roomId,
+            state: isPrivate
+            });
+            console.log("✅ Room enregistrée en BDD :", roomId);
+        } catch (err) {
+            console.error("❌ Erreur BDD :", err.message);
+        }
 
-    socket.join(roomId);
-    io.emit("available-rooms", getAvailableRooms());
-    socket.emit(isPrivateBool ? "private-room-created" : "public-room-created", roomId);
-};
+        socket.join(roomId);
+        io.emit("available-rooms", getAvailableRooms());
+        socket.emit(isPrivateBool ? "private-room-created" : "public-room-created", roomId);
+    };
 
     const removeRoom = (roomId) => 
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         rooms = rooms.filter(r => r.id !== roomId);
-        if (room.isPrivate) 
+        if (room.private) 
         {
             io.to(roomId).emit("remove-private-room");  //pour tout les membres
         } 
@@ -127,7 +133,7 @@ const createRoom = async (rawData) =>
         if (!room) 
         {
             socket.emit("room-not-found");
-            return;
+            return false;
         }
         if (room.isFull()) 
         {
@@ -174,7 +180,7 @@ const createRoom = async (rawData) =>
                 {
                     const users = room.getUsernames();
                     socket.leave(room.id);
-                    if (room.isPrivate) 
+                    if (room.private) 
                     {
                         socket.to(room.id).emit("user-left-private", users);
                     } 
@@ -187,13 +193,11 @@ const createRoom = async (rawData) =>
             }
         };
 
-
-
+    io.emit("available-rooms", getAvailableRooms());
     socket.on("create-room", (data) => {
         console.log("format recu :", data);
         createRoom(data);
       });
-    
 
 //	socket.on("create-room", createRoom);
     
@@ -209,7 +213,7 @@ const createRoom = async (rawData) =>
         {
             socket.join(roomId);
             const users = getUsers(roomId);
-            if (room.isPrivate) 
+            if (room.private) 
             {
                 socket.emit("private-room-joined", users);
                 socket.to(roomId).emit("users-in-your-private-room", users);
