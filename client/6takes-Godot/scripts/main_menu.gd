@@ -34,9 +34,6 @@ func _ready() -> void:
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
 	
-		
-	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
 	
 	get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()

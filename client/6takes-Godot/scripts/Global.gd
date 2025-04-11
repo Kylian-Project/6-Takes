@@ -37,6 +37,8 @@ func get_player_id():
 func get_saved_token():
 	return saved_token
 
+func set_logged_in(state):
+	logged_in = state
 #script to save sessions token globally (for after quit)
 func save_session(token: String):
 	var config = ConfigFile.new()
