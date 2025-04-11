@@ -87,5 +87,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 		return 
 	
 	print("User disconnected successefully")
+	get_node("/root/Global").set_logged_in(false)
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 	return
