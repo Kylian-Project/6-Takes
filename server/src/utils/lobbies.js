@@ -48,18 +48,23 @@ export const roomHandler = (socket, io) =>
         return rooms.filter(room => room.private === false).map(room => room.id);
     };
 
+const getUsers = (roomId) => {
+  const room = rooms.find(r => r.id === roomId);
+  if (!room) return { count: 0, usernames: [] };
 
+  const usernames = room.getUsernames();
+  return {
+    count: usernames.length,
+    usernames
+  };
+};
+
+/*
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        if (!room) return { count: 0, usernames: [] };
-      
-        const usernames = room.getUsernames();
-        return {
-          count: usernames.length$"/10",
-          usernames
-        };
-      };
-      
+        return room ? room.getUsernames() : [];
+    };
+*/
     //fonctions principales
 
     const createRoom = async (rawData) => 
@@ -116,7 +121,7 @@ export const roomHandler = (socket, io) =>
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         rooms = rooms.filter(r => r.id !== roomId);
-        if (room.private) 
+        if (room.isPrivate) 
         {
             io.to(roomId).emit("remove-private-room");  //pour tout les membres
         } 
@@ -133,7 +138,7 @@ export const roomHandler = (socket, io) =>
         if (!room) 
         {
             socket.emit("room-not-found");
-            return false;
+            return;
         }
         if (room.isFull()) 
         {
@@ -193,11 +198,13 @@ export const roomHandler = (socket, io) =>
             }
         };
 
-    io.emit("available-rooms", getAvailableRooms());
+
+
     socket.on("create-room", (data) => {
         console.log("format recu :", data);
         createRoom(data);
       });
+    io.emit("available-rooms", getAvailableRooms());
 
 //	socket.on("create-room", createRoom);
     
@@ -213,7 +220,7 @@ export const roomHandler = (socket, io) =>
         {
             socket.join(roomId);
             const users = getUsers(roomId);
-            if (room.private) 
+            if (room.private)
             {
                 socket.emit("private-room-joined", users);
                 socket.to(roomId).emit("users-in-your-private-room", users);
