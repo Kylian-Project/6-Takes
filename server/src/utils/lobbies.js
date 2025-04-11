@@ -3,8 +3,7 @@ import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 
 
-const ID_LENGTH = 5;
-const NB_PLAYERS_MAX_IN_ROOM = 10;
+const ID_LENGTH = 4;
 
 class RoomUser {
     constructor(username, idSocketUser) {
@@ -14,83 +13,177 @@ class RoomUser {
 }
 
 class Room {
-    constructor(id, host, idSocketHost, isPrivate) {
-    this.id = id;
-    this.host = host;
-    this.idSocketHost = idSocketHost;
-    this.users = [];
-    this.private = isPrivate;
-  }
-
+    /**
+     * Crée une instance de Room.
+     * @param {string} id - ID unique de la room
+     * @param {string} host - Nom de l'hôte (celui qui crée la room)
+     * @param {string} idSocketHost - ID Socket.IO de l'hôte
+     * @param {boolean} isPrivate - Si la room est privée (true) ou publique (false)
+     * @param {object} [settings={}] - Paramètres de la room
+     * @param {number} [settings.playerLimit=10] - Nombre maximum de joueurs
+     * @param {number} [settings.numberOfCards=10] - Nombre de cartes distribuées
+     * @param {number} [settings.roundTimer=45] - Temps (en secondes) pour jouer une carte
+     * @param {number} [settings.endByPoints=66] - Nombre de points pour gagner
+     * @param {number} [settings.rounds=3] - Nombre de tours
+     * @param {string} [settings.lobbyName="Lobby"] - Nom de la room
+     */
+    constructor(id, host, idSocketHost, isPrivate, settings = {}) 
+    {
+        this.id = id;
+        this.host = host;
+        this.idSocketHost = idSocketHost;
+        this.users = [];
+        this.private = isPrivate;
+        this.settings = {
+            playerLimit: settings.playerLimit || 10,        //valeurs assignées par defaut
+            numberOfCards: settings.numberOfCards || 10,
+            roundTimer: settings.roundTimer || 45,
+            endByPoints: settings.endByPoints || 66,
+            rounds: settings.rounds || 3,
+            lobbyName: settings.lobbyName || "Lobby"
+        };
+    }
+  
     addUser(username, idSocketUser) {
         this.users.push(new RoomUser(username, idSocketUser));
     }
-
+  
     removeUser(idSocketUser) {
         this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
     }
-
+  
     getUsernames() {
         return this.users.map(user => user.username);
     }
-
+  
     isFull() {
-        return this.users.length >= NB_PLAYERS_MAX_IN_ROOM;
+        return this.users.length >= this.settings.playerLimit; 
     }
-}
+    /*a voir par la suite si j'utilise ou pas
+    async save() 
+    {
+        try 
+        {
+            const lobby = await Lobby.create({
+                id: this.id,
+                name: this.settings.lobbyName,
+                state: this.private ? "PRIVATE" : "PUBLIC",
+                playerLimit: this.settings.playerLimit,
+                numberOfCards: this.settings.numberOfCards,
+                roundTimer: this.settings.roundTimer,
+                endByPoints: this.settings.endByPoints,
+                rounds: this.settings.rounds
+            });
+            console.log(`Room ${this.id} saved in database`);
+        } 
+        catch (error) 
+        {
+            console.log(`Error saving room ${this.id} in database: ${error}`);
+        }
+    }*/
+  }
+  
 
 export let rooms = [];
 
+
+
+/**
+ * Gère la logique de gestion des salles sur un serveur socket.io.
+ * Cela inclut la création, la jonction et la sortie des salles, ainsi que
+ * la diffusion d'événements de salle et la gestion de la disponibilité des salles.
+ * 
+ * @param {Socket} socket - L'objet socket pour le client connecté.
+ * @param {Server} io - L'instance du serveur socket.io pour la diffusion d'événements.
+ */
+
 export const roomHandler = (socket, io) => 
-{   
-        //fonction utile 
+{    
+    /////////////////////////////////////////////////
+	////////////// fonctions utilitaires /////////////
+  	//////////////////////////////////////////////////
     const getAvailableRooms = () => {
         return rooms.filter(room => room.private === false).map(room => room.id);
     };
 
-
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        return room ? room.getUsernames() : [];
-    };
-
-    //fonctions principales
-
-
-    const createRoom = async ({ username, isPrivate = false }) => 
-    {
-        //async pour attendre la promesse
-        const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
-        const newRoom = new Room(roomId, username, socket.id, isPrivate);      //on crée une instance de Room
-        newRoom.addUser(username, socket.id);   //on ajoute un user(host) dessus
-        rooms.push(newRoom);    //on push la nouvelle room (Room) dans le tableau des rooms globales
+        if (!room) return { count: 0, usernames: [] };
       
-        try
+        const usernames = room.getUsernames();
+        return {
+          count: usernames.length,
+          usernames
+        };
+      };
+      
+    
+    //////////////////////////////////////////////////
+	////////////// fonctions principales /////////////
+  	//////////////////////////////////////////////////
+
+    const createRoom = async (rawData) => 
+    {
+        //on parse le string en JSON
+        let data;
+        try 
         {
-            //une fois le syteme d'auth terminé je peux remplacer par "id_creator: socket.playerId"
-            await Lobby.create(
-            {
-                id_creator: 1,      //temporraire
-                name: roomId,
-                state: isPrivate ? "PRIVATE" : "PUBLIC",
-            });
-          console.log("✅ Room enregistrée en BDD :", roomId);    //test
+            data = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
         } 
-        catch (err) {
+        catch (err)
+        {
+            console.error("❌ Erreur JSON parsing :", err.message);
+            return;
+        }
+        //dé-structuration de l'objet en des variables
+        const 
+        {
+            username = "Anonyme",       //TODO : a recuperer de la bdd une fois la liaison faite avec login 
+            lobbyName = "",
+            playerLimit = 10,
+            numberOfCards = 10,
+            roundTimer = 45,
+            endByPoints = 66,
+            rounds = 1,
+            isPrivate = "PRIVATE" // Valeur par défaut
+        } = data;
+
+        const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
+        const isPrivateBool = isPrivate === "PRIVATE";  // Convertir la valeur de isPrivate en booleen
+
+        const newRoom = new Room(roomId, username, socket.id, isPrivateBool , data);
+
+        
+        newRoom.addUser(username, socket.id);
+        rooms.push(newRoom);
+
+        try {
+            await Lobby.create({
+            id_creator: 1, // temporairement socket.playerId
+            name: roomId,
+            state: isPrivate
+            });
+            console.log("✅ Room enregistrée en BDD :", roomId);
+        } catch (err) {
             console.error("❌ Erreur BDD :", err.message);
         }
-      
+
         socket.join(roomId);
         io.emit("available-rooms", getAvailableRooms());
-        socket.emit(isPrivate ? "private-room-created" : "public-room-created", roomId);
+        socket.emit(isPrivateBool ? "private-room-created" : "public-room-created", roomId);
     };
 
+    /**
+     * Supprime une room et emet des événements pour que les utilisateurs
+     * quittent la room.
+     * @param {string} roomId - ID de la room à supprimer
+     */
     const removeRoom = (roomId) => 
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         rooms = rooms.filter(r => r.id !== roomId);
-        if (room.isPrivate) 
+        if (room.private) 
         {
             io.to(roomId).emit("remove-private-room");  //pour tout les membres
         } 
@@ -101,13 +194,22 @@ export const roomHandler = (socket, io) =>
         io.emit("available-rooms", getAvailableRooms());
     };
 
+/**
+ * Permet à un utilisateur de rejoindre une room existante.
+ * Émet un événement si la room est introuvable ou pleine.
+ * @param {object} data - Informations nécessaires pour rejoindre la room
+ * @param {string} data.roomId - ID de la room à rejoindre
+ * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
+ * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
+ */
+
     const joinRoom = ({ roomId, username }) => 
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) 
         {
             socket.emit("room-not-found");
-            return;
+            return false;
         }
         if (room.isFull()) 
         {
@@ -117,6 +219,12 @@ export const roomHandler = (socket, io) =>
         return room;
     };
 
+    /**
+     * Fait quitter une room à un utilisateur.
+     * Si l'utilisateur est l'hôte, supprime la room.
+     * @param {object} data - Informations de la room à quitter
+     * @param {string} data.roomId - ID de la room à quitter
+     */
     const leaveRoom = ({ roomId }) => 
     {
         const room = rooms.find(r => r.id === roomId);
@@ -137,6 +245,11 @@ export const roomHandler = (socket, io) =>
       };
       
 
+    /**
+     * Fait quitter une room à un utilisateur en connaissant son socketId.
+     * Si l'utilisateur est l'hôte, supprime la room.
+     * @param {string} socketId - L'ID Socket.IO de l'utilisateur
+     */
     const leaveRoomWithSocketId = (socketId) => 
         {
             for (let room of rooms) 
@@ -154,7 +267,7 @@ export const roomHandler = (socket, io) =>
                 {
                     const users = room.getUsernames();
                     socket.leave(room.id);
-                    if (room.isPrivate) 
+                    if (room.private) 
                     {
                         socket.to(room.id).emit("user-left-private", users);
                     } 
@@ -167,31 +280,37 @@ export const roomHandler = (socket, io) =>
             }
         };
 
+    //io.emit("available-rooms", getAvailableRooms());
 
-    //sockets listenners
-    //socket.on("create-room", createRoom);
+
+    //////////////////////////////////////////////////
+	///////////////// Listenners /////////////////////
+  	//////////////////////////////////////////////////
+
     socket.on("create-room", (data) => {
-        if (data && typeof data === 'object') {
-          createRoom(data);
-        } else {
-          console.warn("[create-room] Format invalide reçu :", data);
-          socket.emit("room-creation-failed", "Invalid data format.");
-        }
-      });
-      
-    socket.on("leave-room", leaveRoom);
-    socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
-    socket.on("users-in-private-room", (roomId) => {
-        socket.emit("users-in-your-private-room", getUsers(roomId));});
+        console.log("format recu :", data);
+        createRoom(data);
+    });
 
-    socket.on("join-room", ({ roomId, username }) => 
-    {
+    socket.on("available-rooms", () => {
+        socket.emit("available-rooms", getAvailableRooms());
+    });
+
+    socket.on("leave-room", leaveRoom);
+
+    socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
+
+    socket.on("users-in-private-room", (roomId) => {
+        socket.emit("users-in-your-private-room", getUsers(roomId));
+    });
+
+    socket.on("join-room", ({ roomId, username }) => {
         const room = joinRoom({ roomId, username });
         if (room) 
         {
             socket.join(roomId);
             const users = getUsers(roomId);
-            if (room.isPrivate) 
+            if (room.private) 
             {
                 socket.emit("private-room-joined", users);
                 socket.to(roomId).emit("users-in-your-private-room", users);
@@ -207,4 +326,5 @@ export const roomHandler = (socket, io) =>
             socket.emit("room-join-failed");
         }
     });
+    
 };
