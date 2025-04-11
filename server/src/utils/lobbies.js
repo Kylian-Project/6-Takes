@@ -13,6 +13,20 @@ class RoomUser {
 }
 
 class Room {
+    /**
+     * Crée une instance de Room.
+     * @param {string} id - ID unique de la room
+     * @param {string} host - Nom de l'hôte (celui qui crée la room)
+     * @param {string} idSocketHost - ID Socket.IO de l'hôte
+     * @param {boolean} isPrivate - Si la room est privée (true) ou publique (false)
+     * @param {object} [settings={}] - Paramètres de la room
+     * @param {number} [settings.playerLimit=10] - Nombre maximum de joueurs
+     * @param {number} [settings.numberOfCards=10] - Nombre de cartes distribuées
+     * @param {number} [settings.roundTimer=45] - Temps (en secondes) pour jouer une carte
+     * @param {number} [settings.endByPoints=66] - Nombre de points pour gagner
+     * @param {number} [settings.rounds=3] - Nombre de tours
+     * @param {string} [settings.lobbyName="Lobby"] - Nom de la room
+     */
     constructor(id, host, idSocketHost, isPrivate, settings = {}) 
     {
         this.id = id;
@@ -20,8 +34,7 @@ class Room {
         this.idSocketHost = idSocketHost;
         this.users = [];
         this.private = isPrivate;
-        this.settings = 
-        {
+        this.settings = {
             playerLimit: settings.playerLimit || 10,        //valeurs assignées par defaut
             numberOfCards: settings.numberOfCards || 10,
             roundTimer: settings.roundTimer || 45,
@@ -32,32 +45,66 @@ class Room {
     }
   
     addUser(username, idSocketUser) {
-      this.users.push(new RoomUser(username, idSocketUser));
+        this.users.push(new RoomUser(username, idSocketUser));
     }
   
     removeUser(idSocketUser) {
-      this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
+        this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
     }
   
     getUsernames() {
-      return this.users.map(user => user.username);
+        return this.users.map(user => user.username);
     }
   
     isFull() {
-      return this.users.length >= this.settings.playerLimit; 
+        return this.users.length >= this.settings.playerLimit; 
     }
+    /*a voir par la suite si j'utilise ou pas
+    async save() 
+    {
+        try 
+        {
+            const lobby = await Lobby.create({
+                id: this.id,
+                name: this.settings.lobbyName,
+                state: this.private ? "PRIVATE" : "PUBLIC",
+                playerLimit: this.settings.playerLimit,
+                numberOfCards: this.settings.numberOfCards,
+                roundTimer: this.settings.roundTimer,
+                endByPoints: this.settings.endByPoints,
+                rounds: this.settings.rounds
+            });
+            console.log(`Room ${this.id} saved in database`);
+        } 
+        catch (error) 
+        {
+            console.log(`Error saving room ${this.id} in database: ${error}`);
+        }
+    }*/
   }
   
 
 export let rooms = [];
 
+
+
+/**
+ * Gère la logique de gestion des salles sur un serveur socket.io.
+ * Cela inclut la création, la jonction et la sortie des salles, ainsi que
+ * la diffusion d'événements de salle et la gestion de la disponibilité des salles.
+ * 
+ * @param {Socket} socket - L'objet socket pour le client connecté.
+ * @param {Server} io - L'instance du serveur socket.io pour la diffusion d'événements.
+ */
+
 export const roomHandler = (socket, io) => 
-{   
-        //fonction utile 
+{    
+    /////////////////////////////////////////////////
+	////////////// fonctions utilitaires /////////////
+  	//////////////////////////////////////////////////
     const getAvailableRooms = () => {
         return rooms.filter(room => room.private === false).map(room => room.id);
     };
-
 
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
@@ -70,7 +117,10 @@ export const roomHandler = (socket, io) =>
         };
       };
       
-    //fonctions principales
+    
+    //////////////////////////////////////////////////
+	////////////// fonctions principales /////////////
+  	//////////////////////////////////////////////////
 
     const createRoom = async (rawData) => 
     {
@@ -123,6 +173,11 @@ export const roomHandler = (socket, io) =>
         socket.emit(isPrivateBool ? "private-room-created" : "public-room-created", roomId);
     };
 
+    /**
+     * Supprime une room et emet des événements pour que les utilisateurs
+     * quittent la room.
+     * @param {string} roomId - ID de la room à supprimer
+     */
     const removeRoom = (roomId) => 
     {
         const room = rooms.find(r => r.id === roomId);
@@ -138,6 +193,15 @@ export const roomHandler = (socket, io) =>
         }
         io.emit("available-rooms", getAvailableRooms());
     };
+
+/**
+ * Permet à un utilisateur de rejoindre une room existante.
+ * Émet un événement si la room est introuvable ou pleine.
+ * @param {object} data - Informations nécessaires pour rejoindre la room
+ * @param {string} data.roomId - ID de la room à rejoindre
+ * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
+ * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
+ */
 
     const joinRoom = ({ roomId, username }) => 
     {
@@ -155,6 +219,12 @@ export const roomHandler = (socket, io) =>
         return room;
     };
 
+    /**
+     * Fait quitter une room à un utilisateur.
+     * Si l'utilisateur est l'hôte, supprime la room.
+     * @param {object} data - Informations de la room à quitter
+     * @param {string} data.roomId - ID de la room à quitter
+     */
     const leaveRoom = ({ roomId }) => 
     {
         const room = rooms.find(r => r.id === roomId);
@@ -175,6 +245,11 @@ export const roomHandler = (socket, io) =>
       };
       
 
+    /**
+     * Fait quitter une room à un utilisateur en connaissant son socketId.
+     * Si l'utilisateur est l'hôte, supprime la room.
+     * @param {string} socketId - L'ID Socket.IO de l'utilisateur
+     */
     const leaveRoomWithSocketId = (socketId) => 
         {
             for (let room of rooms) 
@@ -205,21 +280,31 @@ export const roomHandler = (socket, io) =>
             }
         };
 
-    io.emit("available-rooms", getAvailableRooms());
+    //io.emit("available-rooms", getAvailableRooms());
+
+
+    //////////////////////////////////////////////////
+	///////////////// Listenners /////////////////////
+  	//////////////////////////////////////////////////
+
     socket.on("create-room", (data) => {
         console.log("format recu :", data);
         createRoom(data);
-      });
+    });
 
-//	socket.on("create-room", createRoom);
-    
+    socket.on("available-rooms", () => {
+        socket.emit("available-rooms", getAvailableRooms());
+    });
+
     socket.on("leave-room", leaveRoom);
-    socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
-    socket.on("users-in-private-room", (roomId) => {
-        socket.emit("users-in-your-private-room", getUsers(roomId));});
 
-    socket.on("join-room", ({ roomId, username }) => 
-    {
+    socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
+
+    socket.on("users-in-private-room", (roomId) => {
+        socket.emit("users-in-your-private-room", getUsers(roomId));
+    });
+
+    socket.on("join-room", ({ roomId, username }) => {
         const room = joinRoom({ roomId, username });
         if (room) 
         {
@@ -241,4 +326,5 @@ export const roomHandler = (socket, io) =>
             socket.emit("room-join-failed");
         }
     });
+    
 };
