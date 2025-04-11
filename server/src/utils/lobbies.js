@@ -4,7 +4,6 @@ import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 
 
 const ID_LENGTH = 4;
-const NB_PLAYERS_MAX_IN_ROOM = 10;
 
 class RoomUser {
     constructor(username, idSocketUser) {
@@ -14,30 +13,41 @@ class RoomUser {
 }
 
 class Room {
-    constructor(id, host, idSocketHost, isPrivate) {
-    this.id = id;
-    this.host = host;
-    this.idSocketHost = idSocketHost;
-    this.users = [];
-    this.private = isPrivate;
-  }
-
+    constructor(id, host, idSocketHost, isPrivate, settings = {}) 
+    {
+        this.id = id;
+        this.host = host;
+        this.idSocketHost = idSocketHost;
+        this.users = [];
+        this.private = isPrivate;
+        this.settings = 
+        {
+            playerLimit: settings.playerLimit || 10,        //valeurs assignées par defaut
+            numberOfCards: settings.numberOfCards || 10,
+            roundTimer: settings.roundTimer || 45,
+            endByPoints: settings.endByPoints || 66,
+            rounds: settings.rounds || 3,
+            lobbyName: settings.lobbyName || "Lobby"
+        };
+    }
+  
     addUser(username, idSocketUser) {
-        this.users.push(new RoomUser(username, idSocketUser));
+      this.users.push(new RoomUser(username, idSocketUser));
     }
-
+  
     removeUser(idSocketUser) {
-        this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
+      this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
     }
-
+  
     getUsernames() {
-        return this.users.map(user => user.username);
+      return this.users.map(user => user.username);
     }
-
+  
     isFull() {
-        return this.users.length >= NB_PLAYERS_MAX_IN_ROOM;
+      return this.users.length >= this.settings.playerLimit; 
     }
-}
+  }
+  
 
 export let rooms = [];
 
@@ -48,23 +58,18 @@ export const roomHandler = (socket, io) =>
         return rooms.filter(room => room.private === false).map(room => room.id);
     };
 
-const getUsers = (roomId) => {
-  const room = rooms.find(r => r.id === roomId);
-  if (!room) return { count: 0, usernames: [] };
 
-  const usernames = room.getUsernames();
-  return {
-    count: usernames.length,
-    usernames
-  };
-};
-
-/*
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        return room ? room.getUsernames() : [];
-    };
-*/
+        if (!room) return { count: 0, usernames: [] };
+      
+        const usernames = room.getUsernames();
+        return {
+          count: usernames.length,
+          usernames
+        };
+      };
+      
     //fonctions principales
 
     const createRoom = async (rawData) => 
@@ -83,7 +88,7 @@ const getUsers = (roomId) => {
         //dé-structuration de l'objet en des variables
         const 
         {
-            username = "Anonyme",
+            username = "Anonyme",       //TODO : a recuperer de la bdd une fois la liaison faite avec login 
             lobbyName = "",
             playerLimit = 10,
             numberOfCards = 10,
@@ -96,7 +101,9 @@ const getUsers = (roomId) => {
         const roomId = randomstring.generate({ length: ID_LENGTH, charset: "alphanumeric" });
         const isPrivateBool = isPrivate === "PRIVATE";  // Convertir la valeur de isPrivate en booleen
 
-        const newRoom = new Room(roomId, username, socket.id, isPrivateBool);
+        const newRoom = new Room(roomId, username, socket.id, isPrivateBool , data);
+
+        
         newRoom.addUser(username, socket.id);
         rooms.push(newRoom);
 
@@ -121,7 +128,7 @@ const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         rooms = rooms.filter(r => r.id !== roomId);
-        if (room.isPrivate) 
+        if (room.private) 
         {
             io.to(roomId).emit("remove-private-room");  //pour tout les membres
         } 
@@ -138,7 +145,7 @@ const getUsers = (roomId) => {
         if (!room) 
         {
             socket.emit("room-not-found");
-            return;
+            return false;
         }
         if (room.isFull()) 
         {
@@ -198,13 +205,11 @@ const getUsers = (roomId) => {
             }
         };
 
-
-
+    io.emit("available-rooms", getAvailableRooms());
     socket.on("create-room", (data) => {
         console.log("format recu :", data);
         createRoom(data);
       });
-    io.emit("available-rooms", getAvailableRooms());
 
 //	socket.on("create-room", createRoom);
     
@@ -220,7 +225,7 @@ const getUsers = (roomId) => {
         {
             socket.join(roomId);
             const users = getUsers(roomId);
-            if (room.private)
+            if (room.private) 
             {
                 socket.emit("private-room-joined", users);
                 socket.to(roomId).emit("users-in-your-private-room", users);
