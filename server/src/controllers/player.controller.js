@@ -2,6 +2,8 @@
 import Player from "../models/player.js";
 import Session from "../models/session.js";
 import jwt from "jsonwebtoken";
+import PasswordReset from "../models/password_reset.js";
+import { cleanOldResetCodes, generateUniqueCode } from "../utils/passwordResetUtils.js";
 import { Op } from "sequelize";
 
 // ? INSCRIPTION
@@ -17,11 +19,85 @@ const inscription = async (req, res) => {
 
     const newPlayer = await Player.create({ username, email, password });
 
-    res.status(201).json({ message: "Inscription réussie", player: newPlayer });
+    res.status(200).json({ message: "Inscription réussie", player: newPlayer });
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur", error: err });
   }
 };
+
+// ? REQUEST PASSWORD RESET
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const player = await Player.findOne({ where: { email } });
+    if (!player) return res.status(404).json({ message: "No player with this email." });
+    
+    // Delete expired codes
+    await cleanOldResetCodes();
+
+    const code = await generateUniqueCode(); // 4 digits code WHICH doesn't exist in DB
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+    await PasswordReset.create({
+      id_player: player.id,
+      reset_token: code,
+      expires_at: expiresAt,
+      used: false
+    });
+
+    console.log(`📨 Code sent to ${email}:`, code);
+    // Later: send this code via email
+
+    return res.status(200).json({ message: "Reset code sent." });
+
+  } catch (error) {
+    console.error("Reset error:", error);
+    return res.status(500).json({ message: "Server error." });
+  }
+};
+
+// ? PASSWORD RESET
+const resetPassword = async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  try {
+    // If the email exists or not ...
+    const player = await Player.findOne({ where: { email } });
+    if (!player) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // If reset code exists and is valid
+    const reset = await PasswordReset.findOne({
+      where: {
+        id_player: player.id,
+        reset_token: code,
+        used: false,
+        expires_at: { [Op.gt]: new Date() }
+      }
+    });
+
+    if (!reset) {
+      return res.status(400).json({ message: "Invalid or expired code." });
+    }
+
+    // Update password (already hashed (normally) on #GODOT#)
+    player.password = newPassword;
+    await player.save();
+
+    // Mark code as used, to prevent reusing it
+    reset.used = true;
+    await reset.save();
+
+    return res.status(200).json({ message: "Password successfully updated." });
+
+  } catch (error) {
+    console.error("❌ Error in resetPassword:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 
 // ? CONNEXION
 const login = async (req, res) => {
@@ -72,9 +148,12 @@ const login = async (req, res) => {
     });
 
     // Créer une nouvelle session
-    const tokenDuration = 24 * 60 * 60; // 1 jour
+    const tokenDuration = 24 * 60 * 60;   // 1 jour
     const token = jwt.sign(
-      { id: player.id, username: player.username },
+      { id: player.id, 
+        username: player.username,
+        email: player.email
+      },
       process.env.JWT_SECRET,
       { expiresIn: tokenDuration }
     );
@@ -88,7 +167,8 @@ const login = async (req, res) => {
       expire_at: expireAt
     });
 
-    console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})`);
+    console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
+    console.log(`🔐 Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
 
     res.status(200).json({
       message: "Connexion réussie",
@@ -136,5 +216,32 @@ const logout = async (req, res) => {
   }
 };
 
+// RECONNEXION w Token
+const reconnect = async (req, res) => {
+  const userId = req.userId;
 
-export { inscription, login, logout };
+  try {
+    const player = await Player.findByPk(userId);
+    if (!player) return res.status(404).json({ message: "Joueur non trouvé" });
+
+    return res.status(200).json({
+      message: "Reconnexion réussie",
+      player: {
+        id: player.id,
+        username: player.username,
+        email: player.email,
+        created_at: player.created_at,
+        first_login: player.first_login,
+        total_played: player.total_played,
+        total_won: player.total_won,
+        score: player.score
+      }
+    });
+  } catch (err) {
+    console.error("❌ Erreur dans login :", err);
+    return res.status(500).json({ message: "Erreur serveur", error: err });
+  }
+};
+
+
+export { inscription, requestPasswordReset, resetPassword, login, logout, reconnect };

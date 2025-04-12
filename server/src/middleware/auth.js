@@ -35,30 +35,6 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-/**
- * Vérifie le token pour les connexions WebSocket (Socket.IO)
- */
-const verifySocketToken = async (socket) => {
-  const token = socket.handshake.query.token;
 
-  if (!token) {
-    throw new Error("Token manquant");
-  }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-  const session = await Session.findOne({
-    where: {
-      id_player: decoded.id,
-      token
-    }
-  });
-
-  if (!session || new Date() > session.expire_at) {
-    throw new Error("Session expirée ou invalide");
-  }
-
-  return decoded.id;
-};
-
-export { verifyToken, verifySocketToken };
+export { verifyToken };
