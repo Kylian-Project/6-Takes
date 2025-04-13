@@ -69,7 +69,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 		queue_free()
 		
 	else:
-		print("❌ Erreur : ", json.get("message", "Code incorrect"))
+		print(" Erreur : ", json.get("message", "Code incorrect"))
 
 
 func _on_resend_code_pressed() -> void:
