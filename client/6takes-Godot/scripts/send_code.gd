@@ -37,7 +37,8 @@ func _on_enter_pressed() -> void:
 		print(" Code incomplet")
 		return
 	
-	print("GLOBAL EMAIL ------------", email_gloabl)
+	print("GLOBAL EMAIL -----", email_gloabl)
+	print("CODE ------", code)
 	var body = JSON.stringify({
 		"email": email_gloabl,
 		"code": code
