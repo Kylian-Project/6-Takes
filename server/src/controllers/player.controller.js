@@ -3,7 +3,8 @@ import Player from "../models/player.js";
 import Session from "../models/session.js";
 import jwt from "jsonwebtoken";
 import PasswordReset from "../models/password_reset.js";
-import { cleanOldResetCodes, generateUniqueCode } from "../utils/passwordResetUtils.js";
+import { cleanOldResetCodes, generateUniqueCode } from "../utils/passwordReset.js";
+import { sendResetCode } from "../utils/mailer.js";
 import { Op } from "sequelize";
 
 // ? INSCRIPTION
@@ -32,13 +33,19 @@ const requestPasswordReset = async (req, res) => {
   try {
     const player = await Player.findOne({ where: { email } });
     if (!player) return res.status(404).json({ message: "No player with this email." });
-    
-    // Delete expired codes
+
+    // Supprimer toutes les lignes existantes de ce joueur
+    await PasswordReset.destroy({
+      where: { id_player: player.id }
+    });
+
+    // Supprimer tous les codes expirés (optionnel, mais bien)
     await cleanOldResetCodes();
 
-    const code = await generateUniqueCode(); // 4 digits code WHICH doesn't exist in DB
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+    const code = await generateUniqueCode(); // unique 4-digit code
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
+    // Créer un nouveau code unique pour ce joueur
     await PasswordReset.create({
       id_player: player.id,
       reset_token: code,
@@ -46,8 +53,8 @@ const requestPasswordReset = async (req, res) => {
       used: false
     });
 
-    console.log(`📨 Code sent to ${email}:`, code);
-    // Later: send this code via email
+    console.log(`Code envoyé à ${email} :`, code);
+    await sendResetCode(email, code);
 
     return res.status(200).json({ message: "Reset code sent." });
 
@@ -56,6 +63,40 @@ const requestPasswordReset = async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 };
+
+
+// ? VERIFY CODE
+const verifyResetCode = async (req, res) => {
+  const { email, code } = req.body;
+
+  try {
+    const player = await Player.findOne({ where: { email } });
+    if (!player) {
+      return res.status(404).json({ valid: false, message: "Email inconnu." });
+    }
+
+    // Verification s'il existe dans BDD
+    const reset = await PasswordReset.findOne({
+      where: {
+        id_player: player.id,
+        reset_token: code,
+        used: false,
+        expires_at: { [Op.gt]: new Date() }
+      }
+    });
+
+    if (!reset) {
+      return res.status(400).json({ valid: false, message: "Code invalide ou expiré." });
+    }
+
+    return res.status(200).json({ valid: true });
+
+  } catch (err) {
+    console.error("Erreur dans verifyResetCode :", err);
+    return res.status(500).json({ valid: false, message: "Erreur serveur" });
+  }
+};
+
 
 // ? PASSWORD RESET
 const resetPassword = async (req, res) => {
@@ -73,8 +114,7 @@ const resetPassword = async (req, res) => {
       where: {
         id_player: player.id,
         reset_token: code,
-        used: false,
-        expires_at: { [Op.gt]: new Date() }
+        used: false
       }
     });
 
@@ -93,7 +133,7 @@ const resetPassword = async (req, res) => {
     return res.status(200).json({ message: "Password successfully updated." });
 
   } catch (error) {
-    console.error("❌ Error in resetPassword:", error);
+    console.error("Error in resetPassword:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };
@@ -168,7 +208,7 @@ const login = async (req, res) => {
     });
 
     console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
-    console.log(`🔐 Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
+    console.log(`Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
 
     res.status(200).json({
       message: "Connexion réussie",
@@ -238,10 +278,10 @@ const reconnect = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error("❌ Erreur dans login :", err);
+    console.error("Erreur dans login :", err);
     return res.status(500).json({ message: "Erreur serveur", error: err });
   }
 };
 
 
-export { inscription, requestPasswordReset, resetPassword, login, logout, reconnect };
+export { inscription, requestPasswordReset, verifyResetCode, resetPassword, login, logout, reconnect };

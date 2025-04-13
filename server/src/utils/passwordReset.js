@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 const cleanOldResetCodes = async () => {
     await PasswordReset.destroy({
       where: {
-        expires_at: { [Op.lt]: new Date() }
+        expires_at: { [Op.gt]: new Date() },
       }
     });
 };
