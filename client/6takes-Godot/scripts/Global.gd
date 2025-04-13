@@ -5,21 +5,22 @@ var saved_token
 var player_id
 
 var config = ConfigFile.new()
-var file_path = "res://config/env.cfg"
+var file_path = "res://config/config.cfg"
 var response_load = config.load(file_path)
 
 var BASE_URL := ""
+var header := ""
 
 func _ready():
 	if response_load != OK:
 		print("Config error load result: ", response_load)
 		return 
 		
-	var db_host = config.get_value("DEFAULT", "DB_HOST", null)
-	var db_user = config.get_value("DEFAULT", "DB_USER", "")
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
 	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
+	var header_prefix =config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "")
 	
+	header = "Authorization: " + header_prefix +" "
 	BASE_URL = srv_url + ":" + srv_port 
 	print("BASE URL ", BASE_URL)
 	load_session()
@@ -72,7 +73,7 @@ func session_validation(token : String):
 	
 	http_request.request_completed.connect(_on_request_completed)
 
-	var headers = ["Authorization: Bearer " + token]
+	var headers = [header+ token]
 	var json_body = JSON.stringify(token)
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
