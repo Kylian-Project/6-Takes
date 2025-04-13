@@ -4,23 +4,36 @@ extends Control
 @onready var email = $email
 @onready var send_code_button = $sendCode
 
-#new password
-@onready var new_password = $VBoxContainer/password
-@onready var password_confirm = $VBoxContainer/confirmPassword
-@onready var confirm_button = $confirm
-
 #pop Up panel 
 @onready var popup_overlay = $popUp_error
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
 
+@onready var http_request = $HTTPRequest
+
+
+var WS_SERVER_URL 
+var base_url
+var API_URL  
+var RESET_SUBMIT_URL
 var overlay_opened = false
-# Called when the node enters the scene tree for the first time.
+var code 
+
+	 
 func _ready() -> void:
 	self.visible = false
+	
+	if http_request:
+		http_request.request_completed.connect(_on_http_request_completed)
+	
+	base_url = get_node("/root/Global").get_base_url()
+	API_URL = "http://" + base_url + "/api/player/password/request"
+	RESET_SUBMIT_URL = "http://" + base_url + "/api/player/password/reset"
+	WS_SERVER_URL = "ws://" + base_url
 
-func _proces():
-	get_tree().paused = overlay_opened
+
+func set_code(sent_code):
+	code = sent_code
 	
 func show_overlay():
 	overlay_opened = true
@@ -47,67 +60,65 @@ func _on_cancel_pressed() -> void:
 	
 	queue_free()
 
-
-
 func _on_cancel_button_pressed() -> void:
 	queue_free()
 
 
 func _on_send_code_pressed() -> void:
-	if email.text.is_empty():
+	email = email.text.strip_edges()
+	
+	if email.is_empty():
 		popup_overlay.visible = true 
 		return 
-	else:
-		
-		var sendCode_scene = load("res://scenes/sendCode.tscn")
-		if sendCode_scene == null:
-			print("couldn't load scene")
-			
-		var sendCode_instance = sendCode_scene.instantiate()
-		if sendCode_instance== null :
-			print("couldn't instanciate scene ")
-		
-		#queue_free()
-		get_tree().current_scene.add_child(sendCode_instance)
-		sendCode_instance.show_overlay()
-		
-		queue_free()
-
-
-func _on_enter_pressed() -> void:
-	var newPass_scene = load("res://scenes/newPassword.tscn")
-	if newPass_scene == null:
-		print("couldn't load new pass scene")
 	
-	var newPass_instance = newPass_scene.instantiate()
-	if newPass_instance == null :
-		print("couldn't istantiate new pass scene ")
-	
-	get_tree().current_scene.add_child(newPass_instance)
-	newPass_instance.show_overlay()
-	
-	queue_free()
-
-
-func _on_resend_code_pressed() -> void:
-	var forgotPass_scene = load("res://scenes/ForgotPassword.tscn")
-	if forgotPass_scene == null:
-		print("couldn't load scene")
-	
-	var forgotPass_instance = forgotPass_scene.instantiate()
-	if forgotPass_instance == null :
-		print("couldn't istantiate forgot pass scene ")
-	
-	get_tree().current_scene.add_child(forgotPass_instance)
-	forgotPass_instance.show_overlay()
-	
-	queue_free()
-
-
-func _on_confirm_pressed() -> void:
-	if new_password.text.strip_edges() == password_confirm.text.strip_edges() :
-		_on_cancel_pressed()
-	else:
-		popup_message.text = "Passwords don't match"
+	if !is_valid_email(email):
+		popup_message.text = "Invalid Email"
 		popup_overlay.visible = true
-		return  
+		return 
+		
+	var payload = { "email": email }
+	print("EMAIL DEBUG ", email)
+	var json_body = JSON.stringify(payload)
+	var headers = ["Content-Type: application/json"]
+
+	print(" Envoi de requête de reset à :", API_URL)
+	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
+	
+	
+func _on_http_request_completed(result, response_code, headers, body):
+	print("Réponse HTTP reçue : code =", response_code)
+	print("Contenu brut:", body.get_string_from_utf8())
+
+	if response_code != 200:
+		print(" Erreur serveur ou identifiants invalides.")
+		return 
+		
+	var sendCode_scene = load("res://scenes/sendCode.tscn")
+	if sendCode_scene == null:
+		print("couldn't load scene")
+		return 
+		
+	var sendCode_instance = sendCode_scene.instantiate()
+	if sendCode_instance== null :
+		print("couldn't instanciate scene ")
+		return 
+	
+	#queue_free()
+	get_tree().current_scene.add_child(sendCode_instance)
+	sendCode_instance.show_overlay()
+	sendCode_instance.set_email(email)
+	
+	queue_free()
+
+
+func is_valid_email(email: String) -> bool:
+	var regex = RegEx.new()
+	var pattern = r"^[\w\.-]+@[\w\.-]+\.\w{2,}$"
+	var error = regex.compile(pattern)
+	if error != OK:
+		print("Regex compile error!")
+		return false
+	return regex.search(email) != null
+
+
+##############################for ne password 

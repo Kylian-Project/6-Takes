@@ -44,6 +44,7 @@ func set_logged_in(state):
 func save_session(token: String):
 	var config = ConfigFile.new()
 	config.set_value("session", "token", token)
+	#config.set_value("user", "email", email)
 	
 	var error = config.save("user://session.cfg")
 	if error != OK:

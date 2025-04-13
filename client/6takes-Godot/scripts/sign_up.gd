@@ -46,7 +46,15 @@ func hash_password(password: String) -> String:
 	
 func _on_signup_pressed():
 	var username = username_input.text.strip_edges()
-	var email = email_input.text.strip_edges()
+	var email = email_input.text.strip_edges() 
+	
+	if is_valid_email(email_input):
+		print("Valid email")
+	else:
+		popup_message.text = "Invalid Email"
+		popup_overlay.visible = true
+		return 
+
 	var password = password_input.text.strip_edges()
 	var password_confirm = confirmPassword_input.text.strip_edges()
 #
@@ -165,3 +173,13 @@ func _on_cancel_button_pressed() -> void:
 
 func _move_to_multiplayer_pressed():
 	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
+
+func is_valid_email(email: String) -> bool:
+	var regex = RegEx.new()
+	var pattern = r"^[\w\.-]+@[\w\.-]+\.\w{2,}$"
+	var error = regex.compile(pattern)
+	if error != OK:
+		print("Regex compile error!")
+		return false
+	return regex.search(email) != null
