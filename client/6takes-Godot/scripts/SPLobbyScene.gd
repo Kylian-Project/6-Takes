@@ -7,7 +7,16 @@ extends Control
 @onready var sp_settings_button = $BottomButtons/SPSettingsButton
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_close_button = $SettingsOverlay/Close
+
+@onready var player_limit_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown
+@onready var card_number_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/CardNumberDropdown
+@onready var round_timer_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown
+@onready var end_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/EndPointsDropdown
+@onready var rounds_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
+@onready var max_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/MaxPointsDropdown
+
 @export var bot_scene: PackedScene
+
 
 var bot_count = 1  # Start with 1 bot minimum
 
@@ -18,7 +27,31 @@ func _ready():
 	sp_settings_button.pressed.connect(show_settings)
 	settings_close_button.pressed.connect(hide_settings)
 	settings_overlay.visible = false
+	
+	# Hover sounds
+	add_bot_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_start_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_return_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	settings_close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+
+	# Click sounds
+	add_bot_button.pressed.connect(SoundManager.play_click_sound)
+	sp_start_button.pressed.connect(SoundManager.play_click_sound)
+	sp_return_button.pressed.connect(SoundManager.play_click_sound)
+	sp_settings_button.pressed.connect(SoundManager.play_click_sound)
+	settings_close_button.pressed.connect(SoundManager.play_click_sound)
+	
+	# Hover sounds for dropdowns
+	player_limit_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	card_number_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	round_timer_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	end_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	rounds_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	max_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+
 	update_bot_slots()
+
 
 func add_bot():
 	if bot_count < 9:
