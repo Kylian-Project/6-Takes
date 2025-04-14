@@ -44,6 +44,7 @@ func set_logged_in(state):
 func save_session(token: String):
 	var config = ConfigFile.new()
 	config.set_value("session", "token", token)
+	#config.set_value("user", "email", email)
 	
 	var error = config.save("user://session.cfg")
 	if error != OK:
@@ -57,9 +58,6 @@ func load_session():
 	if error == OK:
 		saved_token = config.get_value("session", "token")
 		
-		print("---------DEBUG-------------")
-		print("saved token ", saved_token)
-		#add send token to server for validation
 		print("successfully loaded session, now validating")
 		session_validation(saved_token)
 	
