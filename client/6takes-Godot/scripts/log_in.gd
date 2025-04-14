@@ -4,6 +4,7 @@ extends Control
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
 @onready var http_request = $HTTPRequest_auth
+@onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
 var jwt_token = null
 var player_data = {}
@@ -17,6 +18,10 @@ var API_URL
 @onready var popup_overlay = $popUp_error
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
+
+var showing_password1 := false
+const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
+const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
 
 
 func _ready():
@@ -167,3 +172,9 @@ func _on_forgot_password_pressed() -> void:
 	forgotPass_instance.show_overlay()
 	
 	queue_free()
+
+
+func _on_visibility_button_pressed() -> void:
+	showing_password1 = !showing_password1
+	password_input.secret = not showing_password1
+	visibility_button.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE

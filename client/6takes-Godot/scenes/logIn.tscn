@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://dgmgtvwq04hk7"]
+[gd_scene load_steps=15 format=3 uid="uid://dgmgtvwq04hk7"]
 
 [ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_gofa2"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_js3f7"]
+[ext_resource type="Texture2D" uid="uid://ccdw5btr66au7" path="res://assets/images/visibility/visible.png" id="3_wfq1h"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="5_5g1vb"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="7_ruq61"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="8_emcms"]
@@ -136,6 +137,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
 placeholder_text = "  Password"
 secret = true
 
+[node name="visibility_button" type="Button" parent="VBoxContainer/password_input"]
+offset_left = 444.0
+offset_top = 20.0
+offset_right = 494.0
+offset_bottom = 69.0
+icon = ExtResource("3_wfq1h")
+flat = true
+expand_icon = true
+
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 0
@@ -257,6 +267,7 @@ offset_top = 356.0
 offset_right = 994.0
 offset_bottom = 576.0
 
+[connection signal="pressed" from="VBoxContainer/password_input/visibility_button" to="." method="_on_visibility_button_pressed"]
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]
 [connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]
