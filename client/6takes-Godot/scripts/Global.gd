@@ -58,9 +58,6 @@ func load_session():
 	if error == OK:
 		saved_token = config.get_value("session", "token")
 		
-		print("---------DEBUG-------------")
-		print("saved token ", saved_token)
-		#add send token to server for validation
 		print("successfully loaded session, now validating")
 		session_validation(saved_token)
 	

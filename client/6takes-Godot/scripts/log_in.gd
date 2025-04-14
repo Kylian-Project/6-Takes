@@ -50,15 +50,19 @@ func _on_login_button_pressed():
 
 
 func _on_http_request_completed(result, response_code, headers, body):
+	var response_str = body.get_string_from_utf8()
+	var parsed = JSON.parse_string(response_str)
+	
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", body.get_string_from_utf8())
-
+	print("Contenu brut:", response_str)
+	
 	if response_code != 200:
-		print(" Erreur serveur ou identifiants invalides.")
+		popup_message.text = parsed["message"]
+		popup_overlay.visible = true
 		return
 
-	var json = JSON.parse_string(body.get_string_from_utf8())
 
+	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]

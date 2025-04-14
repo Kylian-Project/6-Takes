@@ -2,11 +2,18 @@ extends Control
 
 @onready var http_request = $HTTPRequest
 @onready var code1 = $HBoxContainer/Number1
-@onready var code2 = $HBoxContainer/Number2
-@onready var code3 = $HBoxContainer/Number3
-@onready var code4 = $HBoxContainer/Number4
+@onready var code_fields = [
+	$HBoxContainer/code1,
+	$HBoxContainer/code2,
+	$HBoxContainer/code3,
+	$HBoxContainer/code4
+]
 @onready var resend_button = $VBoxContainer/ResendButton  # bouton "Receive no code?"
 
+#pop Up panel 
+@onready var popup_overlay = $popUp_error
+@onready var popup_clear = $popUp_error/Button
+@onready var popup_message = $popUp_error/message
 
 var API_VERIFY_URL
 var API_RESEND_URL
@@ -21,6 +28,20 @@ func _ready() -> void:
 	var base_url = get_node("/root/Global").get_base_url()
 	API_VERIFY_URL = "http://" + base_url + "/api/player/password/verify"
 	API_RESEND_URL = "http://" + base_url + "/api/player/password/request"
+	
+	for i in code_fields.size():
+		var input = code_fields[i]
+		input.max_length = 1
+		#input.clip_text = true
+		input.select_all_on_focus = true
+		input.text_changed.connect(_on_text_changed.bind(i))
+
+
+func _on_text_changed(new_text: String, index: int):
+	if !new_text.is_valid_int():
+		code_fields[index].text = ""
+	elif new_text.length() == 1 and index < code_fields.size() - 1:
+		code_fields[index + 1].grab_focus()
 
 
 func set_email(email):
@@ -30,15 +51,17 @@ func show_overlay():
 	self.visible = true
 	
 func _on_enter_pressed() -> void:
-	var code = code1.text + code2.text + code3.text + code4.text
+	for field in code_fields:
+		if field.text.is_empty():
+			popup_overlay.visible = true
+			return
+		
+	var code: String = ""
+	for field in code_fields:
+		code += field.text
+	
 	code_global = code
 	
-	if code.length() != 4:
-		print(" Code incomplet")
-		return
-	
-	print("GLOBAL EMAIL -----", email_gloabl)
-	print("CODE ------", code)
 	var body = JSON.stringify({
 		"email": email_gloabl,
 		"code": code
@@ -49,7 +72,7 @@ func _on_enter_pressed() -> void:
 
 func _on_http_request_completed(result, response_code, headers, body):
 	var json = JSON.parse_string(body.get_string_from_utf8())
-	if response_code == 200:# and json["valid"] == true:
+	if response_code == 200:
 		print("✅ Code valide, aller à newPassword")
 		var newPass_scene = load("res://scenes/newPassword.tscn")
 		if newPass_scene == null:
@@ -69,7 +92,9 @@ func _on_http_request_completed(result, response_code, headers, body):
 		queue_free()
 		
 	else:
-		print(" Erreur : ", json.get("message", "Code incorrect"))
+		popup_message.text = json["message"]
+		popup_overlay.visible = true
+		return
 
 
 func _on_resend_code_pressed() -> void:
