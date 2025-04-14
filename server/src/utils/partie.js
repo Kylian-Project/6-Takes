@@ -1,6 +1,5 @@
-import {Server , socket } from "socket.io";
-import { Jeu6Takes ,Joueur } from "../algo/6takesgame.js";
 import { rooms } from "./lobbies.js";
+import { Jeu6Takes ,Joueur, Carte } from "../algo/6takesgame.js";
 
 const NB_CARTES = 10;
 
@@ -33,6 +32,7 @@ function getGame(roomId)
 
 
 const games = [];		// tableau de Game
+// Mémoire temporaire pour stocker les cartes jouées par room
 const cartesAJouerParRoom = {}; // { roomId: [ { username, carte } ] }
 
 
@@ -85,36 +85,71 @@ export const PlayGame = (socket, io) =>
 
 
 	// 2. Jouer une carte
-	socket.on("play-card", ({ roomId, card, username }) => 
+
+socket.on("play-card", ({ roomId, card, username }) => {
+	const jeu = getGame(roomId);
+	if (!jeu) return console.log("❌ Partie introuvable :", roomId);
+
+	// Normalisation carte
+	const carteJouee = typeof card === "number" ? { numero: card } : card;
+
+	// Initialise la liste si besoin
+	if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
+
+
+	cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
+
+	console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
+
+	// Récupérer la room et la limite attendue
+	const room = rooms.find(r => r.id === roomId);
+	const limite = room?.settings?.playerLimit || jeu.joueurs.length;
+
+	console.log("La limite est : ", limite);
+	console.log("la comparaison est avec  :" , cartesAJoueesParRoom[roomId].length);
+	//attente que tous les joueurs aient joué
+	//ajouter un timer comme ca si on depasse les 45s par exemple ca sera une carte random qui sera joué
+	if (cartesAJoueesParRoom[roomId].length === limite) 
 	{
-		const jeu = getGame(roomId);
-		if (!jeu) return console.log("❌ Partie introuvable pour la room :", roomId);
-	  
-		const joueur = jeu.joueurs.find(j => j.nom === username);
-		if (!joueur) return;
-	  
-		const indexCarte = joueur.getHand().findIndex(c => c.numero === card);
-		if (indexCarte === -1) {
-		  socket.emit("carte-invalide", "Cette carte ne vous appartient pas !");
-		  return;
+		const actions = cartesAJoueesParRoom[roomId];
+
+		// Trier par ordre croissant
+		actions.sort((a, b) => a.carte.numero - b.carte.numero);
+
+		for (const { username, carte } of actions) {
+		try {
+			jeu.jouerCarte(username, carte);
+			console.log(`✅ ${username} a joué ${carte.numero}`);
+		} catch (err) {
+			console.error(`❌ Erreur avec ${username} :`, err.message);
 		}
-	  
-		// On retire la carte de la main
-		const carteJouee = joueur.hand.jouerCarte(indexCarte);
-	  
-		// On stocke temporairement la carte jouée
-		if (!cartesAJouerParRoom[roomId]) cartesAJouerParRoom[roomId] = [];
-		cartesAJouerParRoom[roomId].push({ username, carte: carteJouee });
-	  
-		console.log(` ${username} a joué la carte ${carteJouee.numero}`);
-	  
-		// Si tous ont joué, on traite
-		if (cartesAJouerParRoom[roomId].length === jeu.joueurs.length) {
-		  traiterCartesJouees(roomId, cartesAJouerParRoom[roomId], jeu);
-		  cartesAJouerParRoom[roomId] = []; // reset pour le tour suivant
 		}
-	});
+
+		//Maj de la table
+		const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+		io.to(roomId).emit("update-table", table);
+		console.log("📤 Table actuelle :", table);
+		
+		// Scores
+		const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
+		io.to(roomId).emit("update-scores", scores);
+
+		// Nettoyage pour prochain tour
+		cartesAJoueesParRoom[roomId] = [];
+	}
+});
+
+	  
   
+
+
+
+
+
+
+
+
+	
 	// 3. Choix d'une rangée si la carte est trop faible
 	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => {
 	});
