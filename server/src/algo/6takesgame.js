@@ -97,10 +97,14 @@ class Table {
 
     ajouterCarte(carte) {
         let bestRangIndex = this.trouverBestRang(carte);
-        if (bestRangIndex !== -1) {
+        if (bestRangIndex !== -1) 
+        {
             this.rangs[bestRangIndex].ajouterCarte(carte);
-        } else {
+        } 
+        else 
+        {
             console.log("Aucune rangée possible, il faut gérer ce cas (choix d'un rang à ramasser)");
+            return -1;
         }
     }
 
@@ -109,6 +113,7 @@ class Table {
             if (this.rangs[i].estPleine()) {
                 let cartesARamasser = this.rangs[i].recupererCartes();
                 this.rangs[i] = new Rang(this.rangs[i].cartes[0]);
+                console.log("Cartes ramassées :", cartesARamasser);
                 return cartesARamasser;
             }
         }
@@ -194,12 +199,20 @@ class Jeu6Takes {
         if (index === -1) throw new Error("Carte non trouvée dans la main du joueur");
 
         joueur.hand.jouerCarte(index);
-        this.table.ajouterCarte(carte);
+        const rang = this.table.ajouterCarte(carte);
+        if(rang === -1)
+        {
+            //on attend que le joueurs choisisse un rang
+            return "choix_rang_obligatoire";
+        }
         const cartesRamassees = this.table.ramasserCartes();
 
         const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
+        console.log(`le joueur vient "${nomJoueur}" de recevoir des points : `, penalite);
         joueur.updateScore(penalite);
     }
 }
 
 export { Jeu6Takes };
+export { Joueur };
+export { Carte };
