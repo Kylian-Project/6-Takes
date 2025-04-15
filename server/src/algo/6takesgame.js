@@ -52,7 +52,8 @@ class Rang {
     }
 
     ajouterCarte(carte) {
-        this.cartes.push(carte);
+        let temp_carte= new Carte(carte.numero);
+        this.cartes.push(temp_carte);
     }
 
     estPleine() {
@@ -60,7 +61,12 @@ class Rang {
     }
 
     recupererCartes() {
-        return this.cartes.splice(0, 5);
+        let carte = [];
+        for (let i = 0; i < 5; i++) {
+            carte.push(this.cartes[i]);
+        }
+        console.log("recuperer cartes", carte);
+        return carte;
     }
 
     totalTetes() {
