@@ -52,7 +52,9 @@ class Rang {
     }
 
     ajouterCarte(carte) {
-        let temp_carte= new Carte(carte.numero);
+        let temp_carte= new Carte(carte.numero);    
+        //comme ca meme si le client nous envoie une carte {numero } sans l'attribut tetes
+        //on va nous meme calculer les tetes grace  au constructeur de la carte 
         this.cartes.push(temp_carte);
     }
 
