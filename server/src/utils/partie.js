@@ -87,7 +87,8 @@ export const PlayGame = (socket, io) =>
 
 	// 2. Jouer une carte
 
-	socket.on("play-card", ({ roomId, card, username }) => {
+	socket.on("play-card", ({ roomId, card, username }) => 
+	{
 		const jeu = getGame(roomId);
 		if (!jeu) return console.log("❌ Partie introuvable :", roomId);
 	  
@@ -101,98 +102,84 @@ export const PlayGame = (socket, io) =>
 		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
 	  
 		// Lancer le timer dès le premier joueur
-		if (cartesAJoueesParRoom[roomId].length === 1 && !timers[roomId]) {
-		  const tempsRestant = room?.settings?.roundTimer || 45;
-		  timers[roomId] = setTimeout(() => {
-			console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
-	  
-			const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);//ayant deja jouée
-			const absents = retrouverJoueursAbsents(roomId, dejaJoue);
-	  
-			for (const username of absents) {
-			  const joueur = jeu.joueurs.find(j => j.nom === username);
-			  if (!joueur || joueur.getHand().length === 0) continue;
-	  
-			  const numero =joueur.getHand()[0].numero;//1ere carte de la mauin du joueur
-			  console.log(`🤖 ${username} a joué automatiquement la carte ${numero}`);
-			  cartesAJoueesParRoom[roomId].push({ username, carte : {numero} });
-			}
-				const actions = cartesAJoueesParRoom[roomId];
-				actions.sort((a, b) => a.carte.numero - b.carte.numero);
-				
-		  	for (const { username, carte } of actions) 
-		  	{
-				try 
-				{
-				const res = jeu.jouerCarte(username, carte);
+		if (cartesAJoueesParRoom[roomId].length === 1 && !timers[roomId]) 
+		{
+			const tempsRestant = room?.settings?.roundTimer || 45;
+			
+			timers[roomId] = setTimeout(() => 
+			{
+				console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
 		
-					if (res === "CHOIX_RANGEE_NECESSAIRE") 
-					{
-						const joueur = jeu.joueurs.find(j => j.nom === username);
-						joueur.carteEnAttente = carte;
-			
-						const rangsInfo = jeu.table.rangs.map((rang, i) => ({
-						index: i,
-						cartes: rang.cartes.map(c => c.numero),
-						penalite: rang.totalTetes()
-						}));
-			
-						const socketTarget = io.sockets.sockets.get(
-						room.users.find(u => u.username === username).idSocketUser
-						);
-			
-						socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
-						return; // On arrête ici, on reprendra après le choix
-					}
-					console.log(`✅ ${username} a joué ${carte.numero}`);
-				} 
-				catch (err) 
-				{
-					console.error(`❌ Erreur avec ${username} :`, err.message);
-				}
-				const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
-
+				const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);//ayant deja jouée
+				const absents = retrouverJoueursAbsents(roomId, dejaJoue);
+		
+				for (const username of absents) {
 				const joueur = jeu.joueurs.find(j => j.nom === username);
-				if (joueur && userSocketId) {
-				  const nouvelleMain = joueur.getHand().map(c => c.numero);
-				  console.log(`🎯 Main mise à jour de ${username} :`, nouvelleMain);
-				  io.to(userSocketId).emit("your-hand", nouvelleMain);
-				}
-		  }
-
-		  
-			clearTimeout(timers[roomId]);
-			delete timers[roomId];
-			//traiterTour(roomId);
-			const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-			console.log("🎯 Table mise à jour :", table);
-			io.to(roomId).emit("update-table", table);
+				if (!joueur || joueur.getHand().length === 0) continue;
 		
-			const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
-			io.to(roomId).emit("update-scores", scores);
-			io.to(roomId).emit("tour", { username });
-			cartesAJoueesParRoom[roomId] = [];
+				const numero =joueur.getHand()[0].numero;//1ere carte de la mauin du joueur
+				console.log(`🤖 ${username} a joué automatiquement la carte ${numero}`);
+				cartesAJoueesParRoom[roomId].push({ username, carte : {numero} });
+				}
+					const actions = cartesAJoueesParRoom[roomId];
+					actions.sort((a, b) => a.carte.numero - b.carte.numero);
+					
+				for (const { username, carte } of actions) 
+				{
+					try 
+					{
+					const res = jeu.jouerCarte(username, carte);
+			
+						if (res === "CHOIX_RANGEE_NECESSAIRE") 
+						{
+							const joueur = jeu.joueurs.find(j => j.nom === username);
+							joueur.carteEnAttente = carte;
+				
+							const rangsInfo = jeu.table.rangs.map((rang, i) => ({
+							index: i,
+							cartes: rang.cartes.map(c => c.numero),
+							penalite: rang.totalTetes()
+							}));
+				
+							const socketTarget = io.sockets.sockets.get(
+							room.users.find(u => u.username === username).idSocketUser
+							);
+				
+							socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
+							return; // On arrête ici, on reprendra après le choix
+						}
+						console.log(`✅ ${username} a joué ${carte.numero}`);
+					} 
+					catch (err) 
+					{
+						console.error(`❌ Erreur avec ${username} :`, err.message);
+					}
+					const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
 
+					const joueur = jeu.joueurs.find(j => j.nom === username);
+					if (joueur && userSocketId) 
+					{
+						notifierMain(io,userSocketId, joueur);
+					}
+				}
 
-  
+			
+				clearTimeout(timers[roomId]);
+				delete timers[roomId];
+				notifierCarteJouee(io, roomId, jeu);
+
 		  }, tempsRestant * 1000);
 		}
 	  
-		// Tous les joueurs ont joué
-		if (cartesAJoueesParRoom[roomId].length === limite) {
-		  clearTimeout(timers[roomId]);
-		  delete timers[roomId];
-		  //traiterTour(roomId);
-		  const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-		  console.log("🎯 Table mise à jour :", table);
-		  io.to(roomId).emit("update-table", table);
-	  
-		  const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
-		  io.to(roomId).emit("update-scores", scores);
-		  io.to(roomId).emit("tour", { username });
-		  cartesAJoueesParRoom[roomId] = [];
-
-
+		// Tous les joueurs ont joué pas de soucis de temps
+		if (cartesAJoueesParRoom[roomId].length === limite) 
+		{
+			if (cartesAJoueesParRoom[roomId].length === limite) 
+			{
+				clearTimeout(timers[roomId]);
+				delete timers[roomId];
+				notifierCarteJouee(io, roomId, jeu);
+			}  
 		}
 	  });
 	  
@@ -273,6 +260,17 @@ export const PlayGame = (socket, io) =>
 
 
 
+
+
+
+
+
+    /////////////////////////////////////////////////
+	////////////// fonctions utilitaires /////////////
+  	//////////////////////////////////////////////////
+
+
+
 //fonction qui compare entre une liste de joueur ayant deja jouées et la liste des joueurs de la room 
 //pour retrouver qui na pas encore jouer
 function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
@@ -284,4 +282,27 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
 	const absents = nomsAttendus.filter(nom => !joueursDejaJoue.includes(nom));
 	return absents;
   }
+  
+
+function notifierCarteJouee(io, roomId, jeu) 
+{
+	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+	console.log("🎯 Table mise à jour :", table);
+	io.to(roomId).emit("update-table", table);
+  
+	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
+	io.to(roomId).emit("update-scores", scores);
+  
+	const joueurSuivant = jeu.joueurs.find(j => !j.carteEnAttente); // par défaut
+	io.to(roomId).emit("tour", { username: joueurSuivant?.nom || null });
+  
+	cartesAJoueesParRoom[roomId] = [];
+}
+  
+
+function notifierMain(io,socketId, joueur) 
+{
+	const nouvelleMain = joueur.getHand().map(c => c.numero);
+	io.to(socketId).emit("your-hand", nouvelleMain);
+}
   
