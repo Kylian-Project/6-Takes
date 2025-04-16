@@ -292,6 +292,10 @@ main .game-features-section .features-list .feature-item {
     padding: 15px;
 }
 
+main .game-features-section h3 {
+    margin: 0;
+}
+
 /* Footer Section */
 
 footer {
