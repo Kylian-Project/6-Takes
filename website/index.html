@@ -7,52 +7,59 @@
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    <div class="back-img"></div>
-
     <header>
-        <!-- <img id="playerIcon" src="./assets/img/player_icons/icon_darkgray.png" alt="6 Takes! Logo" class="logo"> -->
-        <img id="playerIcon" src="./assets/img/player_icons/icon_blue.png" alt="Player Icon" />
-        <!-- <h1 class="title">6 Takes !</h1> -->
+        <section class="logo-section">
+            <img id="playerIcon" src="./assets/img/player_icons/icon_blue.png" alt="Player Icon" />
+        </section>
 
-        <h1>Console<span style="color:white;">.<span style="color:#e06c75;">log</span></span>("</h1>
-        <div class="string">
-          <h1 class="greeting en">6 qui prends!</h1>
-          <h1 class="greeting es">6 nimmt!</h1>
-          <h1 class="greeting de">6 takes!</h1>
-          <h1 class="greeting it">6 toma!</h1>  
-        </div>
-        <h1 class="closure">");</h1>
-        
+        <section class="title-section">
+            <h1 class="title">6 Takes !</h1>
+        </section>
+
+        <section class="navigation-section">
+            <nav class="navigation">
+                <ul class="nav-list">
+                    <li><a href="#countdown">Menu1</a></li>
+                    <li><a href="#game">Menu2</a></li>
+                    <li><a href="#rules">Menu3</a></li>
+                    <li><a href="#about">Menu4</a></li>
+                    <li><a href="#contact">Menu5</a></li>
+                </ul>
+            </nav>
+        </section>
     </header>
 
     <main>
-        <!-- <section id="game-info">
-            <h2>Game Information</h2>
-            <p>6 Takes! is a card game where players try to avoid taking cards that have negative points.</p>
-        </section>
+        <section class="countdown-section" id="countdown">
+            <div class="back-img"></div>
+            <h2>The adventure begins in:</h2>
 
-        <section id="game-rules">
-            <h2>Game Rules</h2>
-            <ol>
-                <li>Each player starts with a hand of cards.</li>
-                <li>Players take turns playing cards from their hands.</li>
-                <li>The player who plays the highest card takes the pile of cards.</li>
-                <li>The game continues until all cards are played.</li>
-                <li>The player with the fewest points at the end wins.</li>
-            </ol>
-        </section>
-
-        <section id="game-strategy">
-            <h2>Game Strategy</h2>
-            <p>To win at 6 Takes!, players should try to keep track of the cards played and anticipate their opponents' moves.</p>
-        </section> -->
-        <section id="countdown">
-            <span id="days"></span>j
-            <span id="hours"></span>h
-            <span id="minutes"></span>m
-            <span id="seconds"></span>s
+            <div class="cubes">
+                <div class="cube cube1"><span id="days"></span>j</div>
+                <div class="cube cube2"><span id="hours"></span>h</div>
+                <div class="cube cube3"><span id="minutes"></span>m</div>
+                <div class="cube cube4"><span id="seconds"></span>s</div>
+            </div>
         </section>
         
+        <section class="game-features-section">
+            <h2>Game Features</h2>
+            <div class="features-list">
+                <div class="feature-item">
+                    <img src="./assets/img/feature1.png" alt="Feature 1" class="feature-icon" />
+                    <span>Feature 1</span>
+                </div>
+                <div class="feature-item">
+                    <img src="./assets/img/feature2.png" alt="Feature 2" class="feature-icon" />
+                    <span>Feature 2</span>
+                </div>
+                <div class="feature-item">
+                    <img src="./assets/img/feature3.png" alt="Feature 3" class="feature-icon" />
+                    <span>Feature 3</span>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer>
