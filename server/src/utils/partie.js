@@ -119,46 +119,7 @@ export const PlayGame = (socket, io) =>
 		
 				jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
-				const actions = cartesAJoueesParRoom[roomId];
-				actions.sort((a, b) => a.carte.numero - b.carte.numero);
-				for (const { username, carte } of actions) 
-				{
-					try 
-					{
-					const res = jeu.jouerCarte(username, carte);		//appel principal
-			
-						if (res === "CHOIX_RANGEE_NECESSAIRE") 
-						{
-							const joueur = jeu.joueurs.find(j => j.nom === username);
-							joueur.carteEnAttente = carte;
-				
-							const rangsInfo = jeu.table.rangs.map((rang, i) => ({
-							index: i,
-							cartes: rang.cartes.map(c => c.numero),
-							penalite: rang.totalTetes()
-							}));
-				
-							const socketTarget = io.sockets.sockets.get(
-							room.users.find(u => u.username === username).idSocketUser
-							);
-				
-							socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
-							return; // On arrête ici, on reprendra après le choix
-						}
-						console.log(`✅ ${username} a joué ${carte.numero}`);
-					} 
-					catch (err) 
-					{
-						console.error(`❌ Erreur avec ${username} :`, err.message);
-					}
-
-					const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
-					const joueur = jeu.joueurs.find(j => j.nom === username);
-					if (joueur && userSocketId) 
-					{
-						notifierMain(io,userSocketId, joueur);
-					}
-				}
+				traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
 
 			
 				clearTimeout(timers[roomId]);
@@ -173,6 +134,7 @@ export const PlayGame = (socket, io) =>
 		{
 			clearTimeout(timers[roomId]);
 			delete timers[roomId];
+			traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
 			notifierCarteJouee(io, roomId, jeu);
 		}
 	  });
@@ -323,6 +285,57 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 		const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
 		if (userSocketId) {
 			io.to(userSocketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+		}
+	}
+}
+
+
+function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
+{
+	const actions = cartesAJoueesParRoom[roomId];
+	const room = rooms.find(r => r.id === roomId);
+	if (!room || !actions) return;
+
+	// Trier par valeur croissante
+	actions.sort((a, b) => a.carte.numero - b.carte.numero);
+
+	for (const { username, carte } of actions) {
+		try 
+		{
+			const res = jeu.jouerCarte(username, carte);
+
+			if (res === "CHOIX_RANGEE_NECESSAIRE") {
+				const joueur = jeu.joueurs.find(j => j.nom === username);
+				joueur.carteEnAttente = carte;
+
+				const rangsInfo = jeu.table.rangs.map((rang, i) => ({
+					index: i,
+					cartes: rang.cartes.map(c => c.numero),
+					penalite: rang.totalTetes()
+				}));
+
+				const socketTarget = io.sockets.sockets.get(
+					room.users.find(u => u.username === username)?.idSocketUser
+				);
+
+				if (socketTarget) {
+					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
+				}
+				return; // On arrête ici, la suite reprendra après choix
+			}
+
+			console.log(`✅ ${username} a joué ${carte.numero}`);
+		} 
+		catch (err) {
+			console.error(`❌ Erreur avec ${username} :`, err.message);
+		}
+
+		// Notifier la nouvelle main du joueur
+		const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
+		const joueur = jeu.joueurs.find(j => j.nom === username);
+		if (joueur && userSocketId)
+		{
+			notifierMain(io, userSocketId, joueur);
 		}
 	}
 }

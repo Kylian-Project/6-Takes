@@ -103,13 +103,20 @@ export const roomHandler = (socket, io) =>
 	////////////// fonctions utilitaires /////////////
   	//////////////////////////////////////////////////
     const getAvailableRooms = () => {
-        return rooms.filter(room => room.private === false).map(room => room.id);
+    return rooms
+        .filter(room => room.private === false)
+        .map(room => ({
+        id: room.id,
+        name: room.settings?.lobbyName || "Lobby",
+        count: room.users.length,
+        playerLimit: room.settings?.playerLimit || 10
+        }));
     };
+
 
     const getUsers = (roomId) => {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return { count: 0, usernames: [] };
-      
         const usernames = room.getUsernames();
         return {
           count: usernames.length,
@@ -194,14 +201,14 @@ export const roomHandler = (socket, io) =>
         io.emit("available-rooms", getAvailableRooms());
     };
 
-/**
- * Permet à un utilisateur de rejoindre une room existante.
- * Émet un événement si la room est introuvable ou pleine.
- * @param {object} data - Informations nécessaires pour rejoindre la room
- * @param {string} data.roomId - ID de la room à rejoindre
- * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
- * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
- */
+    /**
+     * Permet à un utilisateur de rejoindre une room existante.
+     * Émet un événement si la room est introuvable ou pleine.
+     * @param {object} data - Informations nécessaires pour rejoindre la room
+     * @param {string} data.roomId - ID de la room à rejoindre
+     * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
+     * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
+     */
 
     const joinRoom = ({ roomId, username }) => 
     {
@@ -280,7 +287,7 @@ export const roomHandler = (socket, io) =>
             }
         };
 
-    //io.emit("available-rooms", getAvailableRooms());
+    io.emit("available-rooms", getAvailableRooms());
 
 
     //////////////////////////////////////////////////
@@ -295,6 +302,7 @@ export const roomHandler = (socket, io) =>
     socket.on("available-rooms", () => {
         socket.emit("available-rooms", getAvailableRooms());
     });
+
 
     socket.on("leave-room", leaveRoom);
 
