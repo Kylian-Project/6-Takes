@@ -1,7 +1,11 @@
 // routes/player_route.js
 
 import express from "express";
-import {inscription, requestPasswordReset, verifyResetCode, resetPassword, login, logout, reconnect} from "../controllers/player.controller.js";
+import {inscription,
+        requestPasswordReset, verifyResetCode, resetPassword, 
+        login, logout, reconnect, 
+        updateProfile
+        } from "../controllers/player.controller.js";
 import {verifyToken} from "../middleware/auth.js"
 
 const router = express.Router();
@@ -13,9 +17,11 @@ router.post("/password/request", requestPasswordReset);
 router.post("/password/verify", verifyResetCode);
 router.post("/password/reset", resetPassword);
 
-router.post("/connexion", login);
-router.post("/logout", verifyToken, logout);
-router.post("/reconnect", verifyToken, reconnect);
+router.post("/connexion", login);                       
+router.post("/logout", verifyToken, logout);            // protected route !important to have Token for a specific USER and not just any user 
+router.post("/reconnect", verifyToken, reconnect);      // protected route !important to have Token for a specific USER and not just any user
+
+router.patch("/profile", verifyToken, updateProfile);   // protected route !important to have Token for a specific USER and not just any user
 // other routes gonna be added, DO NOT FORGET! 
 
 

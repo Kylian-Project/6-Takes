@@ -161,7 +161,7 @@ const login = async (req, res) => {
     });
 
     if (existingSession) {
-      console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})`);
+      console.log(`Connexion réussie : ${player.username} (ID ${player.id})`);
       return res.status(200).json({
         message: "Connexion réussie (session existante)",
         token: existingSession.token,
@@ -207,7 +207,7 @@ const login = async (req, res) => {
       expire_at: expireAt
     });
 
-    console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
+    console.log(`Connexion réussie : ${player.username} (ID ${player.id})\n`);
     console.log(`Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
 
     res.status(200).json({
@@ -248,7 +248,7 @@ const logout = async (req, res) => {
       return res.status(404).json({ message: "Session non trouvée" });
     }
 
-    console.log(`[EXPRESS] Déconnexion : ID ${userId}`);
+    console.log(`Déconnexion : ID ${userId}`);
     return res.status(200).json({ message: "Déconnexion réussie" });
 
   } catch (err) {
@@ -284,4 +284,48 @@ const reconnect = async (req, res) => {
 };
 
 
-export { inscription, requestPasswordReset, verifyResetCode, resetPassword, login, logout, reconnect };
+// ? UPDATE PROFIL
+const updateProfile = async (req, res) => {
+  const userId = req.userId;
+  const { username, password, icon } = req.body;
+
+  try {
+    const player = await Player.findByPk(userId);
+    if (!player) return res.status(404).json({ message: "Joueur introuvable" });
+    
+    // ###################################
+    // ### to see later on what to add ###
+    // ###################################
+
+    if (username) player.username = username;
+
+    // no need for verification normally, its the client gotta check whether old pass and new pass are the same,
+    // or ever pass and confirm pass match or not... (as well as the hashing step)
+    if (password) player.password = password;  
+
+    if (icon) player.icon = icon;
+
+    await player.save();
+
+    return res.status(200).json({
+      message: "Profil mis à jour !",
+      player: {
+        id: player.id,
+        username: player.username,
+        icon: player.icon,
+        email: player.email,
+        created_at: player.created_at,
+        first_login: player.first_login,
+        total_played: player.total_played,
+        total_won: player.total_won,
+        score: player.score
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Erreur lors de la mise à jour", error: err });
+  }
+};
+
+
+
+export { inscription, requestPasswordReset, verifyResetCode, resetPassword, login, logout, reconnect, updateProfile};

@@ -29,7 +29,10 @@ const Player = db.define("player", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
-  // icon : to see later on..
+  icon: {
+    type: DataTypes.INTEGER,
+    allowNull: false,       // by default every player got an icon ..
+  },
   score: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

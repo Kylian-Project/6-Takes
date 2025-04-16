@@ -32,12 +32,14 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // tu pourras sécuriser plus tard si besoin
+    origin: "*",          // to change in Prod
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true     // as we use headers for JWT
   },
 });
 
 io.on("connection",(socket) => {
-  console.log("✅ Un client s'est connecté :", socket.id);
+  console.log("Un client s'est connecté :", socket.id);
   roomHandler(socket, io);
   PlayGame(socket, io);
 });
@@ -51,9 +53,8 @@ const PORT = process.env.PORT;
 
 db.sync().then(() => {
   server.listen(PORT, () => {
-    console.log(`? Serveur HTTP & WebSocket en ligne sur le port ${PORT}`);
-    console.log(`?? API: http://localhost:${PORT}/api/player`);
-    console.log(`?? WS : ws://localhost:${PORT}/?token=<JWT>`);
+    console.log(`Serveur HTTP & WebSocket en ligne sur le port ${PORT}`);
+    console.log(`API: http://bastion:${PORT}/api/player`);
   });
 }).catch((err) => {
   console.error("? Erreur de connexion à la base de données :", err);
