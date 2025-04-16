@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=29 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://e3nomb8wp8lc" path="res://assets/images/plus.png" id="9_eoxuu"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="11_ew5dc"]
 [ext_resource type="Script" path="res://scripts/sp_settings.gd" id="13_esrap"]
+[ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="15_oijlq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i7mao"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -1119,3 +1120,10 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_qewfh")
 text = "X"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="SocketIO" type="Node" parent="."]
+script = ExtResource("15_oijlq")
+autoconnect = false
+base_url = "http://185.155.93.105:1401"

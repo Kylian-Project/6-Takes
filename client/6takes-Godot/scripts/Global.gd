@@ -23,7 +23,7 @@ func _ready():
 	header = "Authorization: " + header_prefix +" "
 	BASE_URL = srv_url + ":" + srv_port 
 	print("BASE URL ", BASE_URL)
-	load_session()
+	#load_session()
 	
 	
 func get_base_url():

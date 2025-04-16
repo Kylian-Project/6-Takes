@@ -10,15 +10,36 @@ extends Control
 @export var bot_scene: PackedScene
 
 var bot_count = 1  # Start with 1 bot minimum
+	
+@onready var socket_io = $SocketIO
 
 func _ready():
-	add_bot_button.pressed.connect(add_bot)
-	sp_start_button.pressed.connect(start_game)
-	sp_return_button.pressed.connect(return_to_main_menu)
-	sp_settings_button.pressed.connect(show_settings)
-	settings_close_button.pressed.connect(hide_settings)
-	settings_overlay.visible = false
+	socket_io.connect_socket()
+	#socket_io.event_received.connect(_on_socket_io_event_received)
+	#
+	#socket_io.connect("connected",Callable(self, "_on_socket_connected"))
+	#socket_io.connect("error", Callable(self, "_on_socket_error"))
+	#
+	## Listen to the events as defined in your Node.js server:
+	#socket_io.connect("start-game", Callable( self, "_on_start_game"))
+	#socket_io.connect("your-hand", Callable(self, "_on_your_hand"))
+	#socket_io.connect("initial-table", Callable(self, "_on_initial_table"))
+	#socket_io.connect("carte-invalide", Callable(self, "_on_invalid_card"))
+	#
+	#
+	#add_bot_button.pressed.connect(add_bot)
+	#sp_start_button.pressed.connect(start_game)
+	#sp_return_button.pressed.connect(return_to_main_menu)
+	#sp_settings_button.pressed.connect(show_settings)
+	#settings_close_button.pressed.connect(hide_settings)
+	#settings_overlay.visible = false
 	update_bot_slots()
+
+
+
+func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
+	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
+
 
 func add_bot():
 	if bot_count < 9:
@@ -52,7 +73,9 @@ func update_bot_slots():
 	add_bot_button.visible = bot_count < 9
 
 func start_game():
+	#socket_io.connect_socket()
 	print("Starting game with", bot_count, "bots.")
+	
 
 func return_to_main_menu():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
