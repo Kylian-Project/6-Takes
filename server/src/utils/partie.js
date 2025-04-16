@@ -106,20 +106,20 @@ export const PlayGame = (socket, io) =>
 		  timers[roomId] = setTimeout(() => {
 			console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
 	  
-			const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);
+			const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);//ayant deja jouée
 			const absents = retrouverJoueursAbsents(roomId, dejaJoue);
 	  
 			for (const username of absents) {
 			  const joueur = jeu.joueurs.find(j => j.nom === username);
 			  if (!joueur || joueur.getHand().length === 0) continue;
 	  
-			  const numero =joueur.getHand()[0].numero;
+			  const numero =joueur.getHand()[0].numero;//1ere carte de la mauin du joueur
 			  console.log(`🤖 ${username} a joué automatiquement la carte ${numero}`);
 			  cartesAJoueesParRoom[roomId].push({ username, carte : {numero} });
 			}
-			const actions = cartesAJoueesParRoom[roomId];
-		  actions.sort((a, b) => a.carte.numero - b.carte.numero);
-			console.log("affichage des carteAjoueesParRoom IMPORTATN", actions);
+				const actions = cartesAJoueesParRoom[roomId];
+				actions.sort((a, b) => a.carte.numero - b.carte.numero);
+				
 		  	for (const { username, carte } of actions) 
 		  	{
 				try 
@@ -150,9 +150,17 @@ export const PlayGame = (socket, io) =>
 				{
 					console.error(`❌ Erreur avec ${username} :`, err.message);
 				}
+				const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
+
+				const joueur = jeu.joueurs.find(j => j.nom === username);
+				if (joueur && userSocketId) {
+				  const nouvelleMain = joueur.getHand().map(c => c.numero);
+				  console.log(`🎯 Main mise à jour de ${username} :`, nouvelleMain);
+				  io.to(userSocketId).emit("your-hand", nouvelleMain);
+				}
 		  }
 
-
+		  
 			clearTimeout(timers[roomId]);
 			delete timers[roomId];
 			//traiterTour(roomId);
@@ -265,25 +273,8 @@ export const PlayGame = (socket, io) =>
 
 
 
-//fonctions utiles
-function trouverPartie(jeu)
-{
-	if (!jeu) return console.log("❌ Partie introuvable :", roomId);
-};
-
-//tabl est un tableau qui contient des objet {{ username, carte}
-function trouverJoueurAbsent(tab, room)
-{
-	let usernamesPlayed = tab.map(personne => personne.username);
-	let usernamesTotal = room.users.username;
-	const diff = usernamesTotal.filter(val => !usernamesPlayed.includes(val));
-
-	//a partir d'ici on retourne les username qui n'ont pas jouée on leurs fait des push  dasn 
-	//cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
-	//juste la carte c'est nous qui alons la choisir de sa main en faison un truc random de hand c'est tout 
-};
-
-
+//fonction qui compare entre une liste de joueur ayant deja jouées et la liste des joueurs de la room 
+//pour retrouver qui na pas encore jouer
 function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
 	const jeu = getGame(roomId);
 	const room = rooms.find(r => r.id === roomId);
