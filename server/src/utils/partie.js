@@ -81,6 +81,13 @@ export const PlayGame = (socket, io) =>
 		const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 		io.to(roomId).emit("initial-table", tableInit);
 
+		// Lancement du timer
+		/*
+		timers[roomId] = setTimeout(() => 
+		{
+			console.log(`⏰ Timer écoulé dans la room ${roomId}`);
+		}, 1000);		// a modifier pour plus tard
+		*/
 		console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
   	});
 
@@ -101,8 +108,8 @@ export const PlayGame = (socket, io) =>
 		const room = rooms.find(r => r.id === roomId);
 		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
 	  
-		// Lancer le timer dès le premier joueur
-		if (cartesAJoueesParRoom[roomId].length === 1 && !timers[roomId]) 
+		// Lancer le timer
+		if (!timers[roomId]) 
 		{
 			const tempsRestant = room?.settings?.roundTimer || 45;
 			
@@ -110,25 +117,15 @@ export const PlayGame = (socket, io) =>
 			{
 				console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
 		
-				const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);//ayant deja jouée
-				const absents = retrouverJoueursAbsents(roomId, dejaJoue);
-		
-				for (const username of absents) {
-				const joueur = jeu.joueurs.find(j => j.nom === username);
-				if (!joueur || joueur.getHand().length === 0) continue;
-		
-				const numero =joueur.getHand()[0].numero;//1ere carte de la mauin du joueur
-				console.log(`🤖 ${username} a joué automatiquement la carte ${numero}`);
-				cartesAJoueesParRoom[roomId].push({ username, carte : {numero} });
-				}
-					const actions = cartesAJoueesParRoom[roomId];
-					actions.sort((a, b) => a.carte.numero - b.carte.numero);
-					
+				jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+
+				const actions = cartesAJoueesParRoom[roomId];
+				actions.sort((a, b) => a.carte.numero - b.carte.numero);
 				for (const { username, carte } of actions) 
 				{
 					try 
 					{
-					const res = jeu.jouerCarte(username, carte);
+					const res = jeu.jouerCarte(username, carte);		//appel principal
 			
 						if (res === "CHOIX_RANGEE_NECESSAIRE") 
 						{
@@ -154,8 +151,8 @@ export const PlayGame = (socket, io) =>
 					{
 						console.error(`❌ Erreur avec ${username} :`, err.message);
 					}
-					const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
 
+					const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
 					const joueur = jeu.joueurs.find(j => j.nom === username);
 					if (joueur && userSocketId) 
 					{
@@ -168,18 +165,15 @@ export const PlayGame = (socket, io) =>
 				delete timers[roomId];
 				notifierCarteJouee(io, roomId, jeu);
 
-		  }, tempsRestant * 1000);
+		  	}, tempsRestant * 1000);
 		}
 	  
 		// Tous les joueurs ont joué pas de soucis de temps
 		if (cartesAJoueesParRoom[roomId].length === limite) 
 		{
-			if (cartesAJoueesParRoom[roomId].length === limite) 
-			{
-				clearTimeout(timers[roomId]);
-				delete timers[roomId];
-				notifierCarteJouee(io, roomId, jeu);
-			}  
+			clearTimeout(timers[roomId]);
+			delete timers[roomId];
+			notifierCarteJouee(io, roomId, jeu);
 		}
 	  });
 	  
@@ -306,3 +300,29 @@ function notifierMain(io,socketId, joueur)
 	io.to(socketId).emit("your-hand", nouvelleMain);
 }
   
+
+function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
+{
+	const room = rooms.find(r => r.id === roomId);
+	if (!room || !jeu) return;
+
+	const dejaJoue = (cartesAJoueesParRoom[roomId] || []).map(p => p.username);
+	const absents = retrouverJoueursAbsents(roomId, dejaJoue);
+
+	for (const username of absents) 
+	{
+		const joueur = jeu.joueurs.find(j => j.nom === username);
+		if (!joueur || joueur.getHand().length === 0) continue;
+
+		const carte = joueur.getHand()[0]; // Joue la première carte
+		cartesAJoueesParRoom[roomId].push({ username, carte });
+
+		console.log(`🤖 ${username} a joué automatiquement la carte ${carte.numero}`);
+
+		// Envoyer main à jour
+		const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
+		if (userSocketId) {
+			io.to(userSocketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+		}
+	}
+}
