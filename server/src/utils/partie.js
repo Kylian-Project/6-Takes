@@ -34,6 +34,7 @@ function getGame(roomId)
 const games = [];		// tableau de Game
 // Mémoire temporaire pour stocker les cartes jouées par room
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
+const timers = {};  // un timer par room
 
 
 
@@ -91,7 +92,6 @@ export const PlayGame = (socket, io) =>
 		if (!jeu) return console.log("❌ Partie introuvable :", roomId);
 	  
 		const carteJouee = typeof card === "number" ? { numero: card } : card;
-	  
 		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
 		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
 	  
@@ -100,10 +100,26 @@ export const PlayGame = (socket, io) =>
 		const room = rooms.find(r => r.id === roomId);
 		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
 	  
-		if (cartesAJoueesParRoom[roomId].length === limite) {
-		  const actions = cartesAJoueesParRoom[roomId];
-		  actions.sort((a, b) => a.carte.numero - b.carte.numero);
+		// Lancer le timer dès le premier joueur
+		if (cartesAJoueesParRoom[roomId].length === 1 && !timers[roomId]) {
+		  const tempsRestant = room?.settings?.roundTimer || 45;
+		  timers[roomId] = setTimeout(() => {
+			console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
 	  
+			const dejaJoue = cartesAJoueesParRoom[roomId].map(p => p.username);
+			const absents = retrouverJoueursAbsents(roomId, dejaJoue);
+	  
+			for (const username of absents) {
+			  const joueur = jeu.joueurs.find(j => j.nom === username);
+			  if (!joueur || joueur.getHand().length === 0) continue;
+	  
+			  const numero =joueur.getHand()[0].numero;
+			  console.log(`🤖 ${username} a joué automatiquement la carte ${numero}`);
+			  cartesAJoueesParRoom[roomId].push({ username, carte : {numero} });
+			}
+			const actions = cartesAJoueesParRoom[roomId];
+		  actions.sort((a, b) => a.carte.numero - b.carte.numero);
+			console.log("affichage des carteAjoueesParRoom IMPORTATN", actions);
 		  	for (const { username, carte } of actions) 
 		  	{
 				try 
@@ -135,7 +151,30 @@ export const PlayGame = (socket, io) =>
 					console.error(`❌ Erreur avec ${username} :`, err.message);
 				}
 		  }
+
+
+			clearTimeout(timers[roomId]);
+			delete timers[roomId];
+			//traiterTour(roomId);
+			const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+			console.log("🎯 Table mise à jour :", table);
+			io.to(roomId).emit("update-table", table);
+		
+			const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
+			io.to(roomId).emit("update-scores", scores);
+			io.to(roomId).emit("tour", { username });
+			cartesAJoueesParRoom[roomId] = [];
+
+
+  
+		  }, tempsRestant * 1000);
+		}
 	  
+		// Tous les joueurs ont joué
+		if (cartesAJoueesParRoom[roomId].length === limite) {
+		  clearTimeout(timers[roomId]);
+		  delete timers[roomId];
+		  //traiterTour(roomId);
 		  const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 		  console.log("🎯 Table mise à jour :", table);
 		  io.to(roomId).emit("update-table", table);
@@ -143,10 +182,11 @@ export const PlayGame = (socket, io) =>
 		  const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
 		  io.to(roomId).emit("update-scores", scores);
 		  io.to(roomId).emit("tour", { username });
-	  
 		  cartesAJoueesParRoom[roomId] = [];
+
+
 		}
-	});
+	  });
 	  
 
 	  
@@ -223,3 +263,34 @@ export const PlayGame = (socket, io) =>
 };
 
 
+
+
+//fonctions utiles
+function trouverPartie(jeu)
+{
+	if (!jeu) return console.log("❌ Partie introuvable :", roomId);
+};
+
+//tabl est un tableau qui contient des objet {{ username, carte}
+function trouverJoueurAbsent(tab, room)
+{
+	let usernamesPlayed = tab.map(personne => personne.username);
+	let usernamesTotal = room.users.username;
+	const diff = usernamesTotal.filter(val => !usernamesPlayed.includes(val));
+
+	//a partir d'ici on retourne les username qui n'ont pas jouée on leurs fait des push  dasn 
+	//cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
+	//juste la carte c'est nous qui alons la choisir de sa main en faison un truc random de hand c'est tout 
+};
+
+
+function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
+	const jeu = getGame(roomId);
+	const room = rooms.find(r => r.id === roomId);
+	if (!jeu || !room) return [];
+  
+	const nomsAttendus = jeu.joueurs.map(j => j.nom);
+	const absents = nomsAttendus.filter(nom => !joueursDejaJoue.includes(nom));
+	return absents;
+  }
+  
