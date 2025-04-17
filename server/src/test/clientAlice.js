@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import readline from "readline";
 
-const socket = io("http://185.155.93.105:14001");
+const socket = io("http://185.155.93.105:14002");
 
 let roomId;
 let hand = [];
@@ -12,6 +12,8 @@ const rl = readline.createInterface({
 });
 
 function askCarte() {
+  socket.emit("tour" , {roomId});
+  console.log(("evebnement tour-start envooyé"));
   console.log("🃏 Votre main :", hand.map((c, i) => `(${i}) ${c}`).join(" | "));
   rl.question("👉 Quelle carte voulez-vous jouer ? (index) ", (input) => {
     const index = parseInt(input);
@@ -33,7 +35,7 @@ socket.on("connect", () => {
     lobbyName: "TestTerminal",
     playerLimit: 2,
     numberOfCards: 10,
-    roundTimer: 45,
+    roundTimer: 10,
     endByPoints: 66,
     rounds: 1
   });
@@ -46,7 +48,6 @@ socket.on("private-room-created", (id) => {
 
 socket.on("your-hand", (cartes) => {
   hand = cartes;
-  console.log("🖐️ Nouvelle main reçue :", hand);
   askCarte();
 });
 
@@ -60,6 +61,7 @@ socket.on("update-table", (table) => {
 socket.on("update-scores", (scores) => {
   console.log("🏆 Scores :");
   scores.forEach(s => console.log(`  ${s.nom} : ${s.score} 🐮`));
+  //socket.emit("tour" , {roomId});
   askCarte();
 });
 
@@ -80,3 +82,7 @@ socket.on("choix-rangee", ({ rangs }) => {
     socket.emit("choisir-rangee", { roomId, indexRangee, username: "Alice" });
   });
 });
+
+
+
+

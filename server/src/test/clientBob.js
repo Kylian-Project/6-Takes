@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import readline from "readline";
 
-const socket = io("http://185.155.93.105:14001");
+const socket = io("http://185.155.93.105:14002");
 
 let roomId;
 let hand = [];
@@ -21,10 +21,14 @@ rl.question("🔑 Entrez le roomId à rejoindre : ", (inputRoomId) => {
   socket.on("private-room-joined", (users) => {
     console.log("👥 Bob a rejoint la room :", users);
     socket.emit("start-game", roomId);
+    //socket.emit("tour", roomId);      //lancer le tour
     console.log("start game envoyé");
+    //askCarte();
   });
   
 function askCarte() {
+  socket.emit("tour" , {roomId});
+  console.log(("evebnement tour-start envooyé"));
   console.log("🃏 Votre main :", hand.map((c, i) => `(${i}) ${c}`).join(" | "));
   rl.question("👉 Quelle carte voulez-vous jouer ? (index) ", (input) => 
   {
@@ -45,7 +49,6 @@ socket.on("connect", () => {
 
 socket.on("your-hand", (cartes) => {
   hand = cartes;
-  console.log("🖐️ Nouvelle main reçue :", hand);
   askCarte();
 });
 
@@ -59,14 +62,11 @@ socket.on("update-table", (table) => {
 socket.on("update-scores", (scores) => {
   console.log("🏆 Scores :");
   scores.forEach(s => console.log(`  ${s.nom} : ${s.score} 🐮`));
+  //socket.emit("tour" , {roomId});
   askCarte();
 });
 
-socket.on("tour", (nom) => {
-  if (nom === "Bob" && hand.length > 0) {
-    askCarte();
-  }
-});
+
 
 socket.on("choix-rangee", ({ rangs }) => {
   console.log("⚠️ Choix obligatoire d'une rangée :");
