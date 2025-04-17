@@ -107,10 +107,6 @@ export const PlayGame = (socket, io) =>
 	  
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
-				// Lancer le timer
-		//lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
-
-
 		// Tous les joueurs ont joué pas de soucis de temps
 		if (cartesAJoueesParRoom[roomId].length === limite) 
 		{
@@ -119,27 +115,24 @@ export const PlayGame = (socket, io) =>
 			delete timers[roomId];
 			traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
 			notifierCarteJouee(io, roomId, jeu);
-			//return ;
+
+			//redemearrer le timer une fois que les joueurs ont tous jouées
+			lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
 		}
 	});
 	  
 
 		// 2. JPasser au tour suivant -start-tour
 
-	socket.on( "tour" , (roomId, card ="", username="" ) =>
+	socket.on( "tour" , ({roomId, card , username }) =>
 	{
-		console.log("evenement tour-start recu");
 		const jeu = getGame(roomId);
-		if (!jeu) return ;
-	  
-		const carteJouee = typeof card === "number" ? { numero: card } : card;
-
-		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
-		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
-	  
-	  
-		const room = rooms.find(r => r.id === roomId);
-		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
+		if (!jeu)
+			{ 
+				console.log("evenement tour-start mais le jeu n'est pas lancé");
+				return ;
+			}
+		cartesAJoueesParRoom[roomId] = [];
 		lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
 	});
   
@@ -345,6 +338,11 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 
 function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 {
+	if(timers[roomId])
+	{
+		console.log("UN TIMER EST DEJA ACTIF DANS LA ROOM !!!", roomId);
+		return;
+	}
 	const room = rooms.find(r => r.id === roomId);
 	const duration = (room?.settings?.roundTimer || 45) * 1000;
 	console.log("le timer est lancé pour la room", roomId);
