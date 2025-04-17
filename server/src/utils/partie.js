@@ -35,6 +35,7 @@ const games = [];		// tableau de Game
 // Mémoire temporaire pour stocker les cartes jouées par room
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
 const timers = {};  // un timer par room
+const affichageTimers = {};
 
 
 
@@ -111,8 +112,13 @@ export const PlayGame = (socket, io) =>
 		if (cartesAJoueesParRoom[roomId].length === limite) 
 		{
 			console.log("time out deleted");
+
 			clearTimeout(timers[roomId]);
 			delete timers[roomId];
+			
+			clearInterval(affichageTimers[roomId]);
+			delete affichageTimers[roomId];
+
 			traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
 			notifierCarteJouee(io, roomId, jeu);
 
@@ -340,18 +346,35 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 {
 	if(timers[roomId])
 	{
-		console.log("UN TIMER EST DEJA ACTIF DANS LA ROOM !!!", roomId);
 		return;
 	}
 	const room = rooms.find(r => r.id === roomId);
 	const duration = (room?.settings?.roundTimer || 45) * 1000;
+	let secondesRestantes = duration/1000 ;
 	console.log("le timer est lancé pour la room", roomId);
 
-	timers[roomId] = setTimeout(() => {
-	  console.log(`⏰ Timer écoulé pour room ${roomId}`);
-	  jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
-	  traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
-	  delete timers[roomId];
-	  notifierCarteJouee(io, roomId, jeu);
+	timers[roomId] = setTimeout(() => 
+	{
+		console.log(`⏰ Timer écoulé pour room ${roomId}`);
+		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+		traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
+		delete timers[roomId];
+		notifierCarteJouee(io, roomId, jeu);
+
+		clearInterval(affichageTimers[roomId]);
+		delete affichageTimers[roomId];
+
 	}, duration);
+
+	//envoyer le timer aux joueurs
+	affichageTimers[roomId] = setInterval(() => {
+		secondesRestantes--;
+		io.to(roomId).emit("temps-room", secondesRestantes);
+		if(secondesRestantes <= 0)
+		{
+			clearInterval(affichageTimers[roomId]);
+			delete affichageTimers[roomId];
+		}
+	},1000);
+
   }
