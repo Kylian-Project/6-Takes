@@ -7,7 +7,6 @@ extends Control
 @onready var drop_point: Area2D=$detector
 @onready var texture_rect = $TextureRect
 
-var selection_visibilty = false 
 var global_card_id 
 
 var original_position := position
@@ -21,25 +20,22 @@ var orig_tex_scale: Vector2
 var is_lifted = false
 
 # tweak these to taste:
-const LIFT_OFFSET   = Vector2(0, -20)     # move up 20px
+const LIFT_OFFSET   = Vector2(0, -25)     # move up 20px
 const SCALE_FACTOR  = 1.2 
 
 
 func _ready() -> void:
 	# cache the TextureRect’s original transform
 	orig_tex_pos   = texture_rect.position
-	orig_tex_scale = texture_rect.scale
+	orig_tex_scale = Vector2(1,1)
 	
-	selection_visibilty = false 
-	selection_container.visible = selection_visibilty
+	selection_container.visible = is_lifted
 	original_position = position
 	original_scale = scale
 	
-	reparent_requested.connect(_on_reparent_requested)
-	
 
 func _process(_delta):
-	selection_container.visible = selection_visibilty
+	selection_container.visible = is_lifted
 	
 	
 # Méthode pour assigner les données de la carte
@@ -50,12 +46,6 @@ func set_card_data(image_path, card_id):
 		$TextureRect.texture = texture  
 	else:
 		print(" Erreur : Impossible de charger l'image", image_path)
-
-signal reparent_requested(which_card_ui:CardUI)
-
-
-func _on_reparent_requested(which_card_ui: CardUI) -> void:
-	print("Reparenting demandé pour :", which_card_ui)
 
 
 func _on_select_button_pressed() -> void:
@@ -69,13 +59,11 @@ func _on_deselect_button_pressed() -> void:
 		return
 	is_lifted = false
 	
-	texture_rect.position = orig_tex_pos
-	texture_rect.scale    = orig_tex_scale
+	self.position = orig_tex_pos
+	self.scale    = orig_tex_scale
 	
-	selection_visibilty = false
-	selection_container.visible = false
+	selection_container.visible = is_lifted
 	
-
 
 func _on_detector_mouse_entered() -> void:
 	if !is_in_hand_grp() or is_lifted:
@@ -91,35 +79,22 @@ func _on_detector_mouse_exited() -> void:
 
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print("group debug : ", is_in_hand_grp())
 		if is_in_hand_grp():
-			selection_visibilty = !selection_visibilty
-			selection_container.visible = selection_visibilty
-			
-			if is_lifted:
-				return
-			is_lifted = true
-
-			# lift & scale the TextureRect
-			texture_rect.position = orig_tex_pos + LIFT_OFFSET
-			texture_rect.scale    = orig_tex_scale * SCALE_FACTOR
-			
-			#if selection_visibilty:
-				#position.y -= 30  # move card up
-				#scale = Vector2(1.2, 1.2)  # scale up
-			#else:
-				#position = original_position
-				#scale = original_scale
+			if !is_lifted:
+				#lift card
+				is_lifted = true
+				selection_container.visible =	is_lifted
+				
+				self.position = orig_tex_pos + LIFT_OFFSET
+				self.scale = orig_tex_scale * SCALE_FACTOR
+			else:
+				is_lifted = false
+				self.position = orig_tex_pos
+				self.scale = original_scale
+				selection_container.visible = is_lifted 
 	else:
 		return
-			
-			
+
+
 func is_in_hand_grp():
 	return self.get_parent().is_in_group("hand_grp")
-
-
-func reset_card():
-	position = original_position
-	scale = original_scale
-	selection_visibilty = false
-	selection_container.visible = false

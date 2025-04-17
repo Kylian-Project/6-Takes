@@ -1,10 +1,15 @@
 extends Node2D
 
-@export var vbox_container: VBoxContainer  # Rows cotainer
 @export var hbox_container: HBoxContainer  # Hand Container
 @export var top_bar: HBoxContainer  # Conteneur HBox pour les labels
 @onready var timer_label = $HBoxContainer/timer
 @onready var score_label = $CanvasLayer/top_bar/nbheads
+
+#deck ui 
+@onready var row1 = $deckContainer/rowsContainer/row1
+@onready var row2 = $deckContainer/rowsContainer/row2
+@onready var row3 = $deckContainer/rowsContainer/row3
+@onready var row4 = $deckContainer/rowsContainer/row4
 
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
@@ -102,13 +107,13 @@ func _handle_room_created(data):
 	}
 	game_state = GameState.ROOM_JOINED
 	
-	await get_tree().create_timer(20).timeout
+	await get_tree().create_timer(15).timeout
 	print("start game event")
 	
 	var start_data = {"roomId" : room_id_global}
 	
 	socket_io.emit("start-game", data[0])
-	_start_turn()	
+	#_start_turn()	
 
 func _handle_room_joined(data):
 	print("data for signal room joined ", data)
@@ -139,11 +144,8 @@ func _handle_update_scores(data):
 	
 	
 func _handle_your_hand(data):
-	if game_state == GameState.HAND_RECEIVED:
-		print("Your hand already processed; ignoring duplicate event.")
-		return 
-	game_state = GameState.HAND_RECEIVED
 	print("Data received on your-hand:", data)
+	_start_turn()
 	update_hand_ui(data)
 	
 
@@ -259,19 +261,25 @@ func _on_card_selected(card_number):
 	
 	
 func update_table_ui(table_data):
-	for child in vbox_container.get_children():
-		child.queue_free()
+	for row in [row1, row2, row3, row4]:
+		for child in row.get_children():
+			child.queue_free()
 		
 	if table_data.size() > 0 :
-		var cards_list = table_data[0]
-		for card_id in cards_list:
-			var card_info = _find_card_data(card_id[0])
-			if card_info:
-				var card_instance = card_ui_scene.instantiate()
-				vbox_container.add_child(card_instance)
-				if card_instance.has_method("set_card_data"):
-					card_instance.set_card_data(card_info["path"], card_id)
-			else:
-				print("No card info found for id:", card_id)
-	else:
-		print("Unexpected table_data format:", table_data)
+		var rows = table_data[0]
+		var row_containers = [row1, row2, row3, row4]
+		
+		for i in range(4):
+			var row_data = rows[i]
+			var container = row_containers[i]
+
+			for card_id in row_data:				
+				var card_info = _find_card_data(card_id)
+				if card_info:
+					var card_instance = card_ui_scene.instantiate()
+					container.add_child(card_instance)
+					
+					if card_instance.has_method("set_card_data"):
+						card_instance.set_card_data(card_info["path"], card_id)
+				else:
+					print("No card info found for id:", card_id)

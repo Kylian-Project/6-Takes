@@ -30,9 +30,8 @@ font_size = 30
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(1124.5, 737.75)
 
-[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container")]
 script = ExtResource("1_yvybn")
-vbox_container = NodePath("hand_colom/rangeofcard")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -105,7 +104,7 @@ theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
 
-[node name="hand_colom" type="HBoxContainer" parent="." groups=["deck_grp"]]
+[node name="deckContainer" type="HBoxContainer" parent="." groups=["deck_grp"]]
 show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -118,10 +117,10 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
 
-[node name="CanvasLayer" type="CanvasLayer" parent="hand_colom"]
+[node name="CanvasLayer" type="CanvasLayer" parent="deckContainer"]
 layer = -1
 
-[node name="background_depose" type="TextureRect" parent="hand_colom/CanvasLayer"]
+[node name="background_depose" type="TextureRect" parent="deckContainer/CanvasLayer"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -136,24 +135,40 @@ grow_vertical = 2
 texture = ExtResource("5_uo4x1")
 expand_mode = 1
 
-[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
+[node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
 alignment = 1
 
-[node name="CardUI" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row1" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI2" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardUI2" parent="deckContainer/rowsContainer/row2" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI3" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardUI3" parent="deckContainer/rowsContainer/row3" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI4" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardUI4" parent="deckContainer/rowsContainer/row4" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
