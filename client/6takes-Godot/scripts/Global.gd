@@ -11,6 +11,20 @@ var response_load = config.load(file_path)
 var BASE_URL := ""
 var header := ""
 
+var icons = {
+	# NOTE: optimize using preload or load() caching if performance not good.
+	0: "res://assets/images/icons/dark_grey.png",
+	1: "res://assets/images/icons/blue.png",
+	2: "res://assets/images/icons/brown.png",
+	3: "res://assets/images/icons/cyan.png",
+	4: "res://assets/images/icons/pink.png",
+	5: "res://assets/images/icons/green.png",
+	6: "res://assets/images/icons/orange.png",
+	7: "res://assets/images/icons/purple.png",
+	8: "res://assets/images/icons/red.png",
+	9: "res://assets/images/icons/reversed.png",
+}
+
 func _ready():
 	if response_load != OK:
 		print("Config error load result: ", response_load)

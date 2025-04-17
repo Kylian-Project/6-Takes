@@ -19,6 +19,7 @@ const ICON_FILES = [
 ]
 
 var selected_icon = "dark_grey.png"  # Default icon
+var selected_icon_id = 0  # Default icon ID
 
 func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
@@ -38,27 +39,44 @@ func _ready():
 	logout_button.connect("pressed", _on_log_out_button_pressed)
 
 func populate_icon_selection():
-	for icon_file in ICON_FILES:
+	var global = get_node("/root/Global")
+	
+	for icon_id in global.icons.keys():
 		var icon_button = Button.new()
-		var texture = load(ICON_PATH + icon_file)
+		var texture = load(global.icons[icon_id])
 		
-		icon_button.icon = texture  # Set the texture as the button icon
-		icon_button.custom_minimum_size = Vector2(64, 64)  # Adjust size if needed
-		icon_button.connect("pressed", _on_icon_selected.bind(icon_file))
+		icon_button.icon = texture
+		icon_button.custom_minimum_size = Vector2(64, 64)
+		icon_button.connect("pressed", _on_icon_selected.bind(global.icons[icon_id]))  # Still binding filename for lookup
 		
 		icon_selection.add_child(icon_button)
 
 func _on_icon_selected(icon_name):
-	selected_icon = icon_name
-	player_icon.texture = load(ICON_PATH + selected_icon)
+	var global = get_node("/root/Global")
+	
+	for id in global.icons.keys():
+		if global.icons[id].ends_with(icon_name):
+			selected_icon_id = id
+			player_icon.texture = load(global.icons[id])
+			break
 
 func _on_save_icon():
-	print("Saving icon:", selected_icon)
-	send_icon_to_database(selected_icon)
+	print("Saving icon ID:", selected_icon_id)
+	send_icon_to_database(selected_icon_id)
 
-func send_icon_to_database(icon_name):
-	#Implement database interaction
-	print("Icon", icon_name, "sent to database")
+func send_icon_to_database(icon_id):
+	var global = get_node("/root/Global")
+	var player_id = global.get_player_id()
+	var user_token = global.get_saved_token()
+	
+	var edit_icon_url = "http://" + global.get_base_url() + "/api/player/editIcon"
+	var payload = {"player_id": player_id, "icon_id": icon_id}
+	var json_body = JSON.stringify(payload)
+	var headers = ["Content-Type: application/json", "Authorization: Bearer " + user_token]
+	
+	print("Sending icon update to:", edit_icon_url)
+	http_request.request(edit_icon_url, headers, HTTPClient.METHOD_POST, json_body)
+
 
 func _on_close_pressed():
 	self.queue_free()
