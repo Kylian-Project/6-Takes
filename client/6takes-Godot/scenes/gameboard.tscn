@@ -68,24 +68,30 @@ label_settings = SubResource("LabelSettings_5oo11")
 horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_left = 648.0
+offset_left = 635.0
 offset_top = 8.0
-offset_right = 1008.0
+offset_right = 1400.0
 offset_bottom = 73.0
 alignment = 1
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="turnLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "Turn 1/10"
 label_settings = SubResource("LabelSettings_7rt8c")
 
-[node name="Label2" type="Label" parent="HBoxContainer"]
+[node name="gameStateLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "              Waiting for players
 "
 label_settings = SubResource("LabelSettings_8de43")
 horizontal_alignment = 3
 vertical_alignment = 1
+
+[node name="timer" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_font_sizes/font_size = 34
+text = "00:45"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
 offset_left = 1742.0

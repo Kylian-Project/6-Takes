@@ -3,11 +3,13 @@ extends Node2D
 @export var vbox_container: VBoxContainer  # Rows cotainer
 @export var hbox_container: HBoxContainer  # Hand Container
 @export var top_bar: HBoxContainer  # Conteneur HBox pour les labels
+@onready var timer_label = $HBoxContainer/timer
+@onready var score_label = $CanvasLayer/top_bar/nbheads
 
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
-
+var username = "tester"
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
 @onready var card_ui_scene = preload("res://scenes/card_ui.tscn")  
@@ -55,6 +57,12 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			_handle_your_hand(data)
 		"initial-table", "update-table":
 			_handle_table(data)
+		"update-scores":
+			_handle_update_scores(data)
+		"choix-rangee":
+			on_player_selects_row(data)
+		"temps-room":
+			_handle_timer(data)
 		_:
 			print("Unhandled event received:", event, "data:", data)
 
@@ -100,14 +108,36 @@ func _handle_room_created(data):
 	var start_data = {"roomId" : room_id_global}
 	
 	socket_io.emit("start-game", data[0])
-
-	
+	_start_turn()	
 
 func _handle_room_joined(data):
 	print("data for signal room joined ", data)
-	#if game_state != GameState.GAME_STARTED:
+	
+
+func _start_turn():
+	if room_id_global != null:
+		socket_io.emit("tour", {"roomId": room_id_global})
 
 
+func _handle_timer(data):
+	var seconds = data[0]
+	timer_label.text = "%d s" % seconds
+
+
+func _handle_update_scores(data):
+	print("updata score data ", data)
+	var score = 0
+	var scores = data[0]
+	for entry in scores:
+		if entry["nom"] == username:
+			score = entry["score"]
+			print("player score in data ", score)
+	
+	score = JSON.stringify(score)
+	score_label.text = score
+	_start_turn()
+	
+	
 func _handle_your_hand(data):
 	if game_state == GameState.HAND_RECEIVED:
 		print("Your hand already processed; ignoring duplicate event.")
@@ -122,7 +152,6 @@ func _handle_table(data):
 	update_table_ui(data)
 
 
-# Example of handling an invalid card event
 func _on_invalid_card(message):
 	pass
 
