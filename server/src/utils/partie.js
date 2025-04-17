@@ -81,66 +81,67 @@ export const PlayGame = (socket, io) =>
 		const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 		io.to(roomId).emit("initial-table", tableInit);
 
-		// Lancement du timer
-		/*
-		timers[roomId] = setTimeout(() => 
-		{
-			console.log(`⏰ Timer écoulé dans la room ${roomId}`);
-		}, 1000);		// a modifier pour plus tard
-		*/
+
 		console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
-  	});
+	
+	});
 
 
 	// 2. Jouer une carte
 
 	socket.on("play-card", ({ roomId, card, username }) => 
 	{
+
+
 		const jeu = getGame(roomId);
-		if (!jeu) return console.log("❌ Partie introuvable :", roomId);
+		if (!jeu) return ;
 	  
 		const carteJouee = typeof card === "number" ? { numero: card } : card;
+
 		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
 		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
 	  
-		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 	  
 		const room = rooms.find(r => r.id === roomId);
 		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
 	  
-		// Lancer le timer
-		if (!timers[roomId]) 
-		{
-			const tempsRestant = room?.settings?.roundTimer || 45;
-			
-			timers[roomId] = setTimeout(() => 
-			{
-				console.log(`⏰ Timer écoulé dans la room ${roomId}, on complète avec des cartes random`);
-		
-				jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
-				traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
+				// Lancer le timer
+		//lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
 
-			
-				clearTimeout(timers[roomId]);
-				delete timers[roomId];
-				notifierCarteJouee(io, roomId, jeu);
 
-		  	}, tempsRestant * 1000);
-		}
-	  
 		// Tous les joueurs ont joué pas de soucis de temps
 		if (cartesAJoueesParRoom[roomId].length === limite) 
 		{
+			console.log("time out deleted");
 			clearTimeout(timers[roomId]);
 			delete timers[roomId];
 			traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
 			notifierCarteJouee(io, roomId, jeu);
+			//return ;
 		}
-	  });
+	});
 	  
 
+		// 2. JPasser au tour suivant -start-tour
+
+	socket.on( "tour" , (roomId, card ="", username="" ) =>
+	{
+		console.log("evenement tour-start recu");
+		const jeu = getGame(roomId);
+		if (!jeu) return ;
 	  
+		const carteJouee = typeof card === "number" ? { numero: card } : card;
+
+		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
+		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
+	  
+	  
+		const room = rooms.find(r => r.id === roomId);
+		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
+		lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
+	});
   
 
 
@@ -221,7 +222,7 @@ export const PlayGame = (socket, io) =>
 
 
 
-    /////////////////////////////////////////////////
+	//////////////////////////////////////////////////
 	////////////// fonctions utilitaires /////////////
   	//////////////////////////////////////////////////
 
@@ -249,8 +250,8 @@ function notifierCarteJouee(io, roomId, jeu)
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
 	io.to(roomId).emit("update-scores", scores);
   
-	const joueurSuivant = jeu.joueurs.find(j => !j.carteEnAttente); // par défaut
-	io.to(roomId).emit("tour", { username: joueurSuivant?.nom || null });
+	//const joueurSuivant = jeu.joueurs.find(j => !j.carteEnAttente); // par défaut
+	//io.to(roomId).emit("tour", { username: joueurSuivant?.nom || null });
   
 	cartesAJoueesParRoom[roomId] = [];
 }
@@ -339,3 +340,20 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 		}
 	}
 }
+
+
+
+function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
+{
+	const room = rooms.find(r => r.id === roomId);
+	const duration = (room?.settings?.roundTimer || 45) * 1000;
+	console.log("le timer est lancé pour la room", roomId);
+
+	timers[roomId] = setTimeout(() => {
+	  console.log(`⏰ Timer écoulé pour room ${roomId}`);
+	  jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+	  traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
+	  delete timers[roomId];
+	  notifierCarteJouee(io, roomId, jeu);
+	}, duration);
+  }
