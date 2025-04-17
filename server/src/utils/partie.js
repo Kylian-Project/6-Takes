@@ -1,5 +1,5 @@
 import { rooms } from "./lobbies.js";
-import { Jeu6Takes ,Joueur, Carte } from "../algo/6takesgame.js";
+import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
 
 const NB_CARTES = 10;
 
@@ -152,7 +152,15 @@ export const PlayGame = (socket, io) =>
 
 	
 	// 3. Choix d'une rangée si la carte est trop faible
-	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => {
+	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => 
+	{
+
+		//on arrete le timer
+		clearTimeout(timers[roomId]);
+		delete timers[roomId];
+		clearInterval(affichageTimers[roomId]);
+		delete affichageTimers[roomId];
+
 		const jeu = getGame(roomId);
 		if (!jeu) return;
 	  
@@ -166,6 +174,26 @@ export const PlayGame = (socket, io) =>
 	  
 		jeu.table.rangs[indexRangee] = new Rang(carte);
 		delete joueur.carteEnAttente;
+
+		const room = rooms.find(r => r.id === roomId);
+		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
+	  
+		if (cartesAJoueesParRoom[roomId].length === limite) 
+			{
+				console.log("time out deleted");
+	
+				clearTimeout(timers[roomId]);
+				delete timers[roomId];
+				
+				clearInterval(affichageTimers[roomId]);
+				delete affichageTimers[roomId];
+	
+				traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
+				notifierCarteJouee(io, roomId, jeu);
+	
+				//redemearrer le timer une fois que les joueurs ont tous jouées
+				lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
+			}
 	  
 		// Mise à jour table et scores
 		const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
@@ -304,7 +332,8 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 		{
 			const res = jeu.jouerCarte(username, carte);
 
-			if (res === "CHOIX_RANGEE_NECESSAIRE") {
+			if (res === "choix_rang_obligatoire") 
+			{
 				const joueur = jeu.joueurs.find(j => j.nom === username);
 				joueur.carteEnAttente = carte;
 
@@ -318,7 +347,8 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 					room.users.find(u => u.username === username)?.idSocketUser
 				);
 
-				if (socketTarget) {
+				if (socketTarget) 
+				{
 					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
 				}
 				return; // On arrête ici, la suite reprendra après choix
@@ -344,9 +374,10 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 
 function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 {
+	//comme ca meme si un event "tour" est recu on l'ignre si on a deja un timer pour la meme room
 	if(timers[roomId])
 	{
-		return;
+		return;		
 	}
 	const room = rooms.find(r => r.id === roomId);
 	const duration = (room?.settings?.roundTimer || 45) * 1000;
