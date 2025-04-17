@@ -20,6 +20,7 @@ offset_top = 23.0
 offset_right = 161.0
 offset_bottom = 203.0
 scale = Vector2(0.773297, 0.696528)
+mouse_filter = 2
 theme = SubResource("Theme_hcot1")
 script = ExtResource("2_14pb0")
 
@@ -30,7 +31,6 @@ priority = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
 position = Vector2(67.6168, 89.7304)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_1peor")
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -48,12 +48,14 @@ expand_mode = 1
 
 [node name="SelectionConatiner" type="HBoxContainer" parent="."]
 visible = false
-layout_mode = 0
-offset_left = 142.0
-offset_top = -3.0
-offset_right = 203.0
-offset_bottom = 29.0
-mouse_filter = 2
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -5.0
+offset_right = 77.0
+offset_bottom = 47.0
+grow_horizontal = 0
 
 [node name="selectButton" type="Button" parent="SelectionConatiner"]
 layout_mode = 2

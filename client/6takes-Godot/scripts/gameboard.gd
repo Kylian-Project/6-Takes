@@ -97,17 +97,7 @@ func _handle_room_created(data):
 	var start_data = {"roomId" : room_id_global}
 	
 	socket_io.emit("start-game", data[0])
-	#await get_tree().create_timer(10).timeout
-	#print("start game event")
-	#var start_data = {"roomId" : room_id_global}
-	#socket_io.emit("start-game", start_data)
 
-	#await get_tree().create_timer(10).timeout
-	#print("timer finished send start signal")
-	#
-	#if game_state != GameState.GAME_STARTED:
-		#game_state = GameState.GAME_STARTED
-		#socket_io.emit("start-game", room_id_global)
 	
 
 func _handle_room_joined(data):
@@ -232,6 +222,7 @@ func _on_card_selected(card_number):
 		"card" : card_number,
 		"username" : "tester"
 	} 
+	print("emitting card selected event", data)
 	socket_io.emit("play-card", data)
 	
 	

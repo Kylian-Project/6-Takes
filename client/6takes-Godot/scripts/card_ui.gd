@@ -9,12 +9,17 @@ extends Control
 var selection_visibilty = false 
 var global_card_id 
 
+var original_position := position
+var original_scale := scale
+
 signal card_selected
 
 
 func _ready() -> void:
 	selection_visibilty = false 
 	selection_container.visible = selection_visibilty
+	original_position = position
+	original_scale = scale
 	
 	reparent_requested.connect(_on_reparent_requested)
 	
@@ -45,7 +50,7 @@ func _on_select_button_pressed() -> void:
 
 
 func _on_deselect_button_pressed() -> void:
-	selection_visibilty = false
+	reset_card()
 
 
 func _on_detector_mouse_entered() -> void:
@@ -59,20 +64,28 @@ func _on_detector_mouse_exited() -> void:
 
 
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	print("--- INPUT EVENT ON CARD ---")
-	print("  event:", event)
-	print("  pressed?:", event is InputEventMouseButton and event.pressed)
-	
-	print("  in hand grp?:", is_in_hand_grp())
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		print("group debug : ", is_in_hand_grp())
 		if is_in_hand_grp():
 			selection_visibilty = !selection_visibilty
 			selection_container.visible = selection_visibilty
-			print("toggled visibility ")
+			
+			if selection_visibilty:
+				position.y -= 30  # move card up
+				scale = Vector2(1.2, 1.2)  # scale up
+			else:
+				position = original_position
+				scale = original_scale
 	else:
 		return
 			
 			
 func is_in_hand_grp():
 	return self.get_parent().is_in_group("hand_grp")
+
+
+func reset_card():
+	position = original_position
+	scale = original_scale
+	selection_visibilty = false
+	selection_container.visible = false
