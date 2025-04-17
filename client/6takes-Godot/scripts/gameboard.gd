@@ -84,6 +84,9 @@ func _handle_available_rooms(data):
 
 func _handle_room_created(data):
 	print("on room created ", data )
+	
+	room_id_global = data[0]
+	print("global room id", room_id_global)
 		
 	var body = {
 		"roomId" : room_id_global,
