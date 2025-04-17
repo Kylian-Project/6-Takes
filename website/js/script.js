@@ -63,3 +63,44 @@ const timerInterval = setInterval(updateCountdown, 1000);
 
 // Mise à jour immédiate au chargement
 updateCountdown();
+
+
+
+// Sélectionne les boutons de type
+const options = document.querySelectorAll('.option');
+
+options.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Retire "active" de tous les boutons
+        options.forEach(b => b.classList.remove('active'));
+        // Ajoute "active" au bouton cliqué
+        btn.classList.add('active');
+    });
+});
+
+// Animation du bouton Submit
+const submitBtn = document.querySelector('.submit');
+submitBtn.addEventListener('click', () => {
+    // Ajoute une petite animation d'échelle
+    submitBtn.style.transform = 'scale(0.95)';
+    submitBtn.style.transition = 'transform 0.1s ease';
+
+    setTimeout(() => {
+        submitBtn.style.transform = 'scale(1)';
+    }, 150);
+});
+
+
+// Changer la taille de body en fonction de l'addition de header + main + footer et actualiser quand la fenêtre est redimensionnée
+function adjustBodyHeight() {
+    const headerHeight = document.querySelector('header').offsetHeight;
+    const mainHeight = document.querySelector('main').offsetHeight;
+    const footerHeight = document.querySelector('footer').offsetHeight;
+
+    const totalHeight = headerHeight + mainHeight + footerHeight;
+
+    document.body.style.height = `${totalHeight}px`;
+}
+window.addEventListener('resize', adjustBodyHeight);
+window.addEventListener('load', adjustBodyHeight);
+adjustBodyHeight();

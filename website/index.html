@@ -13,17 +13,18 @@
         </section>
 
         <section class="title-section">
-            <h1 class="title">6 Takes !</h1>
+            <!-- <h1 class="title">6 Takes !</h1> -->
+            <img src="./assets/img/title.png" alt="Game Logo" class="title" />
         </section>
 
         <section class="navigation-section">
             <nav class="navigation">
                 <ul class="nav-list">
-                    <li><a href="#countdown">Menu1</a></li>
-                    <li><a href="#game">Menu2</a></li>
-                    <li><a href="#rules">Menu3</a></li>
-                    <li><a href="#about">Menu4</a></li>
-                    <li><a href="#contact">Menu5</a></li>
+                    <li><a href="#countdown">Countdown</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#beta">Beta</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </section>
@@ -32,17 +33,19 @@
     <main>
         <section class="countdown-section" id="countdown">
             <div class="back-img"></div>
-            <h2>The adventure begins in:</h2>
+            <div class="overlay">
+                <h2>The adventure begins in:</h2>
 
-            <div class="cubes">
-                <div class="cube cube1"><span id="days"></span>j</div>
-                <div class="cube cube2"><span id="hours"></span>h</div>
-                <div class="cube cube3"><span id="minutes"></span>m</div>
-                <div class="cube cube4"><span id="seconds"></span>s</div>
+                <div class="cubes">
+                    <div class="cube cube1"><span id="days"></span>j</div>
+                    <div class="cube cube2"><span id="hours"></span>h</div>
+                    <div class="cube cube3"><span id="minutes"></span>m</div>
+                    <div class="cube cube4"><span id="seconds"></span>s</div>
+                </div>
             </div>
         </section>
         
-        <section class="game-features-section">
+        <section class="game-features-section" id="features">
             <h2>Game Features</h2>
             <div class="features-list">
                 <div class="feature-item">
@@ -51,28 +54,58 @@
                     <p>Master the art of card placement and outsmart your opponents.</p>
                 </div>
                 <div class="feature-item">
-                    <img src="./assets/img/feature1.png" alt="Feature 2" class="feature-icon" />
+                    <img src="./assets/img/feature2.png" alt="Feature 2" class="feature-icon" />
                     <h3 style="color: #004e98;">Multiplayer Fun</h3>
                     <p>Challenge friends or compete with players worldwide.</p>
                 </div>
                 <div class="feature-item">
-                    <img src="./assets/img/feature1.png" alt="Feature 3" class="feature-icon" />
+                    <img src="./assets/img/feature3.png" alt="Feature 3" class="feature-icon" />
                     <h3 style="color: #ba3737;">Quick To Learn</h3>
                     <p>Simple rules, deep strategy, endless entertainment.</p>
                 </div>
             </div>
         </section>
 
-        <section class="gallery-section">
-            <h2>Gallery</h2>
+        <section class="gallery-section" id="gallery">
+            <h2>Our Gallery</h2>
             <div class="gallery-grid">
                 <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 1" class="gallery-image" />
                 <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 2" class="gallery-image" />
                 <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 3" class="gallery-image" />
                 <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 4" class="gallery-image" />
                 <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 5" class="gallery-image" />
+                <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 6" class="gallery-image" />
+                <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 7" class="gallery-image" />
+                <img src="./assets/img/gallery/gallery-1.png" alt="Gallery Image 8" class="gallery-image" />
             </div>
         </section>
+
+        <section class="beta-section" id="beta">
+            <div class="container-beta">
+                <h2>Try The Beta Version</h2>
+                <p>Join our community of early players and help shape the future of 6 Takes!</p>
+                <button class="beta-button"><img src="./assets/img/download-icon.png" alt="Download" class="download-icon"/>Download Beta</button>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <div class="container">
+              <h1><span class="blue">Your Feedback</span> Shapes <span class="red">the Game</span></h1>
+          
+              <div class="form-box">
+                <p class="label">What would you like to share?</p>
+                <div class="button-group">
+                  <button class="option active">✨ Improvement</button>
+                  <button class="option redback">🐞 Bug Report</button>
+                </div>
+          
+                <label for="message" class="label">Your Message</label>
+                <textarea id="message" placeholder="Share your thoughts with us..."></textarea>
+          
+                <button class="submit">Submit Feedback</button>
+              </div>
+            </div>
+        </section>          
 
     </main>
 
