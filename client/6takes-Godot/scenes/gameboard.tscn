@@ -99,12 +99,12 @@ theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
 
-[node name="hand_colom" type="HBoxContainer" parent="."]
+[node name="hand_colom" type="HBoxContainer" parent="." groups=["deck_grp"]]
 show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 428.0
+offset_left = 455.0
 offset_top = 143.0
 offset_right = 1551.0
 offset_bottom = 835.0
@@ -161,7 +161,7 @@ shape = SubResource("RectangleShape2D_au8mm")
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
 layer = -1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2" groups=["hand_grp"]]
 custom_minimum_size = Vector2(75, 80)
 anchors_preset = 7
 anchor_left = 0.5

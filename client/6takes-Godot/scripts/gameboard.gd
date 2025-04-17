@@ -25,11 +25,12 @@ enum GameState {
 	GAME_STARTED,
 	HAND_RECEIVED
 }
-var game_state = GameState.WAITING_FOR_LOBBY
+var game_state 
 var room_id_global
 
 func _ready():
 	_load_cards()
+	game_state = GameState.WAITING_FOR_LOBBY
 	
 	#connect to socket
 	BASE_URL = get_node("/root/Global").get_base_url()
@@ -52,13 +53,15 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			_handle_room_joined(data)
 		"your-hand":
 			_handle_your_hand(data)
-		"initial-table":
+		"initial-table", "update-table":
 			_handle_table(data)
 		_:
 			print("Unhandled event received:", event, "data:", data)
 
 
 func _handle_available_rooms(data):
+	if game_state != GameState.WAITING_FOR_LOBBY:
+		return 
 	print("data received for available rooms", data)
 	#create a lobby just to test code 
 	if game_state == GameState.WAITING_FOR_LOBBY:
@@ -84,18 +87,33 @@ func _handle_room_created(data):
 		
 	var body = {
 		"roomId" : room_id_global,
-		"username" : "client"
+		"username" : "tester"
 	}
 	game_state = GameState.ROOM_JOINED
-	socket_io.emit("join-room", body)
+	
+	await get_tree().create_timer(20).timeout
+	print("start game event")
+	
+	var start_data = {"roomId" : room_id_global}
+	
+	socket_io.emit("start-game", data[0])
+	#await get_tree().create_timer(10).timeout
+	#print("start game event")
+	#var start_data = {"roomId" : room_id_global}
+	#socket_io.emit("start-game", start_data)
+
+	#await get_tree().create_timer(10).timeout
+	#print("timer finished send start signal")
+	#
+	#if game_state != GameState.GAME_STARTED:
+		#game_state = GameState.GAME_STARTED
+		#socket_io.emit("start-game", room_id_global)
 	
 
 func _handle_room_joined(data):
 	print("data for signal room joined ", data)
-	if game_state != GameState.GAME_STARTED:
-		game_state = GameState.GAME_STARTED		
-		socket_io.emit("start-game", room_id_global)
-	
+	#if game_state != GameState.GAME_STARTED:
+
 
 func _handle_your_hand(data):
 	if game_state == GameState.HAND_RECEIVED:
@@ -185,7 +203,7 @@ func _find_card_data(card_id: int) -> Dictionary:
 # --- UI Update Functions ---
 
 func update_hand_ui(hand_data):
-	print("Update hand UI with:", hand_data)
+	print("Update hand UI with:")
 	for child in hbox_container.get_children():
 		child.queue_free()
 	
@@ -202,13 +220,21 @@ func update_hand_ui(hand_data):
 				var card_instance = card_ui_scene.instantiate()
 				hbox_container.add_child(card_instance)
 				if card_instance.has_method("set_card_data"):
-					card_instance.set_card_data(path)
-				else:
-					print("Card instance does not have method 'set_card_data'")
+					card_instance.set_card_data(path, card_id)
+					card_instance.connect("card_selected", Callable(self, "_on_card_selected"))
 	else:
 		print("Unexpected hand_data format:", hand_data)
 
 
+func _on_card_selected(card_number):
+	var data = {
+		"roomId" : room_id_global,
+		"card" : card_number,
+		"username" : "tester"
+	} 
+	socket_io.emit("play-card", data)
+	
+	
 func update_table_ui(table_data):
 	for child in vbox_container.get_children():
 		child.queue_free()
@@ -221,49 +247,8 @@ func update_table_ui(table_data):
 				var card_instance = card_ui_scene.instantiate()
 				vbox_container.add_child(card_instance)
 				if card_instance.has_method("set_card_data"):
-					card_instance.set_card_data(card_info["path"])
+					card_instance.set_card_data(card_info["path"], card_id)
 			else:
 				print("No card info found for id:", card_id)
 	else:
 		print("Unexpected table_data format:", table_data)
-
-
-#func _assign_vbox_cards(cards):
-	#if all_cards.size() < 4:
-		#print(" Erreur : Pas assez de cartes pour la rangée !")
-		#return
-#
-	## Nettoyer les anciennes cartes dans vbox_container avant d'ajouter les nouvelles
-	#for child in vbox_container.get_children():
-		#child.queue_free()
-#
-	#for card in range(cards):
-		#var card_instance = card_ui_scene.instantiate()
-		#vbox_container.add_child(card_instance)
-		#
-		#if card_instance.has_method("set_card_data"):
-			#card = all_cards.pop_front()
-			#card_instance.set_card_data(card["path"])
-			#selected_cards.append(card)
-			#
-		#else:
-			#print("Erreur : L'instance de carte ne possède pas 'set_card_data'.")
-#
-#
-#func _assign_hbox_cards(cards):
-	#
-	## Nettoyer les anciennes cartes dans hbox_container avant d'ajouter les nouvelles
-	#for child in hbox_container.get_children():
-		#child.queue_free()
-#
-	#for card in cards:
-		#var card_instance = card_ui_scene.instantiate()
-		#hbox_container.add_child(card_instance)
-		#
-		#if card_instance.has_method("set_card_data"):
-			#card = all_cards.pop_front()
-			#card_instance.set_card_data(card["path"])
-			#selected_cards.append(card)
-#
-		#else:
-			#print(" Erreur : L'instance de carte ne possède pas 'set_card_data'.")
