@@ -78,3 +78,9 @@ socket.on("choix-rangee", ({ rangs }) => {
     socket.emit("choisir-rangee", { roomId, indexRangee, username: "Bob" });
   });
 });
+
+
+socket.on("temps-room",(secondeRestantes)=>{
+  console.log(`Temps restant: ${secondeRestantes} secondes`);
+});
+

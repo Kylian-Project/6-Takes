@@ -84,5 +84,7 @@ socket.on("choix-rangee", ({ rangs }) => {
 });
 
 
-
+socket.on("temps-room",(secondeRestantes)=>{
+  console.log(`Temps restant: ${secondeRestantes} secondes`);
+});
 
