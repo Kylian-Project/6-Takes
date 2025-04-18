@@ -382,6 +382,7 @@ offset_right = 212.0
 offset_bottom = 64.0
 
 [node name="SettingsOverlay" type="Control" parent="."]
+visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 15
