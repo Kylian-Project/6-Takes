@@ -56,17 +56,20 @@ func _on_confirm_pressed() -> void:
 		popup_overlay.visible = true
 		return 
 		
-	if new_password.text.strip_edges() != password_confirm.text.strip_edges() :
+	var new_password_text = new_password.text.strip_edges()
+	var password_confirm_text = password_confirm.text.strip_edges()
+	
+	if new_password_text != password_confirm_text :
 		popup_message.text = "Passwords don't match"
 		popup_overlay.visible = true
 		return  
-		
-	if !is_password_secure(new_password):
+	
+	if !is_password_secure(new_password_text):
 		popup_message.text = "Passwords not secure"
 		popup_overlay.visible = true
 		return  
 		
-	var hashed_password = hash_password(new_password.text)
+	var hashed_password = hash_password(new_password_text)
 	var payload = {
 		"email": global_email,
 		"code": global_code,
