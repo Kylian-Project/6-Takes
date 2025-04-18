@@ -21,7 +21,7 @@ var API_URL
 var RESET_SUBMIT_URL
 var overlay_opened = false
 var code 
-
+var email_text
 	 
 func _ready() -> void:
 	self.visible = false
@@ -79,19 +79,18 @@ func _on_cancel_button_pressed() -> void:
 
 
 func _on_send_code_pressed() -> void:
-	email = email.text.strip_edges()
+	email_text = email.text.strip_edges()
 	
-	if email.is_empty():
+	if email_text.is_empty():
 		popup_overlay.visible = true 
 		return 
 	
-	if !is_valid_email(email):
+	if !is_valid_email(email_text):
 		popup_message.text = "Invalid Email"
 		popup_overlay.visible = true
 		return 
 		
-	var payload = { "email": email }
-	print("EMAIL DEBUG ", email)
+	var payload = { "email": email_text }
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
 
@@ -100,12 +99,16 @@ func _on_send_code_pressed() -> void:
 	
 	
 func _on_http_request_completed(result, response_code, headers, body):
+	var response_str = body.get_string_from_utf8()
+	var parsed = JSON.parse_string(response_str)
+	
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
 
 	if response_code != 200:
-		print(" Erreur serveur ou identifiants invalides.")
-		return 
+		popup_message.text = parsed["message"]
+		popup_overlay.visible = true
+		return
 		
 	var sendCode_scene = load("res://scenes/sendCode.tscn")
 	if sendCode_scene == null:
@@ -120,7 +123,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 	#queue_free()
 	get_tree().current_scene.add_child(sendCode_instance)
 	sendCode_instance.show_overlay()
-	sendCode_instance.set_email(email)
+	sendCode_instance.set_email(email_text)
 	
 	queue_free()
 

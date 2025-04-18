@@ -134,44 +134,48 @@ offset_top = 464.0
 offset_right = 853.0
 offset_bottom = 527.0
 
-[node name="Number1" type="LineEdit" parent="HBoxContainer"]
+[node name="code1" type="LineEdit" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 1)
 theme_override_colors/font_selected_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/focus = ExtResource("6_r6e7w")
 theme_override_styles/normal = ExtResource("6_kmn4y")
 placeholder_text = "_"
 alignment = 1
 max_length = 1
 
-[node name="Number2" type="LineEdit" parent="HBoxContainer"]
+[node name="code2" type="LineEdit" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 1)
 theme_override_colors/font_selected_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/focus = ExtResource("6_r6e7w")
 theme_override_styles/normal = ExtResource("6_kmn4y")
 placeholder_text = "_"
 alignment = 1
 max_length = 1
 
-[node name="Number3" type="LineEdit" parent="HBoxContainer"]
+[node name="code3" type="LineEdit" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 1)
 theme_override_colors/font_selected_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/focus = ExtResource("6_r6e7w")
 theme_override_styles/normal = ExtResource("6_kmn4y")
 placeholder_text = "_"
 alignment = 1
 max_length = 1
 
-[node name="Number4" type="LineEdit" parent="HBoxContainer"]
+[node name="code4" type="LineEdit" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 1)
 theme_override_colors/font_selected_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/focus = ExtResource("6_r6e7w")
 theme_override_styles/normal = ExtResource("6_kmn4y")
 placeholder_text = "_"
@@ -226,6 +230,13 @@ offset_right = 996.0
 offset_bottom = 667.0
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="popUp_error" parent="." instance=ExtResource("11_0dcu2")]
+visible = false
+offset_left = 290.0
+offset_top = 409.0
+offset_right = 990.0
+offset_bottom = 629.0
 
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="Cancel" to="." method="_on_cancel_pressed"]

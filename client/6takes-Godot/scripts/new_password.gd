@@ -9,6 +9,15 @@ extends Control
 @onready var new_password = $VBoxContainer/password
 @onready var password_confirm = $VBoxContainer/confirmPassword
 @onready var confirm_button = $confirm
+@onready var pass_check = $password_check
+
+#password input visibility
+@onready var visibility_button1 = $VBoxContainer/password/visibility_button
+@onready var visibility_button2 = $VBoxContainer/confirmPassword/visibility_button2
+var showing_password1 := false
+var showing_password2 := false
+const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
+const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
 
 @onready var http_req_newpass = $HTTPRequest_newpass
 
@@ -22,7 +31,8 @@ var global_email
 
 
 func _ready() -> void:
-	self.visible = false
+	self.visible = true
+	pass_check.visible = false
 	
 	http_req_newpass.request_completed.connect(_on_http_request_completed)
 	
@@ -42,12 +52,24 @@ func show_overlay():
 	self.visible = true
 	
 func _on_confirm_pressed() -> void:
-	if new_password.text.strip_edges() != password_confirm.text.strip_edges() :
+	if password_confirm.text.is_empty() or new_password.text.is_empty():
+		popup_overlay.visible = true
+		return 
+		
+	var new_password_text = new_password.text.strip_edges()
+	var password_confirm_text = password_confirm.text.strip_edges()
+	
+	if new_password_text != password_confirm_text :
 		popup_message.text = "Passwords don't match"
 		popup_overlay.visible = true
 		return  
+	
+	if !is_password_secure(new_password_text):
+		popup_message.text = "Passwords not secure"
+		popup_overlay.visible = true
+		return  
 		
-	var hashed_password = hash_password(new_password.text)
+	var hashed_password = hash_password(new_password_text)
 	var payload = {
 		"email": global_email,
 		"code": global_code,
@@ -79,3 +101,62 @@ func hash_password(password: String) -> String:
 	var hashed_password = ctx.finish()
 	
 	return hashed_password.hex_encode()
+
+
+func _on_password_text_changed(new_text: String) -> void:
+	var is_secure = is_password_secure(new_text)
+	var color := Color.RED
+	if is_secure:
+		color = Color.BLACK
+	new_password.add_theme_color_override("font_color", color)
+	
+	
+func is_password_secure(password: String) -> bool:
+	if password.length() < 8:
+		pass_check.text = "Password must be at least 8 characters long"
+		pass_check.visible = true
+		return false
+
+	var has_upper := false
+	var has_lower := false
+	var has_digit := false
+	var has_special := false
+
+	for c in password:
+		if c >= "A" and c <= "Z":
+			has_upper = true
+		elif c >= "a" and c <= "z":
+			has_lower = true
+		elif c >= "0" and c <= "9":
+			has_digit = true
+		elif "!@#$%^&*()-_=+[]{};:,.<>?/\\|".contains(c):
+			has_special = true
+
+	if not has_upper:
+		pass_check.text = "Missing an uppercase letter (A-Z)"
+	elif not has_lower:
+		pass_check.text = "Missing a lowercase letter (a-z)"
+	elif not has_digit:
+		pass_check.text = "Missing a number (0-9)"
+	elif not has_special:
+		pass_check.text = "Missing a special character (!@#...)"
+	else:
+		pass_check.visible = false
+		return true
+
+	pass_check.visible = true
+	return false
+
+
+func _on_visibility_button_pressed() -> void:
+	showing_password1 = !showing_password1
+	new_password.secret = not showing_password1
+
+	visibility_button1.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE
+
+
+func _on_visibility_button_2_pressed() -> void:
+	showing_password2 = !showing_password2
+	password_confirm.secret = not showing_password2
+
+	visibility_button2.icon = ICON_INVISIBLE if showing_password2 else ICON_VISIBLE

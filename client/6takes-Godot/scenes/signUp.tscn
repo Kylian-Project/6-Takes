@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cqxyv033jupcq"]
+[gd_scene load_steps=15 format=3 uid="uid://cqxyv033jupcq"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
@@ -6,6 +6,7 @@
 [ext_resource type="StyleBox" uid="uid://wem08rsh1cos" path="res://assets/styleBox/signUp_input_focus.tres" id="3_yx8hg"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="4_e6cq5"]
 [ext_resource type="StyleBox" uid="uid://cbkuxplawvtce" path="res://assets/styleBox/signUp_input.tres" id="4_mfcmv"]
+[ext_resource type="Texture2D" uid="uid://ccdw5btr66au7" path="res://assets/images/visibility/visible.png" id="5_oibnm"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="5_pos6h"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
 [ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_ysitm"]
@@ -101,10 +102,10 @@ expand_mode = 1
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 offset_left = 385.0
-offset_top = 309.0
+offset_top = 293.0
 offset_right = 885.0
-offset_bottom = 608.0
-theme_override_constants/separation = 15
+offset_bottom = 622.0
+theme_override_constants/separation = 29
 
 [node name="username" type="LineEdit" parent="VBoxContainer"]
 z_index = 1
@@ -145,6 +146,15 @@ theme_override_styles/normal = ExtResource("4_mfcmv")
 placeholder_text = "     Password"
 secret = true
 
+[node name="visibility_button" type="Button" parent="VBoxContainer/password"]
+offset_left = 444.0
+offset_top = 9.0
+offset_right = 494.0
+offset_bottom = 58.0
+icon = ExtResource("5_oibnm")
+flat = true
+expand_icon = true
+
 [node name="confirmPassword" type="LineEdit" parent="VBoxContainer"]
 z_index = 1
 layout_mode = 2
@@ -157,6 +167,15 @@ theme_override_styles/focus = ExtResource("3_yx8hg")
 theme_override_styles/normal = ExtResource("4_mfcmv")
 placeholder_text = "     Confirm Password"
 secret = true
+
+[node name="visibility_button2" type="Button" parent="VBoxContainer/confirmPassword"]
+offset_left = 444.0
+offset_top = 9.0
+offset_right = 494.0
+offset_bottom = 58.0
+icon = ExtResource("5_oibnm")
+flat = true
+expand_icon = true
 
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(150, 150)
@@ -251,5 +270,19 @@ offset_top = 344.0
 offset_right = 990.0
 offset_bottom = 564.0
 
+[node name="password_check" type="Label" parent="."]
+offset_left = 395.0
+offset_top = 534.0
+offset_right = 827.0
+offset_bottom = 560.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 18
+text = "Has to contain a-z, A-Z, 0-9 and a special char"
+
+[connection signal="text_changed" from="VBoxContainer/password" to="." method="_on_password_text_changed"]
+[connection signal="pressed" from="VBoxContainer/password/visibility_button" to="." method="_on_visibility_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/confirmPassword/visibility_button2" to="." method="_on_visibility_button_2_pressed"]
 [connection signal="pressed" from="Control/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/LogIn" to="." method="_on_log_in_pressed"]

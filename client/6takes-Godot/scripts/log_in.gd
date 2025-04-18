@@ -8,6 +8,7 @@ extends Control
 @onready var cancel_button = $Control/CancelButton
 
 @onready var http_request = $HTTPRequest_auth
+@onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
 var jwt_token = null
 var player_data = {}
@@ -21,6 +22,10 @@ var API_URL
 @onready var popup_overlay = $popUp_error
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
+
+var showing_password1 := false
+const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
+const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
 
 
 func _ready():
@@ -67,15 +72,19 @@ func _on_login_button_pressed():
 
 
 func _on_http_request_completed(result, response_code, headers, body):
+	var response_str = body.get_string_from_utf8()
+	var parsed = JSON.parse_string(response_str)
+	
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", body.get_string_from_utf8())
-
+	print("Contenu brut:", response_str)
+	
 	if response_code != 200:
-		print(" Erreur serveur ou identifiants invalides.")
+		popup_message.text = parsed["message"]
+		popup_overlay.visible = true
 		return
 
-	var json = JSON.parse_string(body.get_string_from_utf8())
 
+	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
@@ -180,3 +189,9 @@ func _on_forgot_password_pressed() -> void:
 	forgotPass_instance.show_overlay()
 	
 	queue_free()
+
+
+func _on_visibility_button_pressed() -> void:
+	showing_password1 = !showing_password1
+	password_input.secret = not showing_password1
+	visibility_button.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE
