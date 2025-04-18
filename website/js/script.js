@@ -104,3 +104,33 @@ function adjustBodyHeight() {
 window.addEventListener('resize', adjustBodyHeight);
 window.addEventListener('load', adjustBodyHeight);
 adjustBodyHeight();
+
+
+
+const images = document.querySelectorAll('.gallery-image');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const closeBtn = document.querySelector('.lightbox .close');
+
+images.forEach(img => {
+    img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('active');
+        // Overflow y hidden pour éviter le scroll de la page sur html
+        document.documentElement.style.overflowY = 'hidden';
+    });
+});
+
+const closeLightbox = () => {
+    lightbox.classList.remove('active');
+    // Réinitialiser l'overflow y pour permettre le scroll de la page
+    document.documentElement.style.overflowY = 'initial';
+};
+
+closeBtn.addEventListener('click', closeLightbox);
+
+lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+        closeLightbox();
+    }
+});
