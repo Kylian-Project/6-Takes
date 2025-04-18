@@ -1,0 +1,45 @@
+/* Menu navigation */
+@media (max-width: 580px) {
+    header .title-section .title {
+        padding-top: 0;
+    }
+
+    header .navigation-section {
+        display: none;
+    }
+
+    #playerIcon {
+        display: none;
+    }
+}
+
+@media (max-width: 550px) {
+    main .countdown-section h2 {
+        text-align: center;
+        font-size: 30px;
+    }
+
+    main .cube{
+        width: 75px;
+        height: 75px;
+        font-size: 30px;
+    }
+
+    main .container-beta {
+        max-width: 90%;
+        margin-left: -15px;
+    }
+
+    main .countdown-section {
+        height: 300px;
+    }
+
+    .contact-section .form-box {
+        width: 80%;
+        padding: 20px;
+    }
+
+    .contact-section h1 {
+        font-size: 30px;
+    }
+}
