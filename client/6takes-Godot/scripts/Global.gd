@@ -37,7 +37,8 @@ func _ready():
 	header = "Authorization: " + header_prefix +" "
 	BASE_URL = srv_url + ":" + srv_port 
 	print("BASE URL ", BASE_URL)
-	load_session()
+	print("Header ", header)
+	#load_session()
 	
 	
 func get_base_url():
@@ -70,8 +71,7 @@ func load_session():
 	var config = ConfigFile.new()
 	var error = config.load("user://session.cfg")
 	if error == OK:
-		saved_token = config.get_value("session", "token")
-		
+		saved_token = config.get_value("session", "token")		
 		print("successfully loaded session, now validating")
 		session_validation(saved_token)
 	
@@ -85,10 +85,13 @@ func session_validation(token : String):
 	
 	http_request.request_completed.connect(_on_request_completed)
 
-	var headers = [header+ token]
+	var headers = ["Authorization: Bearer " + token]
+	print("\n headers debug \n", headers)
 	var json_body = JSON.stringify(token)
+ 
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
+	print("\n url debug ", url)
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	
 	if error != OK:
@@ -101,6 +104,7 @@ func _on_request_completed(result, response_code, headers, body):
 	
 	var raw_response = body.get_string_from_utf8()
 	var result_string = JSON.parse_string(raw_response)
+
 	
 	if response_code == 200:
 		logged_in = true
