@@ -17,6 +17,7 @@
     main .countdown-section h2 {
         text-align: center;
         font-size: 30px;
+        margin-bottom: 20px;
     }
 
     main .cube{
@@ -41,5 +42,24 @@
 
     .contact-section h1 {
         font-size: 30px;
+    }
+}
+
+
+@media (max-width: 450px) {
+    main .countdown-section h2 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 0px;
+    }
+
+    main .cube{
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    main .countdown-section {
+        height: 200px;
     }
 }

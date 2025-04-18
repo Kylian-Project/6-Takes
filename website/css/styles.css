@@ -200,7 +200,7 @@ main {
 /* Countdown Section */
 
 main .countdown-section {
-    width: 110%;
+    width: calc(100% + 20px);
     height: 400px;
 
     display: flex;
@@ -216,9 +216,13 @@ main .countdown-section {
 }
 
 main .overlay {
-    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     transform: rotate(2deg);
-    margin-left: -30px;
+    width: 100%;
+    height: 100%;
 }
 
 main .countdown-section h2 {
@@ -237,7 +241,6 @@ main .cubes {
     gap: 20px;
     margin: 0 auto;
     padding: 20px;
-    margin-bottom: 20px;
 
     color: var(--dark-grey-color);
 }
@@ -552,7 +555,7 @@ main .contact-section h2 {
 /* Section Beta */
 
 main .beta-section {
-    width: 110%;
+    width: calc(100% + 20px);
     height: 400px;
 
     background: var(--blue-color);
@@ -570,14 +573,14 @@ main .beta-section {
 }
 
 main .container-beta {
-    max-width: 600px;
     text-align: center;
-
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
     transform: rotate(-2deg);
-    margin-left: -30px;
+    width: 100%;
+    height: 100%;
 }
 
 main .beta-section h2 {
