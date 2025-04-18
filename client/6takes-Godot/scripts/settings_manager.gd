@@ -1,9 +1,10 @@
 extends Node
 
 var config = ConfigFile.new()
-const FILE_PATH = "user://settings.cfg"
+const FILE_PATH = "res://config/settings.cfg"
 
 func _ready():
+	config.save(FILE_PATH)
 	load_settings()
 
 # Load settings from the config file
@@ -12,20 +13,21 @@ func load_settings():
 	if err != OK:
 		print("No settings file found, using defaults.")
 		return
-	
-	# Load and apply Display settings
-	var display_mode = config.get_value("Display", "Mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
-	var resolution = config.get_value("Display", "Resolution", Vector2i(1920, 1080))
-	var vsync = config.get_value("Display", "VSync", DisplayServer.VSYNC_ENABLED)
+
+	# Load Display settings with fallback to Default
+	var display_mode = config.get_value("Display", "Mode", config.get_value("Default", "Mode", DisplayServer.WINDOW_MODE_FULLSCREEN))
+	var resolution = config.get_value("Display", "Resolution", config.get_value("Default", "Resolution", Vector2i(1920, 1080)))
+	var vsync = config.get_value("Display", "VSync", config.get_value("Default", "VSync", DisplayServer.VSYNC_ENABLED))
 
 	DisplayServer.window_set_mode(display_mode)
 	DisplayServer.window_set_size(resolution)
 	DisplayServer.window_set_vsync_mode(vsync)
 
-	# Load and apply Audio settings
-	for i in range(3):  # Master, Music, SFX
-		var volume = config.get_value("Audio", "Bus" + str(i), 0.5)  # Default 50%
+	# Load and apply Audio settings with fallback to Default
+	for i in range(3):  # Buses: Master (0), Music (1), SFX (2)
+		var volume = config.get_value("Audio", "Bus" + str(i), config.get_value("Default", "Bus" + str(i), 0.5))
 		AudioServer.set_bus_volume_db(i, linear_to_db(volume))
+
 
 # Save display settings
 func save_display_settings(mode, resolution, vsync):
@@ -38,3 +40,12 @@ func save_display_settings(mode, resolution, vsync):
 func save_audio_settings(idx, volume):
 	config.set_value("Audio", "Bus" + str(idx), volume)
 	config.save(FILE_PATH)
+
+func reset_to_defaults():
+	# Clear Display and Audio sections (if they exist)
+	if config.has_section("Display"):
+		config.erase_section("Display")
+	if config.has_section("Audio"):
+		config.erase_section("Audio")
+	config.save(FILE_PATH)
+	load_settings()
