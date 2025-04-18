@@ -4,7 +4,7 @@ var config = ConfigFile.new()
 const FILE_PATH = "res://config/settings.cfg"
 
 func _ready():
-	config.save(FILE_PATH)
+	write_default_settings()
 	load_settings()
 
 # Load settings from the config file
@@ -40,6 +40,16 @@ func save_display_settings(mode, resolution, vsync):
 func save_audio_settings(idx, volume):
 	config.set_value("Audio", "Bus" + str(idx), volume)
 	config.save(FILE_PATH)
+
+func write_default_settings():
+	if not config.has_section("Default"):
+		config.set_value("Default", "Mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
+		config.set_value("Default", "Resolution", Vector2i(1920, 1080))
+		config.set_value("Default", "VSync", DisplayServer.VSYNC_ENABLED)
+		for i in range(3):
+			config.set_value("Default", "Bus" + str(i), 0.5)
+		config.save(FILE_PATH)
+
 
 func reset_to_defaults():
 	# Clear Display and Audio sections (if they exist)
