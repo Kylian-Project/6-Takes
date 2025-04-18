@@ -36,6 +36,7 @@ const games = [];		// tableau de Game
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
 const timers = {};  // un timer par room
 const affichageTimers = {};
+let verrou = true;
 
 
 
@@ -154,58 +155,9 @@ export const PlayGame = (socket, io) =>
 	// 3. Choix d'une rangée si la carte est trop faible
 	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => 
 	{
-
-		//on arrete le timer
-		clearTimeout(timers[roomId]);
-		delete timers[roomId];
-		clearInterval(affichageTimers[roomId]);
-		delete affichageTimers[roomId];
-
-		const jeu = getGame(roomId);
-		if (!jeu) return;
-	  
-		const joueur = jeu.joueurs.find(j => j.nom === username);
-		if (!joueur || !joueur.carteEnAttente) return;
-	  
-		const carte = joueur.carteEnAttente;
-		const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes();
-		const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-		joueur.updateScore(penalite);
-	  
-		jeu.table.rangs[indexRangee] = new Rang(carte);
-		delete joueur.carteEnAttente;
-
-		const room = rooms.find(r => r.id === roomId);
-		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
-	  
-		if (cartesAJoueesParRoom[roomId].length === limite) 
-			{
-				console.log("time out deleted");
+		handleChoixRangee(roomId, indexRangee, username, io);
+	});
 	
-				clearTimeout(timers[roomId]);
-				delete timers[roomId];
-				
-				clearInterval(affichageTimers[roomId]);
-				delete affichageTimers[roomId];
-	
-				traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
-				notifierCarteJouee(io, roomId, jeu);
-	
-				//redemearrer le timer une fois que les joueurs ont tous jouées
-				lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
-			}
-	  
-		// Mise à jour table et scores
-		const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-		io.to(roomId).emit("update-table", table);
-	  
-		const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score }));
-		io.to(roomId).emit("update-scores", scores);
-	  
-		console.log(`✅ ${joueur.nom} a choisi de ramasser la rangée ${indexRangee}`);
-	  
-		// 🧠 Optionnel : Tu pourrais ici rappeler la fin du tour si d'autres joueurs attendaient encore.
-	  });
 	  
   
 
@@ -257,7 +209,8 @@ export const PlayGame = (socket, io) =>
 
 //fonction qui compare entre une liste de joueur ayant deja jouées et la liste des joueurs de la room 
 //pour retrouver qui na pas encore jouer
-function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
+function retrouverJoueursAbsents(roomId, joueursDejaJoue) 
+{
 	const jeu = getGame(roomId);
 	const room = rooms.find(r => r.id === roomId);
 	if (!jeu || !room) return [];
@@ -265,7 +218,7 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue) {
 	const nomsAttendus = jeu.joueurs.map(j => j.nom);
 	const absents = nomsAttendus.filter(nom => !joueursDejaJoue.includes(nom));
 	return absents;
-  }
+}
   
 
 function notifierCarteJouee(io, roomId, jeu) 
@@ -318,7 +271,7 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 }
 
 
-function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
+async function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
 {
 	const actions = cartesAJoueesParRoom[roomId];
 	const room = rooms.find(r => r.id === roomId);
@@ -336,26 +289,42 @@ function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 			{
 				const joueur = jeu.joueurs.find(j => j.nom === username);
 				joueur.carteEnAttente = carte;
-
 				const rangsInfo = jeu.table.rangs.map((rang, i) => ({
 					index: i,
 					cartes: rang.cartes.map(c => c.numero),
 					penalite: rang.totalTetes()
 				}));
-
-				const socketTarget = io.sockets.sockets.get(
-					room.users.find(u => u.username === username)?.idSocketUser
-				);
-
-				if (socketTarget) 
+			
+				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
+				const socketTarget = io.sockets.sockets.get(socketTargetId);
+				// Envoyer uniquement au joueur concerné
+				if (socketTarget)
 				{
 					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
 				}
-				return; // On arrête ici, la suite reprendra après choix
+				
+				await waitForVerrouRelease();
+				
+				// Envoyer à tous les autres joueurs de la room sauf lui
+				if (socketTargetId) 
+				{
+					io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
+				}
+
+				console.log("carte a traité differemnt");
+
+				// Attendre que le joueur choisit une rangée
+
+				//await sleep(40*1000);
+				console.log("reprise du traitement des cartes");
+
+			
+				
+				//return; // on stoppe ici, on reprendra après la réponse
 			}
 
 			console.log(`✅ ${username} a joué ${carte.numero}`);
-		} 
+		}
 		catch (err) {
 			console.error(`❌ Erreur avec ${username} :`, err.message);
 		}
@@ -400,6 +369,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 	//envoyer le timer aux joueurs
 	affichageTimers[roomId] = setInterval(() => {
 		secondesRestantes--;
+
 		io.to(roomId).emit("temps-room", secondesRestantes);
 		if(secondesRestantes <= 0)
 		{
@@ -409,3 +379,54 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 	},1000);
 
   }
+
+
+function handleChoixRangee(roomId, indexRangee, username, io) 
+{
+	const jeu = getGame(roomId);
+	const room = rooms.find(r => r.id === roomId);
+	if (!jeu || !room) return;
+
+	const joueur = jeu.joueurs.find(j => j.nom === username);
+	const carte = joueur?.carteEnAttente;
+	if (!joueur || !carte) return;
+
+	const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes();
+	const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+	joueur.updateScore(penalite);
+	let temp_carte = new Carte(carte.numero);
+	jeu.table.rangs[indexRangee] = new Rang(temp_carte);
+	delete joueur.carteEnAttente;
+
+	verrou = false;
+
+}
+
+
+
+function sleep(ms) 
+{
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+
+function waitForVerrouRelease(timeout = 30000) {
+    return new Promise(resolve => {
+        const interval = setInterval(() => {
+            if (!verrou) {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 100);
+
+        setTimeout(() => {
+            if (verrou) {
+                console.log("⏰ Timeout de verrou, reprise forcée");
+                verrou = false;
+                clearInterval(interval);
+                resolve();
+            }
+        }, timeout);
+    });
+}
