@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://fwrwwy8t1e2u"]
 
-[ext_resource type="Script" uid="uid://bq3ap324mjpx0" path="res://scripts/edit_profile.gd" id="1_in2s6"]
+[ext_resource type="Script" uid="uid://cmoo5rrmm1ebl" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="2_36ldt"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_lv30f"]
