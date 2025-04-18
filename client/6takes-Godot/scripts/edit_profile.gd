@@ -5,11 +5,13 @@ extends Control
 @onready var save_button = $EditProfilePanel/MainVertical/SaveIconButton
 @onready var close_button = $Close
 @onready var logout_button = $EditProfilePanel/MainVertical/HRow/LogOutButton
-
 @onready var http_request = $HTTPRequest
+
 var API_URL
 var WS_SERVER_URL
 var player_id
+var selected_icon = "dark_grey.png"  # Default icon
+var current_action = ""  # Used to distinguish between "logout" and "update_icon"
 
 const ICON_PATH = "res://assets/images/icons/"
 const ICON_FILES = [
@@ -18,77 +20,100 @@ const ICON_FILES = [
 	"reversed.png", "cyan.png"
 ]
 
-var selected_icon = "dark_grey.png"  # Default icon
-
 func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
-
 	populate_icon_selection()
+
 	save_button.connect("pressed", _on_save_icon)
-	close_button.pressed.connect(func():
-		self.queue_free()
-	)
+	close_button.pressed.connect(func(): self.queue_free())
 	
 	var base_url = get_node("/root/Global").get_base_url()
 	API_URL = "http://" + base_url + "/api/player/logout"
 	WS_SERVER_URL = "ws://" + base_url
 	
 	player_id = get_node("/root/Global").get_player_id()
-	print("player id debug", player_id)
+	
 	logout_button.connect("pressed", _on_log_out_button_pressed)
 	logout_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	logout_button.pressed.connect(SoundManager.play_click_sound)
 
+# Dynamically load icons
 func populate_icon_selection():
 	for icon_file in ICON_FILES:
 		var icon_button = Button.new()
 		var texture = load(ICON_PATH + icon_file)
-		
-		icon_button.icon = texture  # Set the texture as the button icon
-		icon_button.custom_minimum_size = Vector2(64, 64)  # Adjust size if needed
+		icon_button.icon = texture
+		icon_button.custom_minimum_size = Vector2(64, 64)
 		icon_button.connect("pressed", _on_icon_selected.bind(icon_file))
-		
 		icon_selection.add_child(icon_button)
 
+# When a user clicks an icon button
 func _on_icon_selected(icon_name):
 	selected_icon = icon_name
 	player_icon.texture = load(ICON_PATH + selected_icon)
 
+# Handle Save
 func _on_save_icon():
 	print("Saving icon:", selected_icon)
 	send_icon_to_database(selected_icon)
 
+# Sends icon ID to the backend
 func send_icon_to_database(icon_name):
-	#Implement database interaction
-	print("Icon", icon_name, "sent to database")
+	current_action = "update_icon"
+	var icon_id = ICON_FILES.find(icon_name)
 
-func _on_close_pressed():
-	self.queue_free()
+	print("DEBUG | Icon name selected:", icon_name)
+	print("DEBUG | Icon ID to send:", icon_id)
+
+	var json_body = JSON.stringify({ "icon": icon_id })
+
+	var url = "http://" + get_node("/root/Global").get_base_url() + "/api/player/updateProfile"
+	var token = get_node("/root/Global").get_saved_token()
+	var headers = ["Authorization: Bearer " + token, "Content-Type: application/json"]
+
+	print("Envoi de l'update à :", url)
+	print("Payload :", json_body)
+
+	http_request.request(url, headers, HTTPClient.METHOD_POST, json_body)
 
 
-func _on_log_out_button_pressed() -> void:
-	#var payload = {player_id}
+# Handles logout
+func _on_log_out_button_pressed():
+	current_action = "logout"
 	get_node("/root/Global").load_session()
 	var user_token = get_node("/root/Global").get_saved_token()
 	var json_body = JSON.stringify(user_token)
-	print("JSON BODY LOG OUT ", json_body)
-	
-	#var headers = ["Content-Type: application/json"]
-	var headers = ["Authorization: Bearer " + user_token]
-	
-	print(" Envoi de la requête HTTP de connexion à:", API_URL)
+	var headers = [get_node("/root/Global").header + user_token]
+
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
-
+# Handles all responses
 func _on_http_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
 
-	if response_code != 200:
-		print(" Erreur serveur ou identifiants invalides.")
-		return 
-	
-	print("User disconnected successefully")
-	get_node("/root/Global").set_logged_in(false)
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
-	return
+	if current_action == "logout":
+		if response_code == 200:
+			print("Déconnexion réussie")
+			get_node("/root/Global").set_logged_in(false)
+			get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+		else:
+			print("Erreur serveur lors de la déconnexion")
+	elif current_action == "update_icon":
+		if response_code == 200:
+
+			var raw_response = body.get_string_from_utf8()
+			var result_string = JSON.parse_string(raw_response)
+
+			var new_icon_id = result_string["player"]["icon"]
+			var icon_path = ICON_PATH + ICON_FILES[new_icon_id]
+			player_icon.texture = load(icon_path)
+
+			print("Icon updated successfully!")
+		else:
+			print("Failed to update icon on server.")
+
+# Refresh icon in current panel
+func update_profile_icon_preview():
+	var new_texture = load(ICON_PATH + selected_icon)
+	player_icon.texture = new_texture
