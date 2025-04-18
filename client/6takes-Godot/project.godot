@@ -11,14 +11,15 @@ config_version=5
 [application]
 
 config/name="6Takes_main"
-run/main_scene="res://scenes/MainMenu.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+run/main_scene="uid://btyeei16grxj"
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 SettingsManager="*res://scripts/settings_manager.gd"
 Global="*res://scripts/Global.gd"
+SoundManager="*res://scenes/SoundManager.tscn"
 
 [display]
 
@@ -26,6 +27,10 @@ window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
+
+[dotnet]
+
+project/assembly_name="6Takes_main"
 
 [rendering]
 

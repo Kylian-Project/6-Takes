@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bi73u3o3qngk5"]
 
-[ext_resource type="Script" path="res://scripts/rules.gd" id="1_7sap1"]
+[ext_resource type="Script" uid="uid://vdo3rdq00ofr" path="res://scripts/rules.gd" id="1_7sap1"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_qwy8h"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="3_vj88w"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="4_oyd2o"]
@@ -272,6 +272,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_c267g")
 layout_mode = 1
 offset_right = 55.0
 offset_bottom = 50.0
+mouse_default_cursor_shape = 2
 icon = ExtResource("5_uitwj")
 flat = true
 expand_icon = true
