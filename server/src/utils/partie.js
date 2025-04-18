@@ -126,6 +126,28 @@ export const PlayGame = (socket, io) =>
 
             notifierCarteJouee(io, roomId, jeu);
             lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+			if(jeu.checkEndManche())
+			{
+				console.log("fin de manche");
+				// Distribution des cartes
+				for (let i = 0; i < usernames.length; i++) 
+				{
+					// On a déjà distribué les cartes dans le constructeur
+					const joueur = jeu.joueurs[i];
+					const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
+		
+					if (socketId) {
+						io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+					}
+				}
+			
+				// Envoi de la table initiale à tous
+				const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+				io.to(roomId).emit("initial-table", tableInit);
+				console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
+			
+			}
+				
         }
 
     });
@@ -399,55 +421,4 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     traiterProchaineCarte(roomId, jeu, io, rooms);
 }
 
-
-
-async function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
-{
-	const actions = cartesAJoueesParRoom[roomId];
-	const room = rooms.find(r => r.id === roomId);
-	if (!room || !actions) return;
-
-	// Trier par valeur croissante
-	actions.sort((a, b) => a.carte.numero - b.carte.numero);
-
-	for (const { username, carte } of actions) {
-		try 
-		{
-			const res = jeu.jouerCarte(username, carte);
-
-			if (res === "choix_rang_obligatoire") 
-			{
-				const joueur = jeu.joueurs.find(j => j.nom === username);
-				joueur.carteEnAttente = carte;
-				const rangsInfo = jeu.table.rangs.map((rang, i) => ({
-					index: i,
-					cartes: rang.cartes.map(c => c.numero),
-					penalite: rang.totalTetes()
-				}));
-			
-				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-				const socketTarget = io.sockets.sockets.get(socketTargetId);
-				// Envoyer uniquement au joueur concerné
-				if (socketTarget)
-				{
-					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
-				}
-				
-				// Envoyer à tous les autres joueurs de la room sauf lui
-				if (socketTargetId) 
-				{
-					io.to(roomId).except(socketTargetId).emit("attente-choix-rangee",  (true));
-				}
-				await waitForVerrouRelease();
-				io.to(roomId).except(socketTargetId).emit("attente-choix-rangee",  (true));
-
-		
-			}
-		}
-		catch (err) 
-		{
-			console.error(`❌ Erreur avec ${username} :`, err.message);
-		}
-	}
-}
 
