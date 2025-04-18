@@ -5,7 +5,6 @@ extends Control
 func _ready() -> void:
 	$ResetButton.pressed.connect(_on_reset_button_pressed)
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
@@ -18,7 +17,7 @@ func _on_reset_button_pressed():
 
 	# --- DISPLAY ---
 	var display_mode = defaults.get_value("Default", "Mode", 0)
-	$TabContainer/MainSettings/HorizontalAlign/VSettings/DisplayOptionBox.select(display_mode)
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption.select(display_mode)
 	DisplayServer.window_set_mode(display_mode)
 
 	var resolution = defaults.get_value("Default", "Resolution", Vector2i(1920, 1080))
@@ -26,7 +25,7 @@ func _on_reset_button_pressed():
 	DisplayServer.window_set_size(resolution)
 
 	var vsync = defaults.get_value("Default", "VSync", 1)
-	$TabContainer/MainSettings/HorizontalAlign/VSettings/VSyncOptions.select(0 if vsync == DisplayServer.VSYNC_ENABLED else 1)
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions.select((0 if vsync == DisplayServer.VSYNC_ENABLED else 1))
 	DisplayServer.window_set_vsync_mode(vsync)
 
 	# --- AUDIO ---
