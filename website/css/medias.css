@@ -11,6 +11,14 @@
     #playerIcon {
         display: none;
     }
+
+    header {
+        height: 200px;
+    }
+
+    main {
+        top: 200px;
+    }
 }
 
 @media (max-width: 550px) {

@@ -92,7 +92,7 @@
             <div class="container-beta">
                 <h2>Try The Beta Version</h2>
                 <p>Join our community of early players and help shape the future of 6 Takes!</p>
-                <button class="beta-button"><img src="./assets/img/download-icon.png" alt="Download" class="download-icon"/>Download Beta</button>
+                <button class="beta-button"><img src="./assets/img/download-icon.png" alt="Download" class="download-icon"/>Download Beta</button>                         
             </div>
         </section>
 
@@ -109,11 +109,18 @@
           
                 <label for="message" class="label">Your Message</label>
                 <textarea id="message" placeholder="Share your thoughts with us..."></textarea>
+
+                <label for="screenshot" class="label">Attach a Screenshot (optional)</label>
+                <input type="file" id="screenshot" accept="image/*" class="file-input" />
           
                 <button class="submit">Submit Feedback</button>
               </div>
             </div>
-        </section>          
+        </section>
+
+        <div id="beta-toast" class="beta-toast hidden">
+            🚧 La version beta n'est pas encore disponible.
+        </div>
 
     </main>
 

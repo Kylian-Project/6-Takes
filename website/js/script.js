@@ -134,3 +134,24 @@ lightbox.addEventListener('click', (e) => {
         closeLightbox();
     }
 });
+
+// Beta message
+// Affiche un message lorsque le bouton "Beta" est cliqué
+const betaButton = document.querySelector('.beta-button');
+const toast = document.getElementById('beta-toast');
+
+betaButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    toast.classList.remove('hidden');
+    toast.classList.add('show');
+
+    // Cache le toast après 3 secondes
+    setTimeout(() => {
+        toast.classList.remove('show');
+        // petit délai pour permettre la transition de sortie
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 400);
+    }, 3000);
+});
