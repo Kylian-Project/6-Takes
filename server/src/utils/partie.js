@@ -36,12 +36,11 @@ const games = [];		// tableau de Game
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
 const timers = {};  // un timer par room
 const affichageTimers = {};
-let verrou = true;
+const fileTraitementParRoom = {}; 
 
 
 
-  	//////////////////////////////////////////////////
-	/////////////// Deroulement du jeu ///////////////
+/////////////// Deroulement du jeu ///////////////
   	//////////////////////////////////////////////////
 
 export const PlayGame = (socket, io) =>
@@ -91,7 +90,7 @@ export const PlayGame = (socket, io) =>
 
 	// 2. Jouer une carte
 
-	socket.on("play-card", ({ roomId, card, username }) => 
+	socket.on("play-card", async ({ roomId, card, username }) =>
 	{
 
 
@@ -110,24 +109,27 @@ export const PlayGame = (socket, io) =>
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
 		// Tous les joueurs ont joué pas de soucis de temps
-		if (cartesAJoueesParRoom[roomId].length === limite) 
-		{
-			console.log("time out deleted");
+		
+        if (cartesAJoueesParRoom[roomId].length === limite) 
+        {
+            clearTimeout(timers[roomId]);
+            delete timers[roomId];
+            clearInterval(affichageTimers[roomId]);
+            delete affichageTimers[roomId];
 
-			clearTimeout(timers[roomId]);
-			delete timers[roomId];
-			
-			clearInterval(affichageTimers[roomId]);
-			delete affichageTimers[roomId];
+            //pour traiter les cartes une par une on ajoute une file
+            //on copie le contenu exct de CarteAJou dans fileTraitement
+            fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+            cartesAJoueesParRoom[roomId] = [];
 
-			traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
-			notifierCarteJouee(io, roomId, jeu);
+            await traiterProchaineCarte(roomId, jeu, io, rooms);
 
-			//redemearrer le timer une fois que les joueurs ont tous jouées
-			lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
-		}
-	});
-	  
+            notifierCarteJouee(io, roomId, jeu);
+            lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+        }
+
+    });
+            
 
 		// 2. JPasser au tour suivant -start-tour
 
@@ -230,18 +232,9 @@ function notifierCarteJouee(io, roomId, jeu)
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
 	io.to(roomId).emit("update-scores", scores);
   
-	//const joueurSuivant = jeu.joueurs.find(j => !j.carteEnAttente); // par défaut
-	//io.to(roomId).emit("tour", { username: joueurSuivant?.nom || null });
-  
 	cartesAJoueesParRoom[roomId] = [];
 }
   
-
-function notifierMain(io,socketId, joueur) 
-{
-	const nouvelleMain = joueur.getHand().map(c => c.numero);
-	io.to(socketId).emit("your-hand", nouvelleMain);
-}
   
 
 function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
@@ -261,83 +254,10 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 		cartesAJoueesParRoom[roomId].push({ username, carte });
 
 		console.log(`🤖 ${username} a joué automatiquement la carte ${carte.numero}`);
-
-		// Envoyer main à jour
-		const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
-		if (userSocketId) {
-			io.to(userSocketId).emit("your-hand", joueur.getHand().map(c => c.numero));
-		}
 	}
 }
 
 
-async function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
-{
-	const actions = cartesAJoueesParRoom[roomId];
-	const room = rooms.find(r => r.id === roomId);
-	if (!room || !actions) return;
-
-	// Trier par valeur croissante
-	actions.sort((a, b) => a.carte.numero - b.carte.numero);
-
-	for (const { username, carte } of actions) {
-		try 
-		{
-			const res = jeu.jouerCarte(username, carte);
-
-			if (res === "choix_rang_obligatoire") 
-			{
-				const joueur = jeu.joueurs.find(j => j.nom === username);
-				joueur.carteEnAttente = carte;
-				const rangsInfo = jeu.table.rangs.map((rang, i) => ({
-					index: i,
-					cartes: rang.cartes.map(c => c.numero),
-					penalite: rang.totalTetes()
-				}));
-			
-				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-				const socketTarget = io.sockets.sockets.get(socketTargetId);
-				// Envoyer uniquement au joueur concerné
-				if (socketTarget)
-				{
-					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
-				}
-				
-				await waitForVerrouRelease();
-				
-				// Envoyer à tous les autres joueurs de la room sauf lui
-				if (socketTargetId) 
-				{
-					io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
-				}
-
-				console.log("carte a traité differemnt");
-
-				// Attendre que le joueur choisit une rangée
-
-				//await sleep(40*1000);
-				console.log("reprise du traitement des cartes");
-
-			
-				
-				//return; // on stoppe ici, on reprendra après la réponse
-			}
-
-			console.log(`✅ ${username} a joué ${carte.numero}`);
-		}
-		catch (err) {
-			console.error(`❌ Erreur avec ${username} :`, err.message);
-		}
-
-		// Notifier la nouvelle main du joueur
-		const userSocketId = room.users.find(u => u.username === username)?.idSocketUser;
-		const joueur = jeu.joueurs.find(j => j.nom === username);
-		if (joueur && userSocketId)
-		{
-			notifierMain(io, userSocketId, joueur);
-		}
-	}
-}
 
 
 
@@ -357,12 +277,18 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 	{
 		console.log(`⏰ Timer écoulé pour room ${roomId}`);
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
-		traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) ;
+
+        fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+        cartesAJoueesParRoom[roomId] = [];
+        traiterProchaineCarte(roomId, jeu, io, rooms);
+        
+
 		delete timers[roomId];
 		notifierCarteJouee(io, roomId, jeu);
 
 		clearInterval(affichageTimers[roomId]);
 		delete affichageTimers[roomId];
+		io.to(roomId).emit("fin-tour");
 
 	}, duration);
 
@@ -398,35 +324,130 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 	jeu.table.rangs[indexRangee] = new Rang(temp_carte);
 	delete joueur.carteEnAttente;
 
-	verrou = false;
 
 }
 
 
 
-function sleep(ms) 
+
+
+
+
+
+//fonction recursive pour traiter les cartes une apres l'autre ce qui permet une asychronie
+//lors du traitement , utilise une file d’attente (fileTraitementParRoom[roomId]) pour
+//traiter les cartes dans l’ordre croissant sans chevauchement
+
+
+async function traiterProchaineCarte(roomId, jeu, io, rooms) 
 {
-	return new Promise(resolve => setTimeout(resolve, ms));
+    const file = fileTraitementParRoom[roomId];
+    const room = rooms.find(r => r.id === roomId);
+    if (!file || !file.length || !room) return;
+
+    const { username, carte } = file.shift();
+
+    try 
+    {
+        const res = jeu.jouerCarte(username, carte);
+
+        if (res === "choix_rang_obligatoire") 
+        {
+            const joueur = jeu.joueurs.find(j => j.nom === username);
+            joueur.carteEnAttente = carte;
+
+            const rangsInfo = jeu.table.rangs.map((rang, i) => ({
+                index: i,
+                cartes: rang.cartes.map(c => c.numero),
+                penalite: rang.totalTetes()
+            }));
+
+            const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
+            const socketTarget = io.sockets.sockets.get(socketTargetId);
+            socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
+            io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
+
+            await new Promise(resolve => 
+            {
+                const handler = ({ roomId: rid, indexRangee, username: uname }) => {
+                if (rid === roomId && uname === username) {
+                    io.sockets.sockets.get(socketTargetId)?.off("choisir-rangee", handler);
+                    const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes();
+                    const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+                    joueur.updateScore(penalite);
+                    jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
+                    delete joueur.carteEnAttente;
+
+                    io.to(roomId).emit("update-table", jeu.table.rangs.map(r => r.cartes.map(c => c.numero)));
+                    io.to(roomId).emit("update-scores", jeu.joueurs.map(j => ({ nom: j.nom, score: j.score })));
+
+                    resolve();
+                }
+                };
+                io.sockets.sockets.get(socketTargetId)?.on("choisir-rangee", handler);
+            });
+        }
+
+
+    }
+    catch (err)
+    {
+        console.error(`❌ Erreur avec ${username} :`, err.message);
+    }
+
+    // Traiter la prochaine carte après celle-ci
+    traiterProchaineCarte(roomId, jeu, io, rooms);
 }
 
 
 
-function waitForVerrouRelease(timeout = 30000) {
-    return new Promise(resolve => {
-        const interval = setInterval(() => {
-            if (!verrou) {
-                clearInterval(interval);
-                resolve();
-            }
-        }, 100);
+async function traiterCartesJouees(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
+{
+	const actions = cartesAJoueesParRoom[roomId];
+	const room = rooms.find(r => r.id === roomId);
+	if (!room || !actions) return;
 
-        setTimeout(() => {
-            if (verrou) {
-                console.log("⏰ Timeout de verrou, reprise forcée");
-                verrou = false;
-                clearInterval(interval);
-                resolve();
-            }
-        }, timeout);
-    });
+	// Trier par valeur croissante
+	actions.sort((a, b) => a.carte.numero - b.carte.numero);
+
+	for (const { username, carte } of actions) {
+		try 
+		{
+			const res = jeu.jouerCarte(username, carte);
+
+			if (res === "choix_rang_obligatoire") 
+			{
+				const joueur = jeu.joueurs.find(j => j.nom === username);
+				joueur.carteEnAttente = carte;
+				const rangsInfo = jeu.table.rangs.map((rang, i) => ({
+					index: i,
+					cartes: rang.cartes.map(c => c.numero),
+					penalite: rang.totalTetes()
+				}));
+			
+				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
+				const socketTarget = io.sockets.sockets.get(socketTargetId);
+				// Envoyer uniquement au joueur concerné
+				if (socketTarget)
+				{
+					socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
+				}
+				
+				// Envoyer à tous les autres joueurs de la room sauf lui
+				if (socketTargetId) 
+				{
+					io.to(roomId).except(socketTargetId).emit("attente-choix-rangee",  (true));
+				}
+				await waitForVerrouRelease();
+				io.to(roomId).except(socketTargetId).emit("attente-choix-rangee",  (true));
+
+		
+			}
+		}
+		catch (err) 
+		{
+			console.error(`❌ Erreur avec ${username} :`, err.message);
+		}
+	}
 }
+
