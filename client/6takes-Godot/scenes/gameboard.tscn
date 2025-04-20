@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
+[ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 [ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="8_q3lfy"]
 
@@ -26,6 +27,12 @@ font_size = 50
 [sub_resource type="LabelSettings" id="LabelSettings_8de43"]
 font = ExtResource("3_r0b0d")
 font_size = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2khg6"]
+bg_color = Color(0.6, 0.6, 0.6, 0.741176)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh6iy"]
+bg_color = Color(0.00566115, 0.00566115, 0.00566114, 0.937255)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(1124.5, 737.75)
@@ -140,37 +147,137 @@ custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
 alignment = 1
 
-[node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+[node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CardUI" parent="deckContainer/rowsContainer/row1" instance=ExtResource("3_8mab6")]
+[node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer/row1_panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 170.0
+grow_horizontal = 0
+size_flags_vertical = 3
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row1_panel/row1" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = 75.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+expand_icon = true
+
+[node name="row2_panel" type="Panel" parent="deckContainer/rowsContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CardUI2" parent="deckContainer/rowsContainer/row2" instance=ExtResource("3_8mab6")]
+[node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer/row2_panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 170.0
+grow_horizontal = 0
+size_flags_vertical = 3
+
+[node name="CardUI2" parent="deckContainer/rowsContainer/row2_panel/row2" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = 75.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+expand_icon = true
+
+[node name="row3_panel" type="Panel" parent="deckContainer/rowsContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CardUI3" parent="deckContainer/rowsContainer/row3" instance=ExtResource("3_8mab6")]
+[node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer/row3_panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 170.0
+grow_horizontal = 0
+size_flags_vertical = 3
+
+[node name="CardUI3" parent="deckContainer/rowsContainer/row3_panel/row3" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer"]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = 75.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+expand_icon = true
+
+[node name="row4_panel" type="Panel" parent="deckContainer/rowsContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CardUI4" parent="deckContainer/rowsContainer/row4" instance=ExtResource("3_8mab6")]
+[node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer/row4_panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 170.0
+grow_horizontal = 0
+size_flags_vertical = 3
+
+[node name="CardUI4" parent="deckContainer/rowsContainer/row4_panel/row4" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = 75.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+expand_icon = true
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2

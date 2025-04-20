@@ -40,9 +40,9 @@ func get_saved_token():
 
 func set_logged_in(state):
 	logged_in = state
-#script to save sessions token globally (for after quit)
+
 func save_session(token: String):
-	var config = ConfigFile.new()
+	#var config = ConfigFile.new()
 	config.set_value("session", "token", token)
 	#config.set_value("user", "email", email)
 	
@@ -53,7 +53,7 @@ func save_session(token: String):
 		
 #load session data from file on startup
 func load_session():
-	var config = ConfigFile.new()
+	#var config = ConfigFile.new()
 	var error = config.load("user://session.cfg")
 	if error == OK:
 		saved_token = config.get_value("session", "token")

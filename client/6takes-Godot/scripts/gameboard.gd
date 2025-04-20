@@ -6,10 +6,24 @@ extends Node2D
 @onready var score_label = $CanvasLayer/top_bar/nbheads
 
 #deck ui 
-@onready var row1 = $deckContainer/rowsContainer/row1
-@onready var row2 = $deckContainer/rowsContainer/row2
-@onready var row3 = $deckContainer/rowsContainer/row3
-@onready var row4 = $deckContainer/rowsContainer/row4
+@onready var row1 = $deckContainer/rowsContainer/row1_panel/row1
+@onready var row2 = $deckContainer/rowsContainer/row2_panel/row2
+@onready var row3 = $deckContainer/rowsContainer/row3_panel/row3
+@onready var row4 = $deckContainer/rowsContainer/row4_panel/row4
+
+
+@onready var row_panels = [
+	$deckContainer/rowsContainer/row1_panel,
+	$deckContainer/rowsContainer/row2_panel,
+	$deckContainer/rowsContainer/row3_panel,
+	$deckContainer/rowsContainer/row4_panel
+]
+@onready var row_buttons = [
+	row_panels[0].get_node("selectRowButton"),
+	row_panels[1].get_node("selectRowButton"),
+	row_panels[2].get_node("selectRowButton"),
+	row_panels[3].get_node("selectRowButton")
+]
 
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
@@ -39,15 +53,18 @@ func _ready():
 	_load_cards()
 	game_state = GameState.WAITING_FOR_LOBBY
 	
+	highlight_row(false)
+	for i in range(row_buttons.size()):
+		var btn = row_buttons[i]
+		btn.visible = false
+		btn.pressed.connect(_on_select_row_button_pressed.bind(i + 1)) 
+	
 	#connect to socket
 	BASE_URL = get_node("/root/Global").get_base_url()
 	BASE_URL = "http://" + BASE_URL
 	socket_io.base_url = BASE_URL
 	socket_io.connect_socket()
 	socket_io.event_received.connect(_on_socket_event_received)
-	
-	#_assign_vbox_cards()  # Distribuer les 4 cartes de la rangée
-	#_assign_hbox_cards() 
 
 
 func _on_socket_event_received(event: String, data: Variant, ns: String) -> void:
@@ -159,27 +176,9 @@ func _on_invalid_card(message):
 
 # --- Player Actions Signals---
 
-
-func on_player_selects_card(card_value):
-	pass
-	#var payload = {
-		#"roomId": room_id,
-		#"card": card_value,
-		#"username": username
-	#}
-	#socket_io.emit("play-card", payload)
-	#print("Sent play-card event with:", payload)
-
-
-func on_player_selects_row(row_index):
-	pass
-	#var payload = {
-		#"roomId": room_id,
-		#"indexRangee": row_index,
-		#"username": username
-	#}
-	#socket_io.emit("choisir-rangee", payload)
-	#print("Sent choisir-rangee event with:", payload)
+func on_player_selects_row(data):
+	print("data received on row choice :", data)
+	highlight_row(true)
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -283,3 +282,37 @@ func update_table_ui(table_data):
 						card_instance.set_card_data(card_info["path"], card_id)
 				else:
 					print("No card info found for id:", card_id)
+
+
+func highlight_row(boolean): #, is_selected: bool) -> void:
+	var style = StyleBoxFlat.new()
+	style.set_border_width_all(4)
+	style.bg_color = Color.TRANSPARENT
+	
+	if boolean:
+		style.border_color = Color.BLUE
+	else:
+		style.border_color = Color.TRANSPARENT
+	
+	for i in range(row_panels.size()):
+		var panel = row_panels[i]
+		var btn   = row_buttons[i]
+		btn.visible = true
+		panel.add_theme_stylebox_override("panel", style)
+
+
+func _on_select_row_button_pressed(row_index):
+	print("choose row event")
+	_clear_row_selection_ui()
+	
+	socket_io.emit("choisir-rangee", {
+		"roomId": room_id_global,
+		"indexRangee": row_index,
+		"username": username
+	})
+
+
+func _clear_row_selection_ui():
+	for i in range(row_panels.size()):
+		row_buttons[i].visible = false
+		row_panels[i].add_theme_stylebox_override("panel", null)
