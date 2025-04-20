@@ -153,12 +153,8 @@ size_flags_vertical = 3
 
 [node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer/row1_panel"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -100.0
+offset_right = 100.0
 offset_bottom = 170.0
-grow_horizontal = 0
 size_flags_vertical = 3
 
 [node name="CardUI" parent="deckContainer/rowsContainer/row1_panel/row1" instance=ExtResource("3_8mab6")]
@@ -186,12 +182,8 @@ size_flags_vertical = 3
 
 [node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer/row2_panel"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -100.0
+offset_right = 100.0
 offset_bottom = 170.0
-grow_horizontal = 0
 size_flags_vertical = 3
 
 [node name="CardUI2" parent="deckContainer/rowsContainer/row2_panel/row2" instance=ExtResource("3_8mab6")]
@@ -219,12 +211,8 @@ size_flags_vertical = 3
 
 [node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer/row3_panel"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -100.0
+offset_right = 100.0
 offset_bottom = 170.0
-grow_horizontal = 0
 size_flags_vertical = 3
 
 [node name="CardUI3" parent="deckContainer/rowsContainer/row3_panel/row3" instance=ExtResource("3_8mab6")]
@@ -252,12 +240,8 @@ size_flags_vertical = 3
 
 [node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer/row4_panel"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -100.0
+offset_right = 100.0
 offset_bottom = 170.0
-grow_horizontal = 0
 size_flags_vertical = 3
 
 [node name="CardUI4" parent="deckContainer/rowsContainer/row4_panel/row4" instance=ExtResource("3_8mab6")]
