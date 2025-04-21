@@ -1,6 +1,6 @@
-[gd_scene load_steps=32 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=33 format=3 uid="uid://btyeei16grxj"]
 
-[ext_resource type="Script" uid="uid://cm8bnclaecx7t" path="res://scripts/main_menu.gd" id="1_wwhcw"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
 [ext_resource type="Texture2D" uid="uid://b4ysqmr5u81y3" path="res://assets/images/Title_screen_title_c2.png" id="3_jsxgc"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_0m83s"]
@@ -8,9 +8,10 @@
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
 [ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
-[ext_resource type="Script" uid="uid://bmw673k7qexsy" path="res://scripts/main_settings.gd" id="10_dnsu6"]
+[ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
-[ext_resource type="Script" uid="uid://bbmkl4wyppavs" path="res://scripts/audio_settings.gd" id="11_aye1x"]
+[ext_resource type="Texture2D" uid="uid://cq60c45jg1ve7" path="res://scenes/accessibilite.png" id="11_3dgwy"]
+[ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
 bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
@@ -316,8 +317,8 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
@@ -329,8 +330,8 @@ custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
@@ -342,8 +343,8 @@ custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_dnm4w")
@@ -481,16 +482,15 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/pressed = SubResource("StyleBoxFlat_bonse")
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
 item_count = 3
 popup/item_0/text = "Fullscreen"
-popup/item_0/id = 0
 popup/item_1/text = "Windowed"
 popup/item_1/id = 1
 popup/item_2/text = "Borderless"
@@ -501,14 +501,13 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
 item_count = 2
 popup/item_0/text = "1920x1080"
-popup/item_0/id = 0
 popup/item_1/text = "1152x648"
 popup/item_1/id = 1
 
@@ -517,14 +516,13 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
 item_count = 2
 popup/item_0/text = "Enabled"
-popup/item_0/id = 0
 popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
@@ -630,6 +628,25 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_x52x6")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ms7p3")
 theme_override_styles/normal = SubResource("StyleBoxFlat_y2rj5")
 icon = ExtResource("10_mcrd4")
+icon_alignment = 1
+expand_icon = true
+
+[node name="SettingsButton2" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.949
+anchor_top = 0.112
+anchor_right = 0.949
+anchor_bottom = 0.112
+offset_left = -95.9271
+offset_top = -75.296
+offset_right = 54.0729
+offset_bottom = 74.704
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_x52x6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ms7p3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_y2rj5")
+icon = ExtResource("11_3dgwy")
 icon_alignment = 1
 expand_icon = true
 
