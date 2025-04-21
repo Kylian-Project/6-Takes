@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://fwrwwy8t1e2u"]
 
-[ext_resource type="Script" uid="uid://cmoo5rrmm1ebl" path="res://scripts/edit_profile.gd" id="1_in2s6"]
+[ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="2_36ldt"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_lv30f"]
@@ -146,8 +146,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 25
 theme_override_styles/hover = ExtResource("5_n3637")
@@ -165,14 +165,33 @@ columns = 5
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 25
 theme_override_styles/hover = ExtResource("5_n3637")
 theme_override_styles/pressed = ExtResource("6_do1go")
 theme_override_styles/normal = ExtResource("6_do1go")
 text = "Save Icon"
+
+[node name="SavePopupLabel" type="PanelContainer" parent="EditProfilePanel"]
+visible = false
+layout_mode = 2
+
+[node name="SavePopupAlert" type="Label" parent="EditProfilePanel/SavePopupLabel"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = ExtResource("6_do1go")
+text = "Icon Saved!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PopupTimer" type="Timer" parent="EditProfilePanel"]
+wait_time = 2.0
+one_shot = true
 
 [node name="Close" type="Button" parent="."]
 layout_mode = 2

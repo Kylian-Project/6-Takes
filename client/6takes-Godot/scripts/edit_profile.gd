@@ -6,6 +6,8 @@ extends Control
 @onready var close_button = $Close
 @onready var logout_button = $EditProfilePanel/MainVertical/HRow/LogOutButton
 @onready var http_request = $HTTPRequest
+@onready var popup_label = $EditProfilePanel/SavePopupLabel
+@onready var popup_timer = $EditProfilePanel/PopupTimer
 
 var API_URL
 var WS_SERVER_URL
@@ -36,6 +38,8 @@ func _ready():
 	logout_button.connect("pressed", _on_log_out_button_pressed)
 	logout_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	logout_button.pressed.connect(SoundManager.play_click_sound)
+	
+	popup_timer.timeout.connect(_on_popup_timer_timeout)
 
 # Dynamically load icons
 func populate_icon_selection():
@@ -110,6 +114,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 			player_icon.texture = load(icon_path)
 
 			print("Icon updated successfully!")
+			show_save_popup()
 		else:
 			print("Failed to update icon on server.")
 
@@ -117,3 +122,10 @@ func _on_http_request_completed(result, response_code, headers, body):
 func update_profile_icon_preview():
 	var new_texture = load(ICON_PATH + selected_icon)
 	player_icon.texture = new_texture
+
+func show_save_popup():
+	popup_label.visible = true
+	popup_timer.start()
+
+func _on_popup_timer_timeout():
+	popup_label.visible = false
