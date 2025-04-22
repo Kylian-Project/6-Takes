@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=41 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -1298,17 +1298,8 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
-<<<<<<< HEAD
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_mster_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_sfx_slider_value_changed"]
-=======
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
-[connection signal="pressed" from="CreateLobbyOverlay/PanelContainer/MainVertical/Button" to="CreateLobbyOverlay" method="_on_create_lobby"]
->>>>>>> develop
