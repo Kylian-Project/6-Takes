@@ -7,6 +7,8 @@ extends Control
 @onready var drop_point: Area2D=$detector
 @onready var texture_rect = $TextureRect
 
+@onready var card_control = $"."
+
 var global_card_id 
 
 var original_position := position
@@ -30,8 +32,8 @@ func _ready() -> void:
 	orig_tex_scale = Vector2(1,1)
 	
 	selection_container.visible = is_lifted
-	original_position = position
-	original_scale = scale
+	original_position = card_control.position
+	original_scale = card_control.scale
 	
 
 func _process(_delta):
@@ -51,10 +53,12 @@ func set_card_data(image_path, card_id):
 func _on_select_button_pressed() -> void:
 	print("emitting card selected signal")
 	emit_signal("card_selected", global_card_id)
+	is_lifted = false
+	self.visible = false
+	#_on_deselect_button_pressed()
 
 
 func _on_deselect_button_pressed() -> void:
-	#reset_card()
 	if not is_lifted:
 		return
 	is_lifted = false
@@ -87,6 +91,9 @@ func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int)
 				
 				self.position = orig_tex_pos + LIFT_OFFSET
 				self.scale = orig_tex_scale * SCALE_FACTOR
+				#card_control.position = original_position + LIFT_OFFSET
+				#card_control.scale = original_scale * SCALE_FACTOR
+				
 			else:
 				is_lifted = false
 				self.position = orig_tex_pos

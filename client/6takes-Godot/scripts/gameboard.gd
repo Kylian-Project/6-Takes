@@ -18,11 +18,12 @@ extends Node2D
 	$deckContainer/rowsContainer/row3_panel,
 	$deckContainer/rowsContainer/row4_panel
 ]
+
 @onready var row_buttons = [
-	row_panels[0].get_node("selectRowButton"),
-	row_panels[1].get_node("selectRowButton"),
-	row_panels[2].get_node("selectRowButton"),
-	row_panels[3].get_node("selectRowButton")
+	$deckContainer/rowsContainer/row1_panel/row1/selectRowButton,
+	$deckContainer/rowsContainer/row2_panel/row2/selectRowButton,
+	$deckContainer/rowsContainer/row3_panel/row3/selectRowButton,
+	$deckContainer/rowsContainer/row4_panel/row4/selectRowButton
 ]
 
 # Listes de cartes
@@ -48,16 +49,18 @@ enum GameState {
 }
 var game_state 
 var room_id_global
+var hand_received 
 
 func _ready():
 	_load_cards()
 	game_state = GameState.WAITING_FOR_LOBBY
 	
+	hand_received = false
 	highlight_row(false)
 	for i in range(row_buttons.size()):
 		var btn = row_buttons[i]
 		btn.visible = false
-		btn.pressed.connect(_on_select_row_button_pressed.bind(i + 1)) 
+		btn.pressed.connect(_on_select_row_button_pressed.bind(i)) 
 	
 	#connect to socket
 	BASE_URL = get_node("/root/Global").get_base_url()
@@ -124,11 +127,12 @@ func _handle_room_created(data):
 	}
 	game_state = GameState.ROOM_JOINED
 	
-	await get_tree().create_timer(15).timeout
+	await get_tree().create_timer(5).timeout
 	print("start game event")
 	
 	var start_data = {"roomId" : room_id_global}
 	
+	game_state = GameState.GAME_STARTED
 	socket_io.emit("start-game", data[0])
 	#_start_turn()	
 
@@ -137,8 +141,12 @@ func _handle_room_joined(data):
 	
 
 func _start_turn():
+	hand_received = false
 	if room_id_global != null:
-		socket_io.emit("tour", {"roomId": room_id_global})
+		socket_io.emit("tour", {
+			"roomId": room_id_global, 
+			"username": username
+		})
 
 
 func _handle_timer(data):
@@ -161,8 +169,11 @@ func _handle_update_scores(data):
 	
 	
 func _handle_your_hand(data):
+	if hand_received:
+		return
+	hand_received = true
 	print("Data received on your-hand:", data)
-	_start_turn()
+	#_start_turn()
 	update_hand_ui(data)
 	
 
@@ -179,6 +190,14 @@ func _on_invalid_card(message):
 func on_player_selects_row(data):
 	print("data received on row choice :", data)
 	highlight_row(true)
+	selection_buttons(true)
+	
+	#socket_io.emit("choisir-rangee", {
+		#"roomId": room_id_global,
+		#"indexRangee": row_index,
+		#"username": username
+	#})
+
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -262,7 +281,8 @@ func _on_card_selected(card_number):
 func update_table_ui(table_data):
 	for row in [row1, row2, row3, row4]:
 		for child in row.get_children():
-			child.queue_free()
+			if child is not Button:
+				child.queue_free()
 		
 	if table_data.size() > 0 :
 		var rows = table_data[0]
@@ -297,12 +317,18 @@ func highlight_row(boolean): #, is_selected: bool) -> void:
 	for i in range(row_panels.size()):
 		var panel = row_panels[i]
 		var btn   = row_buttons[i]
-		btn.visible = true
 		panel.add_theme_stylebox_override("panel", style)
+	selection_buttons(false)
+	
 
-
+func selection_buttons(visibility):
+	for i in range(row_buttons.size()):
+		var btn = row_buttons[i]
+		btn.visible = visibility
+	
+	
 func _on_select_row_button_pressed(row_index):
-	print("choose row event")
+	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
 	
 	socket_io.emit("choisir-rangee", {

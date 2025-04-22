@@ -161,19 +161,14 @@ size_flags_vertical = 3
 layout_mode = 2
 script = null
 
-[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel" groups=["row_select"]]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel/row1" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 25.0
-offset_right = 75.0
-offset_bottom = 50.0
-grow_horizontal = 0
+layout_direction = 2
+layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
 icon = ExtResource("7_88qrw")
+flat = true
 expand_icon = true
 
 [node name="row2_panel" type="Panel" parent="deckContainer/rowsContainer"]
@@ -190,19 +185,13 @@ size_flags_vertical = 3
 layout_mode = 2
 script = null
 
-[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel" groups=["row_select"]]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel/row2" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 25.0
-offset_right = 75.0
-offset_bottom = 50.0
-grow_horizontal = 0
+layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
 icon = ExtResource("7_88qrw")
+flat = true
 expand_icon = true
 
 [node name="row3_panel" type="Panel" parent="deckContainer/rowsContainer"]
@@ -219,19 +208,13 @@ size_flags_vertical = 3
 layout_mode = 2
 script = null
 
-[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel" groups=["row_select"]]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel/row3" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 25.0
-offset_right = 75.0
-offset_bottom = 50.0
-grow_horizontal = 0
+layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
 icon = ExtResource("7_88qrw")
+flat = true
 expand_icon = true
 
 [node name="row4_panel" type="Panel" parent="deckContainer/rowsContainer"]
@@ -248,19 +231,13 @@ size_flags_vertical = 3
 layout_mode = 2
 script = null
 
-[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel" groups=["row_select"]]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel/row4" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 25.0
-offset_right = 75.0
-offset_bottom = 50.0
-grow_horizontal = 0
+layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
 icon = ExtResource("7_88qrw")
+flat = true
 expand_icon = true
 
 [node name="Area2D" type="Area2D" parent="."]
