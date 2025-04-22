@@ -6,13 +6,14 @@ extends Control
 @onready var create_lobby_overlay = $CreateLobbyOverlay
 @onready var join_lobby_overlay = $JoinLobbyOverlay
 @onready var rules_overlay = $RulesOverlay
+@onready var overlay_layer = $OverlayLayer
 
 @onready var create_lobby_button = $MainButtonsBox/Create_Lobby
 @onready var join_lobby_button = $MainButtonsBox/Join_Lobby
 @onready var settings_button = $Settings
+@onready var profile_button = $Profile
 @onready var rules_button = $Rules
 @onready var profile = $Profile
-@onready var overlay_layer = $OverlayLayer 
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -37,10 +38,31 @@ func _ready():
 	join_lobby_button.pressed.connect(_on_join_lobby_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	rules_button.pressed.connect(_on_rules_pressed)
+	profile_button.pressed.connect(_on_profile_pressed)
+
+		# Hover Soundboard
+	create_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	join_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	return_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
+
+	# Click Soundboard
+	create_lobby_button.pressed.connect(SoundManager.play_click_sound)
+	join_lobby_button.pressed.connect(SoundManager.play_click_sound)
+	return_button.pressed.connect(SoundManager.play_click_sound)
+	settings_button.pressed.connect(SoundManager.play_click_sound)
+	rules_button.pressed.connect(SoundManager.play_click_sound)
+	profile_button.pressed.connect(SoundManager.play_click_sound)
+
 
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)
+		
 		
 func _process(_delta):
 	overlay_layer.visible = overlay_layer.get_child_count() > 0
@@ -57,12 +79,6 @@ func open_overlay(overlay: Control):
 	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
 	overlay.visible = true  # Show the selected overlay
-func _on_profile_pressed():
-	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
-	var edit_profile_instance = edit_profile_scene.instantiate()
-	
-	overlay_layer.add_child(edit_profile_instance)
-	overlay_layer.visible = true
 
 # Button functions
 func _on_create_lobby_pressed():
@@ -85,3 +101,25 @@ func _on_close_overlay_pressed():
 	create_lobby_overlay.visible = false
 	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
+	
+func _on_profile_pressed():
+	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
+	var edit_profile_instance = edit_profile_scene.instantiate()
+	
+	overlay_layer.add_child(edit_profile_instance)
+	overlay_layer.visible = true
+	
+	# Attendre un frame pour s'assurer que les enfants sont accessibles
+	await get_tree().process_frame
+
+	# Récupère les boutons de l'instance ajoutée
+	var save_button = edit_profile_instance.get_node("EditProfilePanel/MainVertical/SaveIconButton")
+	var close_button = edit_profile_instance.get_node("Close")
+	
+	if save_button:
+		save_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		save_button.pressed.connect(SoundManager.play_click_sound)
+
+	if close_button:
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)
