@@ -33,11 +33,13 @@ function getGame(roomId)
 
 
 const games = [];		// tableau de Game
+const cartesAJouerParRoom = {}; // { roomId: [ { username, carte } ] }
 
 
 
-////////////////////////////////Deroulemet du jeu
-
+  	//////////////////////////////////////////////////
+	/////////////// Deroulement du jeu ///////////////
+  	//////////////////////////////////////////////////
 
 export const PlayGame = (socket, io) =>
 {
@@ -49,11 +51,17 @@ export const PlayGame = (socket, io) =>
 
 		// Initialisation du jeu
 		let bool= games.find(g => g.roomId === roomId);
-		if(bool === undefined || bool.newGame === true)
+		let jeu;
+		if (!bool) 
 		{
-			jeu = new Jeu6Takes(usernames.length, usernames);
+		  jeu = new Jeu6Takes(usernames.length, usernames);
+		  games.push(new Game(roomId, jeu));
+		} 
+		else 
+		{
+		  jeu = bool.Jeu;
 		}
-		const jeu = new Jeu6Takes(usernames.length, usernames);
+		
 		games.push({ roomId, Jeu: jeu });
 
 		// Distribution des cartes
@@ -76,16 +84,35 @@ export const PlayGame = (socket, io) =>
   });
 
 
-
-
-  	//////////////////////////////////////////////////
-	// squellette a avoir en cours d'implementation //
-  	//////////////////////////////////////////////////
-
-
 	// 2. Jouer une carte
-	socket.on("play-card", ({ roomId, card, username }) => {
-	  // TODO
+	socket.on("play-card", ({ roomId, card, username }) => 
+	{
+		const jeu = getGame(roomId);
+		if (!jeu) return console.log("❌ Partie introuvable pour la room :", roomId);
+	  
+		const joueur = jeu.joueurs.find(j => j.nom === username);
+		if (!joueur) return;
+	  
+		const indexCarte = joueur.getHand().findIndex(c => c.numero === card);
+		if (indexCarte === -1) {
+		  socket.emit("carte-invalide", "Cette carte ne vous appartient pas !");
+		  return;
+		}
+	  
+		// On retire la carte de la main
+		const carteJouee = joueur.hand.jouerCarte(indexCarte);
+	  
+		// On stocke temporairement la carte jouée
+		if (!cartesAJouerParRoom[roomId]) cartesAJouerParRoom[roomId] = [];
+		cartesAJouerParRoom[roomId].push({ username, carte: carteJouee });
+	  
+		console.log(` ${username} a joué la carte ${carteJouee.numero}`);
+	  
+		// Si tous ont joué, on traite
+		if (cartesAJouerParRoom[roomId].length === jeu.joueurs.length) {
+		  traiterCartesJouees(roomId, cartesAJouerParRoom[roomId], jeu);
+		  cartesAJouerParRoom[roomId] = []; // reset pour le tour suivant
+		}
 	});
   
 	// 3. Choix d'une rangée si la carte est trop faible
@@ -111,5 +138,8 @@ export const PlayGame = (socket, io) =>
 	// 8. Déconnexion (abandon ou fermeture de navigateur)
 	socket.on("disconnect", () => {
 	});
+
+
+	
 
 };

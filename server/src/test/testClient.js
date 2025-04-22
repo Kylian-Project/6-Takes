@@ -1,27 +1,56 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://185.155.93.105:14001"); // <== IP publique du bastion + port redirigé
+const BASE_URL = "http://185.155.93.105:14001";
 
-socket.on("connect", () => {
-  console.log("✅ Connecté au serveur avec ID :", socket.id);
+const socketAlice = io(BASE_URL);
+let roomId = "";
 
-  // Création d'une room privée
-  socket.emit("create-room", {
+socketAlice.on("connect", () => {
+  console.log("✅ Alice connectée :", socketAlice.id);
+
+  socketAlice.emit("create-room", {
     username: "Alice",
-    isPrivate: false,
+    lobbyName: "TestRoom",
+    playerLimit: 2,
+    numberOfCards: 10,
+    roundTimer: 30,
+    endByPoints: 66,
+    rounds: 1,
+    isPrivate: "PUBLIC"
   });
 
-  socket.on("private-room-created", (roomId) => {
-    console.log("🔒 Room privée créée :", roomId);
+  socketAlice.on("public-room-created", (id) => {
+    console.log("📦 Room publique créée :", id);
+    roomId = id;
+    joinBob();
+  });
 
-    const socketBob = io("http://185.155.93.105:14001");
-    socketBob.on("connect", () => {
-      console.log("👤 Bob connecté :", socketBob.id);
-      socketBob.emit("join-room", { roomId, username: "Bob" });
-
-      socketBob.on("private-room-joined", (users) => {
-        console.log("👥 Bob a rejoint la room d’Alice :", users);
-      });
-    });
+  socketAlice.on("users-in-your-public-room", (users) => {
+    console.log("👥 [Alice] utilisateurs :", users);
   });
 });
+
+function joinBob() {
+  const socketBob = io(BASE_URL);
+  socketBob.on("connect", () => {
+    console.log("👤 Bob connecté :", socketBob.id);
+    socketBob.emit("join-room", { roomId, username: "Bob" });
+  });
+
+  socketBob.on("public-room-joined", (users) => {
+    console.log("✅ Bob a rejoint la room :", users);
+    joinCharlie();
+  });
+
+  function joinCharlie() {
+    const socketCharlie = io(BASE_URL);
+    socketCharlie.on("connect", () => {
+      console.log("🧍 Charlie tente de rejoindre (devrait échouer)");
+      socketCharlie.emit("join-room", { roomId, username: "Charlie" });
+    });
+
+    socketCharlie.on("room-join-failed", () => {
+      console.log("❌ Charlie a été refusé (room pleine)");
+    });
+  }
+}

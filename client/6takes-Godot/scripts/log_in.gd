@@ -3,39 +3,62 @@ extends Control
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
+@onready var sign_up_button = $HBoxContainer/SignUp
+@onready var forgot_password_button = $ForgotPassword
+@onready var cancel_button = $Control/CancelButton
+
 @onready var http_request = $HTTPRequest_auth
+@onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
 var jwt_token = null
+var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-const WS_SERVER_URL = "ws://185.155.93.105:14001"
-const API_URL = "http://185.155.93.105:14001/api/player/connexion"
-
+var WS_SERVER_URL 
+var API_URL  
 
 #pop Up panel 
 @onready var popup_overlay = $popUp_error
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
 
+var showing_password1 := false
+const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
+const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
+
 
 func _ready():
 	self.visible = true
-	#login_button.pressed.connect(_on_login_button_pressed)
 	http_request.request_completed.connect(_on_http_request_completed)
+	
+	var base_url = get_node("/root/Global").get_base_url()
+	API_URL = "http://" + base_url + "/api/player/connexion"
+	WS_SERVER_URL = "ws://" + base_url
+	
+	# Soundboard
+	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	login_button.pressed.connect(SoundManager.play_click_sound)
+	
+	sign_up_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sign_up_button.pressed.connect(SoundManager.play_click_sound)
+
+	forgot_password_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	forgot_password_button.pressed.connect(SoundManager.play_click_sound)
+
+	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel_button.pressed.connect(SoundManager.play_click_sound)
+	
 
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
 	var password_hashed = hash_password(password)
 	
-	print("HASHED PASSWORD : \n", password_hashed)
-
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
 		return
 	
-	print("	PASSWORD DEBUG ", password)
 	var payload = {
 		"username": username_email,
 		"password": password_hashed
@@ -44,55 +67,60 @@ func _on_login_button_pressed():
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
 
-	print("📡 Envoi de la requête HTTP de connexion à:", API_URL)
+	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
-func _on_http_request_completed(result, response_code, headers, body):
-	print("🔁 Réponse HTTP reçue : code =", response_code)
-	print("🔁 Contenu brut:", body.get_string_from_utf8())
 
+func _on_http_request_completed(result, response_code, headers, body):
+	var response_str = body.get_string_from_utf8()
+	var parsed = JSON.parse_string(response_str)
+	
+	print("Réponse HTTP reçue : code =", response_code)
+	print("Contenu brut:", response_str)
+	
 	if response_code != 200:
-		print("❌ Erreur serveur ou identifiants invalides.")
+		popup_message.text = parsed["message"]
+		popup_overlay.visible = true
 		return
 
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	#if json.error != OK:
-		#print("❌ Erreur JSON :", json.error_string)
-		#return
 
+	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
-		print("✅ Connexion réussie ! Token :", jwt_token)
+		player_data = response["player"]
+		print(" Connexion réussie ! Token :", jwt_token)
+		
+		get_node("/root/Global").save_session(jwt_token)
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
-		print("❌ Connexion échouée :", response.get("message", "Erreur inconnue"))
+		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
+
 
 func _connect_to_websocket():
 	if jwt_token == null:
-		print("❌ Aucun token pour la connexion WebSocket")
+		print(" Aucun token pour la connexion WebSocket")
 		return
 
-	var ws_url = WS_SERVER_URL + "?token=" + jwt_token
-	print("🔌 Connexion WebSocket à :", ws_url)
+	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
 	var err = ws.connect_to_url(ws_url)
 	if err != OK:
-		print("❌ Erreur de connexion WebSocket :", err)
+		print("!! Erreur de connexion WebSocket :", err)
 		return
 
-	print("✅ WebSocket initialisé, en attente de connexion...")
+	print("WebSocket initialisé, en attente de connexion...")
 	ws_connected = false
 
 func _process(_delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
 		ws_connected = true
-		print("✅ WebSocket connecté avec succès !")
+		print(" WebSocket connecté avec succès !")
 
 	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
 		if ws_connected:
 			ws_connected = false
-			print("🔌 WebSocket déconnecté.")
+			print(" WebSocket déconnecté.")
 	
 	ws.poll()
 
@@ -101,10 +129,10 @@ func _process(_delta):
 		_on_ws_data(data)
 
 func _on_ws_data(data):
-	print("📩 Données reçues :", data)
+	print(" Données reçues :", data)
 	var response = JSON.parse_string(data)
 	if response == null:
-		print("⚠️ Donnée non-JSON :", data)
+		print(" Donnée non-JSON :", data)
 		return
 
 
@@ -165,3 +193,9 @@ func _on_forgot_password_pressed() -> void:
 	forgotPass_instance.show_overlay()
 	
 	queue_free()
+
+
+func _on_visibility_button_pressed() -> void:
+	showing_password1 = !showing_password1
+	password_input.secret = not showing_password1
+	visibility_button.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE
