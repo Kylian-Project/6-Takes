@@ -39,9 +39,9 @@ const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 
 
-
-/////////////// Deroulement du jeu ///////////////
-  	//////////////////////////////////////////////////
+	  	//////////////////////////////////////////////////
+		/////// Deroulement du jeu ///////////////////////
+  		//////////////////////////////////////////////////
 
 export const PlayGame = (socket, io) =>
 {
@@ -126,11 +126,11 @@ export const PlayGame = (socket, io) =>
 
             notifierCarteJouee(io, roomId, jeu);
             lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+
 			if(jeu.checkEndManche())
 			{
 				console.log("fin de manche");
-				// Distribution des cartes
-				for (let i = 0; i < usernames.length; i++) 
+								for (let i = 0; i < usernames.length; i++) 
 				{
 					// On a déjà distribué les cartes dans le constructeur
 					const joueur = jeu.joueurs[i];
@@ -145,7 +145,7 @@ export const PlayGame = (socket, io) =>
 				const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 				io.to(roomId).emit("initial-table", tableInit);
 				console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
-			
+
 			}
 				
         }
@@ -339,7 +339,7 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 	const carte = joueur?.carteEnAttente;
 	if (!joueur || !carte) return;
 
-	const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes();
+	const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
 	const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
 	joueur.updateScore(penalite);
 	let temp_carte = new Carte(carte.numero);
@@ -394,7 +394,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
                 const handler = ({ roomId: rid, indexRangee, username: uname }) => {
                 if (rid === roomId && uname === username) {
                     io.sockets.sockets.get(socketTargetId)?.off("choisir-rangee", handler);
-                    const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes();
+                    const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
                     const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
                     joueur.updateScore(penalite);
                     jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
@@ -420,5 +420,4 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     // Traiter la prochaine carte après celle-ci
     traiterProchaineCarte(roomId, jeu, io, rooms);
 }
-
 
