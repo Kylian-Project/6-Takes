@@ -53,7 +53,7 @@ func _ready() -> void:
 	settings_button.pressed.connect(SoundManager.play_click_sound)
 	profile_button.pressed.connect(SoundManager.play_click_sound)
 	rules_button.pressed.connect(SoundManager.play_click_sound)
-
+	accessibility_button.pressed.connect(SoundManager.play_click_sound)
 
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
@@ -135,3 +135,7 @@ func _on_profile_pressed():
 
 func _on_accessibility_button_pressed() -> void:
 	open_overlay(accessibility_overlay)
+
+
+func _on_brightness_slider_value_changed(value: float) -> void:
+	GlobalWorldEnvironment.environment.adjustment_brightness = value

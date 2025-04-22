@@ -419,10 +419,9 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/panel = SubResource("StyleBoxFlat_umhtq")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_khlxb")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_yyply")
-current_tab = 1
+current_tab = 0
 
 [node name="MainSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("10_dnsu6")
 metadata/_tab_index = 0
@@ -527,6 +526,7 @@ popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
 [node name="Audio Settings" type="TabBar" parent="SettingsOverlay/TabContainer"]
+visible = false
 layout_mode = 2
 script = ExtResource("11_aye1x")
 metadata/_tab_index = 1
@@ -651,7 +651,6 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="AccessibilityOverlay" type="Control" parent="."]
-visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 15
@@ -690,6 +689,99 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/panel = SubResource("StyleBoxFlat_umhtq")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_khlxb")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_yyply")
+current_tab = 0
+
+[node name="Acceessibility" type="MarginContainer" parent="AccessibilityOverlay/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 50
+metadata/_tab_index = 0
+
+[node name="Accessibility" type="HBoxContainer" parent="AccessibilityOverlay/TabContainer/Acceessibility"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="VLabels" type="VBoxContainer" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="Contrast" type="Label" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_c0883")
+text = "Contrast 
+"
+
+[node name="ColorBlind" type="Label" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_02ok7")
+text = "Color Blind"
+
+[node name="Brightness" type="Label" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_02ok7")
+text = "Brightness"
+
+[node name="VSettings" type="VBoxContainer" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="ContrastOption" type="OptionButton" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VSettings"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bonse")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
+selected = 0
+item_count = 2
+popup/item_0/text = "OFF"
+popup/item_1/text = "ON"
+popup/item_1/id = 1
+
+[node name="ColorBlindOptions" type="OptionButton" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VSettings"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
+selected = 0
+item_count = 2
+popup/item_0/text = "OFF"
+popup/item_1/text = "ON"
+popup/item_1/id = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VSettings"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+
+[node name="BrightnessSlider" type="HSlider" parent="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VSettings/MarginContainer"]
+layout_mode = 2
+min_value = 0.01
+max_value = 4.0
+step = 0.01
+value = 0.01
 
 [node name="Close" type="Button" parent="AccessibilityOverlay"]
 layout_mode = 1
@@ -748,4 +840,5 @@ grow_vertical = 2
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
 [connection signal="pressed" from="AccessibilityButton" to="." method="_on_accessibility_button_pressed"]
+[connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Acceessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider" to="." method="_on_brightness_slider_value_changed"]
 [connection signal="pressed" from="Rules" to="." method="_on_rules_pressed"]
