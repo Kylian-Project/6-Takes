@@ -41,6 +41,10 @@ func _ready():
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+		
+func _process(_delta):
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
+	
 func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
 	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
 	
