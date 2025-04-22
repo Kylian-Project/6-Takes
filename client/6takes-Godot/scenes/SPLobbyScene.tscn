@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-[gd_scene load_steps=27 format=3 uid="uid://by1kyndsdhh5x"]
-
-[ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
-[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
-[ext_resource type="PackedScene" uid="uid://cf4pld53wviao" path="res://scenes/BotSlot.tscn" id="2_kjaad"]
-=======
 [gd_scene load_steps=28 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
 [ext_resource type="PackedScene" uid="uid://dopa4fttjck5f" path="res://scenes/BotSlot.tscn" id="2_kjaad"]
->>>>>>> develop
 [ext_resource type="Texture2D" uid="uid://cifce8iom6mxg" path="res://assets/images/title_screen_singleplayer.png" id="3_h2et4"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_kadam"]
 [ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="5_w3hn7"]

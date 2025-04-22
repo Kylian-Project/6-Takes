@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-[gd_scene load_steps=37 format=3 uid="uid://bncf0d7gcafll"]
-=======
 [gd_scene load_steps=38 format=3 uid="uid://l45fppjtlnsl"]
->>>>>>> develop
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -1250,9 +1246,6 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
-<<<<<<< HEAD
-[connection signal="pressed" from="MainButtonsBox/Create_Lobby" to="." method="_on_create_lobby_pressed"]
-=======
 [node name="OverlayLayer" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -1262,7 +1255,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
->>>>>>> develop
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]

@@ -1,10 +1,4 @@
-<<<<<<< HEAD:client/6takes-Godot/scenes/screen_pause.gd
-extends PanelContainer
-@onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
-@onready var settings_menu = $SettingsOverlay  # Remplace "SettingsMenu" par le vrai nom du Control dans ta scène
-=======
 extends Control
->>>>>>> develop:client/6takes-Godot/scripts/screen_pause.gd
 
 func _ready() -> void:
 	self.visible = false  # Cache la fenêtre au démarrage
