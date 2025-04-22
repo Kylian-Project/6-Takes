@@ -176,6 +176,23 @@ theme_override_styles/pressed = ExtResource("6_do1go")
 theme_override_styles/normal = ExtResource("6_do1go")
 text = "Save Icon"
 
+[node name="SavePopupLabel" type="Label" parent="EditProfilePanel"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = ExtResource("6_do1go")
+text = "Icon Saved!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PopupTimer" type="Timer" parent="EditProfilePanel"]
+wait_time = 2.0
+one_shot = true
+
 [node name="Close" type="Button" parent="."]
 layout_mode = 2
 anchor_left = 0.887

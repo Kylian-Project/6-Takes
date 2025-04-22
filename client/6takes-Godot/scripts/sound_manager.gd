@@ -4,6 +4,12 @@ extends Node
 @onready var click_sound = $ClickSound
 @onready var music = $Music
 
+func _ready():
+	# Assign audio buses
+	hover_sound.bus = "SFX"
+	click_sound.bus = "SFX"
+	music.bus = "Music"
+
 func play_hover_sound():
 	if hover_sound.playing:
 		hover_sound.stop()
