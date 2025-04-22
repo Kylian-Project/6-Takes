@@ -36,6 +36,8 @@ func _ready():
 	player_id = get_node("/root/Global").get_player_id()
 	print("player id debug", player_id)
 	logout_button.connect("pressed", _on_log_out_button_pressed)
+	logout_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	logout_button.pressed.connect(SoundManager.play_click_sound)
 
 func populate_icon_selection():
 	for icon_file in ICON_FILES:

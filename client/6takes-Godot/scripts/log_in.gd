@@ -3,6 +3,10 @@ extends Control
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
+@onready var sign_up_button = $HBoxContainer/SignUp
+@onready var forgot_password_button = $ForgotPassword
+@onready var cancel_button = $Control/CancelButton
+
 @onready var http_request = $HTTPRequest_auth
 @onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
@@ -31,6 +35,19 @@ func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
 	API_URL = "http://" + base_url + "/api/player/connexion"
 	WS_SERVER_URL = "ws://" + base_url
+	
+	# Soundboard
+	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	login_button.pressed.connect(SoundManager.play_click_sound)
+	
+	sign_up_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sign_up_button.pressed.connect(SoundManager.play_click_sound)
+
+	forgot_password_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	forgot_password_button.pressed.connect(SoundManager.play_click_sound)
+
+	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
 
 func _on_login_button_pressed():
