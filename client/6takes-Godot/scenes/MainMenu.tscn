@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-[gd_scene load_steps=33 format=3 uid="uid://btyeei16grxj"]
-=======
-[gd_scene load_steps=35 format=3 uid="uid://btyeei16grxj"]
->>>>>>> develop
+[gd_scene load_steps=36 format=3 uid="uid://btyeei16grxj"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -11,21 +7,14 @@
 [ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/images/title_screen_welcome_v2.png" id="4_7q4f1"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
-<<<<<<< HEAD
-[ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
-[ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
-[ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
-[ext_resource type="Texture2D" uid="uid://cq60c45jg1ve7" path="res://scenes/accessibilite.png" id="11_3dgwy"]
-[ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
-=======
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="8_8qsur"]
 [ext_resource type="PackedScene" uid="uid://dswro2gf43iip" path="res://scenes/rules.tscn" id="9_jaad2"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="10_3xae7"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
+[ext_resource type="Texture2D" uid="uid://cq60c45jg1ve7" path="res://scenes/accessibilite.png" id="11_3dgwy"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="11_tnfns"]
->>>>>>> develop
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
 bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
@@ -394,6 +383,7 @@ offset_right = 212.0
 offset_bottom = 64.0
 
 [node name="SettingsOverlay" type="Control" parent="."]
+visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 15
@@ -536,11 +526,7 @@ popup/item_0/text = "Enabled"
 popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
-<<<<<<< HEAD
-[node name="Audio Settings" type="TabBar" parent="SettingsOverlay/TabContainer"]
-=======
 [node name="AudioSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
->>>>>>> develop
 visible = false
 layout_mode = 2
 script = ExtResource("11_aye1x")
@@ -685,6 +671,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="AccessibilityOverlay" type="Control" parent="."]
+visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 15
@@ -862,20 +849,12 @@ grow_vertical = 2
 [connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
 [connection signal="pressed" from="VButtons/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
-<<<<<<< HEAD
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/Resolution Options" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
-[connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions2" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_mster_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_music_slider_value_changed"]
-[connection signal="value_changed" from="SettingsOverlay/TabContainer/Audio Settings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/Audio Settings" method="_on_sfx_slider_value_changed"]
-[connection signal="pressed" from="AccessibilityButton" to="." method="_on_accessibility_button_pressed"]
-[connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider" to="." method="_on_contrast_slider_value_changed"]
-[connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider" to="." method="_on_brightness_slider_value_changed"]
-=======
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_v_sync_options_2_item_selected"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_mster_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_sfx_slider_value_changed"]
->>>>>>> develop
+[connection signal="pressed" from="AccessibilityButton" to="." method="_on_accessibility_button_pressed"]
+[connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider" to="." method="_on_contrast_slider_value_changed"]
+[connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider" to="." method="_on_brightness_slider_value_changed"]
 [connection signal="pressed" from="Rules" to="." method="_on_rules_pressed"]

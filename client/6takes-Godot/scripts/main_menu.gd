@@ -128,7 +128,7 @@ func _on_rules_pressed() -> void:
 func _on_profile_pressed():
 	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
 	var edit_profile_instance = edit_profile_scene.instantiate()
-
+	
 	overlay_layer.add_child(edit_profile_instance)
 	overlay_layer.visible = true
 
@@ -143,18 +143,3 @@ func _on_brightness_slider_value_changed(value: float) -> void:
 
 func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
-	# Attendre un frame pour s'assurer que les noeuds enfants sont accessibles
-	await get_tree().process_frame
-
-	# Récupère les boutons de l'instance ajoutée
-	var save_button = edit_profile_instance.get_node("EditProfilePanel/MainVertical/SaveIconButton")
-	var close_button = edit_profile_instance.get_node("Close")
-
-	# Connecte les sons si les boutons existent
-	if save_button:
-		save_button.mouse_entered.connect(SoundManager.play_hover_sound)
-		save_button.pressed.connect(SoundManager.play_click_sound)
-
-	if close_button:
-		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
-		close_button.pressed.connect(SoundManager.play_click_sound)
