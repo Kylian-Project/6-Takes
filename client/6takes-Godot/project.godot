@@ -32,6 +32,10 @@ window/stretch/aspect="expand"
 
 project/assembly_name="6Takes_main"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
+
 [rendering]
 
 window/stretch/mode="viewport"
