@@ -112,8 +112,8 @@ func _on_request_completed(result, response_code, headers, body):
 		logged_in = true
 		#var data = result_string.result
 		var playerIid = result_string["player"]["id"]
-		player_name = result_string["player"]["name"]
-		icon_id = result_string["player"]["icon_id"]
+		player_name = result_string["player"]["username"]
+		icon_id = result_string["player"]["icon"]
 		player_id =  playerIid
 		print("Session validated!")
 		
