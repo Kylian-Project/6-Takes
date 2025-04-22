@@ -139,3 +139,7 @@ func _on_accessibility_button_pressed() -> void:
 
 func _on_brightness_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_brightness = value
+
+
+func _on_contrast_slider_value_changed(value: float) -> void:
+	GlobalWorldEnvironment.environment.adjustment_contrast = value
