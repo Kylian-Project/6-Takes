@@ -155,3 +155,37 @@ betaButton.addEventListener('click', (e) => {
         }, 400);
     }, 3000);
 });
+
+
+// Formulaire via ajax
+document.querySelector('.submit').addEventListener('click', function () {
+    const type = document.querySelector('.option.active').textContent.includes('Bug') ? 'Bug Report' : 'Improvement';
+    const message = document.getElementById('message').value;
+    const fileInput = document.getElementById('screenshot');
+    const formData = new FormData();
+
+    formData.append('type', type);
+    formData.append('message', message);
+    if (fileInput.files.length > 0) {
+        formData.append('screenshot', fileInput.files[0]);
+    }
+
+    fetch('submit_feedback.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Feedback submitted! Thanks!');
+            document.getElementById('message').value = '';
+            fileInput.value = '';
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('Error while sending feedback');
+    });
+});
