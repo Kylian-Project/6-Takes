@@ -62,9 +62,13 @@ class Rang {
         return this.cartes.length === 6;
     }
 
-    recupererCartes() {
+    recupererCartes()
+    {   
+        return this.cartes.splice(0, 5);
+    }
+    recupererCartes_special_case() {
         let carte = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < this.cartes.length; i++) {
             carte.push(this.cartes[i]);
         }
         console.log("recuperer cartes", carte);
@@ -155,6 +159,7 @@ class Joueur {
         this.nom = nom;
         this.score = 0;
         this.hand = new Hand(deck.distribuer(nb_cartes));
+        this.carteEnAttente ;    //en stock la carte joué en attendant que le joueur choissient un rang
     }
 
     updateScore(points) {
@@ -219,8 +224,20 @@ class Jeu6Takes {
         console.log(`le joueur vient "${nomJoueur}" de recevoir des points : `, penalite);
         joueur.updateScore(penalite);
     }
+    /*
+    choisirRang(nomJoueur , carte ,rang)
+    {
+        const joueur = this.joueurs.find(j => j.nom === nomJoueur);
+        if (!joueur) throw new Error("Joueur introuvable");
+
+        const index = joueur.hand.trouverIndex(carte);
+        if (index === -1) throw new Error("Carte non trouvée dans la main du joueur");
+        
+    }
+        */
 }
 
 export { Jeu6Takes };
 export { Joueur };
 export { Carte };
+export { Rang };
