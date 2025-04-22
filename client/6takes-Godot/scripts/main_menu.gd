@@ -12,10 +12,12 @@ extends Control
 @onready var multiplayer_button = $VButtons/MultiPlayerButton
 @onready var profile_button = $Profile
 @onready var overlay_layer = $OverlayLayer
-
+@onready var accessibility_button = $AccessibilityButton
+@onready var accessibility_overlay = $AccessibilityOverlay
 
 @onready var close_buttons = [
-	$SettingsOverlay/Close
+	$SettingsOverlay/Close,
+	$AccessibilityOverlay/Close
 ]
 
 #validate token 
@@ -28,11 +30,12 @@ var logged_in
 func _ready() -> void:
 	rules_overlay.visible = false
 	settings_overlay.visible = false
+	accessibility_overlay.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
 	settings_button.pressed.connect(_on_settings_pressed)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
-		
+	accessibility_button.pressed.connect(_on_accessibility_button_pressed)	
 	
 	# Hover Soundboard
 	singleplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -113,7 +116,7 @@ func _on_settings_pressed():
 
 func _on_close_overlay_pressed():
 	settings_overlay.visible = false
-
+	accessibility_overlay.visible = false
 	
 func quit_game():
 	get_tree().quit()
@@ -128,3 +131,7 @@ func _on_profile_pressed():
 	
 	overlay_layer.add_child(edit_profile_instance)
 	overlay_layer.visible = true
+
+
+func _on_accessibility_button_pressed() -> void:
+	open_overlay(accessibility_overlay)
