@@ -4,6 +4,7 @@ extends Control
 @onready var icon_selection = $EditProfilePanel/MainVertical/IconSelection
 @onready var save_button = $EditProfilePanel/MainVertical/SaveIconButton
 @onready var close_button = $Close
+@onready var user_name = $EditProfilePanel/MainVertical/HRow/UserNameLabel
 @onready var logout_button = $EditProfilePanel/MainVertical/HRow/LogOutButton
 @onready var http_request = $HTTPRequest
 @onready var popup_label = $EditProfilePanel/SavePopupLabel
@@ -28,18 +29,18 @@ func _ready():
 
 	save_button.connect("pressed", _on_save_icon)
 	close_button.pressed.connect(func(): self.queue_free())
-	
-	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/logout"
-	WS_SERVER_URL = "ws://" + base_url
-	
-	player_id = get_node("/root/Global").get_player_id()
-	
+
+	var global = get_node("/root/Global")
+	API_URL = "http://" + global.get_base_url() + "/api/player/logout"
+	WS_SERVER_URL = "ws://" + global.get_base_url()
+	player_id = global.get_player_id()
+
 	logout_button.connect("pressed", _on_log_out_button_pressed)
-	logout_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	logout_button.pressed.connect(SoundManager.play_click_sound)
-	
 	popup_timer.timeout.connect(_on_popup_timer_timeout)
+
+	# Fetch profile info
+	Global.profile_fetched.connect(apply_profile_data)
+	Global.fetch_user_profile()
 
 # Dynamically load icons
 func populate_icon_selection():
@@ -129,3 +130,10 @@ func show_save_popup():
 
 func _on_popup_timer_timeout():
 	popup_label.visible = false
+
+func apply_profile_data():
+	var global = get_node("/root/Global")
+	user_name.text = global.get_player_name()
+	var icon_path = ICON_PATH + ICON_FILES[global.get_icon_id()]
+	player_icon.texture = load(icon_path)
+	selected_icon = ICON_FILES[global.get_icon_id()]
