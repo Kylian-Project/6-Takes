@@ -11,6 +11,8 @@ extends Control
 @onready var join_lobby_button = $MainButtonsBox/Join_Lobby
 @onready var settings_button = $Settings
 @onready var rules_button = $Rules
+@onready var profile = $Profile
+@onready var overlay_layer = $OverlayLayer 
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -27,6 +29,8 @@ func _ready():
 	create_lobby_overlay.visible = false
 	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
+	profile.pressed.connect(_on_profile_pressed)
+
 
 	# Connect button signals
 	create_lobby_button.pressed.connect(_on_create_lobby_pressed)
@@ -37,6 +41,10 @@ func _ready():
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+		
+func _process(_delta):
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
+	
 func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
 	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
 	
@@ -49,6 +57,12 @@ func open_overlay(overlay: Control):
 	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
 	overlay.visible = true  # Show the selected overlay
+func _on_profile_pressed():
+	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
+	var edit_profile_instance = edit_profile_scene.instantiate()
+	
+	overlay_layer.add_child(edit_profile_instance)
+	overlay_layer.visible = true
 
 # Button functions
 func _on_create_lobby_pressed():
