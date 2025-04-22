@@ -6,6 +6,7 @@ extends Control
 @onready var close_button = $Close
 @onready var user_name = $EditProfilePanel/MainVertical/HRow/UserNameLabel
 @onready var logout_button = $EditProfilePanel/MainVertical/HRow/LogOutButton
+@onready var user_label = $EditProfilePanel/MainVertical/HRow/UserNameLabel
 @onready var http_request = $HTTPRequest
 @onready var popup_label = $EditProfilePanel/SavePopupLabel
 @onready var popup_timer = $EditProfilePanel/PopupTimer
@@ -29,18 +30,24 @@ func _ready():
 
 	save_button.connect("pressed", _on_save_icon)
 	close_button.pressed.connect(func(): self.queue_free())
-
-	var global = get_node("/root/Global")
-	API_URL = "http://" + global.get_base_url() + "/api/player/logout"
-	WS_SERVER_URL = "ws://" + global.get_base_url()
-	player_id = global.get_player_id()
-
+	
+	var base_url = get_node("/root/Global").get_base_url()
+	API_URL = "http://" + base_url + "/api/player/logout"
+	WS_SERVER_URL = "ws://" + base_url
+	
+	player_id = get_node("/root/Global").get_player_id()
+	
 	logout_button.connect("pressed", _on_log_out_button_pressed)
+	logout_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	logout_button.pressed.connect(SoundManager.play_click_sound)
+	
 	popup_timer.timeout.connect(_on_popup_timer_timeout)
-
-	# Fetch profile info
-	Global.profile_fetched.connect(apply_profile_data)
-	Global.fetch_user_profile()
+	
+	user_name.text = get_node("/root/Global").player_name
+	var icon_id = get_node("/root/Global").icon_id
+	if icon_id >= 0 and icon_id < ICON_FILES.size():
+		selected_icon = ICON_FILES[icon_id]
+		player_icon.texture = load(ICON_PATH + selected_icon)
 
 # Dynamically load icons
 func populate_icon_selection():
@@ -113,7 +120,8 @@ func _on_http_request_completed(result, response_code, headers, body):
 			var new_icon_id = result_string["player"]["icon"]
 			var icon_path = ICON_PATH + ICON_FILES[new_icon_id]
 			player_icon.texture = load(icon_path)
-
+			
+			get_node("/root/Global").icon_id = new_icon_id
 			print("Icon updated successfully!")
 			show_save_popup()
 		else:
@@ -130,10 +138,3 @@ func show_save_popup():
 
 func _on_popup_timer_timeout():
 	popup_label.visible = false
-
-func apply_profile_data():
-	var global = get_node("/root/Global")
-	user_name.text = global.get_player_name()
-	var icon_path = ICON_PATH + ICON_FILES[global.get_icon_id()]
-	player_icon.texture = load(icon_path)
-	selected_icon = ICON_FILES[global.get_icon_id()]
