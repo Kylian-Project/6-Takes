@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=40 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -19,6 +19,7 @@
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="14_w4cnf"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="15_cnsdq"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="15_oy2mf"]
+[ext_resource type="Texture2D" uid="uid://cbggiuv1an3vf" path="res://assets/images/rafraichir.png" id="18_gtd3s"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_djfxv"]
 
@@ -893,7 +894,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
 [node name="JoinLobbyOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -907,6 +907,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -6.0
+offset_right = -6.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
@@ -980,6 +982,9 @@ text = "Join"
 layout_mode = 2
 alignment = 1
 
+[node name="RoomsList" type="ItemList" parent="JoinLobbyOverlay/JoinPanel/MainVertical/AvailableOptions"]
+layout_mode = 2
+
 [node name="Button" type="Button" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 visible = false
 layout_mode = 2
@@ -990,6 +995,18 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 text = "Create Lobby"
+
+[node name="Button2" type="Button" parent="JoinLobbyOverlay"]
+modulate = Color(0.223529, 1, 1, 1)
+self_modulate = Color(0.129412, 1, 1, 1)
+layout_mode = 2
+offset_left = 754.0
+offset_top = 726.0
+offset_right = 832.0
+offset_bottom = 801.0
+size_flags_horizontal = 3
+icon = ExtResource("18_gtd3s")
+expand_icon = true
 
 [node name="Close" type="Button" parent="JoinLobbyOverlay"]
 layout_mode = 1

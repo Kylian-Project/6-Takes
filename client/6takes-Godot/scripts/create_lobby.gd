@@ -15,27 +15,38 @@ extends Control
 @onready var round_timer_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown
 @onready var rounds_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 
+# Pour afficher la liste des lobbies disponibles
+#@onready var available_rooms_list = $PanelContainer/MainVertical/AvailableOptions/Choices/RoomsList  # Assurez-vous d'avoir un nœud pour afficher la liste
 @onready var client: SocketIO = $"../SocketIO"
 
 func _ready():
-	# Vérifie que le client SocketIO existe et est connecté
 	if client == null:
-		print(" Le client SocketIO n'a pas pu être instancié.")
+		print("❌ Le client SocketIO n'a pas pu être instancié.")
 		return
-	
-	# Connexion manuelle du signal pour la création de lobby
-	create_button.pressed.connect(Callable(self, "_on_create_lobby"))
 
-	# Connecte les événements de connexion et de déconnexion de SocketIO
-	client.connect("connected", Callable(self, "_on_socket_connected"))
-	client.connect("disconnected", Callable(self, "_on_socket_disconnected"))
+	# 🔌 Connecte les signaux une seule fois ici (et pas dans _on_create_lobby)
+	client.event_received.connect(_on_event_recu)
+	client.socket_connected.connect(_on_socket_connected)
+	client.socket_disconnected.connect(_on_socket_disconnected)
 
-# Fonction pour gérer la connexion réussie
+	# Connexion du bouton "Créer"
+	create_button.pressed.connect(_on_create_lobby)
 
-# Fonction pour créer un lobby
+	# Démarre la connexion
+	client.connect_socket()  # ⬅️ Très important pour que tout fonctionne
+
+	# Demande de la liste des lobbies disponibles
+	client.emit("get-available-rooms", {})  # Demande au serveur de récupérer la liste des lobbies disponibles
+
+func _on_socket_connected(ns: String):
+	print("✅ Socket connecté au namespace :", ns)
+
+func _on_socket_disconnected():
+	print("🔌 Socket déconnecté.")
+
 func _on_create_lobby():
 	var visibility = "PRIVATE" if private_check_button.button_pressed else "PUBLIC"
-
+	
 	var message = {
 		"event": "create-room",
 		"lobbyName": lobby_name_field.text,
@@ -46,20 +57,34 @@ func _on_create_lobby():
 		"rounds": int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected())),
 		"isPrivate": visibility
 	}
-	print(visibility)
 
-	client.emit("create-room", JSON.stringify(message))
-	print(" Demande envoyée :", JSON.stringify(message))
+	client.emit("create-room", message)  # PAS besoin de JSON.stringify
+	print("📤 Demande de création envoyée :", message)
+	
+	# ⚠️ Tu ne dois PAS reconnecter event_received ici sinon ça se reconnecte à chaque clic
+	# get_tree().change_scene_to_file("res://scenes/gameboard.tscn") <-- FAIRE ÇA UNIQUEMENT APRÈS RÉPONSE DU SERVEUR
 
-	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+func _on_event_recu(event: String, data: Variant, ns: String):
+	print("📩 Événement reçu :", event)
+	# print("📦 Données :", data)
 
+	if event == "private-room-created":
+		print("✅ Le lobby privé a été créé.")
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	
+	elif event == "public-room-created":
+		print("✅ Le lobby public a été créé.")
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	
+	elif event == "available-rooms":
+		# Traitement des lobbies disponibles
+		print("✅ Lobbies disponibles reçus :", data)
+		
+		# Supposons que 'data' contient un tableau des lobbies
+		#available_rooms_list.clear()  # On vide la liste existante avant de la remplir avec les nouvelles données
+		#for room in data:
+			# Ajouter chaque room à une liste (en supposant que c'est un Label ou une autre liste)
+			#available_rooms_list.add_item(room["name"])  # Adapte cette ligne selon ton composant
 
-
-
-# Fonction appelée lorsque la connexion est prête (optionnel)
-func _on_socket_ready():
-	print("La connexion Socket.IO est prête et prête à recevoir des messages.")
-
-# Fonction de retour à la scène précédente (exemple de bouton "Retour")
-func _on_return_pressed():
-	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")  # Change la scène
+		# Optionnellement, afficher une confirmation à l'utilisateur
+		print("✅ Liste des lobbies mise à jour.")

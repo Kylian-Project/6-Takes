@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://dgmgtvwq04hk7"]
 
-[ext_resource type="Script" uid="uid://66witcjvfhe3" path="res://scripts/log_in.gd" id="1_8677d"]
+[ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_gofa2"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_js3f7"]
@@ -138,6 +138,7 @@ placeholder_text = "  Password"
 secret = true
 
 [node name="visibility_button" type="Button" parent="VBoxContainer/password_input"]
+layout_mode = 0
 offset_left = 444.0
 offset_top = 20.0
 offset_right = 494.0
@@ -230,8 +231,8 @@ offset_right = 769.0
 offset_bottom = 678.0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_js3f7")
 theme_override_font_sizes/font_size = 30
 theme_override_styles/hover = ExtResource("7_ruq61")
