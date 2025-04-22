@@ -1,12 +1,13 @@
 [gd_scene load_steps=10 format=3 uid="uid://dbs4uy1a3a52t"]
 
-[ext_resource type="Script" path="res://scripts/screen_pause.gd" id="1_lsxjp"]
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
 [ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_amim0"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_qk851"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_alrgk"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="7_tjf8j"]
+
+[sub_resource type="GDScript" id="GDScript_imama"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l70lj"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -34,7 +35,7 @@ offset_right = 504.5
 offset_bottom = 401.5
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_lsxjp")
+script = SubResource("GDScript_imama")
 
 [node name="ShadowBox" type="Label" parent="."]
 z_index = -1
