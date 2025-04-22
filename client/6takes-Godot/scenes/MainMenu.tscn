@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/images/title_screen_welcome_v2.png" id="4_7q4f1"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
-[ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
+[ext_resource type="PackedScene" uid="uid://dswro2gf43iip" path="res://scenes/rules.tscn" id="9_jaad2"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]

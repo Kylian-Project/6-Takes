@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="6Takes_main"
-run/main_scene="uid://btyeei16grxj"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -31,6 +31,10 @@ window/stretch/aspect="expand"
 [dotnet]
 
 project/assembly_name="6Takes_main"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
 
 [rendering]
 
