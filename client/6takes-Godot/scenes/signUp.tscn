@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://ccdw5btr66au7" path="res://assets/images/visibility/visible.png" id="5_oibnm"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="5_pos6h"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
-[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_ysitm"]
+[ext_resource type="PackedScene" uid="uid://cbeyupuqn34wv" path="res://scenes/popUp.tscn" id="9_ysitm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nhx8b"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -147,6 +147,7 @@ placeholder_text = "     Password"
 secret = true
 
 [node name="visibility_button" type="Button" parent="VBoxContainer/password"]
+layout_mode = 0
 offset_left = 444.0
 offset_top = 9.0
 offset_right = 494.0
@@ -169,6 +170,7 @@ placeholder_text = "     Confirm Password"
 secret = true
 
 [node name="visibility_button2" type="Button" parent="VBoxContainer/confirmPassword"]
+layout_mode = 0
 offset_left = 444.0
 offset_top = 9.0
 offset_right = 494.0
@@ -271,6 +273,7 @@ offset_right = 990.0
 offset_bottom = 564.0
 
 [node name="password_check" type="Label" parent="."]
+layout_mode = 0
 offset_left = 395.0
 offset_top = 534.0
 offset_right = 827.0
