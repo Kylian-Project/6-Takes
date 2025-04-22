@@ -180,6 +180,7 @@ theme_override_constants/separation = 200
 [node name="SPStartButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -192,6 +193,7 @@ text = "Start"
 [node name="SPSettingsButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -204,6 +206,7 @@ text = "Settings"
 [node name="SPReturnButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -875,7 +878,6 @@ icon = ExtResource("9_eoxuu")
 icon_alignment = 1
 
 [node name="SettingsOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1115,6 +1117,7 @@ offset_right = 19.48
 offset_bottom = 24.24
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_qewfh")

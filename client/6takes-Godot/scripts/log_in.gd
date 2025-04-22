@@ -3,7 +3,12 @@ extends Control
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
+@onready var sign_up_button = $HBoxContainer/SignUp
+@onready var forgot_password_button = $ForgotPassword
+@onready var cancel_button = $Control/CancelButton
+
 @onready var http_request = $HTTPRequest_auth
+@onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
 var jwt_token = null
 var player_data = {}
@@ -18,6 +23,10 @@ var API_URL
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
 
+var showing_password1 := false
+const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
+const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
+
 
 func _ready():
 	self.visible = true
@@ -26,6 +35,19 @@ func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
 	API_URL = "http://" + base_url + "/api/player/connexion"
 	WS_SERVER_URL = "ws://" + base_url
+	
+	# Soundboard
+	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	login_button.pressed.connect(SoundManager.play_click_sound)
+	
+	sign_up_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sign_up_button.pressed.connect(SoundManager.play_click_sound)
+
+	forgot_password_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	forgot_password_button.pressed.connect(SoundManager.play_click_sound)
+
+	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
 
 func _on_login_button_pressed():
@@ -50,15 +72,19 @@ func _on_login_button_pressed():
 
 
 func _on_http_request_completed(result, response_code, headers, body):
+	var response_str = body.get_string_from_utf8()
+	var parsed = JSON.parse_string(response_str)
+	
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", body.get_string_from_utf8())
-
+	print("Contenu brut:", response_str)
+	
 	if response_code != 200:
-		print(" Erreur serveur ou identifiants invalides.")
+		popup_message.text = parsed["message"]
+		popup_overlay.visible = true
 		return
 
-	var json = JSON.parse_string(body.get_string_from_utf8())
 
+	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
@@ -127,18 +153,22 @@ func _move_to_multiplayer_pressed():
 
 func _on_sign_up_pressed() -> void:
 	var signup_scene = load("res://scenes/signUp.tscn")
-	if signup_scene == null:
-		print("couldn't load signup scene")
-		
-	var signup_instance = signup_scene.instantiate() 
-	if signup_instance == null :
-		print("couldn't instanciate sign up scene")
 	
-	#queue_free()
-	get_tree().current_scene.add_child(signup_instance) # Add it to the scene
+	if signup_scene == null:
+		print("❌ Erreur : Impossible de charger la scène SignUp")
+		return  # Stop l'exécution ici
+
+	var signup_instance = signup_scene.instantiate()
+	
+	if signup_instance == null:
+		print("❌ Erreur : Impossible d'instancier la scène SignUp")
+		return  # Stop l'exécution ici
+
+	get_tree().current_scene.add_child(signup_instance)
 	signup_instance.show_overlay()
 	
 	queue_free()
+
 
 #
 func hash_password(password: String) -> String:
@@ -163,3 +193,9 @@ func _on_forgot_password_pressed() -> void:
 	forgotPass_instance.show_overlay()
 	
 	queue_free()
+
+
+func _on_visibility_button_pressed() -> void:
+	showing_password1 = !showing_password1
+	password_input.secret = not showing_password1
+	visibility_button.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE

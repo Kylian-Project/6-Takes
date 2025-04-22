@@ -5,6 +5,7 @@ extends Control
 
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
+@onready var rules_button = $Rules
 @onready var rules_overlay = $RulesOverlay
 @onready var singleplayer_button = $VButtons/SinglePlayerButton
 @onready var quit_button = $VButtons/QuitButton
@@ -31,12 +32,34 @@ func _ready() -> void:
 	settings_button.pressed.connect(_on_settings_pressed)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
+		
+	
+	# Hover Soundboard
+	singleplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	multiplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	quit_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
+
+		
+	# Click Soundboard
+	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
+	multiplayer_button.pressed.connect(SoundManager.play_click_sound)
+	quit_button.pressed.connect(SoundManager.play_click_sound)
+	settings_button.pressed.connect(SoundManager.play_click_sound)
+	profile_button.pressed.connect(SoundManager.play_click_sound)
+	rules_button.pressed.connect(SoundManager.play_click_sound)
+
+
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
-	
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)
 		
-	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
+	# Background Music
+	SoundManager.play_music()
+	
 	
 	get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
