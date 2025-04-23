@@ -1,7 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=18 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="1_3p33s"]
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
@@ -37,6 +37,12 @@ bg_color = Color(0.00566115, 0.00566115, 0.00566114, 0.937255)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(1124.5, 737.75)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f52gu"]
+bg_color = Color(0, 0, 0, 0.65098)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(0.2484, 0.2484, 0.2484, 1)
+
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container")]
 script = ExtResource("1_yvybn")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
@@ -48,9 +54,10 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_3p33s")
+texture = ExtResource("2_jdcid")
 expand_mode = 1
 
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
@@ -100,10 +107,10 @@ theme_override_font_sizes/font_size = 34
 text = "00:45"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
-offset_left = 1742.0
-offset_top = -5.0
-offset_right = 1852.0
-offset_bottom = 145.0
+offset_left = 1828.0
+offset_top = -13.0
+offset_right = 1938.0
+offset_bottom = 137.0
 
 [node name="Button" type="Button" parent="HBoxContainer3"]
 layout_mode = 2
@@ -317,5 +324,17 @@ size_flags_vertical = 4
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("8_q3lfy")
 autoconnect = false
+
+[node name="State_label" type="Label" parent="."]
+offset_left = -9.0
+offset_top = 269.0
+offset_right = 1920.0
+offset_bottom = 709.0
+theme_override_fonts/font = ExtResource("3_r0b0d")
+theme_override_font_sizes/font_size = 130
+theme_override_styles/normal = SubResource("StyleBoxFlat_f52gu")
+text = "Game Start"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

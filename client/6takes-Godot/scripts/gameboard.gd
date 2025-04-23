@@ -4,6 +4,7 @@ extends Node2D
 @export var top_bar: HBoxContainer  # Conteneur HBox pour les labels
 @onready var timer_label = $HBoxContainer/timer
 @onready var score_label = $CanvasLayer/top_bar/nbheads
+@onready var state_label = $State_label
 
 #deck ui 
 @onready var row1 = $deckContainer/rowsContainer/row1_panel/row1
@@ -29,7 +30,8 @@ extends Node2D
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
-var username = "tester"
+var username 
+
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
 @onready var card_ui_scene = preload("res://scenes/card_ui.tscn")  
@@ -44,6 +46,7 @@ enum GameState {
 	WAITING_FOR_LOBBY,
 	LOBBY_CREATED,
 	ROOM_JOINED,
+	SETTING_UP_DECK,
 	GAME_STARTED,
 	HAND_RECEIVED
 }
@@ -53,8 +56,10 @@ var hand_received
 
 func _ready():
 	_load_cards()
+	username = get_node("/root/Global").player_name
 	game_state = GameState.WAITING_FOR_LOBBY
 	
+	#setting up row panels
 	hand_received = false
 	highlight_row(false)
 	for i in range(row_buttons.size()):
@@ -70,6 +75,7 @@ func _ready():
 	socket_io.event_received.connect(_on_socket_event_received)
 
 
+#event listener
 func _on_socket_event_received(event: String, data: Variant, ns: String) -> void:
 	match event:
 		"available-rooms":
@@ -88,15 +94,17 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			on_player_selects_row(data)
 		"temps-room":
 			_handle_timer(data)
+		"attente-choix-rangee":
+			_await_row_selection(data)
 		_:
-			print("Unhandled event received:", event, "data:", data)
+			print("Unhandled event received: ", event, "data:", data)
 
 
 func _handle_available_rooms(data):
 	if game_state != GameState.WAITING_FOR_LOBBY:
 		return 
-	print("data received for available rooms", data)
-	#create a lobby just to test code 
+	print("data received for available rooms:\n", data)
+	##create a lobby just to test code 
 	if game_state == GameState.WAITING_FOR_LOBBY:
 		var lobby = {
 			"username" : "tester",
@@ -123,16 +131,16 @@ func _handle_room_created(data):
 		
 	var body = {
 		"roomId" : room_id_global,
-		"username" : "tester"
+		"username" : username
 	}
 	game_state = GameState.ROOM_JOINED
 	
-	await get_tree().create_timer(5).timeout
+	await get_tree().create_timer(10).timeout
 	print("start game event")
 	
 	var start_data = {"roomId" : room_id_global}
 	
-	game_state = GameState.GAME_STARTED
+	game_state = GameState.SETTING_UP_DECK
 	socket_io.emit("start-game", data[0])
 	#_start_turn()	
 
@@ -173,22 +181,31 @@ func _handle_your_hand(data):
 		return
 	hand_received = true
 	print("Data received on your-hand:", data)
-	#_start_turn()
-	update_hand_ui(data)
+	if game_state == GameState.SETTING_UP_DECK:
+		deck_setup_animation()
 	
+	update_hand_ui(data)
+	#game_state = GameState.GAME_STARTED
+
 
 func _handle_table(data):
 	print("Data received for table:", data)
 	update_table_ui(data)
+	game_state = GameState.GAME_STARTED
 
+func _await_row_selection(data):
+	var player = data[0]["username"]
+	show_label(player + " Is Choosing a Row")
 
 func _on_invalid_card(message):
 	pass
 
-# --- Player Actions Signals---
 
+# --- Player Actions Signals---
 func on_player_selects_row(data):
 	print("data received on row choice :", data)
+	show_label("Choose a row To take")
+	
 	highlight_row(true)
 	selection_buttons(true)
 	
@@ -264,6 +281,9 @@ func update_hand_ui(hand_data):
 				if card_instance.has_method("set_card_data"):
 					card_instance.set_card_data(path, card_id)
 					card_instance.connect("card_selected", Callable(self, "_on_card_selected"))
+					
+					if game_state == GameState.SETTING_UP_DECK:
+						card_instance.start_flip_timer(2.0)
 	else:
 		print("Unexpected hand_data format:", hand_data)
 
@@ -300,6 +320,9 @@ func update_table_ui(table_data):
 					
 					if card_instance.has_method("set_card_data"):
 						card_instance.set_card_data(card_info["path"], card_id)
+						
+						if game_state == GameState.SETTING_UP_DECK:
+							card_instance.start_flip_timer(2.0)
 				else:
 					print("No card info found for id:", card_id)
 
@@ -342,3 +365,18 @@ func _clear_row_selection_ui():
 	for i in range(row_panels.size()):
 		row_buttons[i].visible = false
 		row_panels[i].add_theme_stylebox_override("panel", null)
+
+
+func deck_setup_animation():
+	show_label("Game Start")
+	
+	
+func show_label(text: String) -> void:
+	state_label.text = text
+	state_label.visible = true
+	await get_tree().create_timer(2.0).timeout
+	
+	hide_label()
+
+func hide_label() -> void:
+	state_label.visible = false

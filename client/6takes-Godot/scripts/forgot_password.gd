@@ -9,6 +9,9 @@ extends Control
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
 
+@onready var cancel_button = $Control/CancelButton
+@onready var cancel = $Cancel
+
 @onready var http_request = $HTTPRequest
 
 
@@ -30,6 +33,17 @@ func _ready() -> void:
 	API_URL = "http://" + base_url + "/api/player/password/request"
 	RESET_SUBMIT_URL = "http://" + base_url + "/api/player/password/reset"
 	WS_SERVER_URL = "ws://" + base_url
+	
+	# Sons pour hover + clic
+	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel_button.pressed.connect(SoundManager.play_click_sound)
+
+	cancel.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel.pressed.connect(SoundManager.play_click_sound)
+
+	send_code_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	send_code_button.pressed.connect(SoundManager.play_click_sound)
+
 
 
 func set_code(sent_code):

@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bby1mp8j81yar"]
+[gd_scene load_steps=8 format=3 uid="uid://bby1mp8j81yar"]
 
 [ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="1_8c31k"]
 [ext_resource type="Script" path="res://scripts/card_ui.gd" id="2_14pb0"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="3_c6akw"]
+[ext_resource type="Texture2D" uid="uid://bafmy430fpok4" path="res://assets/images/CardBack.resized.png" id="3_h10ga"]
 [ext_resource type="Texture2D" uid="uid://bbovkvur836lr" path="res://assets/images/selection/deselect.png" id="4_fvx5b"]
 
 [sub_resource type="Theme" id="Theme_hcot1"]
@@ -17,8 +18,8 @@ layout_mode = 3
 anchors_preset = 0
 offset_left = 29.0
 offset_top = 23.0
-offset_right = 161.0
-offset_bottom = 203.0
+offset_right = 156.0
+offset_bottom = 200.0
 scale = Vector2(0.773297, 0.696528)
 mouse_filter = 2
 theme = SubResource("Theme_hcot1")
@@ -33,7 +34,7 @@ priority = 1
 position = Vector2(67.6168, 89.7304)
 shape = SubResource("RectangleShape2D_1peor")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Front_texture" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(149, 170)
 layout_mode = 1
 anchors_preset = 15
@@ -44,6 +45,14 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.893192, 0.817651)
 mouse_filter = 2
+expand_mode = 1
+
+[node name="Back_texture" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -31.0
+offset_right = 150.0
+offset_bottom = 175.0
+texture = ExtResource("3_h10ga")
 expand_mode = 1
 
 [node name="SelectionConatiner" type="HBoxContainer" parent="."]

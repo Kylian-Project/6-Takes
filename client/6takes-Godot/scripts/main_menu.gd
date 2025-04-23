@@ -5,6 +5,7 @@ extends Control
 
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
+@onready var rules_button = $Rules
 @onready var rules_overlay = $RulesOverlay
 @onready var singleplayer_button = $VButtons/SinglePlayerButton
 @onready var quit_button = $VButtons/QuitButton
@@ -31,8 +32,33 @@ func _ready() -> void:
 	settings_button.pressed.connect(_on_settings_pressed)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
+		
+	
+	# Hover Soundboard
+	singleplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	multiplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	quit_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
+
+		
+	# Click Soundboard
+	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
+	multiplayer_button.pressed.connect(SoundManager.play_click_sound)
+	quit_button.pressed.connect(SoundManager.play_click_sound)
+	settings_button.pressed.connect(SoundManager.play_click_sound)
+	profile_button.pressed.connect(SoundManager.play_click_sound)
+	rules_button.pressed.connect(SoundManager.play_click_sound)
+
+
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)
+		
+	# Background Music
+	SoundManager.play_music()
 	
 	
 	get_node("/root/Global").load_session()
@@ -99,6 +125,22 @@ func _on_rules_pressed() -> void:
 func _on_profile_pressed():
 	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
 	var edit_profile_instance = edit_profile_scene.instantiate()
-	
+
 	overlay_layer.add_child(edit_profile_instance)
 	overlay_layer.visible = true
+
+	# Attendre un frame pour s'assurer que les noeuds enfants sont accessibles
+	await get_tree().process_frame
+
+	# Récupère les boutons de l'instance ajoutée
+	var save_button = edit_profile_instance.get_node("EditProfilePanel/MainVertical/SaveIconButton")
+	var close_button = edit_profile_instance.get_node("Close")
+
+	# Connecte les sons si les boutons existent
+	if save_button:
+		save_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		save_button.pressed.connect(SoundManager.play_click_sound)
+
+	if close_button:
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)

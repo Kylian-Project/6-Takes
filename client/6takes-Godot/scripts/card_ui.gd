@@ -5,12 +5,12 @@ extends Control
 @onready var select_card = $SelectionConatiner/selectButton
 @onready var deselect_card = $SelectionConatiner/deselectButton
 @onready var drop_point: Area2D=$detector
-@onready var texture_rect = $TextureRect
+@onready var texture_rect = $Front_texture
+@onready var back_texture = $Back_texture
 
 @onready var card_control = $"."
 
 var global_card_id 
-
 var original_position := position
 var original_scale := scale
 
@@ -35,6 +35,8 @@ func _ready() -> void:
 	original_position = card_control.position
 	original_scale = card_control.scale
 	
+	back_texture.visible = false
+	
 
 func _process(_delta):
 	selection_container.visible = is_lifted
@@ -45,7 +47,7 @@ func set_card_data(image_path, card_id):
 	global_card_id = card_id
 	var texture = load(image_path)  
 	if texture:
-		$TextureRect.texture = texture  
+		$Front_texture.texture = texture  
 	else:
 		print(" Erreur : Impossible de charger l'image", image_path)
 
@@ -105,3 +107,22 @@ func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int)
 
 func is_in_hand_grp():
 	return self.get_parent().is_in_group("hand_grp")
+
+
+func start_flip_timer(delay_sec: float) -> void:
+	await get_tree().create_timer(delay_sec).timeout
+	flip_card()
+	
+func flip_card() -> void:
+	back_texture.visible = true
+	texture_rect.visible = false
+	
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "scale:x", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tween.finished
+	
+	back_texture.visible = false
+	texture_rect.visible = true 
+
+	tween = create_tween()
+	tween.tween_property(self, "scale:x", 1.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

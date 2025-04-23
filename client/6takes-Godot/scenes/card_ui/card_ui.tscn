@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c6afv03ojuako"]
 
-[ext_resource type="FontFile" uid="uid://cq25shrfchedd" path="res://kenvector_future.ttf" id="1_8c31k"]
+[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="1_8c31k"]
 [ext_resource type="Script" path="res://scripts/card_ui.gd" id="2_n7yg6"]
 
 [sub_resource type="Theme" id="Theme_hcot1"]

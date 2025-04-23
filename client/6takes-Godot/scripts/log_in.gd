@@ -3,6 +3,10 @@ extends Control
 @onready var username_email_input = $VBoxContainer/username_email_input
 @onready var password_input = $VBoxContainer/password_input
 @onready var login_button = $LoginButton
+@onready var sign_up_button = $HBoxContainer/SignUp
+@onready var forgot_password_button = $ForgotPassword
+@onready var cancel_button = $Control/CancelButton
+
 @onready var http_request = $HTTPRequest_auth
 @onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
@@ -31,6 +35,19 @@ func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
 	API_URL = "http://" + base_url + "/api/player/connexion"
 	WS_SERVER_URL = "ws://" + base_url
+	
+	# Soundboard
+	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	login_button.pressed.connect(SoundManager.play_click_sound)
+	
+	sign_up_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sign_up_button.pressed.connect(SoundManager.play_click_sound)
+
+	forgot_password_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	forgot_password_button.pressed.connect(SoundManager.play_click_sound)
+
+	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
 
 func _on_login_button_pressed():
@@ -136,18 +153,22 @@ func _move_to_multiplayer_pressed():
 
 func _on_sign_up_pressed() -> void:
 	var signup_scene = load("res://scenes/signUp.tscn")
-	if signup_scene == null:
-		print("couldn't load signup scene")
-		
-	var signup_instance = signup_scene.instantiate() 
-	if signup_instance == null :
-		print("couldn't instanciate sign up scene")
 	
-	#queue_free()
-	get_tree().current_scene.add_child(signup_instance) # Add it to the scene
+	if signup_scene == null:
+		print("❌ Erreur : Impossible de charger la scène SignUp")
+		return  # Stop l'exécution ici
+
+	var signup_instance = signup_scene.instantiate()
+	
+	if signup_instance == null:
+		print("❌ Erreur : Impossible d'instancier la scène SignUp")
+		return  # Stop l'exécution ici
+
+	get_tree().current_scene.add_child(signup_instance)
 	signup_instance.show_overlay()
 	
 	queue_free()
+
 
 #
 func hash_password(password: String) -> String:

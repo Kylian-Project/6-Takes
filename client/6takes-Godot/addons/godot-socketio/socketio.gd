@@ -67,11 +67,7 @@ func connect_socket(auth: Dictionary = {}) -> void:
 		push_error("socket is already connected")
 		return
 
-	if not _namespaces.has(default_namespace):
-		_namespaces[default_namespace] = {}
-	
-# Then, assign the auth key inside the dictionary
-	_namespaces[default_namespace]["auth"] = auth
+	_namespaces[default_namespace].auth = auth
 	engine_make_connection()
 	
 

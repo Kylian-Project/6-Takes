@@ -7,38 +7,52 @@ extends Control
 @onready var sp_settings_button = $BottomButtons/SPSettingsButton
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_close_button = $SettingsOverlay/Close
+
+@onready var player_limit_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown
+@onready var card_number_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/CardNumberDropdown
+@onready var round_timer_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown
+@onready var end_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/EndPointsDropdown
+@onready var rounds_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
+@onready var max_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/MaxPointsDropdown
+
 @export var bot_scene: PackedScene
+
 
 var bot_count = 1  # Start with 1 bot minimum
 	
 @onready var socket_io = $SocketIO
 
 func _ready():
-	socket_io.connect_socket()
-	#socket_io.event_received.connect(_on_socket_io_event_received)
-	#
-	#socket_io.connect("connected",Callable(self, "_on_socket_connected"))
-	#socket_io.connect("error", Callable(self, "_on_socket_error"))
-	#
-	## Listen to the events as defined in your Node.js server:
-	#socket_io.connect("start-game", Callable( self, "_on_start_game"))
-	#socket_io.connect("your-hand", Callable(self, "_on_your_hand"))
-	#socket_io.connect("initial-table", Callable(self, "_on_initial_table"))
-	#socket_io.connect("carte-invalide", Callable(self, "_on_invalid_card"))
-	#
-	#
-	#add_bot_button.pressed.connect(add_bot)
-	#sp_start_button.pressed.connect(start_game)
-	#sp_return_button.pressed.connect(return_to_main_menu)
-	#sp_settings_button.pressed.connect(show_settings)
-	#settings_close_button.pressed.connect(hide_settings)
-	#settings_overlay.visible = false
+	add_bot_button.pressed.connect(add_bot)
+	sp_start_button.pressed.connect(start_game)
+	sp_return_button.pressed.connect(return_to_main_menu)
+	sp_settings_button.pressed.connect(show_settings)
+	settings_close_button.pressed.connect(hide_settings)
+	settings_overlay.visible = false
+	
+	# Hover sounds
+	add_bot_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_start_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_return_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	sp_settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	settings_close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+
+	# Click sounds
+	add_bot_button.pressed.connect(SoundManager.play_click_sound)
+	sp_start_button.pressed.connect(SoundManager.play_click_sound)
+	sp_return_button.pressed.connect(SoundManager.play_click_sound)
+	sp_settings_button.pressed.connect(SoundManager.play_click_sound)
+	settings_close_button.pressed.connect(SoundManager.play_click_sound)
+	
+	# Hover sounds for dropdowns
+	player_limit_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	card_number_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	round_timer_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	end_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	rounds_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+	max_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
+
 	update_bot_slots()
-
-
-
-func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
-	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
 
 
 func add_bot():
