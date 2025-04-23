@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
+import Player from "../models/player.js"
 
 
 const ID_LENGTH = 4;
@@ -114,15 +115,32 @@ export const roomHandler = (socket, io) =>
     };
 
 
-    const getUsers = (roomId) => {
+
+    const getUsers = async (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        if (!room) return { count: 0, usernames: [] };
-        const usernames = room.getUsernames();
-        return {
-          count: usernames.length,
-          usernames
-        };
-      };
+        if (!room) return { count: 0, users: [] };
+    
+        const users = [];
+    
+        for (let user of room.users)
+        {
+            try 
+            {
+                const player = await Player.findOne({ where: { username: user.username } });
+                users.push({
+                    username: user.username,
+                    icon: player?.icon || null
+                });
+            } 
+            catch (err) 
+            {
+                users.push({ username: user.username, icon: null });
+            }
+        }
+    
+        return { count: users.length, users };
+    };
+    
       
     
     //////////////////////////////////////////////////
@@ -139,7 +157,7 @@ export const roomHandler = (socket, io) =>
         } 
         catch (err)
         {
-            console.error("❌ Erreur JSON parsing :", err.message);
+            console.error("Erreur JSON parsing :", err.message);
             return;
         }
         //dé-structuration de l'objet en des variables
@@ -172,7 +190,7 @@ export const roomHandler = (socket, io) =>
             });
             console.log("✅ Room enregistrée en BDD :", roomId);
         } catch (err) {
-            console.error("❌ Erreur BDD :", err.message);
+            console.error("Erreur BDD :", err.message);
         }
 
         socket.join(roomId);
@@ -308,16 +326,30 @@ export const roomHandler = (socket, io) =>
 
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
 
-    socket.on("users-in-private-room", (roomId) => {
-        socket.emit("users-in-your-private-room", getUsers(roomId));
-    });
+    socket.on("users-in-private-room", async (roomId) => {
+        const users = await getUsers(roomId);
+        socket.emit("users-in-your-private-room", {
+          count: users.length,
+          users
+        });
+      });
+      
 
-    socket.on("join-room", ({ roomId, username }) => {
+      socket.on("users-in-public-room", async (roomId) => {
+        const users = await getUsers(roomId);
+        socket.emit("users-in-your-public-room", {
+          count: users.length,
+          users
+        });
+      });
+      
+
+    socket.on("join-room", async({ roomId, username }) => {
         const room = joinRoom({ roomId, username });
         if (room) 
         {
             socket.join(roomId);
-            const users = getUsers(roomId);
+            const users = await getUsers(roomId);
             if (room.private) 
             {
                 socket.emit("private-room-joined", users);
