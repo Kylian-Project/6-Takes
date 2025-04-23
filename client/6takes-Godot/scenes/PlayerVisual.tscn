@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://0rn0aa71d06w"]
+[gd_scene load_steps=7 format=3 uid="uid://cbrl6i5f5hfuu"]
 
 [ext_resource type="Script" path="res://scripts/player_visual.gd" id="1_d68q4"]
 [ext_resource type="Texture2D" uid="uid://c27kcxf7vderc" path="res://assets/images/icons/dark_grey.png" id="1_rnmgo"]
@@ -41,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_d68q4")
 
-[node name="Iccon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

@@ -20,8 +20,8 @@ var is_ready: bool = false
 
 # --- Node References
 @onready var icon_texture: TextureRect = $Icon
-@onready var name_label: Label = $Name
-@onready var ready_panel: PanelContainer = $ReadyCheck
+@onready var name_label = $PlayerName
+@onready var ready_panel = $ReadyCheck
 @onready var http_request: HTTPRequest = $HTTPRequest
 
 
@@ -33,26 +33,28 @@ func _ready():
 	API_URL = "http://" + base_url + "/api/player/playerinfo"
 	WS_SERVER_URL = "ws://" + base_url
 	
-	update_visuals()
+	#tsester
+	name_label.text = "XYZusername"
+	#update_visuals()
 	ready_panel.visible = false 
 	# Begin fetching player info
-	_fetch_player_info()
+	#_fetch_player_info()
 
-func setup_player(id: int, uname: String, icon: int, initial_cards: Array):
+func setup_player(id: int, uname: String, icon: int):#, initial_cards: Array):
 	player_id = id
 	username = uname
 	icon_id = icon
-	cards = initial_cards.slice(0, MAX_CARDS) # limit for extra safety, technically not necessary
+	#cards = initial_cards.slice(0, MAX_CARDS) # limit for extra safety, technically not necessary
 	
-	update_visuals()
-
-func update_visuals():
-	name_label.text = username
-#loading of icon using global variables, default else in case of error
-	if Global.icons.has(icon_id):
-		icon_texture.texture = load(Global.icons[icon_id])
-	else:
-		icon_texture.texture = load(Global.icons[0])
+	#update_visuals()
+#
+#func update_visuals():
+	#name_label.text = "usernametest"
+##loading of icon using global variables, default else in case of error
+	#if Global.icons.has(icon_id):
+		#icon_texture.texture = load(Global.icons[icon_id])
+	#else:
+		#icon_texture.texture = load(Global.icons[0])
 		
 func select_card(card):
 	if is_ready:
@@ -92,7 +94,7 @@ func _set_player_info(data: Dictionary):
 
 	print("Player Data Set:", player_id, username, icon_id)
 
-	update_visuals()
+	#update_visuals()
 
 func on_round_resolved():
 	if is_ready and selected_card:

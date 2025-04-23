@@ -30,12 +30,20 @@ extends Node2D
 #players ui
 @onready var player_visual_scene = preload("res://scenes/PlayerVisual.tscn")
 @onready var left_player_container = $LPlayer_container
-@onready var right_player_contaienr = $RPlayer_container
+@onready var right_player_container = $RPlayer_container
+
+#players icons
+const ICON_PATH = "res://assets/images/icons/"
+const ICON_FILES = [
+	"dark_grey.png", "blue.png", "brown.png", "green.png", 
+	"orange.png", "pink.png", "purple.png", "red.png",
+	"reversed.png", "cyan.png"
+]
 
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
-var username 
+var player_username 
 
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
@@ -61,7 +69,7 @@ var hand_received
 
 func _ready():
 	_load_cards()
-	username = get_node("/root/Global").player_name
+	player_username = get_node("/root/Global").player_name
 	game_state = GameState.WAITING_FOR_LOBBY
 	
 	#setting up row panels
@@ -101,8 +109,10 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			_handle_timer(data)
 		"attente-choix-rangee":
 			_await_row_selection(data)
-		"users-in-private-room", "users-in-public-room":
+		"users-in-your-private-room", "users-in-your-public-room":
 			setup_players(data)
+		"ramassage_rang":
+			_handle_takes(data)
 		_:
 			print("Unhandled event received: ", event, "data:", data)
 
@@ -138,7 +148,7 @@ func _handle_room_created(data):
 		
 	var body = {
 		"roomId" : room_id_global,
-		"username" : username
+		"username" : player_username
 	}
 	game_state = GameState.ROOM_JOINED
 	
@@ -160,7 +170,7 @@ func _start_turn():
 	if room_id_global != null:
 		socket_io.emit("tour", {
 			"roomId": room_id_global, 
-			"username": username
+			"username": player_username
 		})
 
 
@@ -174,7 +184,7 @@ func _handle_update_scores(data):
 	var score = 0
 	var scores = data[0]
 	for entry in scores:
-		if entry["nom"] == username:
+		if entry["nom"] == player_username:
 			score = entry["score"]
 			print("player score in data ", score)
 	
@@ -358,7 +368,7 @@ func _on_select_row_button_pressed(row_index):
 	socket_io.emit("choisir-rangee", {
 		"roomId": room_id_global,
 		"indexRangee": row_index,
-		"username": username
+		"username": player_username
 	})
 
 
@@ -389,7 +399,7 @@ func setup_players(player_data):
 	var other_players = []
 	
 	for username in usernames:
-		if username != current_player_username:
+		if username != player_username:
 			other_players.append(username)
 
 	# Clear existing visuals
@@ -407,19 +417,30 @@ func setup_players(player_data):
 			right_player_container.add_child(visual)
 
 	# Add current player at bottom of left
-	var my_visual = create_player_visual(current_player_username, true)
+	var my_visual = create_player_visual(player_username, true)
 	left_player_container.add_child(my_visual)
 
 
 func create_player_visual(username: String, is_me := false) -> Node:
 	var visual = player_visual_scene.instantiate()
-	visual.get_node("UsernameLabel").text = username
+	visual.get_node("PlayerName").text = username
 
-	# If you want to give a special icon to yourself:
 	if is_me:
-		visual.get_node("Avatar").texture = preload("res://assets/my_avatar.png")
+		var icon_id = get_node("/root/Global").icon_id
+		
+		#edit after connecting lobby and authentification
+		visual.setup_player(0, username, 0,)
+		#visual.get_node("Icon").texture =  load(ICON_PATH + ICON_FILES[icon_id])
 	else:
-		# You can randomize or use a default icon for others
-		visual.get_node("Avatar").texture = preload("res://assets/default_avatar.png")
+		# use default for now
+		visual.get_node("Icon").texture = load(ICON_PATH + ICON_FILES[0])
 
 	return visual
+
+
+func _handle_takes(data):
+	var player_takes = data[0]["username"]
+	if player_takes == player_username:
+		show_label("You Take 6!")
+	else:
+		show_label(player_takes + " Takes 6!")
