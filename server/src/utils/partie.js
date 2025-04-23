@@ -130,21 +130,38 @@ export const PlayGame = (socket, io) =>
 			if(jeu.checkEndManche())
 			{
 				console.log("fin de manche");
+				jeu.mancheSuivante();
+
+
+				//envoie de la nouvelle main a chaque joueur
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!AFACTORISER
+				
+				const usernames = getUsers(roomId);
+				const usersWithSocket = getUsersAndSocketId(roomId);
+
 				for (let i = 0; i < usernames.length; i++) 
-				{
-					// On a déjà distribué les cartes dans le constructeur
-					const joueur = jeu.joueurs[i];
-					const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
-		
-					if (socketId) {
-						io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
-					}
-				}
+					{
+						// On a déjà distribué les cartes dans le constructeur
+						const joueur = jeu.joueurs[i];
+						const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
 			
-				// Envoi de la table initiale à tous
-				const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-				io.to(roomId).emit("initial-table", tableInit);
-				console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
+						if (socketId) {
+							io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+						}
+					}
+
+
+				// Envoi de la nouvelle table à tous
+				const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+				console.log("🎯 Table mise à jour :", table);
+				io.to(roomId).emit("update-table", table);
+				
+
+
+				io.to(roomId).emit("manche-suivante");
+				
+				//deuxieme version sans tout ca juste avec 
+				//jeu.mancheSuivante(); et c'est le client qui m'envoie tour t je lui transmet tout 
 
 			}
 
@@ -195,11 +212,6 @@ export const PlayGame = (socket, io) =>
 	
 	  
   
-
-
-
-
-
 
 
 	// 4. Restaurer le jeu si besoin
@@ -434,4 +446,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     // Traiter la prochaine carte après celle-ci
     traiterProchaineCarte(roomId, jeu, io, rooms);
 }
+
+
+
+
+
 
