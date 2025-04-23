@@ -27,6 +27,11 @@ extends Node2D
 	$deckContainer/rowsContainer/row4_panel/row4/selectRowButton
 ]
 
+#players ui
+@onready var player_visual_scene = preload("res://scenes/PlayerVisual.tscn")
+@onready var left_player_container = $LPlayer_container
+@onready var right_player_contaienr = $RPlayer_container
+
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
@@ -96,6 +101,8 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			_handle_timer(data)
 		"attente-choix-rangee":
 			_await_row_selection(data)
+		"users-in-private-room", "users-in-public-room":
+			setup_players(data)
 		_:
 			print("Unhandled event received: ", event, "data:", data)
 
@@ -208,12 +215,6 @@ func on_player_selects_row(data):
 	
 	highlight_row(true)
 	selection_buttons(true)
-	
-	#socket_io.emit("choisir-rangee", {
-		#"roomId": room_id_global,
-		#"indexRangee": row_index,
-		#"username": username
-	#})
 
 
 func _on_open_pause_button_pressed() -> void:
@@ -380,3 +381,45 @@ func show_label(text: String) -> void:
 
 func hide_label() -> void:
 	state_label.visible = false
+
+
+#display players on gameboard
+func setup_players(player_data):
+	var usernames = player_data[0]["usernames"]
+	var other_players = []
+	
+	for username in usernames:
+		if username != current_player_username:
+			other_players.append(username)
+
+	# Clear existing visuals
+	for container in [left_player_container, right_player_container]:
+		for child in container.get_children():
+			child.queue_free()
+
+	# Add others, alternating left/right
+	for i in range(other_players.size()):
+		var visual = create_player_visual(other_players[i])
+		
+		if i % 2 == 0:
+			left_player_container.add_child(visual)
+		else:
+			right_player_container.add_child(visual)
+
+	# Add current player at bottom of left
+	var my_visual = create_player_visual(current_player_username, true)
+	left_player_container.add_child(my_visual)
+
+
+func create_player_visual(username: String, is_me := false) -> Node:
+	var visual = player_visual_scene.instantiate()
+	visual.get_node("UsernameLabel").text = username
+
+	# If you want to give a special icon to yourself:
+	if is_me:
+		visual.get_node("Avatar").texture = preload("res://assets/my_avatar.png")
+	else:
+		# You can randomize or use a default icon for others
+		visual.get_node("Avatar").texture = preload("res://assets/default_avatar.png")
+
+	return visual

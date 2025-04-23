@@ -326,6 +326,7 @@ script = ExtResource("8_q3lfy")
 autoconnect = false
 
 [node name="State_label" type="Label" parent="."]
+visible = false
 offset_left = -9.0
 offset_top = 269.0
 offset_right = 1920.0
@@ -336,5 +337,17 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_f52gu")
 text = "Game Start"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="LPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 40.0
+offset_top = 140.0
+offset_right = 240.0
+offset_bottom = 852.0
+
+[node name="RPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 1693.0
+offset_top = 140.0
+offset_right = 1893.0
+offset_bottom = 852.0
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]
