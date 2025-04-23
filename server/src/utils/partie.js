@@ -158,10 +158,10 @@ export const PlayGame = (socket, io) =>
 				
 
 
-				io.to(roomId).emit("manche-suivante");
+				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
 				
 				//deuxieme version sans tout ca juste avec 
-				//jeu.mancheSuivante(); et c'est le client qui m'envoie tour t je lui transmet tout 
+				//jeu.mancheSuivante(); et c'est le client qui m'envoie tour et je lui transmet tout 
 
 			}
 
