@@ -130,7 +130,7 @@ export const PlayGame = (socket, io) =>
 			if(jeu.checkEndManche())
 			{
 				console.log("fin de manche");
-								for (let i = 0; i < usernames.length; i++) 
+				for (let i = 0; i < usernames.length; i++) 
 				{
 					// On a déjà distribué les cartes dans le constructeur
 					const joueur = jeu.joueurs[i];
@@ -147,7 +147,7 @@ export const PlayGame = (socket, io) =>
 				console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
 
 			}
-				
+
         }
 
     });
@@ -155,17 +155,28 @@ export const PlayGame = (socket, io) =>
 
 		// 2. JPasser au tour suivant -start-tour
 
-	socket.on( "tour" , ({roomId, card , username }) =>
-	{
-		const jeu = getGame(roomId);
-		if (!jeu)
-			{ 
-				console.log("evenement tour-start mais le jeu n'est pas lancé");
-				return ;
+		socket.on("tour", ({ roomId, username }) => {
+			const jeu = getGame(roomId);
+			const joueur = jeu.joueurs.find(j => j.nom === username);
+
+		
+			// Réinitialisation du tableau des cartes jouées
+			cartesAJoueesParRoom[roomId] = [];
+		
+			// Lancer un nouveau timer pour ce tour
+			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+		
+			// Trouver le socket ID du joueur
+			const room = rooms.find(r => r.id === roomId);
+			const socketId = room?.users.find(u => u.username === username)?.idSocketUser;
+		
+			if (socketId) {
+				io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+				console.log(`🖐️ Main envoyée à ${username}`);
+			} else {
+				console.log(`❌ Socket introuvable pour le joueur ${username}`);
 			}
-		cartesAJoueesParRoom[roomId] = [];
-		lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms);
-	});
+		});
   
 
 
@@ -345,8 +356,6 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 	let temp_carte = new Carte(carte.numero);
 	jeu.table.rangs[indexRangee] = new Rang(temp_carte);
 	delete joueur.carteEnAttente;
-
-
 }
 
 
@@ -409,6 +418,11 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
                 io.sockets.sockets.get(socketTargetId)?.on("choisir-rangee", handler);
             });
         }
+		else if (res=== "ramassage_rang")
+		{
+			const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
+			io.to(roomId).except(socketTargetId).emit("ramassage_rang", { username });
+		}
 
 
     }
