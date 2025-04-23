@@ -219,22 +219,17 @@ class Jeu6Takes {
             return "choix_rang_obligatoire";
         }
         const cartesRamassees = this.table.ramasserCartes();
-
         const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
-        console.log(`le joueur vient "${nomJoueur}" de recevoir des points : `, penalite);
         joueur.updateScore(penalite);
-    }
-    /*
-    choisirRang(nomJoueur , carte ,rang)
-    {
-        const joueur = this.joueurs.find(j => j.nom === nomJoueur);
-        if (!joueur) throw new Error("Joueur introuvable");
+        //pour savoir si un joueurs vient de se prendre un 6quiprend
+        //comme ca je pourrai le dire aux autres
+        if(cartesRamassees.length >0)
+        {
+            return "ramassage_rang";
+        }
 
-        const index = joueur.hand.trouverIndex(carte);
-        if (index === -1) throw new Error("Carte non trouvée dans la main du joueur");
-        
     }
-        */
+    
 }
 
 export { Jeu6Takes };
