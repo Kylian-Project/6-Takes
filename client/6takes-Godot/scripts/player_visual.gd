@@ -34,7 +34,7 @@ func _ready():
 	WS_SERVER_URL = "ws://" + base_url
 	
 	#tsester
-	name_label.text = "XYZusername"
+	#name_label.text = ""
 	#update_visuals()
 	ready_panel.visible = false 
 	# Begin fetching player info

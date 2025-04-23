@@ -41,27 +41,27 @@ func _ready():
 	profile_button.pressed.connect(_on_profile_pressed)
 
 		# Hover Soundboard
-	create_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	join_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	return_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
-	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
-
-	# Click Soundboard
-	create_lobby_button.pressed.connect(SoundManager.play_click_sound)
-	join_lobby_button.pressed.connect(SoundManager.play_click_sound)
-	return_button.pressed.connect(SoundManager.play_click_sound)
-	settings_button.pressed.connect(SoundManager.play_click_sound)
-	rules_button.pressed.connect(SoundManager.play_click_sound)
-	profile_button.pressed.connect(SoundManager.play_click_sound)
+	#create_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	#join_lobby_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	#return_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	#settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	#rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	#profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
+#
+	## Click Soundboard
+	#create_lobby_button.pressed.connect(SoundManager.play_click_sound)
+	#join_lobby_button.pressed.connect(SoundManager.play_click_sound)
+	#return_button.pressed.connect(SoundManager.play_click_sound)
+	#settings_button.pressed.connect(SoundManager.play_click_sound)
+	#rules_button.pressed.connect(SoundManager.play_click_sound)
+	#profile_button.pressed.connect(SoundManager.play_click_sound)
 
 
 	# Connect all close buttons
 	for close_button in close_buttons:
 		close_button.pressed.connect(_on_close_overlay_pressed)
-		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
-		close_button.pressed.connect(SoundManager.play_click_sound)
+		#close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		#close_button.pressed.connect(SoundManager.play_click_sound)
 		
 		
 func _process(_delta):

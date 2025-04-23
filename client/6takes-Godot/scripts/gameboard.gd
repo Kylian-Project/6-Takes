@@ -61,19 +61,28 @@ enum GameState {
 	ROOM_JOINED,
 	SETTING_UP_DECK,
 	GAME_STARTED,
-	HAND_RECEIVED
+	HAND_RECEIVED,
+	PLAYERS_HANDLED
 }
+
 var game_state 
 var room_id_global
 var hand_received 
+var players_displayed
+var cards_animated
 
 func _ready():
 	_load_cards()
-	player_username = get_node("/root/Global").player_name
+	#player_username = get_node("/root/Global").player_name
+	#debug
+	player_username = "tester"
 	game_state = GameState.WAITING_FOR_LOBBY
 	
 	#setting up row panels
-	hand_received = false
+	players_displayed = false
+	#hand_received = false
+	cards_animated = false 
+	
 	highlight_row(false)
 	for i in range(row_buttons.size()):
 		var btn = row_buttons[i]
@@ -113,10 +122,28 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			setup_players(data)
 		"ramassage_rang":
 			_handle_takes(data)
+		"fin-tour":
+			reset_hand()
+		"ramassage-rang":
+			takes_row(data)
 		_:
 			print("Unhandled event received: ", event, "data:", data)
 
 
+func takes_row(data):
+	var user_takes = data[0].username
+	print("player takes ", user_takes)
+	if user_takes == player_username:
+		show_label("You Take 6 !")
+	else:
+		show_label(user_takes + " Takes 6!")
+
+
+func reset_hand():
+	hand_received = false
+	_start_turn()
+	
+	
 func _handle_available_rooms(data):
 	if game_state != GameState.WAITING_FOR_LOBBY:
 		return 
@@ -162,11 +189,11 @@ func _handle_room_created(data):
 	#_start_turn()	
 
 func _handle_room_joined(data):
-	print("data for signal room joined ", data)
+	print("data for event room joined ", data)
 	
 
 func _start_turn():
-	hand_received = false
+	#hand_received = false
 	if room_id_global != null:
 		socket_io.emit("tour", {
 			"roomId": room_id_global, 
@@ -190,13 +217,13 @@ func _handle_update_scores(data):
 	
 	score = JSON.stringify(score)
 	score_label.text = score
-	_start_turn()
+	#_start_turn()
 	
 	
 func _handle_your_hand(data):
-	if hand_received:
-		return
-	hand_received = true
+	#if hand_received:
+		#return
+	#hand_received = true
 	print("Data received on your-hand:", data)
 	if game_state == GameState.SETTING_UP_DECK:
 		deck_setup_animation()
@@ -207,7 +234,9 @@ func _handle_your_hand(data):
 
 func _handle_table(data):
 	print("Data received for table:", data)
-	update_table_ui(data)
+	var animate = (game_state == GameState.SETTING_UP_DECK)
+	update_table_ui(data, animate)
+	
 	game_state = GameState.GAME_STARTED
 
 func _await_row_selection(data):
@@ -277,26 +306,36 @@ func update_hand_ui(hand_data):
 	for child in hbox_container.get_children():
 		child.queue_free()
 	
-	if hand_data.size() > 0:
-		var cards_list = hand_data[0]
-		for card_id in cards_list:
-			var card_info = _find_card_data(card_id)
-			if !card_info:
-				print("No card info found for id:", card_id)
+	for card_id in hand_data[0]:
+		var card_info = _find_card_data(card_id)
+		var path = card_info["path"]
+		
+		if card_id:
+			var card = card_ui_scene.instantiate()
+			card.modulate.a = 0
+			card.scale = Vector2(0.5, 0.5)
+			hbox_container.add_child(card)
+		
+			if !cards_animated:
+				var tw = create_tween()
+				tw.tween_property(card, "modulate:a", 1.0, 0.25)
+				tw.tween_property(card, "scale", Vector2(1,1), 0.25)
+				await tw.finished
+
+				#await card.start_flip_timer(0.1)
+				var t = get_tree().create_timer(0.2)
+				await t.timeout
 				
-			var path = card_info["path"]
+				card.flip_card()
+				await get_tree().create_timer(0.05).timeout
 			
-			if card_id:
-				var card_instance = card_ui_scene.instantiate()
-				hbox_container.add_child(card_instance)
-				if card_instance.has_method("set_card_data"):
-					card_instance.set_card_data(path, card_id)
-					card_instance.connect("card_selected", Callable(self, "_on_card_selected"))
-					
-					if game_state == GameState.SETTING_UP_DECK:
-						card_instance.start_flip_timer(2.0)
-	else:
-		print("Unexpected hand_data format:", hand_data)
+			else:
+				card.toggle_texture_visibility(true)
+				
+			card.set_card_data(path, card_id)
+			card.connect("card_selected", Callable(self, "_on_card_selected"))
+	
+	cards_animated = true
 
 
 func _on_card_selected(card_number):
@@ -309,7 +348,7 @@ func _on_card_selected(card_number):
 	socket_io.emit("play-card", data)
 	
 	
-func update_table_ui(table_data):
+func update_table_ui(table_data, animation):
 	for row in [row1, row2, row3, row4]:
 		for child in row.get_children():
 			if child is not Button:
@@ -332,8 +371,10 @@ func update_table_ui(table_data):
 					if card_instance.has_method("set_card_data"):
 						card_instance.set_card_data(card_info["path"], card_id)
 						
-						if game_state == GameState.SETTING_UP_DECK:
+						if animation:
 							card_instance.start_flip_timer(2.0)
+						else:
+							card_instance.texture_rect.visible = true
 				else:
 					print("No card info found for id:", card_id)
 
@@ -379,13 +420,20 @@ func _clear_row_selection_ui():
 
 
 func deck_setup_animation():
-	show_label("Game Start")
+	show_label("Game Starting")
+	socket_io.emit("users-in-public-room", {
+		"roomId" : room_id_global
+	})
+	
+	#emit tour to start timer
+	#await get_tree().create_timer(3).timeout
+	#_start_turn()
 	
 	
 func show_label(text: String) -> void:
 	state_label.text = text
 	state_label.visible = true
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.5).timeout
 	
 	hide_label()
 
@@ -395,46 +443,62 @@ func hide_label() -> void:
 
 #display players on gameboard
 func setup_players(player_data):
-	var usernames = player_data[0]["usernames"]
-	var other_players = []
+	if players_displayed:
+		return
 	
-	for username in usernames:
-		if username != player_username:
-			other_players.append(username)
-
 	# Clear existing visuals
+	print("player data received ", player_data)
 	for container in [left_player_container, right_player_container]:
 		for child in container.get_children():
 			child.queue_free()
-
-	# Add others, alternating left/right
-	for i in range(other_players.size()):
-		var visual = create_player_visual(other_players[i])
-		
-		if i % 2 == 0:
-			left_player_container.add_child(visual)
+	
+	var players_count = player_data[0]["count"]
+	print("players count ", players_count)
+	
+	var users = player_data[0]["users"]
+	var user_icon
+	var others := []
+	
+	for user_dict in users:
+		if user_dict.username == player_username:
+			continue
+		others.append(user_dict)
+	
+	for i in range(others.size()):
+		print("other players debug")
+		var user = others[i]
+		if user.icon:
+			user_icon = user.icon
 		else:
-			right_player_container.add_child(visual)
+			user_icon = 0
+			
+		var vis = create_player_visual(user.username, user_icon, false)
+		if i % 2 == 0:
+			right_player_container.add_child(vis)
+		else:
+			left_player_container.add_child(vis)
 
-	# Add current player at bottom of left
-	var my_visual = create_player_visual(player_username, true)
-	left_player_container.add_child(my_visual)
+	
+	for user_dict in users:
+		if user_dict.username == player_username:
+			var me_vis = create_player_visual(user_dict.username, user_icon, true)
+			right_player_container.add_child(me_vis)
+			break
+			
+	players_displayed = true
+	game_state = GameState.GAME_STARTED
 
 
-func create_player_visual(username: String, is_me := false) -> Node:
-	var visual = player_visual_scene.instantiate()
-	visual.get_node("PlayerName").text = username
+func create_player_visual(uname: String, icon_id: int, is_me := false) -> Control:
+	var visual: Control = player_visual_scene.instantiate()
+
+	visual.get_node("PlayerName").text = uname
+	var icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
+	visual.get_node("Icon").texture = load(icon_path)
 
 	if is_me:
-		var icon_id = get_node("/root/Global").icon_id
-		
-		#edit after connecting lobby and authentification
-		visual.setup_player(0, username, 0,)
-		#visual.get_node("Icon").texture =  load(ICON_PATH + ICON_FILES[icon_id])
-	else:
-		# use default for now
-		visual.get_node("Icon").texture = load(ICON_PATH + ICON_FILES[0])
-
+		visual.add_theme_color_override("font_color", Color(1, 1, 0))  # e.g. yellow
+		# Or: visual.modulate = Color(1, 1, 1, 1) to brighten, etc.
 	return visual
 
 

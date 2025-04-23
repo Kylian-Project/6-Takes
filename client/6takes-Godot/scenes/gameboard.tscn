@@ -343,11 +343,13 @@ offset_left = 40.0
 offset_top = 140.0
 offset_right = 240.0
 offset_bottom = 852.0
+alignment = 1
 
 [node name="RPlayer_container" type="VBoxContainer" parent="."]
 offset_left = 1693.0
 offset_top = 140.0
 offset_right = 1893.0
 offset_bottom = 852.0
+alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

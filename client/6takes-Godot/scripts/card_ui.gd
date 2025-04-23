@@ -27,7 +27,6 @@ const SCALE_FACTOR  = 1.2
 
 
 func _ready() -> void:
-	# cache the TextureRect’s original transform
 	orig_tex_pos   = texture_rect.position
 	orig_tex_scale = Vector2(1,1)
 	
@@ -48,6 +47,7 @@ func set_card_data(image_path, card_id):
 	var texture = load(image_path)  
 	if texture:
 		$Front_texture.texture = texture  
+		texture_rect.visible = false
 	else:
 		print(" Erreur : Impossible de charger l'image", image_path)
 
@@ -114,15 +114,24 @@ func start_flip_timer(delay_sec: float) -> void:
 	flip_card()
 	
 func flip_card() -> void:
+	if !is_inside_tree() or !is_instance_valid(self):
+		return
+	if self == null:
+		print("this is a null card !!!!")
+		return
+		
 	back_texture.visible = true
-	texture_rect.visible = false
 	
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "scale:x", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await tween.finished
 	
-	back_texture.visible = false
-	texture_rect.visible = true 
+	toggle_texture_visibility(true)
 
 	tween = create_tween()
 	tween.tween_property(self, "scale:x", 1.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+func toggle_texture_visibility(boolean):
+	print("visibility :", !texture_rect.visible)
+	texture_rect.visible = boolean
+	back_texture.visible = !boolean

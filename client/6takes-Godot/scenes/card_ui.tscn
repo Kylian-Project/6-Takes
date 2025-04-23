@@ -52,6 +52,7 @@ layout_mode = 0
 offset_left = -31.0
 offset_right = 150.0
 offset_bottom = 175.0
+mouse_filter = 2
 texture = ExtResource("3_h10ga")
 expand_mode = 1
 
