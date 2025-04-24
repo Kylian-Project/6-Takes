@@ -1,15 +1,15 @@
 [gd_scene load_steps=18 format=3 uid="uid://bcjhf4sva1ypb"]
 
-[ext_resource type="Script" path="res://mp_lobby_scene.gd" id="1_b5vh8"]
-[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_m8rbo"]
-[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_45fdi"]
-[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="3_07tfb"]
-[ext_resource type="Texture2D" uid="uid://c4pji43cyew3j" path="res://assets/images/title_screen_players_lobby 1@2x.png" id="3_ipeuo"]
-[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="4_6pdog"]
-[ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="5_er74r"]
-[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="6_vpw1u"]
-[ext_resource type="Script" path="res://scripts/sp_settings.gd" id="8_mss5p"]
-[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="9_517ks"]
+[ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
+[ext_resource type="Texture2D" uid="uid://c4pji43cyew3j" path="res://assets/images/title_screen_players_lobby 1@2x.png" id="3_0sg8s"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_utsmw"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_nhk61"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_cj54l"]
+[ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="7_w3h5k"]
+[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="8_uqejv"]
+[ext_resource type="Script" path="res://scripts/sp_settings.gd" id="9_8ivq5"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_eex3c"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gic51"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -72,7 +72,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_b5vh8")
+script = ExtResource("1_h4b0v")
 
 [node name="BGColour" type="ColorRect" parent="."]
 layout_mode = 1
@@ -91,7 +91,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_m8rbo")
+texture = ExtResource("2_mqvhc")
 
 [node name="SP_title" type="TextureRect" parent="."]
 layout_mode = 1
@@ -106,7 +106,7 @@ offset_right = 775.0
 offset_bottom = 208.68
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_ipeuo")
+texture = ExtResource("3_0sg8s")
 expand_mode = 1
 stretch_mode = 4
 
@@ -132,10 +132,10 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = ExtResource("3_07tfb")
-theme_override_styles/normal = ExtResource("4_6pdog")
+theme_override_styles/hover = ExtResource("5_nhk61")
+theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Start"
 
 [node name="SPSettingsButton" type="Button" parent="BottomButtons"]
@@ -145,10 +145,10 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = ExtResource("3_07tfb")
-theme_override_styles/normal = ExtResource("4_6pdog")
+theme_override_styles/hover = ExtResource("5_nhk61")
+theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Settings"
 
 [node name="SPReturnButton" type="Button" parent="BottomButtons"]
@@ -158,10 +158,10 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 25
-theme_override_styles/hover = ExtResource("3_07tfb")
-theme_override_styles/normal = ExtResource("4_6pdog")
+theme_override_styles/hover = ExtResource("5_nhk61")
+theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Return
 "
 
@@ -191,14 +191,14 @@ theme_override_constants/separation = 0
 
 [node name="PlayerIcon" type="TextureRect" parent="MainVbox/HostPlayer/PlayerHGroup"]
 layout_mode = 2
-texture = ExtResource("5_er74r")
+texture = ExtResource("7_w3h5k")
 expand_mode = 2
 stretch_mode = 4
 
 [node name="Label" type="Label" parent="MainVbox/HostPlayer/PlayerHGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_xy670")
 text = "Player Name"
@@ -212,7 +212,7 @@ theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxFlat_jm5eu")
 button_mask = 0
-icon = ExtResource("6_vpw1u")
+icon = ExtResource("8_uqejv")
 icon_alignment = 1
 
 [node name="SettingsOverlay" type="Control" parent="."]
@@ -223,7 +223,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("8_mss5p")
+script = ExtResource("9_8ivq5")
 
 [node name="Main Menu Dimming2" type="ColorRect" parent="SettingsOverlay"]
 layout_mode = 1
@@ -254,7 +254,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_dh2o8")
 [node name="TextureRect" type="TextureRect" parent="SettingsOverlay/PanelContainer"]
 self_modulate = Color(1, 1, 1, 0.227451)
 layout_mode = 2
-texture = ExtResource("1_m8rbo")
+texture = ExtResource("2_mqvhc")
 expand_mode = 1
 stretch_mode = 1
 
@@ -269,7 +269,7 @@ size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
-theme_override_fonts/font = ExtResource("9_517ks")
+theme_override_fonts/font = ExtResource("10_eex3c")
 theme_override_font_sizes/font_size = 60
 text = "Game Settings!"
 
@@ -283,7 +283,7 @@ layout_mode = 2
 [node name="PlayerLimit" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "Player Limit"
@@ -291,7 +291,7 @@ text = "Player Limit"
 [node name="NumberCards" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "Number of Cards"
@@ -299,7 +299,7 @@ text = "Number of Cards"
 [node name="RoundTimer" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "Round Timer"
@@ -307,7 +307,7 @@ text = "Round Timer"
 [node name="EndByPoints" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "End by Points"
@@ -315,7 +315,7 @@ text = "End by Points"
 [node name="Rounds" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "Rounds"
@@ -323,7 +323,7 @@ text = "Rounds"
 [node name="MaxPoints" type="Label" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Options"]
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_0xjsq")
 text = "Maximum Points"
@@ -334,7 +334,7 @@ layout_mode = 2
 [node name="PlayerLimitDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 8
@@ -360,7 +360,7 @@ popup/item_8/id = 8
 [node name="CardNumberDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 9
@@ -388,7 +388,7 @@ popup/item_9/id = 9
 [node name="RoundTimerDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 1
@@ -402,7 +402,7 @@ popup/item_2/id = 2
 [node name="EndPointsDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 0
@@ -414,7 +414,7 @@ popup/item_1/id = 1
 [node name="RoundsDropdown" type="OptionButton" parent="SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 0
@@ -433,7 +433,7 @@ popup/item_4/id = 4
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("2_45fdi")
+theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_5wcuy")
 selected = 0
