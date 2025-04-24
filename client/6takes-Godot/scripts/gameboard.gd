@@ -5,6 +5,7 @@ extends Node2D
 @onready var timer_label = $HBoxContainer/timer
 @onready var score_label = $CanvasLayer/top_bar/nbheads
 @onready var state_label = $State_label
+@onready var turn_label = $HBoxContainer/turnLabel
 
 #deck ui 
 @onready var row1 = $deckContainer/rowsContainer/row1_panel/row1
@@ -70,6 +71,7 @@ var room_id_global
 var hand_received 
 var players_displayed
 var cards_animated
+var turn
 
 func _ready():
 	_load_cards()
@@ -79,6 +81,7 @@ func _ready():
 	game_state = GameState.WAITING_FOR_LOBBY
 	
 	#setting up row panels
+	turn = 1
 	players_displayed = false
 	#hand_received = false
 	cards_animated = false 
@@ -126,10 +129,18 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 			reset_hand()
 		"ramassage-rang":
 			takes_row(data)
+		"manche_suivante":
+			_handle_next_round(data)
 		_:
-			print("Unhandled event received: ", event, "data:", data)
+			print("Unhandled event received: ", event, "data: ", data)
 
 
+func _handle_next_round(data):
+	show_label("Next Round")
+	turn += 1
+	turn_label.text = "Turn " + turn +"/" #add total turns
+	
+	
 func takes_row(data):
 	var user_takes = data[0].username
 	print("player takes ", user_takes)
@@ -458,15 +469,18 @@ func setup_players(player_data):
 	var users = player_data[0]["users"]
 	var user_icon
 	var others := []
+	var current_player
 	
 	for user_dict in users:
 		if user_dict.username == player_username:
-			continue
+			current_player = user_dict
 		others.append(user_dict)
 	
 	for i in range(others.size()):
 		print("other players debug")
 		var user = others[i]
+		print("user debug ", user)
+		
 		if user.icon:
 			user_icon = user.icon
 		else:
@@ -474,16 +488,18 @@ func setup_players(player_data):
 			
 		var vis = create_player_visual(user.username, user_icon, false)
 		if i % 2 == 0:
+			print("added player right")
 			right_player_container.add_child(vis)
 		else:
+			print("added player left")
 			left_player_container.add_child(vis)
 
 	
-	for user_dict in users:
-		if user_dict.username == player_username:
-			var me_vis = create_player_visual(user_dict.username, user_icon, true)
-			right_player_container.add_child(me_vis)
-			break
+	#for user_dict in users:
+		#if user_dict.username == player_username:
+	var me_vis = create_player_visual(current_player.username, 0, true)
+	right_player_container.add_child(me_vis)
+			#break
 			
 	players_displayed = true
 	game_state = GameState.GAME_STARTED
