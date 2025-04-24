@@ -13,6 +13,8 @@ var response_load = config.load(file_path)
 var BASE_URL := ""
 var header := ""
 
+var game_settings = {}
+
 var icons = {
 	# NOTE: optimize using preload or load() caching if performance not good.
 	0: "res://assets/images/icons/dark_grey.png",
