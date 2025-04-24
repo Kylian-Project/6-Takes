@@ -72,8 +72,8 @@ func _ready() -> void:
 		multiplayer_button.text = "Log In"
 		
 	else :
-		singleplayer_button.text ="Single Player"
-		multiplayer_button.text = "Multi-Player"
+		singleplayer_button.text ="Singleplayer"
+		multiplayer_button.text = "Multiplayer"
 		
 
 func _process(_delta):
