@@ -325,7 +325,7 @@ theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lowi6")
-text = "Single Player"
+text = "Singleplayer"
 
 [node name="MultiPlayerButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
@@ -338,7 +338,7 @@ theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
 theme_override_styles/normal = SubResource("StyleBoxFlat_ufbv3")
-text = "Multi-Player"
+text = "Multiplayer"
 
 [node name="QuitButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
