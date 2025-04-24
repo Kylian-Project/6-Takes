@@ -37,6 +37,7 @@ const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
 const timers = {};  // un timer par room
 const affichageTimers = {};
 const fileTraitementParRoom = {}; 
+const joueursPretPourTour = {};
 
 
 	  	//////////////////////////////////////////////////
@@ -46,6 +47,9 @@ const fileTraitementParRoom = {};
 export const PlayGame = (socket, io) =>
 {
 
+	/***************************/
+	/*      1.Start Game       */
+	/***************************/
   	socket.on("start-game", (roomId) => 
 	{
 		const usernames = getUsers(roomId);
@@ -78,7 +82,7 @@ export const PlayGame = (socket, io) =>
 			}
 		}
 
-		// Envoi de la table initiale à tous
+		// Envoi de la table initiale à tous sert pas a grand chose a RETIRER
 		const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 		io.to(roomId).emit("initial-table", tableInit);
 
@@ -88,8 +92,55 @@ export const PlayGame = (socket, io) =>
 	});
 
 
-	// 2. Jouer une carte
 
+		// 
+
+	/***************************/
+	/*     2. start-tour       */
+	/***************************/
+
+	socket.on("tour", ({ roomId, username }) => 
+	{
+		if (!joueursPretPourTour[roomId]) joueursPretPourTour[roomId] = [];
+		
+		if (!joueursPretPourTour[roomId].includes(username))
+		{
+			joueursPretPourTour[roomId].push(username);
+		}
+		
+		const jeu = getGame(roomId);
+		const room = rooms.find(r => r.id === roomId);
+		
+		if (!jeu || !room) return;
+		const usernames = getUsers(roomId);
+		
+		const joueursAttendus = usernames.length;
+		//on lance tour que si ils sont tous la 
+		//histoire de tout factoriser a l'interieur de tour 
+		//pour que ca soit plus clair que les event comme youh-hand, update-table...
+		//sont tous envoyé en meme temps dan le "tour"
+		if (joueursPretPourTour[roomId].length === joueursAttendus) 
+		{
+			// Tous sont prêts → on lance le tour
+			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);
+			cartesAJoueesParRoom[roomId] = [];
+		
+			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+		
+			// Envoi des mains et de la table
+			envoyerMainEtTable(io, roomId, jeu, rooms);
+		
+			// Reset pour prochaine fois
+			joueursPretPourTour[roomId] = [];
+		}
+	});
+
+
+
+
+	/***************************/
+	/*    3. Jouer une carte   */
+	/***************************/
 	socket.on("play-card", async ({ roomId, card, username }) =>
 	{
 
@@ -131,37 +182,7 @@ export const PlayGame = (socket, io) =>
 			{
 				console.log("fin de manche");
 				jeu.mancheSuivante();
-
-
-				//envoie de la nouvelle main a chaque joueur
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!AFACTORISER
-				
-				const usernames = getUsers(roomId);
-				const usersWithSocket = getUsersAndSocketId(roomId);
-
-				for (let i = 0; i < usernames.length; i++) 
-					{
-						// On a déjà distribué les cartes dans le constructeur
-						const joueur = jeu.joueurs[i];
-						const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
-			
-						if (socketId) {
-							io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
-						}
-					}
-
-
-				// Envoi de la nouvelle table à tous
-				const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-				console.log("🎯 Table mise à jour :", table);
-				io.to(roomId).emit("update-table", table);
-				
-
-
 				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
-				
-				//deuxieme version sans tout ca juste avec 
-				//jeu.mancheSuivante(); et c'est le client qui m'envoie tour et je lui transmet tout 
 
 			}
 
@@ -170,32 +191,7 @@ export const PlayGame = (socket, io) =>
     });
             
 
-		// 2. JPasser au tour suivant -start-tour
-
-		socket.on("tour", ({ roomId, username }) => {
-			const jeu = getGame(roomId);
-			const joueur = jeu.joueurs.find(j => j.nom === username);
-
 		
-			// Réinitialisation du tableau des cartes jouées
-			cartesAJoueesParRoom[roomId] = [];
-		
-			// Lancer un nouveau timer pour ce tour
-			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
-		
-			// Trouver le socket ID du joueur
-			const room = rooms.find(r => r.id === roomId);
-			const socketId = room?.users.find(u => u.username === username)?.idSocketUser;
-		
-			if (socketId) {
-				io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
-				console.log(`🖐️ Main envoyée à ${username}`);
-			} else {
-				console.log(`❌ Socket introuvable pour le joueur ${username}`);
-			}
-		});
-  
-
 
 
 
@@ -270,10 +266,7 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue)
 
 function notifierCarteJouee(io, roomId, jeu) 
 {
-	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-	console.log("🎯 Table mise à jour :", table);
-	io.to(roomId).emit("update-table", table);
-  
+	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
 	io.to(roomId).emit("update-scores", scores);
   
@@ -333,7 +326,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 
 		clearInterval(affichageTimers[roomId]);
 		delete affichageTimers[roomId];
-		io.to(roomId).emit("fin-tour");
+		//io.to(roomId).emit("fin-tour");
 
 	}, duration);
 
@@ -420,10 +413,6 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
                     joueur.updateScore(penalite);
                     jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
                     delete joueur.carteEnAttente;
-
-                    io.to(roomId).emit("update-table", jeu.table.rangs.map(r => r.cartes.map(c => c.numero)));
-                    io.to(roomId).emit("update-scores", jeu.joueurs.map(j => ({ nom: j.nom, score: j.score })));
-
                     resolve();
                 }
                 };
@@ -449,6 +438,30 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 
 
 
+function envoyerMainEtTable(io, roomId, jeu, rooms) 
+{
+	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+	console.log("🎯 Table mise à jour :", table);
+	io.to(roomId).emit("update-table", table);
 
 
+	const room = rooms.find(r => r.id === roomId);
 
+	if (!room) return;
+	const usernames = getUsers(roomId);
+	const usersWithSocket = getUsersAndSocketId(roomId);
+
+	for (let i = 0; i < usernames.length; i++)
+	{
+		// On a déjà distribué les cartes dans le constructeur
+		const joueur = jeu.joueurs[i];
+		const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
+		if (socketId) 
+		{
+			io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+			console.log(`🖐️ Main envoyée à ${joueur.nom}`);
+		}
+	}
+
+
+}
