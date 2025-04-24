@@ -240,6 +240,15 @@ class Jeu6Takes {
         }
 
     }
+
+    existeBot() {
+        return this.joueurs.some(j => j.nom.startsWith("Bot"));
+      }
+      
+      nbBots() {
+        return this.joueurs.filter(j => j.nom.startsWith("Bot")).length;
+      }
+      
     
 }
 
