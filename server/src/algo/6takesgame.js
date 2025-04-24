@@ -71,7 +71,6 @@ class Rang {
         for (let i = 0; i < this.cartes.length; i++) {
             carte.push(this.cartes[i]);
         }
-        console.log("recuperer cartes", carte);
         return carte;
     }
 
@@ -115,7 +114,6 @@ class Table {
         } 
         else 
         {
-            console.log("Aucune rangée possible, il faut gérer ce cas (choix d'un rang à ramasser)");
             return -1;
         }
     }
@@ -125,7 +123,6 @@ class Table {
             if (this.rangs[i].estPleine()) {
                 let cartesARamasser = this.rangs[i].recupererCartes();
                 this.rangs[i] = new Rang(this.rangs[i].cartes[0]);
-                console.log("Cartes ramassées :", cartesARamasser);
                 return cartesARamasser;
             }
         }
@@ -173,6 +170,10 @@ class Joueur {
     getHand() {
         return this.hand.cartes;
     }
+
+    nouvelleMain(deck, nb_cartes) {
+        this.hand = new Hand(deck.distribuer(nb_cartes));
+    }
 }
 
 // 7. Classe Jeu6Takes
@@ -197,8 +198,18 @@ class Jeu6Takes {
     }
 
     mancheSuivante() {
-        this.mancheActuelle++;
+        // this.mancheActuelle++;
+        
+        // Nouveau deck et nouvelle table
+        this.deck = new Deck(true);
+        this.table = new Table(this.deck);
+
+        // Redonner une nouvelle main à chaque joueur
+        for (let joueur of this.joueurs) {
+            joueur.nouvelleMain(this.deck, this.nbCarte);
+        }
     }
+    
 
     resetGame() {
         this.constructor(this.nbJoueurs, this.joueurs.map(j => j.nom), this.nbMaxManches, this.nbMaxHeads, this.nbCarte);

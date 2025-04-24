@@ -55,12 +55,22 @@ export const PlayGame = (socket, io) =>
 		const usernames = getUsers(roomId);
 		const usersWithSocket = getUsersAndSocketId(roomId);
 
+		const room = rooms.find(r => r.id === roomId);
+		const settings = room.settings; // settings récupérés de la room
+
 		// Initialisation du jeu
 		let bool= games.find(g => g.roomId === roomId);
 		let jeu;
 		if (!bool) 
 		{
-		  jeu = new Jeu6Takes(usernames.length, usernames);
+		  	jeu = new Jeu6Takes(
+				usernames.length,
+				usernames,
+				settings.rounds,
+				settings.endByPoints,
+				settings.numberOfCards
+				);
+
 		  games.push(new Game(roomId, jeu));
 		} 
 		else 
@@ -91,9 +101,6 @@ export const PlayGame = (socket, io) =>
 	
 	});
 
-
-
-		// 
 
 	/***************************/
 	/*     2. start-tour       */
@@ -136,8 +143,6 @@ export const PlayGame = (socket, io) =>
 	});
 
 
-
-
 	/***************************/
 	/*    3. Jouer une carte   */
 	/***************************/
@@ -160,56 +165,60 @@ export const PlayGame = (socket, io) =>
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
 		// Tous les joueurs ont joué pas de soucis de temps
-		
-        if (cartesAJoueesParRoom[roomId].length === limite) 
-        {
-            clearTimeout(timers[roomId]);
-            delete timers[roomId];
-            clearInterval(affichageTimers[roomId]);
-            delete affichageTimers[roomId];
+		if (cartesAJoueesParRoom[roomId].length === limite) 
+		{
+			clearTimeout(timers[roomId]);
+			delete timers[roomId];
+			clearInterval(affichageTimers[roomId]);
+			delete affichageTimers[roomId];
 
-            //pour traiter les cartes une par une on ajoute une file
-            //on copie le contenu exct de CarteAJou dans fileTraitement
-            fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
-            cartesAJoueesParRoom[roomId] = [];
+			//pour traiter les cartes une par une on ajoute une file
+			//on copie le contenu exct de CarteAJou dans fileTraitement
+			fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+			cartesAJoueesParRoom[roomId] = [];
 
-            await traiterProchaineCarte(roomId, jeu, io, rooms);
+			await traiterProchaineCarte(roomId, jeu, io, rooms);
 
-            notifierCarteJouee(io, roomId, jeu);
-            lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
-
+			notifierCarteJouee(io, roomId, jeu);
+			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
+			
+				
 			if(jeu.checkEndManche())
 			{
-				console.log("fin de manche");
-				jeu.mancheSuivante();
-				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
+				jeu.mancheActuelle++;
+				if(!jeu.checkEndGame())
+				{
+					console.log("fin de manche");
+					jeu.mancheSuivante();
+					io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
+			
+				}
+				else 
+				{
+					const classement = jeu.joueurs
+					.map(j => ({ nom: j.nom, score: j.score }))
+					.sort((a, b) => a.score - b.score); // tri cdes scores
 
+					console.log("🏁 Fin de partie");
+					io.to(roomId).emit("end-game", { classement });
+					
+
+				}
 			}
-
-        }
+		}
 
     });
-            
-
-		
-
-
-
-
-
-
-
+         
 	
-	// 3. Choix d'une rangée si la carte est trop faible
+	/***************************/
+	/*    4. Choir une rangée  */
+	/***************************/		
 	socket.on("choisir-rangee", ({ roomId, indexRangee, username }) => 
 	{
 		handleChoixRangee(roomId, indexRangee, username, io);
 	});
 	
 	  
-  
-
-
 	// 4. Restaurer le jeu si besoin
 	socket.on("restore-game", ({ roomId, username }) => {
 	});
@@ -230,16 +239,7 @@ export const PlayGame = (socket, io) =>
 	socket.on("disconnect", () => {
 	});
 
-
-		  
-  
-
 };
-
-
-
-
-
 
 
 
