@@ -68,7 +68,6 @@ enum GameState {
 
 var game_state 
 var room_id_global
-var hand_received 
 var players_displayed
 var cards_animated
 var turn
@@ -83,7 +82,6 @@ func _ready():
 	#setting up row panels
 	turn = 1
 	players_displayed = false
-	#hand_received = false
 	cards_animated = false 
 	
 	highlight_row(false)
@@ -126,7 +124,8 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 		"ramassage_rang":
 			_handle_takes(data)
 		"fin-tour":
-			reset_hand()
+			pass
+			#_handle_your_hand(data)
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
@@ -149,11 +148,6 @@ func takes_row(data):
 	else:
 		show_label(user_takes + " Takes 6!")
 
-
-func reset_hand():
-	hand_received = false
-	_start_turn()
-	
 	
 func _handle_available_rooms(data):
 	if game_state != GameState.WAITING_FOR_LOBBY:
@@ -181,31 +175,36 @@ func _handle_available_rooms(data):
 func _handle_room_created(data):
 	print("on room created ", data )
 	
-	room_id_global = data[0]
-	print("global room id", room_id_global)
-		
+	room_id_global = data[0]		
 	var body = {
 		"roomId" : room_id_global,
 		"username" : player_username
 	}
 	game_state = GameState.ROOM_JOINED
 	
-	await get_tree().create_timer(10).timeout
+	await get_tree().create_timer(6).timeout
 	print("start game event")
 	
 	var start_data = {"roomId" : room_id_global}
 	
 	game_state = GameState.SETTING_UP_DECK
 	socket_io.emit("start-game", data[0])
-	#_start_turn()	
+	
+	show_label("Game Starting")
+	socket_io.emit("users-in-public-room", {
+		"roomId" : room_id_global
+	})
+	
+	await get_tree().create_timer(1).timeout
+	_start_turn()	
 
 func _handle_room_joined(data):
 	print("data for event room joined ", data)
 	
 
 func _start_turn():
-	#hand_received = false
 	if room_id_global != null:
+		print("emit tour")
 		socket_io.emit("tour", {
 			"roomId": room_id_global, 
 			"username": player_username
@@ -228,19 +227,7 @@ func _handle_update_scores(data):
 	
 	score = JSON.stringify(score)
 	score_label.text = score
-	#_start_turn()
-	
-	
-func _handle_your_hand(data):
-	#if hand_received:
-		#return
-	#hand_received = true
-	print("Data received on your-hand:", data)
-	if game_state == GameState.SETTING_UP_DECK:
-		deck_setup_animation()
-	
-	update_hand_ui(data)
-	#game_state = GameState.GAME_STARTED
+	_start_turn()
 
 
 func _handle_table(data):
@@ -312,8 +299,8 @@ func _find_card_data(card_id: int) -> Dictionary:
 
 # --- UI Update Functions ---
 
-func update_hand_ui(hand_data):
-	print("Update hand UI with:")
+func _handle_your_hand(hand_data):
+	print("Update hand UI ", hand_data)
 	for child in hbox_container.get_children():
 		child.queue_free()
 	
@@ -323,31 +310,35 @@ func update_hand_ui(hand_data):
 		
 		if card_id:
 			var card = card_ui_scene.instantiate()
-			card.modulate.a = 0
-			card.scale = Vector2(0.5, 0.5)
+			#card.modulate.a = 0
+			#card.scale = Vector2(0.5, 0.5)
 			hbox_container.add_child(card)
+			card.set_card_data(path, card_id)
 		
 			if !cards_animated:
+				card.modulate.a = 0
+				card.scale = Vector2(0.5, 0.5)
+			
 				var tw = create_tween()
 				tw.tween_property(card, "modulate:a", 1.0, 0.25)
 				tw.tween_property(card, "scale", Vector2(1,1), 0.25)
 				await tw.finished
 
 				#await card.start_flip_timer(0.1)
-				var t = get_tree().create_timer(0.2)
+				var t = get_tree().create_timer(0.1)
 				await t.timeout
 				
 				card.flip_card()
 				await get_tree().create_timer(0.05).timeout
-			
+
 			else:
+				#card.modulate.a = 1.0
+				#card.scale = Vector2(1,1)
 				card.toggle_texture_visibility(true)
-				
-			card.set_card_data(path, card_id)
+
 			card.connect("card_selected", Callable(self, "_on_card_selected"))
 	
 	cards_animated = true
-
 
 func _on_card_selected(card_number):
 	var data = {
@@ -429,17 +420,6 @@ func _clear_row_selection_ui():
 		row_buttons[i].visible = false
 		row_panels[i].add_theme_stylebox_override("panel", null)
 
-
-func deck_setup_animation():
-	show_label("Game Starting")
-	socket_io.emit("users-in-public-room", {
-		"roomId" : room_id_global
-	})
-	
-	#emit tour to start timer
-	#await get_tree().create_timer(3).timeout
-	#_start_turn()
-	
 	
 func show_label(text: String) -> void:
 	state_label.text = text
@@ -477,9 +457,7 @@ func setup_players(player_data):
 		others.append(user_dict)
 	
 	for i in range(others.size()):
-		print("other players debug")
 		var user = others[i]
-		print("user debug ", user)
 		
 		if user.icon:
 			user_icon = user.icon
@@ -488,10 +466,8 @@ func setup_players(player_data):
 			
 		var vis = create_player_visual(user.username, user_icon, false)
 		if i % 2 == 0:
-			print("added player right")
 			right_player_container.add_child(vis)
 		else:
-			print("added player left")
 			left_player_container.add_child(vis)
 
 	

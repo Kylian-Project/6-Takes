@@ -76,7 +76,7 @@ label_settings = SubResource("LabelSettings_bf7xg")
 
 [node name="nbheads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
-text = "        int"
+text = "0"
 label_settings = SubResource("LabelSettings_5oo11")
 horizontal_alignment = 2
 
@@ -104,7 +104,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 34
-text = "00:45"
+text = "00:00"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
 offset_left = 1828.0

@@ -53,7 +53,6 @@ func set_card_data(image_path, card_id):
 
 
 func _on_select_button_pressed() -> void:
-	print("emitting card selected signal")
 	emit_signal("card_selected", global_card_id)
 	is_lifted = false
 	self.visible = false
@@ -132,6 +131,5 @@ func flip_card() -> void:
 	tween.tween_property(self, "scale:x", 1.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func toggle_texture_visibility(boolean):
-	print("visibility :", !texture_rect.visible)
 	texture_rect.visible = boolean
 	back_texture.visible = !boolean
