@@ -70,7 +70,6 @@ var game_state
 var room_id_global
 var players_displayed
 var cards_animated
-var turn
 
 func _ready():
 	_load_cards()
@@ -80,7 +79,6 @@ func _ready():
 	game_state = GameState.WAITING_FOR_LOBBY
 	
 	#setting up row panels
-	turn = 1
 	players_displayed = false
 	cards_animated = false 
 	
@@ -136,8 +134,7 @@ func _on_socket_event_received(event: String, data: Variant, ns: String) -> void
 
 func _handle_next_round(data):
 	show_label("Next Round")
-	turn += 1
-	turn_label.text = "Turn " + turn +"/" #add total turns
+	turn_label.text = "Turn " + data[0] +"/" #add total turns
 	
 	
 func takes_row(data):
