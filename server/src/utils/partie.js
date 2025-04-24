@@ -1,3 +1,4 @@
+//debut 22H
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
 
@@ -223,10 +224,6 @@ export const PlayGame = (socket, io) =>
 	socket.on("restore-game", ({ roomId, username }) => {
 	});
   
-	// 5. Nouvelle manche
-	socket.on("new-round", (roomId) => {
-	});
-  
 	// 6. Nouvelle partie
 	socket.on("new-game", (roomId) => {
 	});
@@ -395,7 +392,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
             const rangsInfo = jeu.table.rangs.map((rang, i) => ({
                 index: i,
                 cartes: rang.cartes.map(c => c.numero),
-                penalite: rang.totalTetes()
+                penalite: rang.totalTetes()	// a retirer prsq le joueur est sensé les calculer !!!!
             }));
 
             const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
@@ -403,26 +400,47 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
             socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
             io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
 
-            await new Promise(resolve => 
-            {
-                const handler = ({ roomId: rid, indexRangee, username: uname }) => {
-                if (rid === roomId && uname === username) {
-                    io.sockets.sockets.get(socketTargetId)?.off("choisir-rangee", handler);
-                    const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-                    const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-                    joueur.updateScore(penalite);
-                    jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
-                    delete joueur.carteEnAttente;
-                    resolve();
-                }
-                };
-                io.sockets.sockets.get(socketTargetId)?.on("choisir-rangee", handler);
-            });
+			await new Promise((resolve) => {				
+				const handler = ({ roomId: rid, indexRangee, username: uname }) => 
+				{
+					if (rid === roomId && uname === username) 
+					{
+						socketTarget.off("choisir-rangee", handler);
+						const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
+						const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+						joueur.updateScore(penalite);
+						jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
+						delete joueur.carteEnAttente;
+						resolve();
+					}
+				};
+			  
+				//  Lancement écoute du choix
+				socketTarget.on("choisir-rangee", handler);
+
+				//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
+				setTimeout(() => 
+				{
+					socketTarget.off("choisir-rangee", handler); // Suppression de l'ecoute
+					console.log(`⚠️ ${username} n'a pas choisi de rangée à temps, on choisit aléatoirement`);
+				
+					const indexRangee = Math.floor(Math.random() * 4);
+					const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
+					const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+					joueur.updateScore(penalite);
+					jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
+					delete joueur.carteEnAttente;
+			  
+				  	resolve();		//on arrete la promesse
+				}, 15000);
+			  });
+			  
         }
+		//pour le cas de la 6eme carte
 		else if (res=== "ramassage_rang")
 		{
 			const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-			io.to(roomId).except(socketTargetId).emit("ramassage_rang", { username });
+			io.to(roomId).emit("ramassage_rang", { username });
 		}
 
 
