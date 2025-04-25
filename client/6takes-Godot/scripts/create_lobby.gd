@@ -22,9 +22,6 @@ var BASE_URL
 var lobby_name 
 
 func _ready():
-	if client == null:
-		print("❌ Le client SocketIO n'a pas pu être instancié.")
-		return
 
 	BASE_URL = get_node("/root/Global").get_base_url()
 	BASE_URL = "http://" + BASE_URL
@@ -32,15 +29,10 @@ func _ready():
 	client.event_received.connect(_on_event_recu)
 	client.socket_connected.connect(_on_socket_connected)
 	client.socket_disconnected.connect(_on_socket_disconnected)
-
-	# Connexion du bouton "Créer"
+	client.connect_socket() 
+	
 	create_button.pressed.connect(_on_create_lobby)
 
-	# Démarre la connexion
-	client.connect_socket() 
-
-	# Demande de la liste des lobbies disponibles
-	#client.emit("get-available-rooms", {})  # Demande au serveur de récupérer la liste des lobbies disponibles
 
 func _on_socket_connected(ns: String):
 	print(" Socket connecté")
@@ -91,8 +83,10 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 	#elif event == "public-room-created":
 		#print("Le lobby public a été créé.")
 		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-	
-	elif event == "available-rooms":
-		# Traitement des lobbies disponibles
-		print(" Lobbies disponibles reçus :", data)
-		print(" Liste des lobbies mise à jour.")
+	else :
+		print("unhandled event received ,",event, data)
+		
+		
+func _on_close_pressed() -> void:
+	self.visible = false
+	queue_free()

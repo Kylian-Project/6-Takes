@@ -3,8 +3,6 @@ extends Control
 @onready var return_button = $MainButtonsBox/ReturnButton
 @onready var socket_io: SocketIO = $SocketIO
 @onready var settings_overlay = $SettingsOverlay
-@onready var create_lobby_overlay = $CreateLobbyOverlay
-@onready var join_lobby_overlay = $JoinLobbyOverlay
 @onready var rules_overlay = $RulesOverlay
 @onready var overlay_layer = $OverlayLayer
 
@@ -17,30 +15,16 @@ extends Control
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
-	$CreateLobbyOverlay/Close,
-	$JoinLobbyOverlay/Close,
 	$RulesOverlay/Close
 ]
-#var client = $SocketIO
-var BASE_URL 
 
 func _ready():
 	return_button.pressed.connect(_on_return_pressed)
 	
-	##connect to socket
-	#BASE_URL = get_node("/root/Global").get_base_url()
-	#BASE_URL = "http://" + BASE_URL
-	#client.base_url = BASE_URL
-	#client.connect_socket()
-	#client.event_received.connect(_on_socket_io_event_received)
-	
 	# Ensure all overlays are hidden at the start
 	settings_overlay.visible = false
-	create_lobby_overlay.visible = false
-	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
 	profile.pressed.connect(_on_profile_pressed)
-
 
 	# Connect button signals
 	create_lobby_button.pressed.connect(_on_create_lobby_pressed)
@@ -83,22 +67,47 @@ func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> v
 func _on_return_pressed():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")  # Change scene
 # Function to open a specific overlay and hide the others
+
 func open_overlay(overlay: Control):
 	settings_overlay.visible = false
-	create_lobby_overlay.visible = false
-	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
 	overlay.visible = true  # Show the selected overlay
 
-# Button functions
+
 func _on_create_lobby_pressed():
-	open_overlay(create_lobby_overlay)
+	#open_overlay(create_lobby_overlay)
+	var create_lobby_scene = load("res://scenes/lobby_scenes/createLobby.tscn")
 	
+	if create_lobby_scene == null:
+		print(" Erreur : Impossible de charger la scène SignUp")
+		return 
+		
+	var create_lobby_instance = create_lobby_scene.instantiate()
+	
+	if create_lobby_instance == null:
+		print(" Erreur : Impossible d'instancier la scène SignUp")
+		return  # Stop l'exécution ici
+
+	get_tree().current_scene.add_child(create_lobby_instance)
+	create_lobby_instance.visible = true
+
 
 func _on_join_lobby_pressed():
-	#client.connect_socket()
-	#client.emit("available-rooms", {})
-	open_overlay(join_lobby_overlay)
+	#open_overlay(join_lobby_overlay)
+	var join_lobby_scene = load("res://scenes/lobby_scenes/joinLobby.tscn")
+	
+	if join_lobby_scene == null:
+		print(" Erreur : Impossible de charger la scène SignUp")
+		return 
+		
+	var join_lobby_instance = join_lobby_scene.instantiate()
+	
+	if join_lobby_instance == null:
+		print(" Erreur : Impossible d'instancier la scène SignUp")
+		return  # Stop l'exécution ici
+
+	get_tree().current_scene.add_child(join_lobby_instance)
+	join_lobby_instance.visible = true
 
 
 func _on_settings_pressed():
@@ -110,8 +119,6 @@ func _on_rules_pressed():
 # Function to close overlays
 func _on_close_overlay_pressed():
 	settings_overlay.visible = false
-	create_lobby_overlay.visible = false
-	join_lobby_overlay.visible = false
 	rules_overlay.visible = false
 	
 func _on_profile_pressed():

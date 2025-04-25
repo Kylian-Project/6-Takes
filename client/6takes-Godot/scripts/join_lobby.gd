@@ -143,3 +143,8 @@ func _on_socket_connected(ns: String):
 
 func _on_socket_disconnected():
 	print("Socket déconnecté.")
+
+
+func _on_close_pressed() -> void:
+	self.visible = false
+	queue_free()
