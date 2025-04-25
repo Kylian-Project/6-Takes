@@ -58,7 +58,7 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 	print("Événement reçu :", event)
 	if event == "available-rooms":
 		print("Lobbies disponibles reçus :", data)
-		available_rooms_list.clear()
+		available_rooms_list.clear()  # Vider la liste existante
 		room_ids.clear()
 
 		if typeof(data) == TYPE_ARRAY and data.size() > 0:
@@ -70,12 +70,15 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 							var room_name = room.get("name", "Unknown")
 							var count = room.get("count", 0)
 							var player_limit = room.get("playerLimit", 10)
+							var is_private = room.get("isPrivate", false)
 
 							var display_text = "%s (%d/%d)" % [room_name, count, player_limit]
+							if is_private:
+								display_text = "[Privé] " + display_text  # Marquer comme privé
 							available_rooms_list.add_item(display_text)
 							available_rooms_list.set_item_metadata(available_rooms_list.item_count - 1, room_id)
 
-							room_ids.append(room_id)  # Stocke l'ID dans l'ordre
+							room_ids.append(room_id)
 							print("🔹 Lobby ajouté :", room_name, "ID:", room_id)
 
 	if event == "public-room-joined":
@@ -84,7 +87,7 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 			if typeof(room_info) == TYPE_DICTIONARY:
 				var count = room_info.get("count", 0)
 				var usernames = room_info.get("usernames", [])
-				print("Tu as rejoint le lobby avec :", usernames)
+				print("Tu as rejoint le lobby public avec :", usernames)
 				print("Nombre actuel de joueurs : ", count)
 
 				if self.selected_room_id != "":
@@ -98,6 +101,27 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 				print("Format de données incorrect pour 'public-room-joined' :", room_info)
 		else:
 			print("Données vides ou mal formatées pour 'public-room-joined'")
+
+	elif event == "private-room-joined":
+		if typeof(data) == TYPE_ARRAY and data.size() > 0:
+			var room_info = data[0]
+			if typeof(room_info) == TYPE_DICTIONARY:
+				var count = room_info.get("count", 0)
+				var usernames = room_info.get("usernames", [])
+				print("Tu as rejoint le lobby privé avec :", usernames)
+				print("Nombre actuel de joueurs : ", count)
+
+				if self.selected_room_id != "":
+					_update_room_in_list(self.selected_room_id, count, usernames)
+				else:
+					print("❌ Aucune ID de lobby sélectionnée pour mise à jour.")
+
+				print("Changement de scène vers le GameBoard...")
+				get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+			else:
+				print("Format de données incorrect pour 'private-room-joined' :", room_info)
+		else:
+			print("Données vides ou mal formatées pour 'private-room-joined'")
 
 func _update_room_in_list(room_id: String, count: int, usernames: Array):
 	var room_found = false

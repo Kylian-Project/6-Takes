@@ -1,4 +1,5 @@
 extends Node2D
+
 # Conteneurs pour les cartes et la barre du haut
 @export var vbox_container: VBoxContainer  # Conteneur des cartes de la rangée
 @export var hbox_container: HBoxContainer  # Conteneur des cartes du joueur
@@ -7,6 +8,13 @@ extends Node2D
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
+var round_duration = Global.game_settings.get("round_timer", 60)  # fallback 60s
+var time_left = round_duration
+
+@onready var label_turn = $HBoxContainer/turn
+@onready var message_label = $HBoxContainer/messagetimer  # Le label pour le message statique
+@onready var label_timer = $HBoxContainer2/Label_timer  # Le label pour afficher le temps restant
+@onready var round_timer = $HBoxContainer2/Timer
 
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
@@ -15,17 +23,22 @@ var selected_cards = []  # Liste des cartes déjà utilisées
 # Instance de l'écran de pause
 var pause_instance = null
 
-
-
-@export var  spplayerleft : VBoxContainer  # Assurez-vous que spplayerleft est assigné depuis l'éditeur
-
-@export var  spplayerright : VBoxContainer
-
+@export var spplayerleft : VBoxContainer  # Assurez-vous que spplayerleft est assigné depuis l'éditeur
+@export var spplayerright : VBoxContainer
 @export var bot_scene: PackedScene = preload("res://scenes/BotSlot.tscn")  # Précharge la scène du bot
 
 var bots_info = []  # Liste des informations des bots à afficher
 
 func _ready():
+	if label_timer == null:
+		print("❌ Erreur : label_timer est nul. Assurez-vous qu'il est bien assigné dans l'éditeur.")
+		return
+
+	round_timer.wait_time = 1  # Le Timer va se déclencher toutes les secondes
+	round_timer.start()  # Démarre le timer
+
+	# Connecte l'événement de timeout du Timer à la fonction qui met à jour le temps
+	round_timer.timeout.connect(_on_timer_timeout)
 	if spplayerleft == null:
 		print("❌ Erreur : spplayerleft est nul, assurez-vous qu'il est bien assigné dans l'éditeur.")
 		return
@@ -54,7 +67,18 @@ func _ready():
 		print("❌ Erreur : spplayerright n'est toujours pas assigné !")
 		return
 
+# Mise à jour de l'affichage du tour
+# Mise à jour de l'affichage du tour
+func update_turn_display(current_turn: int):
+	# Récupère le nombre de cartes sélectionnées
+	var max_turns = selected_cards.size()  # Le nombre de cartes détermine le nombre de tours
 
+	# Si le nombre de cartes est supérieur à 0, affiche "Turn X/Y"
+	if max_turns > 0:
+		label_turn.text = "Turn  %d/%d" % [current_turn, max_turns]
+	else:
+		label_turn.text = "Turn  0/0"  # Si pas de cartes, afficher "Tour 0/0"
+#Initialisation des joueurs depuis le lobby
 func setup_from_lobby(players: Array):
 	bots_info.clear()
 
@@ -64,18 +88,14 @@ func setup_from_lobby(players: Array):
 	display_bots()
 
 # Afficher les icônes des bots dans les panneaux de gauche et droite
-# Afficher les icônes des bots dans les panneaux de gauche et droite
-
 func display_bots():
-	
-	# Vérifier si spplayerleft et spplayerright sont correctement assignés
 	if spplayerleft == null:
 		print("Erreur : spplayerleft est nul. Vérifie l'assignation dans l'inspecteur.")
-		return  # Arrêter la fonction si spplayerleft est nul
+		return
 
 	if spplayerright == null:
 		print("Erreur : spplayerright est nul. Vérifie l'assignation dans l'inspecteur.")
-		return  # Arrêter la fonction si spplayerright est nul
+		return
 
 	# Réinitialiser les panneaux avant d'ajouter de nouveaux éléments
 	for child in spplayerleft.get_children():
@@ -121,7 +141,6 @@ func create_bot_icon(bot_info):
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
 	return icon
-	
 
 # ==============================
 # 🚀 Gestion de l'écran de pause
@@ -193,7 +212,10 @@ func _assign_vbox_cards():
 			print("❌ Erreur : L'instance de carte ne possède pas 'set_card_data'.")
 
 func _assign_hbox_cards():
-	if all_cards.size() < 10:
+	# Nombre de cartes à attribuer, basé sur la configuration globale ou un fallback
+	var cards_to_assign = Global.game_settings.get("nb_cartes", 10)  # fallback à 10 si absent
+
+	if all_cards.size() < cards_to_assign:
 		print("❌ Erreur : Pas assez de cartes pour le joueur !")
 		return
 
@@ -201,14 +223,41 @@ func _assign_hbox_cards():
 	for child in hbox_container.get_children():
 		child.queue_free()
 
-	for i in range(10):
+	# Liste des cartes sélectionnées
+	selected_cards.clear()  # Assurez-vous de vider la liste avant d'ajouter de nouvelles cartes
+
+	# Assigner les cartes
+	for i in range(cards_to_assign):
 		var card_instance = card_ui_scene.instantiate()
 		hbox_container.add_child(card_instance)
 		
 		if card_instance.has_method("set_card_data"):
 			var card = all_cards.pop_front()
 			card_instance.set_card_data(card["path"])
-			selected_cards.append(card)
+			selected_cards.append(card)  # Ajouter la carte à la liste des cartes sélectionnées
 			print("🃏 Carte assignée au joueur", i, "avec ID", card["id"], ":", card["path"])
 		else:
 			print("❌ Erreur : L'instance de carte ne possède pas 'set_card_data'.")
+
+	# Après avoir attribué les cartes, mettre à jour l'affichage du tour
+	update_turn_display(1)  # Par exemple, on commence au tour 1 (ou à un autre tour selon le jeu)
+
+# ==============================
+# 🚀 Gestion du timer
+# ==============================
+func start_round_timer():
+	time_left = round_duration
+	label_timer.text = str(time_left)  # Affiche seulement le nombre de secondes restantes
+	round_timer.wait_time = 1
+	round_timer.start()
+
+# Cette fonction est appelée à chaque timeout du timer
+func _on_timer_timeout():
+	time_left -= 1  # Décrémenter le temps restant
+
+	# Mets à jour le texte du Label avec uniquement le temps restant (pas de message)
+	label_timer.text = str(time_left) + " s" # Affiche juste le nombre restant en secondes
+
+	# Si le temps est écoulé, arrête le timer
+	if time_left <= 0:
+		round_timer.stop()  # Arrêter le timer quand le temps est écoulé

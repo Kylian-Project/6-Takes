@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=16 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_ogeqv"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
+[ext_resource type="Theme" uid="uid://cu3iwi035266x" path="res://assets/images/label_theme.theme" id="4_vdvt6"]
+[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_qasg2"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 
@@ -24,6 +26,10 @@ font_size = 50
 
 [sub_resource type="LabelSettings" id="LabelSettings_8de43"]
 font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_43ah5"]
+font = ExtResource("5_qasg2")
 font_size = 30
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
@@ -77,18 +83,35 @@ offset_right = 1008.0
 offset_bottom = 73.0
 alignment = 1
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="turn" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "Turn 1/10"
 label_settings = SubResource("LabelSettings_7rt8c")
 
-[node name="Label2" type="Label" parent="HBoxContainer"]
+[node name="messagetimer" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "              Waiting for players
 "
 label_settings = SubResource("LabelSettings_8de43")
 horizontal_alignment = 3
 vertical_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+offset_left = 1179.0
+offset_top = 23.0
+offset_right = 1369.0
+offset_bottom = 65.0
+
+[node name="Label_timer" type="Label" parent="HBoxContainer2"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme = ExtResource("4_vdvt6")
+theme_override_fonts/font = ExtResource("5_qasg2")
+theme_override_font_sizes/font_size = 100
+text = "time"
+label_settings = SubResource("LabelSettings_43ah5")
+
+[node name="Timer" type="Timer" parent="HBoxContainer2"]
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
 offset_left = 1828.0
