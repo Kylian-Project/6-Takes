@@ -121,9 +121,7 @@ func create_bot_icon(bot_info):
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
 	return icon
-	print(" icone assighner au bot", i, "bot_info")
-
-
+	
 
 # ==============================
 # 🚀 Gestion de l'écran de pause

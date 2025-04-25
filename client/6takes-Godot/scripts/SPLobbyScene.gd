@@ -56,17 +56,31 @@ func _ready():
 	max_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
 
 	update_bot_slots()
-
+	update_add_bot_button()
 
 func add_bot():
-	if bot_count < 9:
-		bot_count += 1
-		update_bot_slots()
+	var player_limit = get_current_player_limit()
+	if (bot_count + 1) >= player_limit:
+		print("Limite de joueurs atteinte (", player_limit, ")")
+		return
+
+	bot_count += 1
+	update_bot_slots()
+
+func get_current_player_limit() -> int:
+	if settings_overlay.has_method("get_settings"):
+		return settings_overlay.get_settings()["player_limit"]
+	return 9  # fallback par défaut
+
+func update_add_bot_button():
+	var player_limit = get_current_player_limit()
+	add_bot_button.disabled = (bot_count + 1) >= player_limit
 
 func remove_bot(bot_instance):
 	if bot_count > 1:
 		bot_count -= 1
 		update_bot_slots()
+		update_add_bot_button()
 	else:
 		print("Cannot remove the last bot!")
 
@@ -91,6 +105,18 @@ func update_bot_slots():
 
 # Démarrer le jeu
 func start_game():
+	var settings = settings_overlay.get_settings()
+
+	# Sauvegarde des paramètres dans le singleton Global
+	Global.game_settings = {
+		"nb_cartes": settings["card_number"],
+		"nb_max_heads": settings["max_points"] if settings["use_max_points"] else 999,
+		"nb_max_manches": settings["rounds"] if not settings["use_max_points"] else 999,
+		"bot_count": bot_count,
+		"round_timer": settings["round_timer"]
+	}
+
+	print("Lancement du jeu solo avec les paramètres :", Global.game_settings)
 	var player_name = "You"  # ou récupéré depuis un champ de saisie
 	print("Starting game for", player_name, "with", bot_count, "bots.")
 

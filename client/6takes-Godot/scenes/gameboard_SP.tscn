@@ -36,7 +36,6 @@ hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 top_bar = NodePath("CanvasLayer/top_bar")
 spplayerleft = NodePath("spplayerleft")
 spplayerright = NodePath("spplayerright")
-bot_scene = null
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1

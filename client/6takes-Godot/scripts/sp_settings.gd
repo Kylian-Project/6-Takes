@@ -25,3 +25,16 @@ func _on_end_points_selected(index: int):
 	
 	end_points_dropdown.button_pressed = false 
 	
+func get_settings() -> Dictionary:
+	var use_max_points = end_points_dropdown.selected == 1
+
+	var settings = {
+		"use_max_points": use_max_points,
+		"max_points": int(max_points_dropdown.get_item_text(max_points_dropdown.selected)),
+		"rounds": int(round_dropdown.get_item_text(round_dropdown.selected)),
+		"card_number": int($PanelContainer/MainVertical/AvailableOptions/Choices/CardNumberDropdown.get_item_text($PanelContainer/MainVertical/AvailableOptions/Choices/CardNumberDropdown.selected)),
+		"round_timer": int($PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown.get_item_text($PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown.selected)),
+		"player_limit": int($PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown.get_item_text($PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown.selected))
+	}
+	
+	return settings
