@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_ogeqv"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
@@ -29,11 +29,14 @@ font_size = 30
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(1124.5, 737.75)
 
-[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container", "top_bar")]
-script = ExtResource("1_yvybn")
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container", "top_bar", "spplayerleft", "spplayerright")]
+script = ExtResource("1_ogeqv")
 vbox_container = NodePath("hand_colom/rangeofcard")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
-top_bar = NodePath("CanvasLayer2/HBoxContainer")
+top_bar = NodePath("CanvasLayer/top_bar")
+spplayerleft = NodePath("spplayerleft")
+spplayerright = NodePath("spplayerright")
+bot_scene = null
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -105,10 +108,10 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 428.0
-offset_top = 143.0
-offset_right = 1551.0
-offset_bottom = 835.0
+offset_left = 487.0
+offset_top = 122.0
+offset_right = 1580.0
+offset_bottom = 854.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -225,5 +228,17 @@ offset_right = 1564.0
 offset_bottom = 952.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="spplayerleft" type="VBoxContainer" parent="."]
+offset_left = 34.0
+offset_top = 130.0
+offset_right = 240.0
+offset_bottom = 1030.0
+
+[node name="spplayerright" type="VBoxContainer" parent="."]
+offset_left = 1708.0
+offset_top = 168.0
+offset_right = 1900.0
+offset_bottom = 1032.0
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

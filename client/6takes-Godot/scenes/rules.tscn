@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dswro2gf43iip"]
 
-[ext_resource type="Script" uid="uid://vdo3rdq00ofr" path="res://scripts/rules.gd" id="1_7sap1"]
+[ext_resource type="Script" path="res://scripts/rules.gd" id="1_7sap1"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_qwy8h"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="3_vj88w"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="4_oyd2o"]

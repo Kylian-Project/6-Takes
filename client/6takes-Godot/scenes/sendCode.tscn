@@ -10,7 +10,7 @@
 [ext_resource type="StyleBox" uid="uid://wem08rsh1cos" path="res://assets/styleBox/signUp_input_focus.tres" id="6_r6e7w"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="8_dtbr3"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="9_mv6e1"]
-[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="11_0dcu2"]
+[ext_resource type="PackedScene" uid="uid://cbeyupuqn34wv" path="res://scenes/popUp.tscn" id="11_0dcu2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0omyn"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
