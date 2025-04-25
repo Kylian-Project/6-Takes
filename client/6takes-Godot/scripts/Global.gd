@@ -58,10 +58,12 @@ func get_saved_token():
 func set_logged_in(state):
 	logged_in = state
 
-func save_session(token: String):
+func save_session(token: String, uid, uname, icon):
 	#var config = ConfigFile.new()
 	config.set_value("session", "token", token)
-	#config.set_value("user", "email", email)
+	config.set_value("user", "uid", uid)
+	config.set_value("user", "username", uname)
+	config.set_value("user", "icon", icon)
 	
 	var error = config.save("user://session.cfg")
 	if error != OK:
@@ -88,9 +90,7 @@ func session_validation(token : String):
 	http_request.request_completed.connect(_on_request_completed)
 
 	var headers = ["Authorization: Bearer " + token]
-	print("\n headers debug \n", headers)
 	var json_body = JSON.stringify(token)
- 
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
 	print("\n url debug ", url)
@@ -115,6 +115,8 @@ func _on_request_completed(result, response_code, headers, body):
 		player_name = result_string["player"]["username"]
 		icon_id = result_string["player"]["icon"]
 		player_id =  playerIid
+		
+		save_session(saved_token, player_id, player_name, icon_id)
 		print("Session validated!")
 		
 	else:

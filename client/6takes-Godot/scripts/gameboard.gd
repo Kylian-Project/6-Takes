@@ -75,9 +75,10 @@ func _ready():
 	_load_cards()
 	#player_username = get_node("/root/Global").player_name
 	#debug
-	player_username = "tester"
-	game_state = GameState.WAITING_FOR_LOBBY
 	
+	game_state = GameState.WAITING_FOR_LOBBY
+	player_username = get_node("/root/Global").player_name
+	room_id_global = get_node("/root/GameState").id_lobby
 	#setting up row panels
 	players_displayed = false
 	cards_animated = false 
@@ -99,12 +100,6 @@ func _ready():
 #event listener
 func _on_socket_event_received(event: String, data: Variant, ns: String) -> void:
 	match event:
-		"available-rooms":
-			_handle_available_rooms(data)
-		"private-room-created", "public-room-created":
-			_handle_room_created(data)
-		"public-room-joined", "private-room-joined":
-			_handle_room_joined(data)
 		"your-hand":
 			_handle_your_hand(data)
 		"initial-table", "update-table":
@@ -145,43 +140,8 @@ func takes_row(data):
 	else:
 		show_label(user_takes + " Takes 6!")
 
-	
-func _handle_available_rooms(data):
-	if game_state != GameState.WAITING_FOR_LOBBY:
-		return 
-	print("data received for available rooms:\n", data)
-	##create a lobby just to test code 
-	if game_state == GameState.WAITING_FOR_LOBBY:
-		var lobby = {
-			"username" : "tester",
-			"isPrivate" : "PUBLIC",
-			"lobbyName" : "BestLobby",
-			"playerLimit" : 2,
-			"numberOfCards": 10,
-			"roundTimer": 45,
-			"endByPoints": 66,
-			"rounds": 2
-		}
-		game_state = GameState.LOBBY_CREATED	#update game state
-		socket_io.emit("create-room", lobby)
-		
-	else:
-		room_id_global = data[0][0]["id"]
 
-
-func _handle_room_created(data):
-	print("on room created ", data )
-	
-	room_id_global = data[0]		
-	var body = {
-		"roomId" : room_id_global,
-		"username" : player_username
-	}
-	game_state = GameState.ROOM_JOINED
-	
-	await get_tree().create_timer(6).timeout
-	print("start game event")
-	
+func start_game(data):
 	var start_data = {"roomId" : room_id_global}
 	
 	game_state = GameState.SETTING_UP_DECK

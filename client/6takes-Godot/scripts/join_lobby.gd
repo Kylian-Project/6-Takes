@@ -4,19 +4,26 @@ extends Control
 @onready var join_button = $JoinPanel/MainVertical/JoinCodeContainer/JoinCodeButton
 @onready var client: SocketIO = $"../SocketIO"
 @onready var btn = $JoinPanel/MainVertical/JoinCodeContainer/SpinBox
-@onready var test_button = $JoinPanel/MainVertical/AvailableOptions/TestButton
+#@onready var test_button = $JoinPanel/MainVertical/AvailableOptions/TestButton
 @onready var refresh = $Button2
 var selected_room_id = ""
 var room_ids: Array = []  # <-- Contient les roomId réels (ex: "cTjY")
 var max_players = 10
+var BASE_URL
+
+var player_name
 
 func _ready():
 	if client == null:
 		print("❌ Le client SocketIO n'est pas instancié.")
 		return
-
+	
+	player_name = get_node("/root/Global").player_name
 	available_rooms_list.custom_minimum_size = Vector2(200, 200)
-
+	
+	BASE_URL = get_node("/root/Global").get_base_url()
+	BASE_URL = "http://" + BASE_URL
+	client.base_url = BASE_URL
 	client.socket_connected.connect(_on_socket_connected)
 	client.socket_disconnected.connect(_on_socket_disconnected)
 	client.event_received.connect(_on_event_recu)
@@ -26,10 +33,8 @@ func _ready():
 	available_rooms_list.item_selected.connect(_on_room_selected)
 	refresh.pressed.connect(_on_refresh_lobbies)
 
-	if test_button:
-		test_button.pressed.connect(_on_test_button_pressed)
+	#client.emit("available-rooms", {})
 
-	client.emit("available-rooms", {})
 
 func _on_room_selected(index: int):
 	var selected_room_name = available_rooms_list.get_item_text(index)
@@ -39,19 +44,19 @@ func _on_room_selected(index: int):
 
 	self.selected_room_id = selected_room_id
 
-	btn.text = selected_room_id  # ✅ On met directement l'ID du lobby dans le LineEdit (pas l'index !)
+	btn.text = selected_room_id
+
 
 func _on_refresh_lobbies():
-	print("🔄 Rafraîchissement des lobbies demandé...")
+	print(" Rafraîchissement des lobbies demandé...")
 	client.emit("available-rooms", {})
-
-	if selected_room_id != "":
-		var message = {
-			"roomId": selected_room_id,
-			"username": "mouctar"
-		}
-		client.emit("join-room", message)
-		print("🔁 Rejoint temporairement pour actualiser les joueurs :", message)
+#
+	#if selected_room_id != "":
+		#var message = {
+			#"roomId": selected_room_id,
+			#"username": player_name
+		#}
+		#client.emit("join-room", message)
 
 
 func _on_event_recu(event: String, data: Variant, ns: String):
@@ -78,7 +83,7 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 							room_ids.append(room_id)  # Stocke l'ID dans l'ordre
 							print("🔹 Lobby ajouté :", room_name, "ID:", room_id)
 
-	if event == "public-room-joined":
+	if event == "public-room-joined" or event == "private-room-joined" :
 		if typeof(data) == TYPE_ARRAY and data.size() > 0:
 			var room_info = data[0]
 			if typeof(room_info) == TYPE_DICTIONARY:
@@ -92,12 +97,17 @@ func _on_event_recu(event: String, data: Variant, ns: String):
 				else:
 					print("❌ Aucune ID de lobby sélectionnée pour mise à jour.")
 				
-				print("Changement de scène vers le GameBoard...")
-				get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+					
+				get_node("/root/GameState").id_lobby = selected_room_id
+				get_node("/root/GameState").is_host = false
+				get_node("/root/GameState").other_players = usernames
+				
+				get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 			else:
 				print("Format de données incorrect pour 'public-room-joined' :", room_info)
 		else:
 			print("Données vides ou mal formatées pour 'public-room-joined'")
+
 
 func _update_room_in_list(room_id: String, count: int, usernames: Array):
 	var room_found = false
@@ -120,20 +130,16 @@ func _on_join_lobby():
 	if selected_room_value != "":
 		var message = {
 			"roomId": selected_room_value,
-			"username": "mouctar"
+			"username": player_name
 		}
 		client.emit("join-room", message)
-		print("✅ Demande de rejoindre le lobby envoyée :", message)
+		print("join room sent :", message)
 	else:
-		print("❌ Aucun lobby sélectionné ou valeur vide dans le LineEdit.")
+		print(" Aucun lobby sélectionné ou valeur vide dans le LineEdit.")
+
 
 func _on_socket_connected(ns: String):
 	print("Socket connecté :", ns)
 
 func _on_socket_disconnected():
 	print("Socket déconnecté.")
-
-func _on_test_button_pressed():
-	available_rooms_list.add_item("TEST_LOBBY")
-	room_ids.append("test1234")
-	print("Test: ajout de 'TEST_LOBBY' dans la liste avec ID test1234")

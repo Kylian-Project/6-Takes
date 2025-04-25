@@ -14,7 +14,7 @@
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="9_n02ju"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_pajrb"]
 [ext_resource type="Script" path="res://scripts/create_lobby.gd" id="11_md0s3"]
-[ext_resource type="Script" path="res://scripts/line_edit_check.gd" id="12_3t6wc"]
+[ext_resource type="Script" path="res://scripts/join_lobby.gd" id="12_3t6wc"]
 [ext_resource type="StyleBox" uid="uid://cclwcahso1h12" path="res://assets/styleBox/settings_menu_dropdown_nroma.tres" id="13_n1yxg"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="14_gfuy5"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="14_w4cnf"]
@@ -249,7 +249,6 @@ script = ExtResource("1_dp3rm")
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("2_75ips")
 autoconnect = false
-base_url = "http://185.155.93.105:14001"
 
 [node name="Backgroundcolour" type="ColorRect" parent="."]
 layout_mode = 1
@@ -927,7 +926,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
 text = "Public"
 
-[node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
+[node name="CreateLobbyButton" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)

@@ -1,32 +1,14 @@
-[gd_scene load_steps=18 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=14 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
+[ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="2_v13p7"]
 [ext_resource type="Texture2D" uid="uid://c4pji43cyew3j" path="res://assets/images/title_screen_players_lobby 1@2x.png" id="3_0sg8s"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_utsmw"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_nhk61"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_cj54l"]
-[ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="7_w3h5k"]
-[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="8_uqejv"]
 [ext_resource type="Script" path="res://scripts/sp_settings.gd" id="9_8ivq5"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_eex3c"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gic51"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xy670"]
-bg_color = Color(0.729412, 0.215686, 0.215686, 1)
-border_width_left = 15
-border_width_top = 40
-border_width_right = 15
-border_width_bottom = 40
-border_color = Color(0.729412, 0.215686, 0.215686, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jm5eu"]
-bg_color = Color(0.239216, 0.239216, 0.239216, 1)
-border_width_left = 20
-border_width_right = 20
-border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dh2o8"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -73,6 +55,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h4b0v")
+
+[node name="SocketIO" type="Node" parent="."]
+script = ExtResource("2_v13p7")
 
 [node name="BGColour" type="ColorRect" parent="."]
 layout_mode = 1
@@ -125,7 +110,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 200
 
-[node name="SPStartButton" type="Button" parent="BottomButtons"]
+[node name="StartButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -138,7 +123,7 @@ theme_override_styles/hover = ExtResource("5_nhk61")
 theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Start"
 
-[node name="SPSettingsButton" type="Button" parent="BottomButtons"]
+[node name="SettingsButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -151,7 +136,7 @@ theme_override_styles/hover = ExtResource("5_nhk61")
 theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Settings"
 
-[node name="SPReturnButton" type="Button" parent="BottomButtons"]
+[node name="QuitButton" type="Button" parent="BottomButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -162,7 +147,7 @@ theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 25
 theme_override_styles/hover = ExtResource("5_nhk61")
 theme_override_styles/normal = ExtResource("6_cj54l")
-text = "Return
+text = "Quit
 "
 
 [node name="MainVbox" type="VBoxContainer" parent="."]
@@ -178,42 +163,6 @@ offset_right = 808.0
 offset_bottom = 249.04
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="HostPlayer" type="PanelContainer" parent="MainVbox"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_gic51")
-
-[node name="PlayerHGroup" type="HBoxContainer" parent="MainVbox/HostPlayer"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="PlayerIcon" type="TextureRect" parent="MainVbox/HostPlayer/PlayerHGroup"]
-layout_mode = 2
-texture = ExtResource("7_w3h5k")
-expand_mode = 2
-stretch_mode = 4
-
-[node name="Label" type="Label" parent="MainVbox/HostPlayer/PlayerHGroup"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("4_utsmw")
-theme_override_font_sizes/font_size = 25
-theme_override_styles/normal = SubResource("StyleBoxFlat_xy670")
-text = "Player Name"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AddRemove" type="Button" parent="MainVbox/HostPlayer/PlayerHGroup"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_constants/icon_max_width = 50
-theme_override_font_sizes/font_size = 80
-theme_override_styles/normal = SubResource("StyleBoxFlat_jm5eu")
-button_mask = 0
-icon = ExtResource("8_uqejv")
-icon_alignment = 1
 
 [node name="SettingsOverlay" type="Control" parent="."]
 visible = false
@@ -460,3 +409,5 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_wgurt")
 text = "X"
+
+[connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]

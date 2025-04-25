@@ -1,7 +1,7 @@
 extends Control
 
 @onready var return_button = $MainButtonsBox/ReturnButton
-@onready var client: SocketIO = $SocketIO
+@onready var socket_io: SocketIO = $SocketIO
 @onready var settings_overlay = $SettingsOverlay
 @onready var create_lobby_overlay = $CreateLobbyOverlay
 @onready var join_lobby_overlay = $JoinLobbyOverlay
@@ -21,10 +21,19 @@ extends Control
 	$JoinLobbyOverlay/Close,
 	$RulesOverlay/Close
 ]
+#var client = $SocketIO
+var BASE_URL 
 
 func _ready():
 	return_button.pressed.connect(_on_return_pressed)
-	client.event_received.connect(_on_socket_io_event_received)
+	
+	##connect to socket
+	#BASE_URL = get_node("/root/Global").get_base_url()
+	#BASE_URL = "http://" + BASE_URL
+	#client.base_url = BASE_URL
+	#client.connect_socket()
+	#client.event_received.connect(_on_socket_io_event_received)
+	
 	# Ensure all overlays are hidden at the start
 	settings_overlay.visible = false
 	create_lobby_overlay.visible = false
@@ -67,6 +76,7 @@ func _ready():
 func _process(_delta):
 	overlay_layer.visible = overlay_layer.get_child_count() > 0
 	
+	
 func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
 	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
 	
@@ -83,11 +93,13 @@ func open_overlay(overlay: Control):
 # Button functions
 func _on_create_lobby_pressed():
 	open_overlay(create_lobby_overlay)
-	client.connect_socket()
+	
 
 func _on_join_lobby_pressed():
+	#client.connect_socket()
+	#client.emit("available-rooms", {})
 	open_overlay(join_lobby_overlay)
-	client.connect_socket()
+
 
 func _on_settings_pressed():
 	open_overlay(settings_overlay)

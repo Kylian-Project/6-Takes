@@ -92,7 +92,7 @@ func start_game():
 	
 
 func return_to_main_menu():
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 func show_settings():
 	settings_overlay.visible = true
