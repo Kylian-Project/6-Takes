@@ -122,16 +122,34 @@ export const PlayGame = (socket, io) =>
 		if (!jeu || !room) return;
 		const usernames = getUsers(roomId);
 		
-		const joueursAttendus = usernames.length;
+		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
+		const joueursAttendus = usernames.length - nombreBots;
+
+
+		  
+
 		//on lance tour que si ils sont tous la 
 		//histoire de tout factoriser a l'interieur de tour 
 		//pour que ca soit plus clair que les event comme youh-hand, update-table...
 		//sont tous envoyé en meme temps dan le "tour"
 		if (joueursPretPourTour[roomId].length === joueursAttendus) 
 		{
+			//faire jouer automatiquement les bots b1sur une fois que tous les joueurs sont prets
+			jeu.joueurs.forEach(joueur => 
+			{
+				if (joueur.nom.startsWith("Bot") && joueur.getHand().length > 0) 
+				{
+					const carte = joueur.getHand()[0];
+					//joueur.hand.jouerCarte(0);
+					console.log(`🤖 ${joueur.nom} a joué ${carte.numero}`);
+					if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
+					cartesAJoueesParRoom[roomId].push({ username: joueur.nom, carte });
+				}
+			});
+
 			// Tous sont prêts → on lance le tour
 			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);
-			cartesAJoueesParRoom[roomId] = [];
+			// cartesAJoueesParRoom[roomId] = [];
 		
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 		
@@ -383,7 +401,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     try 
     {
         const res = jeu.jouerCarte(username, carte);
-
+		
         if (res === "choix_rang_obligatoire") 
         {
             const joueur = jeu.joueurs.find(j => j.nom === username);
@@ -417,7 +435,15 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 			  
 				//  Lancement écoute du choix
 				socketTarget.on("choisir-rangee", handler);
-
+				let timer;
+				if(username.startsWith("Bot"))
+				{
+					timer = 5;	//comme ca on garde la meme structure que pour les joueurs humains juste ca ira plus vite
+				}
+				else 
+				{
+					timer = 15;
+				}
 				//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
 				setTimeout(() => 
 				{
@@ -432,7 +458,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 					delete joueur.carteEnAttente;
 			  
 				  	resolve();		//on arrete la promesse
-				}, 15000);
+				}, timer*1000);
 			  });
 			  
         }
@@ -471,7 +497,6 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
 
 	for (let i = 0; i < usernames.length; i++)
 	{
-		// On a déjà distribué les cartes dans le constructeur
 		const joueur = jeu.joueurs[i];
 		const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
 		if (socketId) 
