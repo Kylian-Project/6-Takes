@@ -1,4 +1,3 @@
-//debut 22H
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
 
@@ -33,7 +32,6 @@ function getGame(roomId)
 
 
 const games = [];		// tableau de Game
-// Mémoire temporaire pour stocker les cartes jouées par room
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
 const timers = {};  // un timer par room
 const affichageTimers = {};
@@ -94,8 +92,8 @@ export const PlayGame = (socket, io) =>
 		}
 
 		// Envoi de la table initiale à tous sert pas a grand chose a RETIRER
-		const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-		io.to(roomId).emit("initial-table", tableInit);
+		// const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+		// io.to(roomId).emit("initial-table", tableInit);
 
 
 		console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
@@ -140,19 +138,15 @@ export const PlayGame = (socket, io) =>
 				if (joueur.nom.startsWith("Bot") && joueur.getHand().length > 0) 
 				{
 					const carte = joueur.getHand()[0];
-					//joueur.hand.jouerCarte(0);
 					console.log(`🤖 ${joueur.nom} a joué ${carte.numero}`);
 					if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
 					cartesAJoueesParRoom[roomId].push({ username: joueur.nom, carte });
 				}
 			});
 
-			// Tous sont prêts → on lance le tour
-			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);
-			// cartesAJoueesParRoom[roomId] = [];
-		
+			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);		
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
-		
+
 			// Envoi des mains et de la table
 			envoyerMainEtTable(io, roomId, jeu, rooms);
 		
@@ -341,7 +335,6 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 
 		clearInterval(affichageTimers[roomId]);
 		delete affichageTimers[roomId];
-		//io.to(roomId).emit("fin-tour");
 
 	}, duration);
 
