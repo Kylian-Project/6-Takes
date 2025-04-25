@@ -1,21 +1,33 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { PlayGame } from "./utils/partie.js";
 import { roomHandler } from "./utils/lobbies.js";
 
+
+
+
 const app = express();
 const server = http.createServer(app);
-const port = 8080;
+const PORT = process.env.PORT || 14001;
 
-const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
-io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
-  roomHandler(socket, io);
-  PlayGame(socket, io);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*", // tu pourras sécuriser plus tard si besoin
+  },
 });
 
-server.listen(port, () => {
-  console.log(`listening on http://localhost:${port}`);
+io.on("connection", (socket) => {
+  console.log("✅ Un client s'est connecté :", socket.id);
+  roomHandler(socket, io);    
+  PlayGame(socket, io);       
+});
+
+// Lancer le serveur
+server.listen(PORT, () => {
+  console.log(`🚀 Serveur WebSocket actif sur le port ${PORT}`);
 });
