@@ -22,6 +22,7 @@ var player_username
 var bot_count = 0
 
 var BASE_URL
+var id_lobby
 
 func _ready():
 	settings_overlay.visible = false
@@ -54,18 +55,47 @@ func _ready():
 	socket_io.base_url = BASE_URL
 	socket_io.connect_socket()
 	socket_io.event_received.connect(_on_socket_event_received)
+	
+	socket_io.connect("raw_packet", Callable(self, "_on_raw_packet"))
 
+	id_lobby = get_node("/root/GameState").id_lobby
+	print("emit get users in room :", id_lobby)
+	var wrapped = "\"" + id_lobby + "\""
+	print("debug wrapped ", wrapped)
+	
+	socket_io.emit("users-in-public-room", wrapped)
+	socket_io.emit("users-in-public-room", id_lobby)
+	socket_io.emit("users-in-public-room", [id_lobby])
+	socket_io.emit("users-in-public-room",{
+		"roomId" : id_lobby
+	})
 
+func _on_raw_packet(packet):
+	print("Raw packet bytes:", packet)
+	print("Raw packet string:", packet.get_string_from_utf8())
+	
+	
 func _on_socket_event_received(event: String, data: Variant, ns: String):
 	match event:
-		"users-in-your-private-room", "users-in-your-public-room":
+		"users-in-your-private-room":
+			print("event users in private room received \n", data)
 			_refresh_player_list(data)
+		"users-in-your-public-room":
+			print("event users in public room received \n", data)
+			_refresh_player_list(data)
+		_:
+			print("unhandled event received \n", event, data)
 
 	
 func _refresh_player_list(data):
 	players_container.clear()  # remove old entries
 	#for user_dict in GameState.other_players:
-	for i in data.size():
+	
+	var players_count = data[0]["count"]
+	print("players count ", players_count)
+	var users =data[0]["users"]
+	
+	for i in range(players_count):
 		var user_dict = data[i]
 		var entry = player_entry_scene.instantiate()
 		var is_host = (i == 0)
@@ -73,7 +103,15 @@ func _refresh_player_list(data):
 		entry.create_player_visual(user_dict.username, user_dict.icon, is_host)
 		#entry.get_node("HostBadge").visible = (user_dict.username == GameState.player_info.username and GameState.is_host)
 		players_container.add_child(entry)
-		
+		print("child added to scene")
+
 
 func _on_start_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+
+
+func _on_quit_button_pressed() -> void:
+	print("leave room event sent")
+	socket_io.emit("leave-room", {
+		"roomId" : id_lobby
+	})

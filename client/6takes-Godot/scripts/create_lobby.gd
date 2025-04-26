@@ -46,7 +46,7 @@ func _on_create_lobby():
 	if !lobby_name_field.text.is_empty():
 		print("lobby name debug :", lobby_name)
 		lobby_name = lobby_name_field.text
-		get_node("/root/Global").lobby_name = lobby_name
+		
 		
 	var message = {
 		"event": "create-room",
@@ -58,7 +58,13 @@ func _on_create_lobby():
 		"rounds": int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected())),
 		"isPrivate": visibility
 	}
-
+	get_node("/root/GameState").lobby_name = lobby_name
+	get_node("/root/GameState").is_host = true
+	GameState.player_info = {
+		"username": get_node("/root/Global").player_name,
+		 "id": get_node("/root/Global").player_id
+		}
+	
 	client.emit("create-room", message)  # PAS besoin de JSON.stringify
 	print(" Demande de création envoyée :", message)
 	
@@ -66,20 +72,13 @@ func _on_create_lobby():
 func _on_event_recu(event: String, data: Variant, ns: String):
 	print(" Événement reçu :", event)
 
-	if event == "private-room-created" or "public-room-created" :
+	if event == "private-room-created" or event == "public-room-created" :
 		print(" Le lobby privé a été créé.")
-		
-		#set global lobby data
+		print(data)
 		get_node("/root/GameState").id_lobby = data[0]
-		get_node("/root/GameState").is_host = true
 		
-		GameState.player_info = {
-			"username": get_node("/root/Global").player_name,
-			 "id": get_node("/root/Global").player_id
-			}
-	
 		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-	
+		
 	#elif event == "public-room-created":
 		#print("Le lobby public a été créé.")
 		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")

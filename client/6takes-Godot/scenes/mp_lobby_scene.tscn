@@ -411,3 +411,4 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_wgurt")
 text = "X"
 
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]

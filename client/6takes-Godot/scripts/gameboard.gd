@@ -73,8 +73,6 @@ var cards_animated
 
 func _ready():
 	_load_cards()
-	#player_username = get_node("/root/Global").player_name
-	#debug
 	
 	game_state = GameState.WAITING_FOR_LOBBY
 	player_username = get_node("/root/Global").player_name
