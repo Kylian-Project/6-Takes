@@ -52,15 +52,26 @@ class Rang {
     }
 
     ajouterCarte(carte) {
-        this.cartes.push(carte);
+        let temp_carte= new Carte(carte.numero);    
+        //comme ca meme si le client nous envoie une carte {numero } sans l'attribut tetes
+        //on va nous meme calculer les tetes grace  au constructeur de la carte 
+        this.cartes.push(temp_carte);
     }
 
     estPleine() {
         return this.cartes.length === 6;
     }
 
-    recupererCartes() {
+    recupererCartes()
+    {   
         return this.cartes.splice(0, 5);
+    }
+    recupererCartes_special_case() {
+        let carte = [];
+        for (let i = 0; i < this.cartes.length; i++) {
+            carte.push(this.cartes[i]);
+        }
+        return carte;
     }
 
     totalTetes() {
@@ -97,10 +108,13 @@ class Table {
 
     ajouterCarte(carte) {
         let bestRangIndex = this.trouverBestRang(carte);
-        if (bestRangIndex !== -1) {
+        if (bestRangIndex !== -1) 
+        {
             this.rangs[bestRangIndex].ajouterCarte(carte);
-        } else {
-            console.log("Aucune rangée possible, il faut gérer ce cas (choix d'un rang à ramasser)");
+        } 
+        else 
+        {
+            return -1;
         }
     }
 
@@ -142,6 +156,7 @@ class Joueur {
         this.nom = nom;
         this.score = 0;
         this.hand = new Hand(deck.distribuer(nb_cartes));
+        this.carteEnAttente ;    //en stock la carte joué en attendant que le joueur choissient un rang
     }
 
     updateScore(points) {
@@ -154,6 +169,10 @@ class Joueur {
 
     getHand() {
         return this.hand.cartes;
+    }
+
+    nouvelleMain(deck, nb_cartes) {
+        this.hand = new Hand(deck.distribuer(nb_cartes));
     }
 }
 
@@ -179,8 +198,18 @@ class Jeu6Takes {
     }
 
     mancheSuivante() {
-        this.mancheActuelle++;
+        // this.mancheActuelle++;
+        
+        // Nouveau deck et nouvelle table
+        this.deck = new Deck(true);
+        this.table = new Table(this.deck);
+
+        // Redonner une nouvelle main à chaque joueur
+        for (let joueur of this.joueurs) {
+            joueur.nouvelleMain(this.deck, this.nbCarte);
+        }
     }
+    
 
     resetGame() {
         this.constructor(this.nbJoueurs, this.joueurs.map(j => j.nom), this.nbMaxManches, this.nbMaxHeads, this.nbCarte);
@@ -194,10 +223,36 @@ class Jeu6Takes {
         if (index === -1) throw new Error("Carte non trouvée dans la main du joueur");
 
         joueur.hand.jouerCarte(index);
-        this.table.ajouterCarte(carte);
+        const rang = this.table.ajouterCarte(carte);
+        if(rang === -1)
+        {
+            //on attend que le joueurs choisisse un rang
+            return "choix_rang_obligatoire";
+        }
         const cartesRamassees = this.table.ramasserCartes();
-
         const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
         joueur.updateScore(penalite);
+        //pour savoir si un joueurs vient de se prendre un 6quiprend
+        //comme ca je pourrai le dire aux autres
+        if(cartesRamassees.length >0)
+        {
+            return "ramassage_rang";
+        }
+
     }
+
+    existeBot() {
+        return this.joueurs.some(j => j.nom.startsWith("Bot"));
+      }
+      
+      nbBots() {
+        return this.joueurs.filter(j => j.nom.startsWith("Bot")).length;
+      }
+      
+    
 }
+
+export { Jeu6Takes };
+export { Joueur };
+export { Carte };
+export { Rang };

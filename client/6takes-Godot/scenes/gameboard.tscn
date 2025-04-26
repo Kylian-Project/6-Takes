@@ -1,18 +1,37 @@
-[gd_scene load_steps=7 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
 
-[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_jjao2"]
-[ext_resource type="Texture2D" uid="uid://dhyaayrlq4gdq" path="res://bleu.png" id="2_f2b3k"]
+[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
 [ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
-[ext_resource type="Texture2D" uid="uid://cw8la0ob0wf0q" path="res://vert.png" id="3_254vd"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
+[ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
+[ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
+[ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_rl5u3"]
+[sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
+line_spacing = 30.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_5oo11"]
+line_spacing = 16.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_7rt8c"]
+font = ExtResource("3_r0b0d")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_8de43"]
+font = ExtResource("3_r0b0d")
+font_size = 30
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
-size = Vector2(1192, 714)
+size = Vector2(1124.5, 737.75)
 
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
-script = ExtResource("1_jjao2")
-vbox_container = NodePath("hand_colom/VBoxContainer")
+script = ExtResource("1_yvybn")
+vbox_container = NodePath("hand_colom/rangeofcard")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -22,70 +41,73 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_f2b3k")
+texture = ExtResource("2_jdcid")
 expand_mode = 1
 
 [node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 5.0
-offset_bottom = 61.0
+offset_top = 12.0
+offset_right = -1492.0
+offset_bottom = 77.0
 grow_horizontal = 2
-
-[node name="heads" type="HBoxContainer" parent="CanvasLayer/top_bar"]
-custom_minimum_size = Vector2(150, 56)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/heads"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "heads"
-label_settings = SubResource("LabelSettings_rl5u3")
-horizontal_alignment = 1
-
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/heads"]
-layout_mode = 2
-text = "0"
-
-[node name="round_player_time" type="HBoxContainer" parent="CanvasLayer/top_bar"]
-layout_mode = 2
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/top_bar/round_player_time"]
+[node name="heads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
+text = "Heads          "
+label_settings = SubResource("LabelSettings_bf7xg")
 
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer"]
+[node name="nbheads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
-text = "Rounds                                     "
-horizontal_alignment = 1
+text = "        int"
+label_settings = SubResource("LabelSettings_5oo11")
+horizontal_alignment = 2
 
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer"]
-layout_mode = 2
-text = "2/34"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/top_bar/round_player_time"]
-layout_mode = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_left = 648.0
+offset_top = 8.0
+offset_right = 1008.0
+offset_bottom = 73.0
 alignment = 1
 
-[node name="Label" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer2"]
+[node name="Label" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "player choosing stack..."
+text = "Turn 1/10"
+label_settings = SubResource("LabelSettings_7rt8c")
 
-[node name="Label2" type="Label" parent="CanvasLayer/top_bar/round_player_time/HBoxContainer2"]
+[node name="Label2" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "25s"
+text = "              Waiting for players
+"
+label_settings = SubResource("LabelSettings_8de43")
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+offset_left = 1828.0
+offset_top = -13.0
+offset_right = 1938.0
+offset_bottom = 137.0
+
+[node name="Button" type="Button" parent="HBoxContainer3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 1
+icon = ExtResource("4_7flow")
+flat = true
 
 [node name="hand_colom" type="HBoxContainer" parent="."]
 show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 399.0
-offset_top = 152.0
-offset_right = 1559.0
-offset_bottom = 802.0
+offset_left = 428.0
+offset_top = 143.0
+offset_right = 1551.0
+offset_bottom = 835.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -99,49 +121,45 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -650.0
-offset_top = -478.0
-offset_right = 622.0
-offset_bottom = 285.0
+offset_left = -557.0
+offset_top = -417.0
+offset_right = 597.0
+offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_254vd")
+texture = ExtResource("5_uo4x1")
+expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="hand_colom"]
+[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
+custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
+alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+[node name="CardUI" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer" instance=ExtResource("3_8mab6")]
+[node name="CardUI2" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
+[node name="CardUI3" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
+script = null
 
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer2" instance=ExtResource("3_8mab6")]
+[node name="CardUI4" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
 layout_mode = 2
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
-layout_mode = 2
-
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer3" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="hand_colom/VBoxContainer"]
-layout_mode = 2
-
-[node name="CardUI" parent="hand_colom/VBoxContainer/HBoxContainer4" instance=ExtResource("3_8mab6")]
-layout_mode = 2
+script = null
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(956, 444)
+position = Vector2(957.75, 488.125)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
+layer = -1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2"]
 custom_minimum_size = Vector2(75, 80)
@@ -150,13 +168,12 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -508.0
-offset_top = -220.0
-offset_right = 508.0
-offset_bottom = -14.0
+offset_left = -561.0
+offset_top = -170.0
+offset_right = 610.0
+offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(1.00562, 1.00201)
 alignment = 1
 
 [node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
@@ -198,3 +215,14 @@ script = null
 [node name="CardUI10" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
+
+[node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
+visible = false
+offset_left = 367.0
+offset_top = 101.0
+offset_right = 1564.0
+offset_bottom = 952.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

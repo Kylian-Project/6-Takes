@@ -6,8 +6,8 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
 
+import { Server } from "socket.io";
 import { PlayGame } from "./utils/partie.js";
 import { roomHandler } from "./utils/lobbies.js";
 
@@ -57,5 +57,5 @@ db.sync().then(() => {
     console.log(`API: http://bastion:${PORT}/api/player`);
   });
 }).catch((err) => {
-  console.error("? Erreur de connexion à la base de données :", err);
+  console.error("Erreur de connexion à la base de données :", err);
 });
