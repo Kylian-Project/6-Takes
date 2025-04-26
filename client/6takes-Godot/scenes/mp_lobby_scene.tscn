@@ -146,7 +146,7 @@ theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Quit
 "
 
-[node name="MainVbox" type="VBoxContainer" parent="."]
+[node name="MainVbox_" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -157,6 +157,20 @@ offset_left = -808.0
 offset_top = -255.96
 offset_right = 808.0
 offset_bottom = 249.04
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainVbox" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -808.0
+offset_top = -160.0
+offset_right = 808.0
+offset_bottom = 345.0
 grow_horizontal = 2
 grow_vertical = 2
 

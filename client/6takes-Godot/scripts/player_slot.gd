@@ -13,9 +13,9 @@ const ICON_FILES = [
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	pass#player_name = ""
 
-func create_player_visual(uname: String, icon_id: int, host := false):
+func create_player_visual(uname, icon_id: int, host := false):
 	player_name.text = uname
 	var icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
 	icon.texture = load(icon_path)
@@ -23,9 +23,7 @@ func create_player_visual(uname: String, icon_id: int, host := false):
 	if host:
 		button.icon = preload("res://assets/images/crown.png") 
 		button.text = ""
-		button.icon.visible = true
 	else:
 		button.text = "quick"
 		button.icon = null  
-		button.icon.visible = false
 	

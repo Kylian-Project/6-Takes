@@ -52,15 +52,8 @@ func _ready():
 
 	id_lobby = get_node("/root/GameState").id_lobby
 	print("emit get users in room :", id_lobby)
-	var wrapped = "\"" + id_lobby + "\""
-	print("debug wrapped ", wrapped)
-	
-	#socket_io.emit("users-in-public-room", wrapped)
 	SocketManager.emit("users-in-public-room", id_lobby)
-	#socket_io.emit("users-in-public-room", [id_lobby])
-	#socket_io.emit("users-in-public-room",{
-		#"roomId" : id_lobby
-	#})
+
 
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
@@ -78,24 +71,85 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		_:
 			print("unhandled event received \n", event, data)
 
-	
+
+
 func _refresh_player_list(data):
-	players_container.clear()  # remove old entries
-	#for user_dict in GameState.other_players:
-	
-	var players_count = data[0]["count"]
-	print("players count ", players_count)
-	var users =data[0]["users"]
-	
+	print("refreshing players display")
+	# Clear old entries
+	for child in players_container.get_children():
+		child.queue_free()
+
+	var outer = data[0]
+	var payload : Dictionary
+
+	# Shape A: { "users": { count, users } }
+	if outer.has("users") and typeof(outer["users"]) == TYPE_DICTIONARY:
+		payload = outer["users"]
+	# Shape B: { "count": X, "users": [ … ] }
+	elif outer.has("count") and outer.has("users") and typeof(outer["users"]) == TYPE_ARRAY:
+		payload = outer
+	else:
+		push_error("Unrecognized users-in room payload: %s" % outer)
+		return
+
+	var players_count = int(payload.get("count", 0))
+	var players       = payload.get("users", [])
+
+	print("players count", players_count)
+	print("users in room debug", players)
+
+	# Instantiate UI for each player
 	for i in range(players_count):
-		var user_dict = data[i]
-		var entry = player_entry_scene.instantiate()
-		var is_host = (i == 0)
-		
-		entry.create_player_visual(user_dict.username, user_dict.icon, is_host)
-		#entry.get_node("HostBadge").visible = (user_dict.username == GameState.player_info.username and GameState.is_host)
+		var user_dict = players[i] as Dictionary
+		var entry     = player_entry_scene.instantiate()
 		players_container.add_child(entry)
+
+		var is_host = (i == 0)
+		var icon_id = user_dict.get("icon", null)
+		icon_id = icon_id if icon_id != null else 0
+
+		entry.create_player_visual(
+			user_dict.get("username", "Unknown"),
+			icon_id,
+			is_host
+		)
 		print("child added to scene")
+
+
+#func _refresh_player_list(data):
+	#print("refreshing players display")
+	#for child in players_container.get_children():
+		#child.queue_free()
+	#
+	#if data.size() == 0:
+		#print("empty data for users-in-your room!")
+		#return 
+	#
+	#var outer = data[0]
+	#if not outer.has("users"):
+		#return
+#
+	#var payload     = outer["users"]       # the { count, users } dict
+	#var players     = payload.get("users", [])
+	#var players_count = payload.get("count", players.size())
+	#
+	##var players_count = data[0]["count"]
+	#print("players count ", players_count)
+	#print("users in room debug ", players)
+	##var users =data[0]["users"]
+	#var i = 0
+	#for user_dict in players:
+		##var user_dict = players[i]
+		#
+		#var entry = player_entry_scene.instantiate()
+		#players_container.add_child(entry)
+		#var is_host = (i == 0)
+		#
+		##temp for debug
+		#var icon = user_dict.icon if user_dict.icon != null else 0
+		#entry.create_player_visual(user_dict.username, icon, is_host)
+		#i +=1
+		#print("child added to scene")
 
 
 func _on_start_button_pressed() -> void:
