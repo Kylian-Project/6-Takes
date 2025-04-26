@@ -161,7 +161,7 @@ const login = async (req, res) => {
     });
 
     if (existingSession) {
-      console.log(`Connexion réussie : ${player.username} (ID ${player.id})`);
+      console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})`);
       return res.status(200).json({
         message: "Connexion réussie (session existante)",
         token: existingSession.token,
@@ -170,6 +170,7 @@ const login = async (req, res) => {
           id: player.id,
           username: player.username,
           email: player.email,
+          icon: player.icon,
           created_at: player.created_at,
           first_login: player.first_login,
           total_played: player.total_played,
@@ -207,7 +208,7 @@ const login = async (req, res) => {
       expire_at: expireAt
     });
 
-    console.log(`Connexion réussie : ${player.username} (ID ${player.id})\n`);
+    console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
     console.log(`Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
 
     res.status(200).json({
@@ -218,6 +219,7 @@ const login = async (req, res) => {
         id: player.id,
         username: player.username,
         email: player.email,
+        icon: player.icon,
         created_at: player.created_at,
         first_login: player.first_login,
         total_played: player.total_played,
@@ -248,7 +250,7 @@ const logout = async (req, res) => {
       return res.status(404).json({ message: "Session non trouvée" });
     }
 
-    console.log(`Déconnexion : ID ${userId}`);
+    console.log(`[EXPRESS] Déconnexion : ID ${userId}`);
     return res.status(200).json({ message: "Déconnexion réussie" });
 
   } catch (err) {
@@ -259,6 +261,10 @@ const logout = async (req, res) => {
 // RECONNEXION w Token
 const reconnect = async (req, res) => {
   const userId = req.userId;
+  const token = req.token;
+
+  console.log("[RECONNECT] ID joueur :", userId);
+  console.log("[RECONNECT] Token utilise :", token);
 
   try {
     const player = await Player.findByPk(userId);
@@ -270,6 +276,7 @@ const reconnect = async (req, res) => {
         id: player.id,
         username: player.username,
         email: player.email,
+        icon: player.icon,
         created_at: player.created_at,
         first_login: player.first_login,
         total_played: player.total_played,
@@ -287,6 +294,7 @@ const reconnect = async (req, res) => {
 // ? UPDATE PROFIL
 const updateProfile = async (req, res) => {
   const userId = req.userId;
+  // Godot side not done username, password update yet, aborting.. except icon
   const { username, password, icon } = req.body;
 
   try {
@@ -297,13 +305,16 @@ const updateProfile = async (req, res) => {
     // ### to see later on what to add ###
     // ###################################
 
-    if (username) player.username = username;
+    if (username !== undefined && username !== "") player.username = username;
 
     // no need for verification normally, its the client gotta check whether old pass and new pass are the same,
     // or ever pass and confirm pass match or not... (as well as the hashing step)
-    if (password) player.password = password;  
+    if (password !== undefined && password !== "") player.password = password;  
 
-    if (icon) player.icon = icon;
+    if (icon) {
+      console.log("Received icon ID:", icon);
+      player.icon = icon;
+    }
 
     await player.save();
 
@@ -314,6 +325,7 @@ const updateProfile = async (req, res) => {
         username: player.username,
         icon: player.icon,
         email: player.email,
+        icon: player.icon,
         created_at: player.created_at,
         first_login: player.first_login,
         total_played: player.total_played,
@@ -325,7 +337,6 @@ const updateProfile = async (req, res) => {
     return res.status(500).json({ message: "Erreur lors de la mise à jour", error: err });
   }
 };
-
 
 
 export { inscription, requestPasswordReset, verifyResetCode, resetPassword, login, logout, reconnect, updateProfile};

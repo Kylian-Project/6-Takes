@@ -31,7 +31,8 @@ const Player = db.define("player", {
   },
   icon: {
     type: DataTypes.INTEGER,
-    allowNull: false,       // by default every player got an icon ..
+    allowNull: false, 
+    defaultValue: 0,      // by default, every player got an icon with id = 0 (gray color Icon)..
   },
   score: {
     type: DataTypes.INTEGER,

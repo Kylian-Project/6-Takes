@@ -21,7 +21,7 @@ router.post("/connexion", login);
 router.post("/logout", verifyToken, logout);            // protected route !important to have Token for a specific USER and not just any user 
 router.post("/reconnect", verifyToken, reconnect);      // protected route !important to have Token for a specific USER and not just any user
 
-router.patch("/profile", verifyToken, updateProfile);   // protected route !important to have Token for a specific USER and not just any user
+router.post("/updateProfile", verifyToken, updateProfile);   // protected route !important to have Token for a specific USER and not just any user
 // other routes gonna be added, DO NOT FORGET! 
 
 
