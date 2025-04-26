@@ -89,6 +89,7 @@ export let rooms = [];
 
 
 
+
 /**
  * Gère la logique de gestion des salles sur un serveur socket.io.
  * Cela inclut la création, la jonction et la sortie des salles, ainsi que
@@ -97,52 +98,10 @@ export let rooms = [];
  * @param {Socket} socket - L'objet socket pour le client connecté.
  * @param {Server} io - L'instance du serveur socket.io pour la diffusion d'événements.
  */
-
 export const roomHandler = (socket, io) => 
-{    
-    /////////////////////////////////////////////////
-	////////////// fonctions utilitaires /////////////
-  	//////////////////////////////////////////////////
-    const getAvailableRooms = () => {
-    return rooms
-        .filter(room => room.private === false)
-        .map(room => ({
-        id: room.id,
-        name: room.settings?.lobbyName || "Lobby",
-        count: room.users.length,
-        playerLimit: room.settings?.playerLimit || 10
-        }));
-    };
-
-
-
-    const getUsers = async (roomId) => {
-        const room = rooms.find(r => r.id === roomId);
-        if (!room) return { count: 0, users: [] };
+{
     
-        const users = [];
-    
-        for (let user of room.users)
-        {
-            try 
-            {
-                const player = await Player.findOne({ where: { username: user.username } });
-                users.push({
-                    username: user.username,
-                    icon: player?.icon || null
-                });
-            } 
-            catch (err) 
-            {
-                users.push({ username: user.username, icon: null });
-            }
-        }
-    
-        return { count: users.length, users };
-    };
-    
-      
-    
+         
     //////////////////////////////////////////////////
 	////////////// fonctions principales /////////////
   	//////////////////////////////////////////////////
@@ -177,14 +136,14 @@ export const roomHandler = (socket, io) =>
         const isPrivateBool = isPrivate === "PRIVATE";  // Convertir la valeur de isPrivate en booleen
 
         const newRoom = new Room(roomId, username, socket.id, isPrivateBool , data);
-
+        let playerID = await getPlayerID(username);
         
         newRoom.addUser(username, socket.id);
         rooms.push(newRoom);
 
         try {
             await Lobby.create({
-            id_creator: 1, // temporairement socket.playerId
+            id_creator: playerID,
             name: roomId,
             state: isPrivate
             });
@@ -368,3 +327,76 @@ export const roomHandler = (socket, io) =>
     });
     
 };
+
+
+
+
+
+    //////////////////////////////////////////////////
+	////////////// fonctions utilitaires /////////////
+  	//////////////////////////////////////////////////
+const getAvailableRooms = () => 
+{
+    return rooms
+    .filter(room => room.private === false)
+    .map(room => ({
+    id: room.id,
+    name: room.settings?.lobbyName || "Lobby",
+    count: room.users.length,
+    playerLimit: room.settings?.playerLimit || 10
+    }));
+};
+
+
+
+const getUsers = async (roomId) => 
+{
+    const room = rooms.find(r => r.id === roomId);
+    if (!room) return { count: 0, users: [] };
+
+    const users = [];
+
+    for (let user of room.users)
+    {
+        try 
+        {
+            const player = await Player.findOne({ where: { username: user.username } });
+            users.push({
+                username: user.username,
+                icon: player?.icon || null
+            });
+        } 
+        catch (err) 
+        {
+            users.push({ username: user.username, icon: null });
+        }
+    }
+
+    return { count: users.length, users };
+};
+
+
+async function getPlayerID(username) 
+{
+    try
+    {
+        const player = await Player.findOne({ where: { username: username } });
+        if(player) return player.id;
+        else return null;
+    }
+    catch(err)
+    {
+        console.log("erreur lors de la recuperation du pllayer ID");
+        return null;
+    }
+    
+}
+
+
+
+//////////////////////////////////////////////
+/////////////// A faire //////////////////////
+//////////////////////////////////////////////
+//remove bots de la room
+//exploitation base de données a la place de room[]
+//une fois room startgame elle disparait de available rooms , mais toujours en bdd pour le coup 
