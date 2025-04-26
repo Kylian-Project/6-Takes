@@ -14,15 +14,13 @@ extends Control
 @onready var max_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/MaxPointsDropdown
 
 @onready var players_container = $MainVbox
-@onready var socket_io = $SocketIO
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 
 var player_count = 1
 var player_username
 var bot_count = 0
-
-var BASE_URL
 var id_lobby
+
 
 func _ready():
 	settings_overlay.visible = false
@@ -50,32 +48,26 @@ func _ready():
 	max_points_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
 	
 	#connect to socket
-	BASE_URL = get_node("/root/Global").get_base_url()
-	BASE_URL = "http://" + BASE_URL
-	socket_io.base_url = BASE_URL
-	socket_io.connect_socket()
-	socket_io.event_received.connect(_on_socket_event_received)
-	
-	socket_io.connect("raw_packet", Callable(self, "_on_raw_packet"))
+	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 
 	id_lobby = get_node("/root/GameState").id_lobby
 	print("emit get users in room :", id_lobby)
 	var wrapped = "\"" + id_lobby + "\""
 	print("debug wrapped ", wrapped)
 	
-	socket_io.emit("users-in-public-room", wrapped)
-	socket_io.emit("users-in-public-room", id_lobby)
-	socket_io.emit("users-in-public-room", [id_lobby])
-	socket_io.emit("users-in-public-room",{
-		"roomId" : id_lobby
-	})
+	#socket_io.emit("users-in-public-room", wrapped)
+	SocketManager.emit("users-in-public-room", id_lobby)
+	#socket_io.emit("users-in-public-room", [id_lobby])
+	#socket_io.emit("users-in-public-room",{
+		#"roomId" : id_lobby
+	#})
 
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
 	print("Raw packet string:", packet.get_string_from_utf8())
 	
 	
-func _on_socket_event_received(event: String, data: Variant, ns: String):
+func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
 		"users-in-your-private-room":
 			print("event users in private room received \n", data)
@@ -112,6 +104,6 @@ func _on_start_button_pressed() -> void:
 
 func _on_quit_button_pressed() -> void:
 	print("leave room event sent")
-	socket_io.emit("leave-room", {
+	SocketManager.emit("leave-room", {
 		"roomId" : id_lobby
 	})

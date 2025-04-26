@@ -53,9 +53,6 @@ var player_username
 # Instance de l'écran de pause
 var pause_instance = null
 
-@onready var socket_io = $SocketIO
-var BASE_URL 
-
 enum GameState {
 	WAITING_FOR_LOBBY,
 	LOBBY_CREATED,
@@ -88,15 +85,11 @@ func _ready():
 		btn.pressed.connect(_on_select_row_button_pressed.bind(i)) 
 	
 	#connect to socket
-	BASE_URL = get_node("/root/Global").get_base_url()
-	BASE_URL = "http://" + BASE_URL
-	socket_io.base_url = BASE_URL
-	socket_io.connect_socket()
-	socket_io.event_received.connect(_on_socket_event_received)
+	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 
 
 #event listener
-func _on_socket_event_received(event: String, data: Variant, ns: String) -> void:
+func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	match event:
 		"your-hand":
 			_handle_your_hand(data)
@@ -143,10 +136,10 @@ func start_game(data):
 	var start_data = {"roomId" : room_id_global}
 	
 	game_state = GameState.SETTING_UP_DECK
-	socket_io.emit("start-game", data[0])
+	SocketManager.emit("start-game", data[0])
 	
 	show_label("Game Starting")
-	socket_io.emit("users-in-public-room", {
+	SocketManager.emit("users-in-public-room", {
 		"roomId" : room_id_global
 	})
 	
@@ -160,7 +153,7 @@ func _handle_room_joined(data):
 func _start_turn():
 	if room_id_global != null:
 		print("emit tour")
-		socket_io.emit("tour", {
+		SocketManager.emit("tour", {
 			"roomId": room_id_global, 
 			"username": player_username
 		})
@@ -302,7 +295,7 @@ func _on_card_selected(card_number):
 		"username" : "tester"
 	} 
 	print("emitting card selected event", data)
-	socket_io.emit("play-card", data)
+	SocketManager.emit("play-card", data)
 	
 	
 func update_table_ui(table_data, animation):
@@ -363,7 +356,7 @@ func _on_select_row_button_pressed(row_index):
 	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
 	
-	socket_io.emit("choisir-rangee", {
+	SocketManager.emit("choisir-rangee", {
 		"roomId": room_id_global,
 		"indexRangee": row_index,
 		"username": player_username

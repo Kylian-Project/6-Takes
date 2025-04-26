@@ -2,38 +2,26 @@ extends Control
 
 @onready var available_rooms_list = $JoinPanel/MainVertical/AvailableOptions/RoomsList  
 @onready var join_button = $JoinPanel/MainVertical/JoinCodeContainer/JoinCodeButton
-@onready var client: SocketIO = $"../SocketIO"
 @onready var btn = $JoinPanel/MainVertical/JoinCodeContainer/SpinBox
-#@onready var test_button = $JoinPanel/MainVertical/AvailableOptions/TestButton
 @onready var refresh = $Button2
 var selected_room_id = ""
 var room_ids: Array = []  # <-- Contient les roomId réels (ex: "cTjY")
 var max_players = 10
-var BASE_URL
 
 var player_name
 
-func _ready():
-	if client == null:
-		print("❌ Le client SocketIO n'est pas instancié.")
-		return
-	
+
+func _ready():	
 	player_name = get_node("/root/Global").player_name
 	available_rooms_list.custom_minimum_size = Vector2(200, 200)
 	
-	BASE_URL = get_node("/root/Global").get_base_url()
-	BASE_URL = "http://" + BASE_URL
-	client.base_url = BASE_URL
-	client.socket_connected.connect(_on_socket_connected)
-	client.socket_disconnected.connect(_on_socket_disconnected)
-	client.event_received.connect(_on_event_recu)
-	client.connect_socket()
+	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 
 	join_button.pressed.connect(_on_join_lobby)
 	available_rooms_list.item_selected.connect(_on_room_selected)
 	refresh.pressed.connect(_on_refresh_lobbies)
 
-	#client.emit("available-rooms", {})
+	SocketManager.emit("available-rooms", {})
 
 
 func _on_room_selected(index: int):
@@ -49,17 +37,10 @@ func _on_room_selected(index: int):
 
 func _on_refresh_lobbies():
 	print(" Rafraîchissement des lobbies demandé...")
-	client.emit("available-rooms", {})
-#
-	#if selected_room_id != "":
-		#var message = {
-			#"roomId": selected_room_id,
-			#"username": player_name
-		#}
-		#client.emit("join-room", message)
+	SocketManager.emit("available-rooms", {})
 
 
-func _on_event_recu(event: String, data: Variant, ns: String):
+func _on_socket_event(event: String, data: Variant, ns: String):
 	print("Événement reçu :", event)
 	if event == "available-rooms":
 		print("Lobbies disponibles reçus :", data)
@@ -132,7 +113,7 @@ func _on_join_lobby():
 			"roomId": selected_room_value,
 			"username": player_name
 		}
-		client.emit("join-room", message)
+		SocketManager.emit("join-room", message)
 		print("join room sent :", message)
 	else:
 		print(" Aucun lobby sélectionné ou valeur vide dans le LineEdit.")

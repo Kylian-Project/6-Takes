@@ -15,22 +15,11 @@ extends Control
 @onready var round_timer_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown
 @onready var rounds_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 
-# Pour afficher la liste des lobbies disponibles
-#@onready var available_rooms_list = $PanelContainer/MainVertical/AvailableOptions/Choices/RoomsList  # Assurez-vous d'avoir un nœud pour afficher la liste
-@onready var client: SocketIO = $"../SocketIO"
-var BASE_URL
 var lobby_name 
 
-func _ready():
 
-	BASE_URL = get_node("/root/Global").get_base_url()
-	BASE_URL = "http://" + BASE_URL
-	client.base_url = BASE_URL
-	client.event_received.connect(_on_event_recu)
-	client.socket_connected.connect(_on_socket_connected)
-	client.socket_disconnected.connect(_on_socket_disconnected)
-	client.connect_socket() 
-	
+func _ready():	
+	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	create_button.pressed.connect(_on_create_lobby)
 
 
@@ -65,11 +54,11 @@ func _on_create_lobby():
 		 "id": get_node("/root/Global").player_id
 		}
 	
-	client.emit("create-room", message)  # PAS besoin de JSON.stringify
+	SocketManager.emit("create-room", message)  # PAS besoin de JSON.stringify
 	print(" Demande de création envoyée :", message)
 	
 
-func _on_event_recu(event: String, data: Variant, ns: String):
+func _on_socket_event(event: String, data: Variant, ns: String):
 	print(" Événement reçu :", event)
 
 	if event == "private-room-created" or event == "public-room-created" :

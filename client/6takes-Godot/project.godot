@@ -21,6 +21,7 @@ SettingsManager="*res://scripts/settings_manager.gd"
 Global="*res://scripts/Global.gd"
 SoundManager="*res://scenes/SoundManager.tscn"
 GameState="*res://scripts/GameState.gd"
+SocketManager="*res://scripts/SocketManager.gd"
 
 [display]
 

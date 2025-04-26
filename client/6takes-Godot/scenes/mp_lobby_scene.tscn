@@ -1,8 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=13 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
-[ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="2_v13p7"]
 [ext_resource type="Texture2D" uid="uid://c4pji43cyew3j" path="res://assets/images/title_screen_players_lobby 1@2x.png" id="3_0sg8s"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_utsmw"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_nhk61"]
@@ -55,9 +54,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h4b0v")
-
-[node name="SocketIO" type="Node" parent="."]
-script = ExtResource("2_v13p7")
 
 [node name="BGColour" type="ColorRect" parent="."]
 layout_mode = 1
