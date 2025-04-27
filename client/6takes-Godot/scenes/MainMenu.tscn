@@ -863,5 +863,6 @@ grow_vertical = 2
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_sfx_slider_value_changed"]
 [connection signal="pressed" from="AccessibilityButton" to="." method="_on_accessibility_button_pressed"]
 [connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider" to="." method="_on_contrast_slider_value_changed"]
+[connection signal="item_selected" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions" to="." method="_on_color_blind_options_item_selected"]
 [connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider" to="." method="_on_brightness_slider_value_changed"]
 [connection signal="pressed" from="Rules" to="." method="_on_rules_pressed"]

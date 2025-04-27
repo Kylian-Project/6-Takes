@@ -2,8 +2,8 @@ extends Control
 
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
-@onready var colorblind_option = $ColorBlindOptions
-@onready var cbl_filter_rect   = $CBL_FilterRect
+@onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
+@onready var cbl_filter_rect   = $AccessibilityOverlay/CBL_FilterLayer/CBL_FilterRect   
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
 @onready var rules_button = $Rules
@@ -64,6 +64,7 @@ func _ready() -> void:
 	# Background Music
 	SoundManager.play_music()
 	
+	colorblind_option.item_selected.connect(_on_color_blind_options_item_selected)
 	
 	get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
@@ -147,6 +148,10 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 
 
 
-
 func _on_color_blind_options_item_selected(index: int) -> void:
-	pass # Replace with function body.
+	# index 0 → first item (“Off”), index 1 → second (“On”)
+	# fade the filter in/out:
+	cbl_filter_rect.modulate.a = index
+	# and update the shader's mode if you like (0 or 1)
+	var mat = cbl_filter_rect.material as ShaderMaterial
+	mat.set_shader_param("mode", index)
