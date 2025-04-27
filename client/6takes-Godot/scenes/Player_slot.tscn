@@ -20,9 +20,9 @@ border_color = Color(0.729412, 0.215686, 0.215686, 1)
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [node name="PlayerSlot" type="PanelContainer"]
-custom_minimum_size = Vector2(449, 109)
-offset_right = 190.0
-offset_bottom = 31.0
+custom_minimum_size = Vector2(400, 50)
+offset_right = 406.0
+offset_bottom = 99.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_f21i5")
 script = ExtResource("1_s3203")
 

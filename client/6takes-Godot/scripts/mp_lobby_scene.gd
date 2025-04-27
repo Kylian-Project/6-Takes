@@ -13,7 +13,7 @@ extends Control
 @onready var rounds_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 @onready var max_points_dropdown = $SettingsOverlay/PanelContainer/MainVertical/AvailableOptions/Choices/MaxPointsDropdown
 
-@onready var players_container = $MainVbox
+@onready var players_container = $MainVboxContainer/playersContainer
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 
 var player_count = 1
@@ -114,42 +114,6 @@ func _refresh_player_list(data):
 			is_host
 		)
 		print("child added to scene")
-
-
-#func _refresh_player_list(data):
-	#print("refreshing players display")
-	#for child in players_container.get_children():
-		#child.queue_free()
-	#
-	#if data.size() == 0:
-		#print("empty data for users-in-your room!")
-		#return 
-	#
-	#var outer = data[0]
-	#if not outer.has("users"):
-		#return
-#
-	#var payload     = outer["users"]       # the { count, users } dict
-	#var players     = payload.get("users", [])
-	#var players_count = payload.get("count", players.size())
-	#
-	##var players_count = data[0]["count"]
-	#print("players count ", players_count)
-	#print("users in room debug ", players)
-	##var users =data[0]["users"]
-	#var i = 0
-	#for user_dict in players:
-		##var user_dict = players[i]
-		#
-		#var entry = player_entry_scene.instantiate()
-		#players_container.add_child(entry)
-		#var is_host = (i == 0)
-		#
-		##temp for debug
-		#var icon = user_dict.icon if user_dict.icon != null else 0
-		#entry.create_player_visual(user_dict.username, icon, is_host)
-		#i +=1
-		#print("child added to scene")
 
 
 func _on_start_button_pressed() -> void:

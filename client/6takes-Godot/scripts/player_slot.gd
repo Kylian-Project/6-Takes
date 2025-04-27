@@ -23,7 +23,8 @@ func create_player_visual(uname, icon_id: int, host := false):
 	if host:
 		button.icon = preload("res://assets/images/crown.png") 
 		button.text = ""
+		button.disabled = true
 	else:
-		button.text = "quick"
+		button.text = "Kick"
 		button.icon = null  
 	

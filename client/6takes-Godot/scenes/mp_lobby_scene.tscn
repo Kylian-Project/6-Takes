@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=21 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
@@ -6,8 +6,52 @@
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_utsmw"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_nhk61"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_cj54l"]
+[ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="7_uwrtb"]
+[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="8_wbnmf"]
 [ext_resource type="Script" path="res://scripts/sp_settings.gd" id="9_8ivq5"]
+[ext_resource type="PackedScene" uid="uid://8vn3wq1njoww" path="res://scenes/Player_slot.tscn" id="10_8w88v"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_eex3c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7n0kn"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_leeaa"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+border_width_left = 15
+border_width_top = 40
+border_width_right = 15
+border_width_bottom = 40
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6vtbm"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 20
+border_width_right = 20
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rfb1u"]
+bg_color = Color(0.12549, 0.12549, 0.12549, 0.435294)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y56x"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dh2o8"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -146,33 +190,121 @@ theme_override_styles/normal = ExtResource("6_cj54l")
 text = "Quit
 "
 
-[node name="MainVbox_" type="VBoxContainer" parent="."]
+[node name="MainVboxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.587
 anchor_right = 0.5
 anchor_bottom = 0.587
-offset_left = -808.0
-offset_top = -255.96
-offset_right = 808.0
-offset_bottom = 249.04
+offset_left = -760.0
+offset_top = -262.96
+offset_right = 758.0
+offset_bottom = 256.04
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 30
 
-[node name="MainVbox" type="GridContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -808.0
-offset_top = -160.0
-offset_right = 808.0
-offset_bottom = 345.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVboxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="HostPlayer" type="PanelContainer" parent="MainVboxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7n0kn")
+
+[node name="PlayerHGroup" type="HBoxContainer" parent="MainVboxContainer/HBoxContainer/HostPlayer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PlayerIcon" type="TextureRect" parent="MainVboxContainer/HBoxContainer/HostPlayer/PlayerHGroup"]
+layout_mode = 2
+texture = ExtResource("7_uwrtb")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="MainVboxContainer/HBoxContainer/HostPlayer/PlayerHGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_leeaa")
+text = "Player Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddRemove" type="Button" parent="MainVboxContainer/HBoxContainer/HostPlayer/PlayerHGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_6vtbm")
+button_mask = 0
+icon = ExtResource("8_wbnmf")
+icon_alignment = 1
+
+[node name="playersCount" type="Label" parent="MainVboxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_fonts/font = ExtResource("10_eex3c")
+theme_override_font_sizes/font_size = 35
+text = "Players :1 / 10"
+
+[node name="lobbyCode" type="Label" parent="MainVboxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_fonts/font = ExtResource("10_eex3c")
+theme_override_font_sizes/font_size = 35
+text = "Code : XYZ"
+
+[node name="playersContainer" type="GridContainer" parent="MainVboxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 70
+theme_override_constants/v_separation = 35
+columns = 3
+
+[node name="PlayerSlot" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot2" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot3" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot4" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot5" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot6" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot7" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot8" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="PlayerSlot9" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
+layout_mode = 2
+
+[node name="AddBotButton" type="Button" parent="MainVboxContainer"]
+layout_direction = 3
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_rfb1u")
+theme_override_styles/normal = SubResource("StyleBoxFlat_1y56x")
+text = "Add a Bot"
 
 [node name="SettingsOverlay" type="Control" parent="."]
 visible = false
@@ -419,6 +551,11 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_wgurt")
 text = "X"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]
