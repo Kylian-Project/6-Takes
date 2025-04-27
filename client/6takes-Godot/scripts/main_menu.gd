@@ -2,7 +2,8 @@ extends Control
 
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
-
+@onready var colorblind_option = $ColorBlindOptions
+@onready var cbl_filter_rect   = $CBL_FilterRect
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
 @onready var rules_button = $Rules
@@ -143,3 +144,9 @@ func _on_brightness_slider_value_changed(value: float) -> void:
 
 func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
+
+
+
+
+func _on_color_blind_options_item_selected(index: int) -> void:
+	pass # Replace with function body.

@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="8_8qsur"]
-[ext_resource type="PackedScene" uid="uid://dswro2gf43iip" path="res://scenes/rules.tscn" id="9_jaad2"]
+[ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="9_jaad2"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="10_3xae7"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
@@ -816,6 +816,13 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_82t6k")
 text = "X"
+
+[node name="CBL_FilterLayer" type="CanvasLayer" parent="AccessibilityOverlay"]
+visible = false
+
+[node name="CBL_FilterRect" type="ColorRect" parent="AccessibilityOverlay/CBL_FilterLayer"]
+offset_right = 1923.0
+offset_bottom = 1083.0
 
 [node name="Rules" type="Button" parent="."]
 layout_mode = 1
