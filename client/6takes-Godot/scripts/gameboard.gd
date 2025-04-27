@@ -86,6 +86,9 @@ func _ready():
 	
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
+	
+	#start game
+	start_game()
 
 
 #event listener
@@ -132,18 +135,18 @@ func takes_row(data):
 		show_label(user_takes + " Takes 6!")
 
 
-func start_game(data):
+func start_game():
 	var start_data = {"roomId" : room_id_global}
 	
 	game_state = GameState.SETTING_UP_DECK
-	SocketManager.emit("start-game", data[0])
+	#SocketManager.emit("start-game", room_id_global)
 	
 	show_label("Game Starting")
 	SocketManager.emit("users-in-public-room", {
 		"roomId" : room_id_global
 	})
 	
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(3).timeout
 	_start_turn()	
 
 func _handle_room_joined(data):
@@ -391,17 +394,35 @@ func setup_players(player_data):
 		for child in container.get_children():
 			child.queue_free()
 	
-	var players_count = player_data[0]["count"]
+	var outer = player_data[0]
+	var payload : Dictionary
+
+	# Shape A: { "users": { count, users } }
+	if outer.has("users") and typeof(outer["users"]) == TYPE_DICTIONARY:
+		payload = outer["users"]
+	# Shape B: { "count": X, "users": [ … ] }
+	elif outer.has("count") and outer.has("users") and typeof(outer["users"]) == TYPE_ARRAY:
+		payload = outer
+	else:
+		push_error("Unrecognized users-in room payload: %s" % outer)
+		return
+
+	var players_count = int(payload.get("count", 0))
+	var players       = payload.get("users", [])
+
 	print("players count ", players_count)
+	print("players debug ", players)
 	
 	var users = player_data[0]["users"]
 	var user_icon
 	var others := []
 	var current_player
 	
-	for user_dict in users:
-		if user_dict.username == player_username:
+	for user_dict in players:
+		print("\n player dict : \n")
+		if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
 			current_player = user_dict
+			print("current player is anonyme")
 		others.append(user_dict)
 	
 	for i in range(others.size()):

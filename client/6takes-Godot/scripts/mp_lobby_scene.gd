@@ -23,7 +23,6 @@ extends Control
 @onready var lobby_code_panel = $MainVboxContainer/HBoxContainer/lobbyCode/codeValue
 @onready var lobby_name_panel = $lobbyName
 
-var player_count = 1
 var player_username
 var bot_count = 0
 var id_lobby
@@ -60,6 +59,9 @@ func _ready():
 	id_lobby = get_node("/root/GameState").id_lobby
 	print("emit get users in room :", id_lobby)
 	SocketManager.emit("users-in-public-room", id_lobby)
+	
+	lobby_name_panel.text = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+	lobby_code_panel.text = str(id_lobby)
 
 
 func _on_raw_packet(packet):
@@ -106,7 +108,7 @@ func _refresh_player_list(data):
 	var players       = payload.get("users", [])
 
 	print("players count ", players_count)
-	players_count_panel.text = players_count
+	players_count_panel.text = str(players_count)
 
 	## Update HostPlayer node
 	var host_user = players[0] as Dictionary
@@ -123,6 +125,12 @@ func _refresh_player_list(data):
 		true # is_host = true
 	)
 	
+	#disable buttons for non host players ----- TO DO IN SERVER LINK PLAYERS WITH LIBBY USERS
+	#if host_user.get("username", "Unknown") != get_node("/root/Global").player_name:
+		#start_button.disabled = true
+		#settings_button.disabled = true 
+		
+		
 	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
 		
@@ -141,6 +149,7 @@ func _refresh_player_list(data):
 
 	
 func _on_start_button_pressed() -> void:
+	SocketManager.emit("start-game", id_lobby)
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 
@@ -149,3 +158,4 @@ func _on_quit_button_pressed() -> void:
 	SocketManager.emit("leave-room", {
 		"roomId" : id_lobby
 	})
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=20 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://djrircdlr04ck" path="res://assets/images/icon_darkgray.png" id="7_uwrtb"]
 [ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="8_wbnmf"]
 [ext_resource type="Script" path="res://scripts/sp_settings.gd" id="9_8ivq5"]
-[ext_resource type="PackedScene" uid="uid://8vn3wq1njoww" path="res://scenes/Player_slot.tscn" id="10_8w88v"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_eex3c"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7n0kn"]
@@ -324,27 +323,6 @@ layout_mode = 2
 theme_override_constants/h_separation = 83
 theme_override_constants/v_separation = 40
 columns = 3
-
-[node name="PlayerSlot" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot2" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot3" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot4" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot5" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot6" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
-
-[node name="PlayerSlot7" parent="MainVboxContainer/playersContainer" instance=ExtResource("10_8w88v")]
-layout_mode = 2
 
 [node name="AddBotButton" type="Button" parent="MainVboxContainer"]
 layout_direction = 3

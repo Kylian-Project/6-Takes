@@ -41,9 +41,8 @@ func _on_refresh_lobbies():
 
 
 func _on_socket_event(event: String, data: Variant, ns: String):
-	print("Événement reçu :", event)
+	print("Événement reçu :", event, data)
 	if event == "available-rooms":
-		print("Lobbies disponibles reçus :", data)
 		available_rooms_list.clear()
 		room_ids.clear()
 
