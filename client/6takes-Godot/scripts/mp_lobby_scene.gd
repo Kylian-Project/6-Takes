@@ -16,6 +16,8 @@ extends Control
 @onready var players_container = $MainVboxContainer/playersContainer
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 
+@onready var host_node = $MainVboxContainer/HBoxContainer/HostPlayer
+
 var player_count = 1
 var player_username
 var bot_count = 0
@@ -74,6 +76,9 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 
 
 func _refresh_player_list(data):
+	var host_icon
+	var host_uname
+	
 	print("refreshing players display")
 	# Clear old entries
 	for child in players_container.get_children():
@@ -95,27 +100,41 @@ func _refresh_player_list(data):
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
 
-	print("players count", players_count)
+	print("players count ", players_count)
 	print("users in room debug", players)
 
-	# Instantiate UI for each player
-	for i in range(players_count):
+	## Update HostPlayer node
+	var host_user = players[0] as Dictionary
+	for child in host_node.get_children():
+		child.queue_free()
+	
+	var host_entry = player_entry_scene.instantiate()
+	host_node.add_child(host_entry)
+	
+	print("host debug ", host_user)
+	host_entry.create_player_visual(
+		host_user.get("username", "Unknown"),
+		0,#host_user.get("icon", 0), -------TO DO IN SERVER LINK PLAYERS WITH LIBBY USERS
+		true # is_host = true
+	)
+	
+	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
+		
 		var entry     = player_entry_scene.instantiate()
 		players_container.add_child(entry)
 
-		var is_host = (i == 0)
 		var icon_id = user_dict.get("icon", null)
 		icon_id = icon_id if icon_id != null else 0
-
+		
 		entry.create_player_visual(
 			user_dict.get("username", "Unknown"),
 			icon_id,
-			is_host
+			false
 		)
 		print("child added to scene")
 
-
+	
 func _on_start_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
