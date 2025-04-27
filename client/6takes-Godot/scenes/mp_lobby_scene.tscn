@@ -271,12 +271,12 @@ icon = ExtResource("8_wbnmf")
 flat = true
 icon_alignment = 1
 
-[node name="playersCount" type="HBoxContainer" parent="MainVboxContainer/HBoxContainer"]
+[node name="lobbyCode" type="HBoxContainer" parent="MainVboxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_constants/separation = 30
 
-[node name="Code" type="Label" parent="MainVboxContainer/HBoxContainer/playersCount"]
+[node name="Code" type="Label" parent="MainVboxContainer/HBoxContainer/lobbyCode"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.654902, 0, 0, 1)
@@ -289,18 +289,18 @@ theme_override_fonts/font = ExtResource("10_eex3c")
 theme_override_font_sizes/font_size = 50
 text = "Code :	"
 
-[node name="codeValue" type="Label" parent="MainVboxContainer/HBoxContainer/playersCount"]
+[node name="codeValue" type="Label" parent="MainVboxContainer/HBoxContainer/lobbyCode"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("10_eex3c")
 theme_override_font_sizes/font_size = 40
 text = "WXYZ"
 
-[node name="lobbyCode" type="HBoxContainer" parent="MainVboxContainer/HBoxContainer"]
+[node name="playersCount" type="HBoxContainer" parent="MainVboxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/separation = 30
 
-[node name="Players" type="Label" parent="MainVboxContainer/HBoxContainer/lobbyCode"]
+[node name="Players" type="Label" parent="MainVboxContainer/HBoxContainer/playersCount"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.654902, 0, 0, 1)
@@ -313,7 +313,7 @@ theme_override_fonts/font = ExtResource("10_eex3c")
 theme_override_font_sizes/font_size = 50
 text = "Players :"
 
-[node name="playersCount" type="Label" parent="MainVboxContainer/HBoxContainer/lobbyCode"]
+[node name="playersCount" type="Label" parent="MainVboxContainer/HBoxContainer/playersCount"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("10_eex3c")
 theme_override_font_sizes/font_size = 40

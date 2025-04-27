@@ -18,6 +18,11 @@ extends Control
 
 @onready var host_node = $MainVboxContainer/HBoxContainer/HostPlayer
 
+#lobby info 
+@onready var players_count_panel = $MainVboxContainer/HBoxContainer/playersCount/playersCount
+@onready var lobby_code_panel = $MainVboxContainer/HBoxContainer/lobbyCode/codeValue
+@onready var lobby_name_panel = $lobbyName
+
 var player_count = 1
 var player_username
 var bot_count = 0
@@ -101,7 +106,7 @@ func _refresh_player_list(data):
 	var players       = payload.get("users", [])
 
 	print("players count ", players_count)
-	print("users in room debug", players)
+	players_count_panel.text = players_count
 
 	## Update HostPlayer node
 	var host_user = players[0] as Dictionary
