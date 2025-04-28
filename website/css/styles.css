@@ -37,7 +37,49 @@ body {
     font-family: 'Poppins', sans-serif;
     background: #f4f4f4;
     color: black;
+
+    opacity: 0;
+    transition: opacity 1s ease;
 }
+
+/* Fade in body */
+body.loaded {
+    opacity: 1;
+}
+
+/* Annimation LIST */
+
+/* Animation pour fade-in */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Animation pour fade-out */
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out;
+}
+
+/* Keyframes pour fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Keyframes pour fade-out */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+/* Fin annimation */
+
 
 /* Header Section */
 
@@ -628,6 +670,10 @@ main .contact-section h2 {
     border-color: var(--primary-color);
 }
 
+.hidden {
+    display: none;
+}
+
 /* Section Beta */
 
 main .beta-section {
@@ -694,6 +740,31 @@ main .beta-section button:active {
 main .download-icon {
     width: 30px;
     margin-right: 10px;
+}
+
+/* Message de remerciement */
+.thank-you-message {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border-radius: 15px;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+main .thank-you-message h2 {
+    color: var(--blue-color);
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 10px;
+    text-shadow: none;
+}
+
+.thank-you-message p {
+    color: #555;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 /* Toast beta pas dispo */

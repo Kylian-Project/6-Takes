@@ -1,6 +1,6 @@
 <?php
 $host = 'mysql-6takes.alwaysdata.net';
-$dbname = ' 6takes_db';
+$dbname = '6takes_db';
 $username = '6takes';
 $password = '6Takes2025**';
 

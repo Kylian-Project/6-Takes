@@ -67,14 +67,16 @@ updateCountdown();
 
 
 // Sélectionne les boutons de type
-const options = document.querySelectorAll('.option');
+document.querySelectorAll('.option').forEach(button => {
+    button.addEventListener('click', function () {
+        // Enlever la classe 'active' de tous les boutons
+        document.querySelectorAll('.option').forEach(btn => btn.classList.remove('active'));
+        // Ajouter la classe 'active' au bouton sélectionné
+        this.classList.add('active');
 
-options.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Retire "active" de tous les boutons
-        options.forEach(b => b.classList.remove('active'));
-        // Ajoute "active" au bouton cliqué
-        btn.classList.add('active');
+        // Mettre à jour la valeur du champ caché 'type'
+        const type = this.getAttribute('data-type');
+        document.getElementById('type').value = type;
     });
 });
 
@@ -158,34 +160,99 @@ betaButton.addEventListener('click', (e) => {
 
 
 // Formulaire via ajax
-document.querySelector('.submit').addEventListener('click', function () {
-    const type = document.querySelector('.option.active').textContent.includes('Bug') ? 'Bug Report' : 'Improvement';
+document.querySelector('.submit').addEventListener('click', async function () {
     const message = document.getElementById('message').value;
-    const fileInput = document.getElementById('screenshot');
-    const formData = new FormData();
+    const screenshot = document.getElementById('screenshot').files[0];
+    const formBox = document.querySelector('.form-box');
+    const spinner = document.getElementById('spinner'); // Le spinner
+    const submitButton = document.querySelector('.submit'); // Le bouton d'envoi
+    const type = document.getElementById('type').value;
 
-    formData.append('type', type);
-    formData.append('message', message);
-    if (fileInput.files.length > 0) {
-        formData.append('screenshot', fileInput.files[0]);
+    // Si aucun message, on affiche un message d'alerte
+    if (!message) {
+        alert("Please enter a message.");
+        return;
     }
 
-    fetch('submit_feedback.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Feedback submitted! Thanks!');
+    // Si le message est trop long, on affiche un message d'alerte
+    if (message.length > 500) {
+        alert("Message too long. Please limit to 500 characters.");
+        return;
+    }
+
+    // Si le message est trop court, on affiche un message d'alerte
+    if (message.length < 10) {
+        alert("Message too short. Please enter at least 10 characters.");
+        return;
+    }
+
+    const name = document.getElementById('name').value;
+    if (name) {
+        alert("Error. Please try again.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('type', type);
+    formData.append('message', message);
+    if (screenshot) {
+        formData.append('screenshot', screenshot);
+    }
+
+    try {
+        spinner.style.display = 'block';
+        spinner.classList.add('fade-in');
+
+        // ➔ Désactivation du bouton "submit"
+        submitButton.disabled = true;
+        submitButton.style.display = 'none';
+
+        const response = await fetch('../php/submit_feedback.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        // ➔ Une fois la réponse, on cache le spinner avec animation
+        spinner.classList.remove('fade-in');
+        spinner.classList.add('fade-out');
+
+        setTimeout(() => {
+            spinner.style.display = 'none'; // Cacher le spinner après l'animation
+        }, 500);
+
+        // ➔ Réaction au résultat du serveur
+        if (result.success) {
+            // Reset le formulaire proprement AVANT
             document.getElementById('message').value = '';
-            fileInput.value = '';
+            document.getElementById('screenshot').value = '';
+
+            // Afficher le message de remerciement
+            formBox.innerHTML = `
+                <div class="thank-you-message">
+                    <h2>Thank you for your feedback! 🎉</h2>
+                    <p>We appreciate your help in making 6 Takes even better!</p>
+                </div>
+            `;
         } else {
-            alert('Error: ' + (data.error || 'Unknown error'));
+            alert('Error: ' + result.error);
         }
-    })
-    .catch(err => {
-        console.error('Error:', err);
-        alert('Error while sending feedback');
-    });
+    } catch (error) {
+        // En cas d'erreur, cacher le spinner et afficher l'alerte
+        spinner.style.display = 'none';
+        alert('Error sending feedback.');
+    } finally {
+        // Réactiver le bouton "submit" à la fin
+        submitButton.disabled = false;
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('loaded');
+    document.getElementById('message').value = '';
+    document.getElementById('screenshot').value = '';
+    // Réinitialiser le type à suggestion par défaut
+    document.getElementById('type').value = 'suggestion';
 });

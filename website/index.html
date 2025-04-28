@@ -103,8 +103,8 @@
               <div class="form-box">
                 <p class="label">What would you like to share?</p>
                 <div class="button-group">
-                  <button class="option active">✨ Improvement</button>
-                  <button class="option redback">🐞 Bug Report</button>
+                    <button class="option active" data-type="suggestion">✨ Improvement</button>
+                    <button class="option redback" data-type="bug">🐞 Bug Report</button>
                 </div>
           
                 <label for="message" class="label">Your Message</label>
@@ -112,8 +112,17 @@
 
                 <label for="screenshot" class="label">Attach a Screenshot (optional)</label>
                 <input type="file" id="screenshot" accept="image/*" class="file-input" />
-          
+
+                <input type="text" id="name" name="name" placeholder="Name" class="hidden" />
+                
+                <input type="hidden" id="type" name="type" value="suggestion" />
+
                 <button class="submit">Submit Feedback</button>
+
+                <div id="spinner" style="display: none; text-align: center; margin-top: 10px;">
+                    <img src="./assets/img/spinner.gif" alt="Chargement..." width="50">
+                </div>
+                
               </div>
             </div>
         </section>
