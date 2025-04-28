@@ -26,7 +26,7 @@ extends Control
 var player_username
 var bot_count = 0
 var id_lobby
-
+var is_host
 
 func _ready():
 	settings_overlay.visible = false
@@ -57,8 +57,11 @@ func _ready():
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 
 	id_lobby = get_node("/root/GameState").id_lobby
+	is_host = get_node("/root/GameState").is_host
+	
 	print("emit get users in room :", id_lobby)
 	SocketManager.emit("users-in-public-room", id_lobby)
+	SocketManager.emit("users-in-private-room", id_lobby) #TO DO merge the two events
 	
 	lobby_name_panel.text = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
 	lobby_code_panel.text = str(id_lobby)
@@ -77,10 +80,23 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		"users-in-your-public-room":
 			print("event users in public room received \n", data)
 			_refresh_player_list(data)
+		"user-left-public", "user-left-private":
+			print("user left room :", data)
+			SocketManager.emit("users-in-private-room", id_lobby)
+			SocketManager.emit("users-in-public-room", id_lobby) 
+		"game-starting":
+			_handle_game_starting()
 		_:
 			print("unhandled event received \n", event, data)
 
 
+func _handle_game_starting():
+	print("game starting received")
+	if is_host:
+		pass
+	else:
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+		
 
 func _refresh_player_list(data):
 	var host_icon
@@ -149,8 +165,12 @@ func _refresh_player_list(data):
 
 	
 func _on_start_button_pressed() -> void:
+	print("emit start game and move to gameboard")
 	SocketManager.emit("start-game", id_lobby)
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	
+	#await get_tree().create_timer(0.1).timeout
+	#SocketManager.emit("start-game", id_lobby)
 
 
 func _on_quit_button_pressed() -> void:
@@ -159,3 +179,4 @@ func _on_quit_button_pressed() -> void:
 		"roomId" : id_lobby
 	})
 	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	

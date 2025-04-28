@@ -65,6 +65,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		print(" Le lobby privé a été créé.")
 		print(data)
 		get_node("/root/GameState").id_lobby = data[0]
+		get_node("/root/GameState").is_host = true
 		
 		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 		

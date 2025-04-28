@@ -67,13 +67,18 @@ var game_state
 var room_id_global
 var players_displayed
 var cards_animated
+var me
+var is_host 
 
 func _ready():
+	print("in gameboard")
 	_load_cards()
 	
 	game_state = GameState.WAITING_FOR_LOBBY
 	player_username = get_node("/root/Global").player_name
 	room_id_global = get_node("/root/GameState").id_lobby
+	me = get_node("/root/GameState").player_info
+	
 	#setting up row panels
 	players_displayed = false
 	cards_animated = false 
@@ -88,6 +93,9 @@ func _ready():
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 	#start game
+	is_host = get_node("/root/GameState").is_host
+	if is_host:
+		SocketManager.emit("start-game", room_id_global)
 	start_game()
 
 
@@ -140,14 +148,16 @@ func start_game():
 	
 	game_state = GameState.SETTING_UP_DECK
 	#SocketManager.emit("start-game", room_id_global)
-	
+	print("emit users in room to start game with ", room_id_global)
 	show_label("Game Starting")
 	SocketManager.emit("users-in-public-room", {
 		"roomId" : room_id_global
 	})
 	
-	await get_tree().create_timer(3).timeout
-	_start_turn()	
+	SocketManager.emit("users-in-public-room", room_id_global)
+	
+	#await get_tree().create_timer(3).timeout
+	#_start_turn()	
 
 func _handle_room_joined(data):
 	print("data for event room joined ", data)
@@ -290,6 +300,7 @@ func _handle_your_hand(hand_data):
 			card.connect("card_selected", Callable(self, "_on_card_selected"))
 	
 	cards_animated = true
+	_start_turn()
 
 func _on_card_selected(card_number):
 	var data = {
@@ -420,10 +431,14 @@ func setup_players(player_data):
 	
 	for user_dict in players:
 		print("\n player dict : \n")
-		if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
+		print(user_dict)
+		var name = user_dict.get("username", "")
+		if name == "Anonyme" :#player_username:
+		#if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
 			current_player = user_dict
 			print("current player is anonyme")
-		others.append(user_dict)
+		else:
+			others.append(user_dict)
 	
 	for i in range(others.size()):
 		var user = others[i]
@@ -442,9 +457,18 @@ func setup_players(player_data):
 	
 	#for user_dict in users:
 		#if user_dict.username == player_username:
-	var me_vis = create_player_visual(current_player.username, 0, true)
-	right_player_container.add_child(me_vis)
-			#break
+	if current_player:
+		print("current player dict ", current_player)
+		var icon_id 
+		if current_player.get("icon", 0) == null:
+			icon_id = 0
+		else:
+			icon_id = current_player.get("icon", 0)
+		var me_vis = create_player_visual(current_player.get("username",""),icon_id, true)
+		right_player_container.add_child(me_vis)
+	else:
+		print("Couldn’t find current_player in %s" , players)
+		return
 			
 	players_displayed = true
 	game_state = GameState.GAME_STARTED
