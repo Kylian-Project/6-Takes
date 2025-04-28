@@ -70,6 +70,8 @@ var cards_animated
 var me
 var is_host 
 var hand_received
+var table_received
+var turn_emitted 
 
 func _ready():
 	print("in gameboard")
@@ -88,6 +90,8 @@ func _ready():
 	players_displayed = false
 	cards_animated = false 
 	hand_received = false
+	table_received = false
+	turn_emitted = false
 	
 	highlight_row(false)
 	for i in range(row_buttons.size()):
@@ -110,11 +114,16 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	match event:
 		"your-hand":
 			if !hand_received:
+				hand_received = true
 				_handle_your_hand(data)
-				await get_tree().create_timer(3).timeout
-				_start_turn()
+				#turn_emitted = true
+				#await get_tree().create_timer(3).timeout
+				#_start_turn()
+				
 		"initial-table", "update-table":
-			_handle_table(data)
+			if !table_received:
+				table_received = true
+				_handle_table(data)
 		"update-scores":
 			_handle_update_scores(data)
 		"choix-rangee":
@@ -136,9 +145,15 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_handle_next_round(data)
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
+			
+	if hand_received and not turn_emitted:
+		turn_emitted = true
+		print(" hand & table are ready — emitting tour")
+		_start_turn()
 
 
 func _handle_next_round(data):
+	print("next round event ereceived ")
 	show_label("Next Round")
 	turn_label.text = "Turn " + data[0] +"/" #add total turns
 	
@@ -154,7 +169,7 @@ func takes_row(data):
 
 func start_game():
 	var start_data = {"roomId" : room_id_global}
-	
+	start_game
 	game_state = GameState.SETTING_UP_DECK
 	#SocketManager.emit("start-game", room_id_global)
 	print("emit users in room to start game with ", room_id_global)
@@ -165,16 +180,11 @@ func start_game():
 	
 	SocketManager.emit("users-in-public-room", room_id_global)
 	
-	#await get_tree().create_timer(3).timeout
-	#_start_turn()	
-
-func _handle_room_joined(data):
-	print("data for event room joined ", data)
-	
 
 func _start_turn():
 	if room_id_global != null:
-		hand_received = false
+		#hand_received = false
+		#table_received = false
 		print("emit tour")
 		SocketManager.emit("tour", {
 			"roomId": room_id_global, 
@@ -188,6 +198,9 @@ func _handle_timer(data):
 
 
 func _handle_update_scores(data):
+	#turn_emitted = false
+	hand_received = false
+	table_received = false
 	print("updata score data ", data)
 	var score = 0
 	var scores = data[0]
@@ -198,7 +211,8 @@ func _handle_update_scores(data):
 	
 	score = JSON.stringify(score)
 	score_label.text = score
-	#_start_turn()
+	
+	_start_turn()
 
 
 func _handle_table(data):
