@@ -69,19 +69,24 @@ var players_displayed
 var cards_animated
 var me
 var is_host 
+var hand_received
 
 func _ready():
 	print("in gameboard")
 	_load_cards()
 	
 	game_state = GameState.WAITING_FOR_LOBBY
-	player_username = get_node("/root/Global").player_name
+	
+	print("player info stored ? ", get_node("/root/GameState").player_info)
+	
+	player_username = "Anonyme" #get_node("/root/Global").player_name
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
 	
 	#setting up row panels
 	players_displayed = false
 	cards_animated = false 
+	hand_received = false
 	
 	highlight_row(false)
 	for i in range(row_buttons.size()):
@@ -103,7 +108,8 @@ func _ready():
 func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	match event:
 		"your-hand":
-			_handle_your_hand(data)
+			if !hand_received:
+				_handle_your_hand(data)
 		"initial-table", "update-table":
 			_handle_table(data)
 		"update-scores":
@@ -119,8 +125,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"ramassage_rang":
 			_handle_takes(data)
 		"fin-tour":
-			pass
-			#_handle_your_hand(data)
+			hand_received = false	
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
@@ -261,6 +266,7 @@ func _find_card_data(card_id: int) -> Dictionary:
 # --- UI Update Functions ---
 
 func _handle_your_hand(hand_data):
+	hand_received = true
 	print("Update hand UI ", hand_data)
 	for child in hbox_container.get_children():
 		child.queue_free()
@@ -271,11 +277,12 @@ func _handle_your_hand(hand_data):
 		
 		if card_id:
 			var card = card_ui_scene.instantiate()
-			#card.modulate.a = 0
-			#card.scale = Vector2(0.5, 0.5)
 			hbox_container.add_child(card)
+			card.connect("card_selected", Callable(self, "_on_card_selected"))
+			
 			card.set_card_data(path, card_id)
-		
+			var this_card = card
+			
 			if !cards_animated:
 				card.modulate.a = 0
 				card.scale = Vector2(0.5, 0.5)
@@ -285,28 +292,29 @@ func _handle_your_hand(hand_data):
 				tw.tween_property(card, "scale", Vector2(1,1), 0.25)
 				await tw.finished
 
-				#await card.start_flip_timer(0.1)
-				var t = get_tree().create_timer(0.1)
-				await t.timeout
-				
-				card.flip_card()
-				await get_tree().create_timer(0.05).timeout
+				this_card = card
+
+		# small delay before flip
+				await get_tree().create_timer(0.1).timeout
+
+		# only flip if it’s still a live node
+				if is_instance_valid(this_card) and this_card.is_inside_tree():
+					this_card.flip_card()
+					#card.flip_card()
+					await get_tree().create_timer(0.05).timeout
 
 			else:
-				#card.modulate.a = 1.0
-				#card.scale = Vector2(1,1)
 				card.toggle_texture_visibility(true)
-
-			card.connect("card_selected", Callable(self, "_on_card_selected"))
 	
 	cards_animated = true
 	_start_turn()
+
 
 func _on_card_selected(card_number):
 	var data = {
 		"roomId" : room_id_global,
 		"card" : card_number,
-		"username" : "tester"
+		"username" : player_username
 	} 
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
@@ -433,7 +441,7 @@ func setup_players(player_data):
 		print("\n player dict : \n")
 		print(user_dict)
 		var name = user_dict.get("username", "")
-		if name == "Anonyme" :#player_username:
+		if name == player_username:
 		#if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
 			current_player = user_dict
 			print("current player is anonyme")

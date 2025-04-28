@@ -27,9 +27,12 @@ var player_username
 var bot_count = 0
 var id_lobby
 var is_host
+var scene_changed
+
 
 func _ready():
 	settings_overlay.visible = false
+	scene_changed = false 
 	
 	player_username = get_node("/root/Global").player_name
 	
@@ -91,10 +94,10 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 
 
 func _handle_game_starting():
-	print("game starting received")
-	if is_host:
-		pass
-	else:
+	print("is host debug ", is_host)
+	if !is_host and !scene_changed:
+		scene_changed = true
+		print("game starting received, moving to gameboard")
 		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 		
 
