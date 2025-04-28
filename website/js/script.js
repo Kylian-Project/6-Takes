@@ -192,6 +192,12 @@ document.querySelector('.submit').addEventListener('click', async function () {
         return;
     }
 
+    // Vérifier la taille de l'image si elle est fournie
+    if (screenshot && screenshot.size > 2 * 1024 * 1024) { // 2 Mo max
+        alert("Image too large. Please limit to 2MB.");
+        return;
+    }
+
     const formData = new FormData();
     formData.append('type', type);
     formData.append('message', message);
@@ -245,6 +251,7 @@ document.querySelector('.submit').addEventListener('click', async function () {
     } finally {
         // Réactiver le bouton "submit" à la fin
         submitButton.disabled = false;
+        submitButton.style.display = 'block';
     }
 });
 
