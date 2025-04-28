@@ -3,7 +3,7 @@ extends Control
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
 @onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
-@onready var cbl_filter_rect   = $AccessibilityOverlay/CBL_FilterLayer/CBL_FilterRect   
+@onready var color_blind= $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions/Colorblindness
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
 @onready var rules_button = $Rules
@@ -77,8 +77,8 @@ func _ready() -> void:
 		multiplayer_button.text = "Log In"
 		
 	else :
-		singleplayer_button.text ="Single Player"
-		multiplayer_button.text = "Multi-Player"
+		singleplayer_button.text ="Singleplayer"
+		multiplayer_button.text = "Multiplayer"
 		
 
 func _process(_delta):
@@ -146,12 +146,5 @@ func _on_brightness_slider_value_changed(value: float) -> void:
 func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
 
-
-
 func _on_color_blind_options_item_selected(index: int) -> void:
-	# index 0 → first item (“Off”), index 1 → second (“On”)
-	# fade the filter in/out:
-	cbl_filter_rect.modulate.a = index
-	# and update the shader's mode if you like (0 or 1)
-	var mat = cbl_filter_rect.material as ShaderMaterial
-	mat.set_shader_param("mode", index)
+	color_blind.visible= true

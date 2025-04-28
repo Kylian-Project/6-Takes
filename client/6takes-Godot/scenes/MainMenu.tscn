@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=37 format=3 uid="uid://btyeei16grxj"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://cq60c45jg1ve7" path="res://scenes/accessibilite.png" id="11_3dgwy"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="11_tnfns"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="15_3wg6b"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yc0qg"]
 bg_color = Color(0.137255, 0.309804, 0.454902, 0.670588)
@@ -272,10 +273,10 @@ anchor_left = 0.5
 anchor_top = 0.254
 anchor_right = 0.5
 anchor_bottom = 0.254
-offset_left = -771.0
-offset_top = -381.32
-offset_right = 771.0
-offset_bottom = 381.68
+offset_left = -771.5
+offset_top = -381.082
+offset_right = 768.5
+offset_bottom = 378.918
 grow_horizontal = 2
 texture = ExtResource("3_jsxgc")
 expand_mode = 1
@@ -289,9 +290,9 @@ anchor_top = 0.458
 anchor_right = 0.5
 anchor_bottom = 0.458
 offset_left = -344.5
-offset_top = -141.64
-offset_right = 344.5
-offset_bottom = 142.36
+offset_top = -141.014
+offset_right = 345.5
+offset_bottom = 143.986
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_7q4f1")
@@ -301,18 +302,18 @@ stretch_mode = 5
 [node name="VButtons" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(300, 200)
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.776
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 0.776
 offset_left = -201.5
-offset_top = 149.5
+offset_top = -150.408
 offset_right = 198.5
-offset_bottom = 449.5
+offset_bottom = 149.592
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 20
 
 [node name="SinglePlayerButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
@@ -326,7 +327,7 @@ theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lowi6")
-text = "Single Player"
+text = "Singleplayer"
 
 [node name="MultiPlayerButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
@@ -339,7 +340,7 @@ theme_override_fonts/font = ExtResource("4_0m83s")
 theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yc0qg")
 theme_override_styles/normal = SubResource("StyleBoxFlat_ufbv3")
-text = "Multi-Player"
+text = "Multiplayer"
 
 [node name="QuitButton" type="Button" parent="VButtons"]
 custom_minimum_size = Vector2(100, 65)
@@ -356,17 +357,16 @@ text = "QUIT
 "
 
 [node name="Profile" type="Button" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.926
-anchor_top = 0.687
-anchor_right = 0.926
-anchor_bottom = 0.687
-offset_left = -47.7521
-offset_top = -48.176
-offset_right = 102.248
-offset_bottom = 101.824
+anchor_left = 0.94
+anchor_top = 0.712
+anchor_right = 0.94
+anchor_bottom = 0.712
+offset_left = -74.6201
+offset_top = -75.096
+offset_right = 75.38
+offset_bottom = 74.904
 mouse_default_cursor_shape = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_6ehi8")
 theme_override_styles/normal = SubResource("StyleBoxFlat_h5wiw")
@@ -635,14 +635,14 @@ text = "Reset Default Settings"
 [node name="SettingsButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.926
-anchor_top = 0.872
-anchor_right = 0.926
-anchor_bottom = 0.872
-offset_left = -47.698
-offset_top = -48.376
-offset_right = 102.302
-offset_bottom = 101.624
+anchor_left = 0.94
+anchor_top = 0.897
+anchor_right = 0.94
+anchor_bottom = 0.897
+offset_left = -74.6201
+offset_top = -75.451
+offset_right = 75.3799
+offset_bottom = 74.549
 mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_x52x6")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ms7p3")
@@ -787,6 +787,13 @@ popup/item_0/text = "OFF"
 popup/item_1/text = "ON"
 popup/item_1/id = 1
 
+[node name="Colorblindness" type="CanvasLayer" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions"]
+visible = false
+scale = Vector2(1.3, 1.34)
+transform = Transform2D(1.3, 0, 0, 1.34, 0, 0)
+script = ExtResource("15_3wg6b")
+Type = 2
+
 [node name="MarginContainer" type="MarginContainer" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings"]
 layout_mode = 2
 theme_override_constants/margin_top = 15
@@ -827,14 +834,14 @@ offset_bottom = 1083.0
 [node name="Rules" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.106
-anchor_top = 0.872
-anchor_right = 0.106
-anchor_bottom = 0.872
-offset_left = -109.784
-offset_top = -48.0561
-offset_right = 40.216
-offset_bottom = 101.944
+anchor_left = 0.088
+anchor_top = 0.897
+anchor_right = 0.088
+anchor_bottom = 0.897
+offset_left = -75.224
+offset_top = -75.451
+offset_right = 74.776
+offset_bottom = 74.5491
 mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_6kpx0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_trsrx")

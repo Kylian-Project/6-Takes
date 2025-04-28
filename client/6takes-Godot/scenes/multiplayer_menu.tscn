@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=44 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -73,7 +73,7 @@ border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.968627, 0.996078, 1, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -87,6 +87,41 @@ border_width_left = 10
 border_width_top = 10
 border_width_right = 10
 border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h71jn"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gejw"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 2
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iu4pb"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -243,10 +278,10 @@ anchor_left = 0.5
 anchor_top = 0.254
 anchor_right = 0.5
 anchor_bottom = 0.254
-offset_left = -771.0
-offset_top = -381.32
-offset_right = 771.0
-offset_bottom = 381.68
+offset_left = -770.0
+offset_top = -380.32
+offset_right = 770.0
+offset_bottom = 379.68
 grow_horizontal = 2
 texture = ExtResource("2_8fj2n")
 expand_mode = 1
@@ -259,10 +294,10 @@ anchor_left = 0.5
 anchor_top = 0.458
 anchor_right = 0.5
 anchor_bottom = 0.458
-offset_left = -344.5
-offset_top = -141.64
-offset_right = 344.5
-offset_bottom = 142.36
+offset_left = -343.0
+offset_top = -139.64
+offset_right = 347.0
+offset_bottom = 145.36
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_wbbcl")
@@ -270,22 +305,24 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="MainButtonsBox" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(300, 200)
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.778
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 0.778
 offset_left = -200.0
-offset_top = 151.0
+offset_top = -150.24
 offset_right = 200.0
-offset_bottom = 451.0
+offset_bottom = 149.76
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
 [node name="Create_Lobby" type="Button" parent="MainButtonsBox"]
+custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -293,13 +330,14 @@ theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 27
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_djfxv")
 theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Create a Lobby"
 
 [node name="Join_Lobby" type="Button" parent="MainButtonsBox"]
+custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -307,12 +345,13 @@ theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 27
 theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
 text = "Join a Lobby"
 
 [node name="ReturnButton" type="Button" parent="MainButtonsBox"]
+custom_minimum_size = Vector2(100, 65)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -320,7 +359,7 @@ theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 27
 theme_override_styles/focus = SubResource("StyleBoxFlat_d15vq")
 theme_override_styles/hover = SubResource("StyleBoxFlat_yjo8o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vs32j")
@@ -329,14 +368,14 @@ text = "Return"
 [node name="Settings" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.926
-anchor_top = 0.872
-anchor_right = 0.926
-anchor_bottom = 0.872
-offset_left = -47.7521
-offset_top = -48.056
-offset_right = 102.248
-offset_bottom = 101.944
+anchor_left = 0.94
+anchor_top = 0.897
+anchor_right = 0.94
+anchor_bottom = 0.897
+offset_left = -71.8
+offset_top = -72.76
+offset_right = 78.2001
+offset_bottom = 77.24
 mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
@@ -348,14 +387,14 @@ expand_icon = true
 [node name="Profile" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.926
-anchor_top = 0.687
-anchor_right = 0.926
-anchor_bottom = 0.687
-offset_left = -47.7521
-offset_top = -48.176
-offset_right = 102.248
-offset_bottom = 101.824
+anchor_left = 0.942
+anchor_top = 0.714
+anchor_right = 0.942
+anchor_bottom = 0.714
+offset_left = -75.64
+offset_top = -75.1201
+offset_right = 74.3601
+offset_bottom = 74.8799
 mouse_default_cursor_shape = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
@@ -366,18 +405,18 @@ expand_icon = true
 [node name="Rules" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.104
-anchor_top = 0.874
-anchor_right = 0.104
-anchor_bottom = 0.874
-offset_left = -105.848
-offset_top = -50.2161
-offset_right = 44.152
-offset_bottom = 99.7839
+anchor_left = 0.088
+anchor_top = 0.897
+anchor_right = 0.088
+anchor_bottom = 0.897
+offset_left = -74.96
+offset_top = -72.76
+offset_right = 75.04
+offset_bottom = 77.24
 mouse_default_cursor_shape = 2
-theme_override_styles/focus = SubResource("StyleBoxFlat_fe82j")
-theme_override_styles/hover = SubResource("StyleBoxFlat_b2r32")
-theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
+theme_override_styles/focus = SubResource("StyleBoxFlat_h71jn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7gejw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_iu4pb")
 icon = ExtResource("6_kcnsc")
 icon_alignment = 1
 expand_icon = true

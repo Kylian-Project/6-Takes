@@ -35,7 +35,7 @@ project/assembly_name="6Takes_main"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg", "res://addons/paulloz.colorblindness/plugin.cfg")
 
 [rendering]
 
