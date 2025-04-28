@@ -140,7 +140,6 @@ func start_game():
 	get_tree().current_scene.queue_free()
 	get_tree().current_scene = game_scene
 
-
 func return_to_main_menu():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 

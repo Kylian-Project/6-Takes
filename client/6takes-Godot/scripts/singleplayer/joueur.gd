@@ -2,19 +2,21 @@ class_name Joueur
 extends Object
 
 var nom: String
+var hand
 var score: int = 0
-var hand: Hand
-var carte_en_attente = null
 
-func _init(n: String, deck, nb_cartes: int):
-    nom = n
-    hand = Hand.new(deck.distribuer(nb_cartes))
+func _init(_nom: String, _deck, nb_cartes: int):
+	nom = _nom
+	hand = Hand.new(_deck.distribuer(nb_cartes))
 
-func update_score(points: int):
-    score += points
+func update_score(penalite: int):
+	score += penalite
 
-func reset_score():
-    score = 0
-
-func get_hand() -> Array:
-    return hand.cartes
+func choisir_carte() -> Carte:
+	# IA simple : joue la plus petite carte
+	var carte_min = hand.cartes[0]
+	for carte in hand.cartes:
+		if carte.numero < carte_min.numero:
+			carte_min = carte
+	hand.cartes.erase(carte_min)
+	return carte_min

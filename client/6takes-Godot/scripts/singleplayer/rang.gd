@@ -7,14 +7,16 @@ func _init(carte):
 	cartes = [carte]
 
 func ajouter_carte(carte):
-	cartes.append(Carte.new(carte.numero))
+	cartes.append(carte)
+
 
 func est_pleine() -> bool:
 	return cartes.size() == 6
 
 func recuperer_cartes() -> Array:
-	return cartes.slice(0, 5)  # pour la pénalité
+	var cartes_a_ramasser = cartes.slice(0, 5)  # pour la pénalité
 	cartes = cartes.slice(5)  # on garde la 6e carte
+	return cartes_a_ramasser
 
 func recuperer_cartes_special_case() -> Array:
 	return cartes.duplicate()

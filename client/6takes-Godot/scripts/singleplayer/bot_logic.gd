@@ -14,3 +14,16 @@ static func delai_aleatoire() -> float:
 # Renvoie l'index d'une rangée aléatoire parmi les 4
 static func choisir_rang_aleatoire() -> int:
 	return randi() % 4
+
+# Nouvelle fonction pour choisir les cartes du bot
+static func choisir_cartes_bots(main: Array) -> Array:
+	var cartes_a_jouer = []
+	
+	# Exemple simple : choisir 2 cartes au hasard
+	for i in range(2):
+		var index_carte = choisir_carte_aleatoire(main)
+		if index_carte != -1:
+			cartes_a_jouer.append(main[index_carte])
+			main.erase(main[index_carte])  # Utiliser erase() au lieu de remove()
+	
+	return cartes_a_jouer

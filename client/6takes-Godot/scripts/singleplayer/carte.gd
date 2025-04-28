@@ -1,10 +1,11 @@
 class_name Carte
+extends Object
 
-var numero: int
-var tetes: int
+var numero : int
+var tetes : int
 
-func _init(n):
-	numero = n
+func _init(_numero : int):
+	numero = _numero
 	tetes = calculer_tetes()
 
 func calculer_tetes() -> int:
