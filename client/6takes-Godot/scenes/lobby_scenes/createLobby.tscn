@@ -64,14 +64,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_t2o4j")
 
-[node name="Main Menu Dimming2" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.501961)
+[node name="BgDimming" type="ColorRect" parent="."]
+z_index = -1
+offset_left = -968.0
+offset_top = -544.0
+offset_right = 974.0
+offset_bottom = 554.0
+color = Color(0, 0, 0, 0.117647)
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
