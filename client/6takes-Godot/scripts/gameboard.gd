@@ -80,6 +80,7 @@ func _ready():
 	print("player info stored ? ", get_node("/root/GameState").player_info)
 	
 	player_username = "Anonyme" #get_node("/root/Global").player_name
+	
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
 	
@@ -110,6 +111,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"your-hand":
 			if !hand_received:
 				_handle_your_hand(data)
+				await get_tree().create_timer(3).timeout
+				_start_turn()
 		"initial-table", "update-table":
 			_handle_table(data)
 		"update-scores":
@@ -125,7 +128,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"ramassage_rang":
 			_handle_takes(data)
 		"fin-tour":
-			hand_received = false	
+			print("fin tour")
+			#hand_received = false	
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
@@ -170,6 +174,7 @@ func _handle_room_joined(data):
 
 func _start_turn():
 	if room_id_global != null:
+		hand_received = false
 		print("emit tour")
 		SocketManager.emit("tour", {
 			"roomId": room_id_global, 
@@ -193,7 +198,7 @@ func _handle_update_scores(data):
 	
 	score = JSON.stringify(score)
 	score_label.text = score
-	_start_turn()
+	#_start_turn()
 
 
 func _handle_table(data):
@@ -307,7 +312,6 @@ func _handle_your_hand(hand_data):
 				card.toggle_texture_visibility(true)
 	
 	cards_animated = true
-	_start_turn()
 
 
 func _on_card_selected(card_number):
@@ -438,8 +442,6 @@ func setup_players(player_data):
 	var current_player
 	
 	for user_dict in players:
-		print("\n player dict : \n")
-		print(user_dict)
 		var name = user_dict.get("username", "")
 		if name == player_username:
 		#if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
@@ -450,6 +452,7 @@ func setup_players(player_data):
 	
 	for i in range(others.size()):
 		var user = others[i]
+		print("\nothers debug ;", others)
 		
 		if user.icon:
 			user_icon = user.icon
@@ -458,15 +461,13 @@ func setup_players(player_data):
 			
 		var vis = create_player_visual(user.username, user_icon, false)
 		if i % 2 == 0:
-			right_player_container.add_child(vis)
-		else:
 			left_player_container.add_child(vis)
+		else:
+			right_player_container.add_child(vis)
 
-	
 	#for user_dict in users:
 		#if user_dict.username == player_username:
 	if current_player:
-		print("current player dict ", current_player)
 		var icon_id 
 		if current_player.get("icon", 0) == null:
 			icon_id = 0
