@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://dswro2gf43iip"]
+[gd_scene load_steps=8 format=3 uid="uid://bi73u3o3qngk5"]
 
-[ext_resource type="Script" uid="uid://vdo3rdq00ofr" path="res://scripts/rules.gd" id="1_7sap1"]
+[ext_resource type="Script" path="res://scripts/rules.gd" id="1_7sap1"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_qwy8h"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="3_vj88w"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="4_oyd2o"]
@@ -28,8 +28,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 247.0
 offset_top = 100.0
-offset_right = -309.0
-offset_bottom = -116.0
+offset_right = -274.0
+offset_bottom = -128.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7sap1")
@@ -74,24 +74,24 @@ mouse_filter = 2
 texture = ExtResource("2_qwy8h")
 expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 32.0
-offset_right = -300.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 160
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -101,7 +101,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Objective"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
@@ -112,12 +112,12 @@ theme_override_font_sizes/font_size = 22
 text = "Avoid collecting jester heads (penalty points) by strategically playing your cards.
 The player with the fewest points at the end wins."
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer2"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -127,7 +127,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Game Setup"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer2"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
@@ -138,12 +138,12 @@ theme_override_font_sizes/font_size = 22
 text = "- Each player is dealt 5 - 10 cards from a deck of 104 (numbered 1–104).  
 - Four cards are placed face-up on the table to form the initial rows."
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer3" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer3"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer3"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -153,7 +153,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Round Play"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer3"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer3"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
@@ -164,12 +164,12 @@ theme_override_font_sizes/font_size = 22
 text = "- Every round, players secretly choose one card from their hand.  
 - All chosen cards are revealed simultaneously."
 
-[node name="VBoxContainer4" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer4" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer4"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer4"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -179,7 +179,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Card Ordering & Placement"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer4"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer4"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
@@ -191,12 +191,12 @@ text = "- Revealed cards are automatically sorted in ascending order.
 - Each card is placed at the end of the row where the last card is the highest number
    lower than the played card."
 
-[node name="VBoxContainer5" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer5" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer5"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer5"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -206,7 +206,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Row Overflow"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer5"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer5"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
@@ -218,12 +218,12 @@ text = "- If placing a card would make a row exceed five cards (i.e., become the
 - The player who played the card collects the five cards from that row
    (adding their bullheads to their score), and the played card becomes the new row starter."
 
-[node name="VBoxContainer6" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer6" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer6"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer6"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.585062, 0.585062, 0.585062, 1)
@@ -233,7 +233,7 @@ theme_override_fonts/font = ExtResource("4_oyd2o")
 theme_override_font_sizes/font_size = 34
 text = "      Special Placement Rule"
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer6"]
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer6"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 0.929412)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2)
