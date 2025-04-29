@@ -68,6 +68,9 @@ func _ready():
 	
 	lobby_name_panel.text = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
 	lobby_code_panel.text = str(id_lobby)
+	
+	settings_button.disabled = !is_host
+	start_button.disabled = !is_host
 
 
 func _on_raw_packet(packet):
@@ -89,6 +92,9 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			SocketManager.emit("users-in-public-room", id_lobby) 
 		"game-starting":
 			_handle_game_starting()
+		"remove-room":
+			print("room removed")
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -169,9 +175,12 @@ func _refresh_player_list(data):
 	
 func _on_start_button_pressed() -> void:
 	print("emit start game and move to gameboard")
+	
+	#if is_host:
 	SocketManager.emit("start-game", id_lobby)
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-	
+	#else:
+		#return
 	#await get_tree().create_timer(0.1).timeout
 	#SocketManager.emit("start-game", id_lobby)
 

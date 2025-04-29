@@ -81,7 +81,7 @@ func _ready():
 	
 	print("player info stored ? ", get_node("/root/GameState").player_info)
 	
-	player_username = "Anonyme" #get_node("/root/Global").player_name
+	player_username = "neila" #get_node("/root/Global").player_name
 	
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info

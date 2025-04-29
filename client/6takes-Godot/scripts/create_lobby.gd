@@ -16,11 +16,13 @@ extends Control
 @onready var rounds_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 
 var lobby_name 
-
+var uname
 
 func _ready():	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	create_button.pressed.connect(_on_create_lobby)
+	
+	uname = get_node("/root/Global").player_name
 
 
 func _on_socket_connected(ns: String):
@@ -39,6 +41,7 @@ func _on_create_lobby():
 		
 	var message = {
 		"event": "create-room",
+		"username" : uname,
 		"lobbyName": lobby_name,
 		"playerLimit": int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected())),
 		"numberOfCards": int(card_number_dropdown.get_item_text(card_number_dropdown.get_selected())),

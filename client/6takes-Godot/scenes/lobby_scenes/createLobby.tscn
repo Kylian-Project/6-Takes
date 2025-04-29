@@ -66,6 +66,7 @@ script = ExtResource("1_t2o4j")
 
 [node name="BgDimming" type="ColorRect" parent="."]
 z_index = -1
+layout_mode = 0
 offset_left = -968.0
 offset_top = -544.0
 offset_right = 974.0
