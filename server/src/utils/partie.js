@@ -79,17 +79,22 @@ export const PlayGame = (socket, io) =>
 		
 		games.push({ roomId, Jeu: jeu });
 
-		// Distribution des cartes
-		for (let i = 0; i < usernames.length; i++) 
-		{
-			// On a déjà distribué les cartes dans le constructeur
-			const joueur = jeu.joueurs[i];
-			const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
+		// On notify players que le jeu a commence
+		io.to(roomId).emit("game-starting");
 
-			if (socketId) {
-				io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+		// Distribution des cartes avec 2 secs de delay
+		setTimeout(() => {
+			for (let i = 0; i < usernames.length; i++) 
+			{
+				// On a déjà distribué les cartes dans le constructeur
+				const joueur = jeu.joueurs[i];
+				const socketId = usersWithSocket.find(u => u.username === joueur.nom)?.idSocketUser;
+
+				if (socketId) {
+					io.to(socketId).emit("your-hand", joueur.getHand().map(c => c.numero));
+				}
 			}
-		}
+		},2000);
 
 		// Envoi de la table initiale à tous sert pas a grand chose a RETIRER
 		// const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
@@ -411,7 +416,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
             socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
             io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
 
-			await new Promise((resolve) => {				
+			await new Promise((resolve) => {
 				const handler = ({ roomId: rid, indexRangee, username: uname }) => 
 				{
 					if (rid === roomId && uname === username) 
