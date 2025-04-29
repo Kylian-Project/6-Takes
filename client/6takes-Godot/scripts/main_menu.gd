@@ -46,6 +46,13 @@ func _ready() -> void:
 	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
 
+	# Populate or verify your Off/On items have IDs 0/1,
+	# connect the signal, then force one initial call:
+	colorblind_option.clear()
+	colorblind_option.add_item("Off", 0)
+	colorblind_option.add_item("On",  1)
+	colorblind_option.item_selected.connect(self._on_color_blind_options_item_selected)
+	_on_color_blind_options_item_selected(colorblind_option.get_selected_id())
 		
 	# Click Soundboard
 	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
@@ -147,4 +154,5 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
 
 func _on_color_blind_options_item_selected(index: int) -> void:
-	color_blind.visible= true
+	# index==0 (“Off”) → hide; index==1 (“On”) → show
+	color_blind.visible = (index == 1)
