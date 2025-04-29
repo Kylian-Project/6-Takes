@@ -376,6 +376,7 @@ expand_icon = true
 [node name="RulesOverlay" parent="." instance=ExtResource("9_jaad2")]
 visible = false
 layout_mode = 1
+anchors_preset = 15
 offset_left = 220.0
 offset_top = 78.0
 offset_right = 212.0
