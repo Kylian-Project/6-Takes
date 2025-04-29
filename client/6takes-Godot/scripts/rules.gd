@@ -1,5 +1,5 @@
 extends Control
-@onready var cancel_button = $Control/CancelButton
+@onready var cancel_button = $MarginContainer/Control/Panel/CancelButton
 
 
 # Called when the node enters the scene tree for the first time.

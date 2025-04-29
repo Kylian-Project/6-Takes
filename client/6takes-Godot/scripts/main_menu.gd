@@ -123,6 +123,7 @@ func quit_game():
 func _on_rules_pressed() -> void:
 	rules_overlay.visible = true
 	
+	
 func _on_profile_pressed():
 	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
 	var edit_profile_instance = edit_profile_scene.instantiate()
