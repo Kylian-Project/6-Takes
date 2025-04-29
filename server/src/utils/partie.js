@@ -177,13 +177,15 @@ export const PlayGame = (socket, io) =>
 		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
 	  
 	  
-		const room = rooms.find(r => r.id === roomId);
-		const limite = room?.settings?.playerLimit || jeu.joueurs.length;
-	  
+		const room = rooms.find(r => r.id === roomId);	  
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
+		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
+		const usernames = getUsers(roomId);
+		const joueursAttendus = usernames.length - nombreBots;
+
 		// Tous les joueurs ont joué pas de soucis de temps
-		if (cartesAJoueesParRoom[roomId].length === limite) 
+		if (cartesAJoueesParRoom[roomId].length === joueursAttendus) 
 		{
 			clearTimeout(timers[roomId]);
 			delete timers[roomId];
