@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=18 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -270,6 +271,7 @@ offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
+script = ExtResource("8_tuggc")
 
 [node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2
