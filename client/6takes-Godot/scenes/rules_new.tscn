@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dnl00vxjesyqs"]
+[gd_scene load_steps=7 format=3 uid="uid://dnl00vxjesyqs"]
 
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_mj5vi"]
+[ext_resource type="Script" path="res://scenes/rules_new.gd" id="1_nuacv"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="2_2d4cy"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="3_tbm3c"]
 [ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="4_tyrwb"]
@@ -19,6 +20,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_nuacv")
 
 [node name="ColorRect3" type="ColorRect" parent="."]
 layout_mode = 1
@@ -259,3 +261,5 @@ offset_right = 1555.0
 offset_bottom = 363.0
 texture = ExtResource("4_tyrwb")
 expand_mode = 1
+
+[connection signal="pressed" from="MarginContainer/Control/Panel/CancelButton" to="." method="_on_cancel_button_pressed"]

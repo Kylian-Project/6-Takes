@@ -16,6 +16,7 @@ extends Control
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close
+	
 ]
 
 #validate token 
