@@ -2,7 +2,7 @@ extends PanelContainer
 
 @onready var icon = $PlayerInfoContainer/playerIcon
 @onready var player_name = $PlayerInfoContainer/playerName
-@onready var button = $PlayerInfoContainer/QuickButton
+@onready var button = $PlayerInfoContainer/KickButton
 
 const ICON_PATH = "res://assets/images/icons/"
 const ICON_FILES = [
@@ -28,3 +28,7 @@ func create_player_visual(uname, icon_id: int, host := false):
 		button.text = "Kick"
 		button.icon = null  
 	
+
+func _on_kick_button_pressed() -> void:
+	print("player kicked : ", player_name)
+	return player_name

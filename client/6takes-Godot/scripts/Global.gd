@@ -93,7 +93,6 @@ func session_validation(token : String):
 	var json_body = JSON.stringify(token)
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
-	print("\n url debug ", url)
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	
 	if error != OK:

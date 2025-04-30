@@ -50,7 +50,7 @@ text = "Player
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="QuickButton" type="Button" parent="PlayerInfoContainer"]
+[node name="KickButton" type="Button" parent="PlayerInfoContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -60,3 +60,5 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_4gvs5")
 text = "QUICK"
 icon = ExtResource("4_je7o0")
 icon_alignment = 1
+
+[connection signal="pressed" from="PlayerInfoContainer/KickButton" to="." method="_on_kick_button_pressed"]

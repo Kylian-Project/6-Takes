@@ -17,7 +17,7 @@ extends Control
 @onready var players_container = $MainVboxContainer/playersContainer
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 @onready var bot_scene = preload("res://scenes/BotSlot.tscn")
-
+@onready var message_label = $mssgLabel
 @onready var host_node = $MainVboxContainer/HBoxContainer/HostPlayer
 
 #lobby info 
@@ -89,7 +89,7 @@ func _ready():
 		add_bot_button.visible = bot_count < 9
 		quit_button.text = "Remove Lobby"
 		#disable add bot button if player limit reached
-		if players_count >= players_limit:
+		if  players_count >= players_limit:
 			add_bot_button.disabled = true
 	
 
@@ -115,6 +115,10 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				SocketManager.emit("users-in-private-room", id_lobby)
 		"game-starting":
 			_handle_game_starting()
+		"kicked":
+			message_label.visible = true
+			await get_tree().create_timer(3).timeoutawait
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		#"public-room-joined", "private-room-joined":
 			#_refresh_player_list(data)
 		_:
@@ -171,7 +175,7 @@ func _refresh_player_list(data):
 		host_user.get("icon", 0),
 		true # is_host = true
 	)
-
+	#add players to scene
 	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
 		
@@ -186,6 +190,7 @@ func _refresh_player_list(data):
 			icon_id,
 			false
 		)
+		entry.get_node("PlayerInfoContainer/KickButton").disabled = !is_host
 		print("child added to scene")
 
 	
@@ -207,22 +212,35 @@ func remove_bot(bot_instance):
 		bot_count -= 1
 		players_count -= 1
 		get_node("/root/GameState").players_count = players_count	
-		
-		if is_instance_valid(bot_instance):
-			bot_instance.queue_free()
+		update_bot_slots()
+		#if is_instance_valid(bot_instance):
+			#bot_instance.queue_free()
+
+
+func update_bot_slots():
+	# Clear existing bot slots
+	for child in players_container.get_children():
+		if child.has_method("check_bot_removal"):
+			child.queue_free()
+
+	# Recreate bots with correct numbering
+	for i in range(bot_count):
+		var bot_instance = bot_scene.instantiate()
+		bot_instance.bot_index = i + 1 
+		bot_instance.lobby_scene = self  # Provide reference to LobbyScene
+		players_container.add_child(bot_instance)
 
 
 func _on_add_bot_button_pressed() -> void:
 	bot_count += 1
-	#for i in range(bot_count):
-	var bot_instance = bot_scene.instantiate()
-	bot_instance.bot_index = bot_count
-	bot_instance.lobby_scene = self  # Provide reference to LobbyScene
-	players_container.add_child(bot_instance)
+	#var bot_instance = bot_scene.instantiate()
+	#bot_instance.bot_index = bot_count
+	#bot_instance.lobby_scene = self  # Provide reference to LobbyScene
+	#players_container.add_child(bot_instance)
 	
 	players_count += 1
 	get_node("/root/GameState").players_count = players_count
-	
+	update_bot_slots()
 	SocketManager.emit("join-room", 
 	{
 		"roomId" : id_lobby,
