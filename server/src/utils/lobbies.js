@@ -241,6 +241,7 @@ export const roomHandler = (socket, io) =>
                 if (room.idSocketHost === socketId) 
                 {
                     removeRoom(room.id);
+                    console.log("📦 Room supprimée :", room.id);
                     return;
                 }
           
@@ -251,15 +252,8 @@ export const roomHandler = (socket, io) =>
                 {
                     const users = room.getUsernames();
                     socket.leave(room.id);
-                    if (room.private) 
-                    {
-                        socket.to(room.id).emit("user-left-private", users);
-                    } 
-                    else 
-                    {
-                        socket.to(room.id).emit("user-left-public", users);
-                    }
-                    return;
+                    socket.to(room.id).emit("user-left", users);
+                    //return;
                 }
             }
         };
@@ -303,12 +297,14 @@ export const roomHandler = (socket, io) =>
       });
       
 
-    socket.on("join-room", async({ roomId, username }) => {
+    socket.on("join-room", async({ roomId, username }) => 
+    {
         const room = joinRoom({ roomId, username });
         if (room) 
         {
             socket.join(roomId);
             const users = await getUsers(roomId);
+            //!!!! a modifier pour n'avoir qu'un seul event
             if (room.private) 
             {
                 socket.emit("private-room-joined", users);
@@ -326,6 +322,47 @@ export const roomHandler = (socket, io) =>
         }
     });
     
+
+    socket.on("kick-player", async({ roomId, username }) => 
+    {
+        const room = rooms.find(r => r.id === roomId);
+        if (!room) return;
+      
+        const userToKick = room.users.find(u => u.username === username);
+      
+        // Retirer l'utilisateur de la room
+        room.removeUser(userToKick.idSocketUser);
+      
+        const isBot = username.startsWith("Bot");
+
+        // Le faire quitter la room socket.io
+        if(!isBot)
+        {
+            const kickedSocket = io.sockets.sockets.get(userToKick.idSocketUser);
+            if (kickedSocket) 
+            {
+                kickedSocket.leave(roomId);
+                kickedSocket.emit("kicked", { roomId, reason: "Vous avez été expulsé de la salle." });
+            }
+        }
+        const users = await getUsers(roomId);
+        if(room.private)
+        {
+            io.to(roomId).emit("users-in-your-private-room", users);
+        }
+        else 
+        {
+            io.to(roomId).emit("users-in-your-public-room", users);
+        }
+        console.log(`🚫 ${username} a été expulsé de la room ${roomId}`);
+
+
+    });
+      
+    
+
+
+
 };
 
 

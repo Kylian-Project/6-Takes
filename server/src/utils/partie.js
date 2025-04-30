@@ -38,7 +38,6 @@ const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 const joueursPretPourTour = {};
 
-
 	  	//////////////////////////////////////////////////
 		/////// Deroulement du jeu ///////////////////////
   		//////////////////////////////////////////////////
@@ -182,7 +181,7 @@ export const PlayGame = (socket, io) =>
 
 		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const usernames = getUsers(roomId);
-		const joueursAttendus = usernames.length - nombreBots;
+		const joueursAttendus = usernames.length;
 
 		// Tous les joueurs ont joué pas de soucis de temps
 		if (cartesAJoueesParRoom[roomId].length === joueursAttendus) 
@@ -276,6 +275,7 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue)
   
 	const nomsAttendus = jeu.joueurs.map(j => j.nom);
 	const absents = nomsAttendus.filter(nom => !joueursDejaJoue.includes(nom));
+	console.log("absents",absents);
 	return absents;
 }
   
