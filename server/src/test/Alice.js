@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import readline from "readline";
 
-const socket = io("http://185.155.93.105:14002");
+const socket = io("http://185.155.93.105:14003");
 
 let roomId;
 let hand = [];
@@ -35,10 +35,10 @@ socket.on("connect", () => {
     isPrivate: "PRIVATE",
     lobbyName: "TestTerminal",
     playerLimit: 10,
-    numberOfCards: 10,
-    roundTimer: 15,
-    endByPoints: 10,
-    rounds: 5
+    numberOfCards: 5,
+    roundTimer: 45,
+    endByPoints: 50,
+    rounds: 2
   });
 });
 
@@ -46,10 +46,10 @@ socket.on("private-room-created", (id) => {
   roomId = id;
   console.log("📦 Room créée :", roomId);
 
-  setTimeout(() => {
-  console.log("🚪 neila demande un kick lounas");
-  socket.emit("kick-player", { roomId, username:"Bot1234" });
-}, 15000);
+//   setTimeout(() => {
+//   console.log("🚪 neila demande un kick lounas");
+//   socket.emit("kick-player", { roomId, username:"Bot1234" });
+// }, 15000);
 
 
 });
@@ -120,7 +120,9 @@ socket.on("manche-suivante", () =>
   {
       console.log("Nouvelle manche ");
       // on peut afficher les score de tout le monde pendant X secondes
-      socket.emit("tour" , {roomId, username:"neila"});
+      //socket.emit("tour" , {roomId, username:"neila"});
+      //compteur=0;
+      askCarte();
     });
 
 socket.on("end-game", ({ classement }) => {
@@ -156,3 +158,13 @@ socket.on("users-in-your-public-room", (users) => {
 });
 
 
+
+socket.on("score-manche", ({ classement }) => {
+  console.log("\n🏆 FIN DE MANCHE !");
+  console.log("📋 Classement dans cette manche :");
+  
+  classement.forEach((joueur, index) => {
+    console.log(` ${index + 1}. ${joueur.nom} → ${joueur.score} 🐮`);
+  });
+
+});

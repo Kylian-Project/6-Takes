@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import readline from "readline";
 
-const socket = io("http://185.155.93.105:14002");
+const socket = io("http://185.155.93.105:14003");
 
 let roomId;
 let hand = [];
@@ -21,9 +21,9 @@ rl.question("🔑 Entrez le roomId à rejoindre : ", (inputRoomId) => {
 
   socket.on("private-room-joined", (users) => {
     console.log("👥 Lounas a rejoint la room :", users);
-    //socket.emit("start-game", roomId);
+    socket.emit("start-game", roomId);
     //socket.emit("tour", roomId);      //lancer le tour
-    //console.log("start game envoyé");
+    console.log("start game envoyé");
     //askCarte();
   });
   
@@ -108,7 +108,8 @@ socket.on("manche-suivante", () =>
 {
     console.log("Nouvelle manche ");
     // on peut afficher les score de tout le monde pendant X secondes
-    socket.emit("tour" , {roomId, username:"lounas"});
+    //socket.emit("tour" , {roomId, username:"lounas"});
+    askCarte();
   });
 
 
@@ -123,4 +124,16 @@ socket.on("end-game", ({ classement }) => {
 
   console.log("Merci d'avoir joué !");
   process.exit(0); // Termine proprement le processus
+});
+
+
+
+socket.on("score-manche", ({ classement }) => {
+  console.log("\n🏆 FIN DE MANCHE !");
+  console.log("📋 Classement dans cette manche :");
+  
+  classement.forEach((joueur, index) => {
+    console.log(` ${index + 1}. ${joueur.nom} → ${joueur.score} 🐮`);
+  });
+
 });
