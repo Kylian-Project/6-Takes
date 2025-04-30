@@ -38,6 +38,7 @@ const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 const joueursPretPourTour = {};
 
+
 	  	//////////////////////////////////////////////////
 		/////// Deroulement du jeu ///////////////////////
   		//////////////////////////////////////////////////
@@ -136,6 +137,8 @@ export const PlayGame = (socket, io) =>
 		//sont tous envoyé en meme temps dan le "tour"
 		if (joueursPretPourTour[roomId].length === joueursAttendus) 
 		{
+			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);		
+
 			//faire jouer automatiquement les bots b1sur une fois que tous les joueurs sont prets
 			jeu.joueurs.forEach(joueur => 
 			{
@@ -148,7 +151,6 @@ export const PlayGame = (socket, io) =>
 				}
 			});
 
-			console.log(`🚦 Tous les joueurs sont prêts, start - tour !`);		
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
 			// Envoi des mains et de la table
@@ -181,7 +183,7 @@ export const PlayGame = (socket, io) =>
 
 		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const usernames = getUsers(roomId);
-		const joueursAttendus = usernames.length;
+		const joueursAttendus = usernames.length ;
 
 		// Tous les joueurs ont joué pas de soucis de temps
 		if (cartesAJoueesParRoom[roomId].length === joueursAttendus) 
@@ -275,7 +277,6 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue)
   
 	const nomsAttendus = jeu.joueurs.map(j => j.nom);
 	const absents = nomsAttendus.filter(nom => !joueursDejaJoue.includes(nom));
-	console.log("absents",absents);
 	return absents;
 }
   
