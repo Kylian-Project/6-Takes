@@ -37,22 +37,27 @@ func _on_create_lobby():
 	if !lobby_name_field.text.is_empty():
 		print("lobby name debug :", lobby_name)
 		lobby_name = lobby_name_field.text
+	else:
+		lobby_name = " "
 		
-		
+	var player_limit = int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected()))
+	
 	var message = {
 		"event": "create-room",
 		"username" : uname,
 		"lobbyName": lobby_name,
-		"playerLimit": int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected())),
+		"playerLimit": player_limit,
 		"numberOfCards": int(card_number_dropdown.get_item_text(card_number_dropdown.get_selected())),
 		"roundTimer": int(round_timer_dropdown.get_item_text(round_timer_dropdown.get_selected())),
 		"endByPoints": int(end_points_dropdown.get_item_text(end_points_dropdown.get_selected())),
 		"rounds": int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected())),
 		"isPrivate": visibility
 	}
+	
 	get_node("/root/GameState").lobby_name = lobby_name
 	get_node("/root/GameState").is_host = true
 	get_node("/root/GameState").is_public = !visibility
+	get_node("/root/GameState").players_limit = player_limit
 	
 	GameState.player_info = {
 		"username": get_node("/root/Global").player_name,
