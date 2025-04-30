@@ -1,5 +1,8 @@
 extends Control
 
+const DEFAULT_BRIGHTNESS = 1.0
+const DEFAULT_CONTRAST   = 1.0
+
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
 @onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
@@ -15,6 +18,9 @@ extends Control
 @onready var overlay_layer = $OverlayLayer
 @onready var accessibility_button = $AccessibilityButton
 @onready var accessibility_overlay = $AccessibilityOverlay
+@onready var brightness_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider
+@onready var contrast_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider
+@onready var reset_button = $AccessibilityOverlay/ResetButton
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -87,6 +93,8 @@ func _ready() -> void:
 		singleplayer_button.text ="Singleplayer"
 		multiplayer_button.text = "Multiplayer"
 		
+	reset_button.pressed.connect(self._on_reset_button_pressed)
+
 
 func _process(_delta):
 	overlay_layer.visible = overlay_layer.get_child_count() > 0
@@ -156,3 +164,16 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 func _on_color_blind_options_item_selected(index: int) -> void:
 	# index==0 (“Off”) → hide; index==1 (“On”) → show
 	color_blind.visible = (index == 1)
+
+func _on_reset_button_pressed() -> void:
+	# 1) Reset slider positions
+	brightness_slider.value = DEFAULT_BRIGHTNESS
+	contrast_slider.value   = DEFAULT_CONTRAST
+	# 2) Reset option button (ID 0 = Off)
+	colorblind_option.select(0)
+	
+	# 3) Reapply each setting to the environment/filter	
+	#    (you probably already have these handlers—call them directly)
+	_on_brightness_slider_value_changed(DEFAULT_BRIGHTNESS)
+	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
+	_on_color_blind_options_item_selected(0)
