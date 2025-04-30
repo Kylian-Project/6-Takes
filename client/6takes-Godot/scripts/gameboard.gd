@@ -143,6 +143,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			takes_row(data)
 		"manche_suivante":
 			_handle_next_round(data)
+		"end-game":
+			_handle_end_game(data)
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
 			
@@ -516,3 +518,7 @@ func _handle_takes(data):
 		show_label("You Take 6!")
 	else:
 		show_label(player_takes + " Takes 6!")
+
+
+func _handle_end_game(data):
+	print("Game ended event ", data)

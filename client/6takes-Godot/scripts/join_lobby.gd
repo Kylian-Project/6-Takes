@@ -12,7 +12,7 @@ var player_name
 
 
 func _ready():	
-	player_name = "neila" #get_node("/root/Global").player_name
+	player_name = get_node("/root/Global").player_name
 	available_rooms_list.custom_minimum_size = Vector2(200, 200)
 	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
@@ -63,7 +63,13 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 							room_ids.append(room_id)  # Stocke l'ID dans l'ordre
 							print("🔹 Lobby ajouté :", room_name, "ID:", room_id)
 
+
 	if event == "public-room-joined" or event == "private-room-joined" :
+		if event == "public-room-joined":
+			get_node("/root/GameState").is_public = true
+		elif event == "private-room-joined" :
+			get_node("/root/GameState").is_public = false
+			
 		if typeof(data) == TYPE_ARRAY and data.size() > 0:
 			var room_info = data[0]
 			if typeof(room_info) == TYPE_DICTIONARY:

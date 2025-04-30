@@ -52,6 +52,8 @@ func _on_create_lobby():
 	}
 	get_node("/root/GameState").lobby_name = lobby_name
 	get_node("/root/GameState").is_host = true
+	get_node("/root/GameState").is_public = !visibility
+	
 	GameState.player_info = {
 		"username": get_node("/root/Global").player_name,
 		 "id": get_node("/root/Global").player_id

@@ -591,3 +591,4 @@ offset_bottom = 40.0
 
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="MainVboxContainer/AddBotButton" to="." method="_on_add_bot_button_pressed"]

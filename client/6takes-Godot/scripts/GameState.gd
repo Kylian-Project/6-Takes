@@ -5,4 +5,5 @@ var id_lobby = ""
 var lobby_name = ""
 var player_info = {}
 var is_host = false
+var is_public = true
 var other_players = []
