@@ -79,8 +79,8 @@ func _on_http_request_completed(result, response_code, headers, body):
 	print("Contenu brut:", response_str)
 	
 	if response_code != 200:
-		if parsed == null:
-			popup_message.text = "Config File Error"
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Error -config or Off-"
 		else:
 			popup_message.text = parsed["message"]
 		popup_overlay.visible = true

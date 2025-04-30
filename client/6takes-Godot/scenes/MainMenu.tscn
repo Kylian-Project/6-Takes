@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=35 format=3 uid="uid://b731ylwap623e"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -379,6 +379,7 @@ offset_left = 220.0
 offset_top = 78.0
 offset_right = 212.0
 offset_bottom = 64.0
+script = null
 
 [node name="SettingsOverlay" type="Control" parent="."]
 visible = false

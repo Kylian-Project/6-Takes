@@ -114,12 +114,12 @@ func _on_http_request_completed(result, response_code, headers, body):
 			get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 		else:
 			var popup_message = popup_label.get_node("message")
-			if parsed == null:
-				popup_message.text = "Config File Error"
+			if parsed == null or response_code == 0 :
+				popup_message.text = "Server Connexion Error"
 			else:
 				popup_message.text = parsed["message"]
-				print("Erreur serveur lors de la déconnexion")
 			popup_label.make_visible()
+			return
 			
 	elif current_action == "update_icon":
 		if response_code == 200:
