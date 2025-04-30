@@ -79,7 +79,7 @@ export const PlayGame = (socket, io) =>
 		
 		games.push({ roomId, Jeu: jeu });
 
-		// On notify players que le jeu a commence
+		// On notify players que le jeu va commence
 		io.to(roomId).emit("game-starting");
 
 		// Distribution des cartes avec 2 secs de delay
@@ -97,8 +97,8 @@ export const PlayGame = (socket, io) =>
 		},2000);
 
 		// Envoi de la table initiale à tous sert pas a grand chose a RETIRER
-		// const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
-		// io.to(roomId).emit("initial-table", tableInit);
+		const tableInit = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
+		io.to(roomId).emit("initial-table", tableInit);
 
 
 		console.log(`✅ Partie lancée dans la room ${roomId} avec joueurs:`, usernames);
@@ -127,8 +127,6 @@ export const PlayGame = (socket, io) =>
 		
 		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const joueursAttendus = usernames.length - nombreBots;
-
-
 		  
 
 		//on lance tour que si ils sont tous la 
@@ -200,7 +198,6 @@ export const PlayGame = (socket, io) =>
 
 			await traiterProchaineCarte(roomId, jeu, io, rooms);
 
-			notifierCarteJouee(io, roomId, jeu);
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 			
 				
@@ -222,9 +219,12 @@ export const PlayGame = (socket, io) =>
 
 					console.log("🏁 Fin de partie");
 					io.to(roomId).emit("end-game", { classement });
-					
 
 				}
+			}
+			else
+			{
+				notifierCarteJouee(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
 			}
 		}
 
@@ -402,8 +402,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     try 
     {
         const res = jeu.jouerCarte(username, carte);
+		console.log("LA CARTE ",carte," de ",username , " vient detre traité");
 		
-        if (res === "choix_rang_obligatoire") 
+		if (res === "choix_rang_obligatoire") 
         {
             const joueur = jeu.joueurs.find(j => j.nom === username);
             joueur.carteEnAttente = carte;
@@ -414,55 +415,74 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
                 penalite: rang.totalTetes()	// a retirer prsq le joueur est sensé les calculer !!!!
             }));
 
-            const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-            const socketTarget = io.sockets.sockets.get(socketTargetId);
-            socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
-            io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
+			//on traite les cas separement pour eviter les bugs
+			if(username.startsWith("Bot"))
+			{
+				const cartesARamasser = jeu.table.rangs[0].recupererCartes_special_case();
+				const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+				joueur.updateScore(penalite);
+				jeu.table.rangs[0] = new Rang(new Carte(carte.numero));
+				delete joueur.carteEnAttente;
+				traiterProchaineCarte(roomId, jeu, io, rooms);
 
-			await new Promise((resolve) => {
-				const handler = ({ roomId: rid, indexRangee, username: uname }) => 
+			}
+			else
+			{
+				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
+				const socketTarget = io.sockets.sockets.get(socketTargetId);
+				socketTarget.emit("choix-rangee", { roomId, rangs: rangsInfo, username });
+				io.to(roomId).except(socketTargetId).emit("attente-choix-rangee", { username });
+
+				await new Promise((resolve) => 
 				{
-					if (rid === roomId && uname === username) 
+					const handler = ({ roomId: rid, indexRangee, username: uname }) => 
 					{
-						socketTarget.off("choisir-rangee", handler);
+						if (rid === roomId && uname === username) 
+						{
+							clearTimeout(timeoutId); // annulation ici du timer
+							socketTarget.off("choisir-rangee", handler);
+							const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
+							const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+							joueur.updateScore(penalite);
+							jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
+							delete joueur.carteEnAttente;
+							resolve();
+							console.log("le joueur a choisi son rangpour la premiere fois" , indexRangee);
+							traiterProchaineCarte(roomId, jeu, io, rooms);
+						}
+					};
+					
+					//  Lancement écoute du choix
+					socketTarget.on("choisir-rangee", handler);
+					let timer;
+					if(username.startsWith("Bot"))
+					{
+						timer = 5;	//comme ca on garde la meme structure que pour les joueurs humains juste ca ira plus vite
+					}
+					else 
+					{
+						timer = 15;			//!!! le joueurs a 15s pour choisir un rang
+					}
+					//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
+					const timeoutId = setTimeout(() =>  
+					{
+						socketTarget.off("choisir-rangee", handler); // Suppression de l'ecoute
+						console.log(`⚠️ ${username} n'a pas choisi de rangée à temps, on choisit aléatoirement`);
+					
+						const indexRangee = Math.floor(Math.random() * 4);
 						const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
 						const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
 						joueur.updateScore(penalite);
 						jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
 						delete joueur.carteEnAttente;
-						resolve();
-					}
-				};
-			  
-				//  Lancement écoute du choix
-				socketTarget.on("choisir-rangee", handler);
-				let timer;
-				if(username.startsWith("Bot"))
-				{
-					timer = 5;	//comme ca on garde la meme structure que pour les joueurs humains juste ca ira plus vite
-				}
-				else 
-				{
-					timer = 15;
-				}
-				//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
-				setTimeout(() => 
-				{
-					socketTarget.off("choisir-rangee", handler); // Suppression de l'ecoute
-					console.log(`⚠️ ${username} n'a pas choisi de rangée à temps, on choisit aléatoirement`);
-				
-					const indexRangee = Math.floor(Math.random() * 4);
-					const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-					const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-					joueur.updateScore(penalite);
-					jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
-					delete joueur.carteEnAttente;
-			  
-				  	resolve();		//on arrete la promesse
-				}, timer*1000);
-			  });
-			  
+						console.log("le joueur a choisi son rang pour a deuxieme fois",indexRangee);
+						resolve();		//on arrete la promesse
+					}, timer*1000);
+				});
+			}	  
         }
+
+
 		//pour le cas de la 6eme carte
 		else if (res=== "ramassage_rang")
 		{
