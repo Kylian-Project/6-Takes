@@ -8,3 +8,6 @@ func _ready() -> void:
 
 func _on_button_pressed() -> void:
 	self.visible = false
+
+func make_visible():
+	self.visible = true

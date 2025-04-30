@@ -12,6 +12,7 @@ var response_load = config.load(file_path)
 
 var BASE_URL := ""
 var header := ""
+@onready var popup_scene = preload("res://scenes/popUp.tscn")
 
 var icons = {
 	# NOTE: optimize using preload or load() caching if performance not good.
@@ -30,6 +31,20 @@ var icons = {
 func _ready():
 	if response_load != OK:
 		print("Config error load result: ", response_load)
+		if response_load == 7:
+			print("Config file not found Error")
+			var popup_instance = popup_scene.instantiate()
+			var label = popup_instance.get_node("message")
+			
+			if label:
+				label.text = "Config File missing"
+				await get_tree().create_timer(0.1).timeout
+				get_tree().current_scene.add_child(popup_instance)
+
+				popup_instance.make_visible()
+			else:
+				print("can't get message label in pop up scene ")
+				return 
 		return 
 		
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
