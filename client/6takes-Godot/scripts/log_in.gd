@@ -80,7 +80,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 	
 	if response_code != 200:
 		if parsed == null or response_code == 0 :
-			popup_message.text = "Server Error -config or Off-"
+			popup_message.text = "Server Connexion Error"
 		else:
 			popup_message.text = parsed["message"]
 		popup_overlay.visible = true
