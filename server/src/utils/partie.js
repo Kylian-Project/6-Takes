@@ -207,7 +207,17 @@ export const PlayGame = (socket, io) =>
 				if(!jeu.checkEndGame())
 				{
 					console.log("fin de manche");
+					envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
+
+					const classement = jeu.joueurs
+					.map(j => ({ nom: j.nom, score: j.score }))
+					.sort((a, b) => a.score - b.score); // tri cdes scores
+
+					io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
+
+
 					jeu.mancheSuivante();
+					envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
 					io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
 			
 				}
@@ -224,7 +234,7 @@ export const PlayGame = (socket, io) =>
 			}
 			else
 			{
-				notifierCarteJouee(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
+				notifierScore(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
 			}
 		}
 
@@ -281,7 +291,7 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue)
 }
   
 
-function notifierCarteJouee(io, roomId, jeu) 
+function notifierScore(io, roomId, jeu) 
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
@@ -339,7 +349,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
         
 
 		delete timers[roomId];
-		notifierCarteJouee(io, roomId, jeu);
+		notifierScore(io, roomId, jeu);
 
 		clearInterval(affichageTimers[roomId]);
 		delete affichageTimers[roomId];
