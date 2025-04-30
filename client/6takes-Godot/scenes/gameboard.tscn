@@ -124,9 +124,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 455.0
-offset_top = 143.0
+offset_top = 194.0
 offset_right = 1551.0
-offset_bottom = 835.0
+offset_bottom = 886.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -143,7 +143,7 @@ anchor_bottom = 0.5
 offset_left = -557.0
 offset_top = -417.0
 offset_right = 597.0
-offset_bottom = 320.0
+offset_bottom = 331.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_uo4x1")
@@ -152,6 +152,7 @@ expand_mode = 1
 [node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
+theme_override_constants/separation = 30
 alignment = 1
 
 [node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
