@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://fwrwwy8t1e2u"]
+[gd_scene load_steps=15 format=3 uid="uid://fwrwwy8t1e2u"]
 
 [ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_lv30f"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_n3637"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_do1go"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="7_nkusj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6hv8q"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -211,3 +212,5 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_8x7t0")
 text = "X"
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="popupPanel" parent="." instance=ExtResource("7_nkusj")]

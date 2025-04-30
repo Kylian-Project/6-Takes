@@ -10,6 +10,7 @@ extends Control
 @onready var http_request = $HTTPRequest
 @onready var popup_label = $EditProfilePanel/SavePopupLabel
 @onready var popup_timer = $EditProfilePanel/PopupTimer
+@onready var popup_panel = $popupPanel
 
 var API_URL
 var WS_SERVER_URL
@@ -103,6 +104,8 @@ func _on_log_out_button_pressed():
 func _on_http_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
+	
+	var parsed = JSON.parse_string(body.get_string_from_utf8())
 
 	if current_action == "logout":
 		if response_code == 200:
@@ -110,7 +113,14 @@ func _on_http_request_completed(result, response_code, headers, body):
 			get_node("/root/Global").set_logged_in(false)
 			get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 		else:
-			print("Erreur serveur lors de la déconnexion")
+			var popup_message = popup_label.get_node("message")
+			if parsed == null:
+				popup_message.text = "Config File Error"
+			else:
+				popup_message.text = parsed["message"]
+				print("Erreur serveur lors de la déconnexion")
+			popup_label.make_visible()
+			
 	elif current_action == "update_icon":
 		if response_code == 200:
 
@@ -125,7 +135,13 @@ func _on_http_request_completed(result, response_code, headers, body):
 			print("Icon updated successfully!")
 			show_save_popup()
 		else:
-			print("Failed to update icon on server.")
+			var popup_message = popup_label.get_node("message")
+			if parsed == null:
+				popup_message.text = "Config File Error"
+			else:
+				popup_message.text = parsed["message"]
+				print("Erreur serveur lors de la déconnexion")
+			popup_label.make_visible()
 
 # Refresh icon in current panel
 func update_profile_icon_preview():
