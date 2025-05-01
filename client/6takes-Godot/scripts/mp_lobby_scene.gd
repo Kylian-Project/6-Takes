@@ -146,7 +146,6 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		"lobby-info":
 			print("room info received ", data)
 			if(data != null):
-				print()
 				get_node("/root/GameState").lobby_name = data[0].get("room").get("settings").get("lobbyName")
 				get_node("/root/GameState").players_limit = data[0].get("room").get("settings").get("playerLimit")
 				

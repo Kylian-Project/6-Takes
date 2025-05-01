@@ -193,4 +193,24 @@ size_flags_horizontal = 3
 icon = ExtResource("5_d1nde")
 expand_icon = true
 
+[node name="error_label" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -133.0
+offset_top = 238.0
+offset_right = 227.0
+offset_bottom = 266.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.712129, 0.712129, 0.712129, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 20
+text = "Lobby Not Found ! Please Verify Code"
+
 [connection signal="pressed" from="Close" to="." method="_on_close_pressed"]

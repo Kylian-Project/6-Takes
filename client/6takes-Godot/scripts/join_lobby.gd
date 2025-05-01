@@ -90,9 +90,11 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 		else:
 			print("Données vides ou mal formatées pour 'public-room-joined'")
-
+	
+	if event == "room-not-found":
+		$error_label.visible = true
 	else:
-		print("unhandled event receuved ", event, data)
+		print("unhandled event received ", event, data)
 
 func _update_room_in_list(room_id: String, count: int, usernames: Array):
 	var room_found = false
