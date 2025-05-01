@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://fwrwwy8t1e2u"]
+[gd_scene load_steps=15 format=3 uid="uid://fwrwwy8t1e2u"]
 
 [ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
@@ -70,10 +70,16 @@ Button/styles/hover = SubResource("StyleBoxFlat_p88d8")
 Button/styles/normal = SubResource("StyleBoxFlat_snw1d")
 Button/styles/pressed = SubResource("StyleBoxFlat_ilxc5")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lkhjb"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 8
+border_width_right = 8
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8x7t0"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_left = 5
-border_width_right = 5
+border_width_left = 8
+border_width_right = 8
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [node name="EditProfile" type="Control"]
@@ -166,11 +172,13 @@ columns = 5
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_lv30f")
 theme_override_font_sizes/font_size = 25
+theme_override_styles/hover_pressed_mirrored = ExtResource("5_n3637")
 theme_override_styles/hover = ExtResource("5_n3637")
 theme_override_styles/pressed = ExtResource("6_do1go")
 theme_override_styles/normal = ExtResource("6_do1go")
@@ -195,18 +203,21 @@ one_shot = true
 
 [node name="Close" type="Button" parent="."]
 layout_mode = 2
-anchor_left = 0.887
+anchor_left = 0.886
 anchor_top = 0.127
-anchor_right = 0.887
+anchor_right = 0.886
 anchor_bottom = 0.127
-offset_left = -15.04
+offset_left = -19.1201
 offset_top = -29.16
-offset_right = 14.96
+offset_right = 18.8799
 offset_bottom = 28.84
 mouse_default_cursor_shape = 2
-theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 36
+theme_override_styles/hover = SubResource("StyleBoxFlat_lkhjb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_8x7t0")
 text = "X"
 

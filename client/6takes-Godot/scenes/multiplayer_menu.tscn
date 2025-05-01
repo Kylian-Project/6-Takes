@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://l45fppjtlnsl"]
+[gd_scene load_steps=46 format=3 uid="uid://l45fppjtlnsl"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer_menu.gd" id="1_dp3rm"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="1_pfnuq"]
@@ -222,19 +222,29 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdh8"]
-bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_offset = Vector2(0, 10)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qsxc"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bv3sv"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q8eac"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpuuw"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -461,10 +471,9 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jsm2")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_udiwy")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_iww2l")
-current_tab = 1
+current_tab = 0
 
 [node name="MainSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("8_db6nl")
 metadata/_tab_index = 0
@@ -493,7 +502,7 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Display"
 
@@ -501,7 +510,7 @@ text = "Display"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "Resolution"
 
@@ -509,7 +518,7 @@ text = "Resolution"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_7mrnj")
 text = "VSync"
 
@@ -527,7 +536,7 @@ theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/pressed = SubResource("StyleBoxFlat_6wyjx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
 selected = 0
@@ -544,7 +553,7 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
 selected = 0
 item_count = 2
@@ -558,7 +567,7 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_6wyjx")
 selected = 0
 item_count = 2
@@ -567,6 +576,7 @@ popup/item_1/text = "Disabled"
 popup/item_1/id = 1
 
 [node name="AudioSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
+visible = false
 layout_mode = 2
 script = ExtResource("9_n02ju")
 metadata/_tab_index = 1
@@ -648,10 +658,10 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 30
 theme_override_styles/hover = ExtResource("14_w4cnf")
 theme_override_styles/normal = ExtResource("15_oy2mf")
-text = "Reset Default Settings"
+text = "Reset Settings"
 
 [node name="Close" type="Button" parent="SettingsOverlay"]
 layout_mode = 1
@@ -698,9 +708,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -318.5
-offset_top = -366.0
-offset_right = 318.5
-offset_bottom = 366.0
+offset_top = -365.0
+offset_right = 316.5
+offset_bottom = 365.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -708,7 +718,7 @@ size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_whri7")
 
 [node name="TextureRect" type="TextureRect" parent="CreateLobbyOverlay/PanelContainer"]
-self_modulate = Color(1, 1, 1, 0.0901961)
+self_modulate = Color(1, 1, 1, 0.156863)
 layout_mode = 2
 texture = ExtResource("1_pfnuq")
 expand_mode = 1
@@ -726,11 +736,12 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("10_pajrb")
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "Create a Lobby!"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
 layout_mode = 2
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="Options" type="VBoxContainer" parent="CreateLobbyOverlay/PanelContainer/MainVertical/AvailableOptions"]
@@ -741,7 +752,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Lobby Name"
 
@@ -749,7 +760,7 @@ text = "Lobby Name"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Player Limit"
 
@@ -757,7 +768,7 @@ text = "Player Limit"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Number of Cards"
 
@@ -765,7 +776,7 @@ text = "Number of Cards"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Round Timer"
 
@@ -773,7 +784,7 @@ text = "Round Timer"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "End by Points"
 
@@ -781,7 +792,7 @@ text = "End by Points"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Rounds"
 
@@ -790,7 +801,7 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Maximum Points"
 
@@ -806,9 +817,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2spsn")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/pressed = ExtResource("13_n1yxg")
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 8
 item_count = 9
 popup/item_0/text = "2"
@@ -833,8 +845,9 @@ popup/item_8/id = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 9
 item_count = 10
 popup/item_0/text = "1"
@@ -861,8 +874,9 @@ popup/item_9/id = 9
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 1
 item_count = 3
 popup/item_0/text = "30"
@@ -875,8 +889,9 @@ popup/item_2/id = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 0
 item_count = 2
 popup/item_0/text = "No"
@@ -887,8 +902,9 @@ popup/item_1/id = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 0
 item_count = 5
 popup/item_0/text = "1"
@@ -906,8 +922,9 @@ visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = ExtResource("13_n1yxg")
+alignment = 1
 selected = 0
 item_count = 2
 popup/item_0/text = "60"
@@ -921,10 +938,14 @@ alignment = 1
 
 [node name="PrivateCheckButton" type="CheckButton" parent="CreateLobbyOverlay/PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_dqdh8")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = ExtResource("14_w4cnf")
+theme_override_styles/normal = ExtResource("15_oy2mf")
 text = "Public"
 
 [node name="Button" type="Button" parent="CreateLobbyOverlay/PanelContainer/MainVertical"]
@@ -934,26 +955,30 @@ theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/hover = ExtResource("14_w4cnf")
 theme_override_styles/normal = ExtResource("15_oy2mf")
 text = "Create Lobby"
 
 [node name="Close" type="Button" parent="CreateLobbyOverlay"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 280.0
-offset_top = -366.0
-offset_right = 319.0
-offset_bottom = -317.0
+anchors_preset = -1
+anchor_left = 0.652
+anchor_top = 0.185
+anchor_right = 0.652
+anchor_bottom = 0.185
+offset_left = -24.84
+offset_top = -24.8
+offset_right = 25.16
+offset_bottom = 25.2
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_2qsxc")
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
@@ -985,10 +1010,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -236.5
-offset_top = -272.0
-offset_right = 236.5
-offset_bottom = 272.0
+offset_left = -318.5
+offset_top = -365.0
+offset_right = 316.5
+offset_bottom = 365.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -1014,23 +1039,30 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("10_pajrb")
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "Join a Lobby!"
 
 [node name="JoinCodeContainer" type="HBoxContainer" parent="JoinLobbyOverlay/JoinPanel/MainVertical"]
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="JoinByCodeLabel" type="Label" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_qegko")
 text = "Join by code"
 
 [node name="SpinBox" type="LineEdit" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
+theme_override_colors/font_uneditable_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_color = Color(0.85098, 0.85098, 0.85098, 1)
 max_length = 4
 
 [node name="JoinCodeButton" type="Button" parent="JoinLobbyOverlay/JoinPanel/MainVertical/JoinCodeContainer"]
@@ -1062,32 +1094,40 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_hk44s")
 text = "Create Lobby"
 
 [node name="Button2" type="Button" parent="JoinLobbyOverlay"]
-modulate = Color(0.223529, 1, 1, 1)
-self_modulate = Color(0.129412, 1, 1, 1)
 layout_mode = 2
-offset_left = 754.0
-offset_top = 726.0
-offset_right = 832.0
-offset_bottom = 801.0
+anchor_left = 0.375
+anchor_top = 0.707
+anchor_right = 0.375
+anchor_bottom = 0.707
+offset_left = -39.0001
+offset_top = -37.56
+offset_right = 38.9999
+offset_bottom = 37.44
 size_flags_horizontal = 3
+theme_override_styles/hover = ExtResource("14_w4cnf")
+theme_override_styles/normal = ExtResource("15_oy2mf")
 icon = ExtResource("18_gtd3s")
 expand_icon = true
 
 [node name="Close" type="Button" parent="JoinLobbyOverlay"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 198.0
-offset_top = -272.0
-offset_right = 237.0
-offset_bottom = -223.0
+anchors_preset = -1
+anchor_left = 0.652
+anchor_top = 0.185
+anchor_right = 0.652
+anchor_bottom = 0.185
+offset_left = -24.84
+offset_top = -24.8
+offset_right = 25.16
+offset_bottom = 25.2
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_bv3sv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
@@ -1101,14 +1141,13 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ColorRect2" type="ColorRect" parent="RulesOverlay"]
-self_modulate = Color(1, 1, 1, 0.298039)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
+color = Color(0, 0, 0, 0.490196)
 
 [node name="ShadowBox" type="Label" parent="RulesOverlay"]
 layout_mode = 0
@@ -1312,19 +1351,23 @@ expand_mode = 1
 
 [node name="Close" type="Button" parent="RulesOverlay"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 695.0
-offset_top = -441.0
-offset_right = 734.0
-offset_bottom = -392.0
+anchors_preset = -1
+anchor_left = 0.869
+anchor_top = 0.116
+anchor_right = 0.869
+anchor_bottom = 0.116
+offset_left = -24.48
+offset_top = -25.28
+offset_right = 25.52
+offset_bottom = 24.72
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_wpuuw")
 theme_override_styles/normal = SubResource("StyleBoxFlat_b45p8")
 text = "X"
 
