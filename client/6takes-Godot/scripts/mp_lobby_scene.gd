@@ -33,6 +33,7 @@ var bot_count = 0
 var players_count
 var players_limit
 var id_lobby
+var lobby_name
 var is_host
 var scene_changed
 var is_public
@@ -80,7 +81,8 @@ func _ready():
 	else:
 		SocketManager.emit("users-in-private-room", id_lobby) #TO DO merge the two events
 	
-	lobby_name_panel.text = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+	lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+	lobby_name_panel.text = lobby_name
 	lobby_code_panel.text = str(id_lobby)
 	
 	settings_button.disabled = !is_host
@@ -111,7 +113,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			print("event users in room received \n", data)
 			_refresh_player_list(data)
 			
-		"user-left-public", "user-left-private":
+		"user-left", "user-left":
 			print("user left room :", data)
 			
 			if is_public:
@@ -129,6 +131,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
+		
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -210,11 +213,9 @@ func _on_start_button_pressed() -> void:
 
 
 func _on_quit_button_pressed() -> void:
-	print("leave room event sent")
-	
 	confirm_panel.action_type    = "quit"
 	if is_host:
-		confirm_panel.message = "Remove lobby ?"
+		confirm_panel.message = "Remove \""+ lobby_name+ "\" ?"
 	else :
 		confirm_panel.message = "Quit lobby ?"
 	confirm_panel.action_payload = {}
@@ -263,8 +264,6 @@ func _on_add_bot_button_pressed() -> void:
 
 
 func kick_player(player_username):
-	print("kicking ", player_username)
-	
 	if !player_username.begins_with("Bot"):
 		confirm_panel.action_type    = "kick"
 		confirm_panel.message = "Kick \"" + player_username+ "\" from Lobby ?"

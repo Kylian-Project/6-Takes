@@ -101,9 +101,11 @@ border_blend = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo1wa"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
-border_width_top = 10
-border_width_bottom = 10
-border_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 0.917647)
 border_blend = true
 
 [node name="MPLobbyScene" type="Control"]
@@ -695,6 +697,7 @@ theme_override_constants/separation = 120
 [node name="confirmButton" type="Button" parent="ConfirmControl/buttonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
@@ -707,6 +710,7 @@ expand_icon = true
 [node name="cancelButton" type="Button" parent="ConfirmControl/buttonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
