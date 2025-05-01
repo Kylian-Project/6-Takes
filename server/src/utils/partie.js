@@ -1,7 +1,6 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
 
-const NB_CARTES = 10;
 
 class Game
 {
@@ -200,7 +199,7 @@ export const PlayGame = (socket, io) =>
 
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 			
-				
+			//!!a factoriser	
 			if(jeu.checkEndManche())
 			{
 				jeu.mancheActuelle++;
@@ -412,7 +411,6 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     try 
     {
         const res = jeu.jouerCarte(username, carte);
-		console.log("LA CARTE ",carte," de ",username , " vient detre traité");
 		
 		if (res === "choix_rang_obligatoire") 
         {
@@ -428,14 +426,17 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 			//on traite les cas separement pour eviter les bugs
 			if(username.startsWith("Bot"))
 			{
-				const cartesARamasser = jeu.table.rangs[0].recupererCartes_special_case();
+				io.to(roomId).emit("attente-choix-rangee", { username });
+				await new Promise(resolve => setTimeout(resolve, 5000));
+				const indexRangee = Math.floor(Math.random() * 4);
+				const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
 				const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
 				joueur.updateScore(penalite);
-				jeu.table.rangs[0] = new Rang(new Carte(carte.numero));
+				jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
 				delete joueur.carteEnAttente;
 				traiterProchaineCarte(roomId, jeu, io, rooms);
-
 			}
+
 			else
 			{
 				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
@@ -457,22 +458,14 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 							jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
 							delete joueur.carteEnAttente;
 							resolve();
-							console.log("le joueur a choisi son rangpour la premiere fois" , indexRangee);
 							traiterProchaineCarte(roomId, jeu, io, rooms);
 						}
 					};
 					
 					//  Lancement écoute du choix
 					socketTarget.on("choisir-rangee", handler);
-					let timer;
-					if(username.startsWith("Bot"))
-					{
-						timer = 5;	//comme ca on garde la meme structure que pour les joueurs humains juste ca ira plus vite
-					}
-					else 
-					{
-						timer = 15;			//!!! le joueurs a 15s pour choisir un rang
-					}
+					let timer=15;	// on laisse au joueur 15s pour choisir son rang
+
 					//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
 					const timeoutId = setTimeout(() =>  
 					{
@@ -485,7 +478,6 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 						joueur.updateScore(penalite);
 						jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
 						delete joueur.carteEnAttente;
-						console.log("le joueur a choisi son rang pour a deuxieme fois",indexRangee);
 						resolve();		//on arrete la promesse
 					}, timer*1000);
 				});
@@ -509,6 +501,41 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 
     // Traiter la prochaine carte après celle-ci
     traiterProchaineCarte(roomId, jeu, io, rooms);
+
+	//verifie si la game n'est pas finie 
+	//si jamais ya pas eu de 'play-card' et que c'etais automatique
+	//comme ca on est sur de faire un check end game meme si ya pas eu de 'play-card'
+	if(jeu.checkEndManche())
+		{
+			jeu.mancheActuelle++;
+			if(!jeu.checkEndGame())
+			{
+				console.log("fin de manche");
+				envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
+
+				const classement = jeu.joueurs
+				.map(j => ({ nom: j.nom, score: j.score }))
+				.sort((a, b) => a.score - b.score); // tri cdes scores
+
+				io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
+
+
+				jeu.mancheSuivante();
+				envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
+				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
+		
+			}
+			else 
+			{
+				const classement = jeu.joueurs
+				.map(j => ({ nom: j.nom, score: j.score }))
+				.sort((a, b) => a.score - b.score); // tri cdes scores
+
+				console.log("🏁 Fin de partie");
+				io.to(roomId).emit("end-game", { classement });
+
+			}
+		}
 }
 
 

@@ -378,7 +378,7 @@ export const roomHandler = (socket, io) =>
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         const users = await getUsers(roomId);
-        socket.emit("room-info", {
+        socket.emit("lobby-info", {
             room,
             count: users.count
         });
