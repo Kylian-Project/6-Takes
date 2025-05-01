@@ -2,7 +2,7 @@ class_name TCardUI
 extends Control
 
 @onready var selection_container = $SelectionConatiner
-@onready var selection_modulate: CanvasItem = $SelectionConatiner
+@onready var selection_modulate: CanvasItem = $SelectionContainer
 @onready var select_card = $SelectionConatiner/selectButton
 @onready var deselect_card = $SelectionConatiner/deselectButton
 @onready var drop_point: Area2D=$detector
