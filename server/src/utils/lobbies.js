@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 import Player from "../models/player.js"
+import { count } from "console";
 
 
 const ID_LENGTH = 4;
@@ -371,6 +372,17 @@ export const roomHandler = (socket, io) =>
 
     });
       
+
+    socket.on("get-lobby-info", async (roomId) => 
+    {
+        const room = rooms.find(r => r.id === roomId);
+        if (!room) return;
+        const users = await getUsers(roomId);
+        socket.emit("room-info", {
+            room,
+            count: users.count
+        });
+    });
     
 
 
