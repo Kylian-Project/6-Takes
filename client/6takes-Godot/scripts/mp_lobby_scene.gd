@@ -25,6 +25,9 @@ extends Control
 @onready var lobby_code_panel = $MainVboxContainer/HBoxContainer/lobbyCode/codeValue
 @onready var lobby_name_panel = $lobbyName
 
+#confirmation control
+@onready var confirm_panel = $ConfirmControl
+
 var player_username
 var bot_count = 0
 var players_count
@@ -91,6 +94,10 @@ func _ready():
 		#disable add bot button if player limit reached
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
+			
+	#set confirmation panel
+	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
+	confirm_panel.connect("canceled",  Callable(self, "_on_canceled"))
 	
 
 func _on_raw_packet(packet):
@@ -111,8 +118,10 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				SocketManager.emit("users-in-public-room", id_lobby) 
 			else:
 				SocketManager.emit("users-in-private-room", id_lobby)
+				
 		"game-starting":
 			_handle_game_starting()
+			
 		"kicked":
 			message_label.visible = true
 			await get_tree().create_timer(3).timeout
@@ -177,7 +186,6 @@ func _refresh_player_list(data):
 		var user_dict = players[i] as Dictionary
 		
 		if user_dict.get("username", "").begins_with("Bot"):
-			#bot_count += 1
 			update_bot_slots()
 		else:
 			var entry     = player_entry_scene.instantiate()
@@ -203,10 +211,14 @@ func _on_start_button_pressed() -> void:
 
 func _on_quit_button_pressed() -> void:
 	print("leave room event sent")
-	SocketManager.emit("leave-room", {
-		"roomId" : id_lobby
-	})
-	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	
+	confirm_panel.action_type    = "quit"
+	if is_host:
+		confirm_panel.message = "Remove lobby ?"
+	else :
+		confirm_panel.message = "Quit lobby ?"
+	confirm_panel.action_payload = {}
+	confirm_panel.show_panel()
 
 
 func remove_bot(bot_instance):
@@ -218,8 +230,6 @@ func remove_bot(bot_instance):
 		var bot_name = "Bot" + str(bot_instance.bot_index)
 		kick_player(bot_name)
 		update_bot_slots()
-		#if is_instance_valid(bot_instance):
-			#bot_instance.queue_free()
 
 
 func update_bot_slots():
@@ -254,7 +264,37 @@ func _on_add_bot_button_pressed() -> void:
 
 func kick_player(player_username):
 	print("kicking ", player_username)
-	SocketManager.emit("kick-player", {
+	
+	if !player_username.begins_with("Bot"):
+		confirm_panel.action_type    = "kick"
+		confirm_panel.message = "Kick \"" + player_username+ "\" from Lobby ?"
+		confirm_panel.action_payload = { "username": player_username }
+		confirm_panel.show_panel()
+		
+	#no need for confirmation o remove bot
+	else:
+		SocketManager.emit("kick-player", {
 		"roomId" : id_lobby,
 		"username" : player_username
-	})
+		})
+
+
+func _on_confirmed(action_type:String, payload) -> void:
+	match action_type:
+		"quit":
+			SocketManager.emit("leave-room", { "roomId": id_lobby })
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
+		"kick":
+			SocketManager.emit("kick-player", {
+				"roomId": id_lobby,
+				"username": payload.username
+			})
+
+		_:
+			push_error("Unknown action: %s" % action_type)
+
+
+func _on_canceled():
+	#hide panel handled in confirm panel script
+	pass

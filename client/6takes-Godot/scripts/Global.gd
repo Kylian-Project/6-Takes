@@ -40,7 +40,6 @@ func _ready():
 	BASE_URL = srv_url + ":" + srv_port 
 	print("BASE URL ", BASE_URL)
 
-	#load_session()
 	
 	
 func get_base_url():
@@ -101,7 +100,6 @@ func session_validation(token : String):
 
 func _on_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", body.get_string_from_utf8())
 	
 	var raw_response = body.get_string_from_utf8()
 	var result_string = JSON.parse_string(raw_response)
