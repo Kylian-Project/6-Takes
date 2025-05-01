@@ -824,7 +824,7 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_82t6k")
 text = "X"
 
-[node name="ResetButton" type="Button" parent="AccessibilityOverlay"]
+[node name="ResetButtonAccessibility" type="Button" parent="AccessibilityOverlay"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -887,5 +887,5 @@ grow_vertical = 2
 [connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider" to="." method="_on_contrast_slider_value_changed"]
 [connection signal="item_selected" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions" to="." method="_on_color_blind_options_item_selected"]
 [connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider" to="." method="_on_brightness_slider_value_changed"]
-[connection signal="pressed" from="AccessibilityOverlay/ResetButton" to="." method="_on_reset_button_pressed"]
+[connection signal="pressed" from="AccessibilityOverlay/ResetButtonAccessibility" to="." method="_on_reset_button_accessibility_pressed"]
 [connection signal="pressed" from="Rules" to="." method="_on_rules_pressed"]

@@ -20,7 +20,7 @@ const DEFAULT_CONTRAST   = 1.0
 @onready var accessibility_overlay = $AccessibilityOverlay
 @onready var brightness_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider
 @onready var contrast_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider
-@onready var reset_button = $AccessibilityOverlay/ResetButton
+@onready var reset_button = $AccessibilityOverlay/ResetButtonAccessibility
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -94,7 +94,7 @@ func _ready() -> void:
 		singleplayer_button.text ="Singleplayer"
 		multiplayer_button.text = "Multiplayer"
 		
-	reset_button.pressed.connect(self._on_reset_button_pressed)
+	reset_button.pressed.connect(self._on_reset_button_accessibility_pressed)
 
 
 func _process(_delta):
@@ -153,7 +153,7 @@ func _on_profile_pressed():
 
 func _on_accessibility_button_pressed() -> void:
 	open_overlay(accessibility_overlay)
-	_on_reset_button_pressed()
+	_on_reset_button_accessibility_pressed()
 
 
 func _on_brightness_slider_value_changed(value: float) -> void:
@@ -167,7 +167,9 @@ func _on_color_blind_options_item_selected(index: int) -> void:
 	# index==0 (“Off”) → hide; index==1 (“On”) → show
 	color_blind.visible = (index == 1)
 
-func _on_reset_button_pressed() -> void:
+
+
+func _on_reset_button_accessibility_pressed() -> void:
 	# 1) Reset slider positions
 	brightness_slider.value = DEFAULT_BRIGHTNESS
 	contrast_slider.value   = DEFAULT_CONTRAST
