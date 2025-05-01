@@ -117,7 +117,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			_handle_game_starting()
 		"kicked":
 			message_label.visible = true
-			await get_tree().create_timer(3).timeoutawait
+			await get_tree().create_timer(3).timeout
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		#"public-room-joined", "private-room-joined":
 			#_refresh_player_list(data)
@@ -180,6 +180,7 @@ func _refresh_player_list(data):
 		var user_dict = players[i] as Dictionary
 		
 		var entry     = player_entry_scene.instantiate()
+		entry.lobby_scene = self
 		players_container.add_child(entry)
 
 		var icon_id = user_dict.get("icon", null)
@@ -211,7 +212,11 @@ func remove_bot(bot_instance):
 	if bot_count > 0:
 		bot_count -= 1
 		players_count -= 1
-		get_node("/root/GameState").players_count = players_count	
+		get_node("/root/GameState").players_count = players_count
+		#send remove bot to server
+		var bot_name = "Bot" + str(bot_instance.bot_index)
+		print("send kick bot ", bot_name)
+		kick_player(bot_name)
 		update_bot_slots()
 		#if is_instance_valid(bot_instance):
 			#bot_instance.queue_free()
@@ -233,10 +238,6 @@ func update_bot_slots():
 
 func _on_add_bot_button_pressed() -> void:
 	bot_count += 1
-	#var bot_instance = bot_scene.instantiate()
-	#bot_instance.bot_index = bot_count
-	#bot_instance.lobby_scene = self  # Provide reference to LobbyScene
-	#players_container.add_child(bot_instance)
 	
 	players_count += 1
 	get_node("/root/GameState").players_count = players_count
@@ -249,3 +250,11 @@ func _on_add_bot_button_pressed() -> void:
 	
 	if bot_count + players_count >= players_limit:
 		add_bot_button.disabled = true
+
+
+func kick_player(player_username):
+	print("kicking ", player_username)
+	SocketManager.emit("kick-player", {
+		"roomId" : id_lobby,
+		"username" : player_username
+	})

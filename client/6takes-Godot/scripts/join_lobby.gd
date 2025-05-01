@@ -84,7 +84,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				get_node("/root/GameState").id_lobby = selected_room_id
 				get_node("/root/GameState").is_host = false
 				get_node("/root/GameState").other_players = usernames
-				get_node("/root/GameState").players_cont = count
+				get_node("/root/GameState").players_count = count
 				
 				get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 			else:

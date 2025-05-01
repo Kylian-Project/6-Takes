@@ -11,12 +11,16 @@ const ICON_FILES = [
 	"reversed.png", "cyan.png"
 ]
 
-# Called when the node enters the scene tree for the first time.
+var lobby_scene
+var username
+
 func _ready() -> void:
 	pass#player_name = ""
 
 func create_player_visual(uname, icon_id: int, host := false):
-	player_name.text = uname
+	username = uname
+	player_name.text = username
+	
 	var icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
 	icon.texture = load(icon_path)
 
@@ -30,5 +34,5 @@ func create_player_visual(uname, icon_id: int, host := false):
 	
 
 func _on_kick_button_pressed() -> void:
-	print("player kicked : ", player_name)
-	return player_name
+	if lobby_scene:
+		lobby_scene.kick_player(username)
