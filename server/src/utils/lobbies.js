@@ -52,6 +52,10 @@ class Room {
     removeUser(idSocketUser) {
         this.users = this.users.filter(user => user.idSocketUser !== idSocketUser);
     }
+
+    removeUserByusername(username) {
+        this.users = this.users.filter(user => user.username !== username);
+      }
   
     getUsernames() {
         return this.users.map(user => user.username);
@@ -330,14 +334,19 @@ export const roomHandler = (socket, io) =>
       
         const userToKick = room.users.find(u => u.username === username);
       
-        // Retirer l'utilisateur de la room
-        room.removeUser(userToKick.idSocketUser);
+
       
         const isBot = username.startsWith("Bot");
-
-        // Le faire quitter la room socket.io
-        if(!isBot)
+        if(isBot)
         {
+            // Retirer l'utilisateur de la room par son username car socketid du bot est celle du host
+            room.removeUserByusername(username);
+        }
+
+        else if(!isBot)
+        {
+            // Retirer l'utilisateur de la room par sa socketid
+            room.removeUser(userToKick.idSocketUser);
             const kickedSocket = io.sockets.sockets.get(userToKick.idSocketUser);
             if (kickedSocket) 
             {
@@ -345,14 +354,17 @@ export const roomHandler = (socket, io) =>
                 kickedSocket.emit("kicked", { roomId, reason: "Vous avez été expulsé de la salle." });
             }
         }
+
         const users = await getUsers(roomId);
         if(room.private)
         {
             io.to(roomId).emit("users-in-your-private-room", users);
+            console.log("users in your private room", users);
         }
         else 
         {
             io.to(roomId).emit("users-in-your-public-room", users);
+            console.log("users in your public room", users);
         }
         console.log(`🚫 ${username} a été expulsé de la room ${roomId}`);
 
