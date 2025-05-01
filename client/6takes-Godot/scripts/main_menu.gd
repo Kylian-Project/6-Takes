@@ -51,7 +51,8 @@ func _ready() -> void:
 	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
-
+	accessibility_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	
 	# Populate or verify your Off/On items have IDs 0/1,
 	# connect the signal, then force one initial call:
 	colorblind_option.clear()
@@ -152,6 +153,7 @@ func _on_profile_pressed():
 
 func _on_accessibility_button_pressed() -> void:
 	open_overlay(accessibility_overlay)
+	_on_reset_button_pressed()
 
 
 func _on_brightness_slider_value_changed(value: float) -> void:
