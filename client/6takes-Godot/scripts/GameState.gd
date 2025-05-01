@@ -9,3 +9,4 @@ var is_public = true
 var players_limit
 var players_count = 1
 var other_players = []
+var data

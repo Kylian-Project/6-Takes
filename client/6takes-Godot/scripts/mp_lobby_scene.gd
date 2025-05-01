@@ -44,7 +44,6 @@ func _ready():
 	scene_changed = false 
 	
 	player_username = get_node("/root/Global").player_name
-	players_limit = get_node("/root/GameState").players_limit
 	players_count = get_node("/root/GameState").players_count
 	
 	# Hover sounds
@@ -69,20 +68,32 @@ func _ready():
 	
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-
+	
 	id_lobby = get_node("/root/GameState").id_lobby
 	is_host = get_node("/root/GameState").is_host
 	is_public = get_node("/root/GameState").is_public
+	lobby_name = str(get_node("/root/GameState").lobby_name) 
 	
-	print("emit get users in room :", id_lobby)
-	
-	if is_public:
-		SocketManager.emit("users-in-public-room", id_lobby)
+	if is_host:
+		lobby_name_panel.text = lobby_name + "  LOBBY"
+		players_limit = get_node("/root/GameState").players_limit
+		
+	var data = get_node("/root/GameState").data
+	if data != null:
+		_refresh_player_list(get_node("/root/GameState").data)
+		
 	else:
-		SocketManager.emit("users-in-private-room", id_lobby) #TO DO merge the two events
+		if is_public:
+			print("emit get users in public room :", id_lobby)
+			SocketManager.emit("users-in-public-room", id_lobby)
+		else:
+			print("emit get users in private room :", id_lobby)
+			SocketManager.emit("users-in-private-room", id_lobby) 
 	
-	lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
-	lobby_name_panel.text = lobby_name
+	#fetch lobby info
+	if !is_host:
+		SocketManager.emit("get-lobby-info", id_lobby)
+
 	lobby_code_panel.text = str(id_lobby)
 	
 	settings_button.disabled = !is_host
@@ -131,7 +142,19 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
-		
+			
+		"lobby-info":
+			print("room info received ", data)
+			if(data != null):
+				print()
+				get_node("/root/GameState").lobby_name = data[0].get("room").get("settings").get("lobbyName")
+				get_node("/root/GameState").players_limit = data[0].get("room").get("settings").get("playerLimit")
+				
+				#set lobby name
+				lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+				lobby_name_panel.text = lobby_name
+				players_limit = get_node("/root/GameState").players_limit
+				players_count_panel.text = str(players_count) + " / " + str(players_limit)
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -147,7 +170,7 @@ func _refresh_player_list(data):
 	var host_icon
 	var host_uname
 	
-	print("refreshing players display")
+	print("refreshing players display with :", data)
 	# Clear old entries
 	for child in players_container.get_children():
 		child.queue_free()
@@ -282,6 +305,7 @@ func _on_confirmed(action_type:String, payload) -> void:
 	match action_type:
 		"quit":
 			SocketManager.emit("leave-room", { "roomId": id_lobby })
+			get_node("/root/GameState").data = null
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 		"kick":

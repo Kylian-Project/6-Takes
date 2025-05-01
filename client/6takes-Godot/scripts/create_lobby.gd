@@ -71,8 +71,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 	print(" Événement reçu :", event)
 
 	if event == "private-room-created" or event == "public-room-created" :
-		print(" Le lobby privé a été créé.")
-		print(data)
+		print(" Le lobby a été créé.")
 		get_node("/root/GameState").id_lobby = data[0]
 		get_node("/root/GameState").is_host = true
 		
