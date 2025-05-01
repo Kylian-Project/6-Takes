@@ -19,6 +19,8 @@ extends Control
 
 
 var bot_count = 1  # Start with 1 bot minimum
+	
+@onready var socket_io = $SocketIO
 
 func _ready():
 	add_bot_button.pressed.connect(add_bot)
@@ -85,10 +87,12 @@ func update_bot_slots():
 	add_bot_button.visible = bot_count < 9
 
 func start_game():
+	#socket_io.connect_socket()
 	print("Starting game with", bot_count, "bots.")
+	
 
 func return_to_main_menu():
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 func show_settings():
 	settings_overlay.visible = true
