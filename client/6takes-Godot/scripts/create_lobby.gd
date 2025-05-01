@@ -65,8 +65,7 @@ func _on_create_lobby():
 		}
 	
 	SocketManager.emit("create-room", message)  # PAS besoin de JSON.stringify
-	print(" Demande de création envoyée :", message)
-	
+	print("create lobby event sent")
 
 func _on_socket_event(event: String, data: Variant, ns: String):
 	print(" Événement reçu :", event)
@@ -78,10 +77,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		get_node("/root/GameState").is_host = true
 		
 		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-		
-	#elif event == "public-room-created":
-		#print("Le lobby public a été créé.")
-		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+
 	else :
 		print("unhandled event received ,",event, data)
 		

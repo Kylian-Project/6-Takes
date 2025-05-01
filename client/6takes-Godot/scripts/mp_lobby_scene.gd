@@ -100,12 +100,10 @@ func _on_raw_packet(packet):
 	
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
-		"users-in-your-private-room":
-			print("event users in private room received \n", data)
+		"users-in-your-private-room", "users-in-your-public-room" :
+			print("event users in room received \n", data)
 			_refresh_player_list(data)
-		"users-in-your-public-room":
-			print("event users in public room received \n", data)
-			_refresh_player_list(data)
+			
 		"user-left-public", "user-left-private":
 			print("user left room :", data)
 			
@@ -119,14 +117,14 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			message_label.visible = true
 			await get_tree().create_timer(3).timeout
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-		#"public-room-joined", "private-room-joined":
-			#_refresh_player_list(data)
+			
+		"public-room-joined", "private-room-joined":
+			_refresh_player_list(data)
 		_:
 			print("unhandled event received \n", event, data)
 
 
 func _handle_game_starting():
-	print("is host debug ", is_host)
 	if !is_host and !scene_changed:
 		scene_changed = true
 		print("game starting received, moving to gameboard")
@@ -160,7 +158,7 @@ func _refresh_player_list(data):
 
 	print("players count ", players_count)
 	players_count_panel.text = str(players_count) + " / " + str(players_limit)
-
+	
 	## Update HostPlayer node
 	var host_user = players[0] as Dictionary
 	for child in host_node.get_children():
@@ -169,7 +167,6 @@ func _refresh_player_list(data):
 	var host_entry = player_entry_scene.instantiate()
 	host_node.add_child(host_entry)
 	
-	print("host debug ", host_user)
 	host_entry.create_player_visual(
 		host_user.get("username", "Unknown"),
 		host_user.get("icon", 0),
@@ -179,20 +176,24 @@ func _refresh_player_list(data):
 	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
 		
-		var entry     = player_entry_scene.instantiate()
-		entry.lobby_scene = self
-		players_container.add_child(entry)
+		if user_dict.get("username", "").begins_with("Bot"):
+			#bot_count += 1
+			update_bot_slots()
+		else:
+			var entry     = player_entry_scene.instantiate()
+			entry.lobby_scene = self
+			players_container.add_child(entry)
 
-		var icon_id = user_dict.get("icon", null)
-		icon_id = icon_id if icon_id != null else 0
-		
-		entry.create_player_visual(
-			user_dict.get("username", "Unknown"),
-			icon_id,
-			false
-		)
-		entry.get_node("PlayerInfoContainer/KickButton").disabled = !is_host
-		print("child added to scene")
+			var icon_id = user_dict.get("icon", null)
+			icon_id = icon_id if icon_id != null else 0
+			
+			entry.create_player_visual(
+				user_dict.get("username", "Unknown"),
+				icon_id,
+				false
+			)
+			entry.get_node("PlayerInfoContainer/KickButton").disabled = !is_host
+			print("child added to scene")
 
 	
 func _on_start_button_pressed() -> void:
@@ -215,7 +216,6 @@ func remove_bot(bot_instance):
 		get_node("/root/GameState").players_count = players_count
 		#send remove bot to server
 		var bot_name = "Bot" + str(bot_instance.bot_index)
-		print("send kick bot ", bot_name)
 		kick_player(bot_name)
 		update_bot_slots()
 		#if is_instance_valid(bot_instance):
@@ -241,14 +241,14 @@ func _on_add_bot_button_pressed() -> void:
 	
 	players_count += 1
 	get_node("/root/GameState").players_count = players_count
-	update_bot_slots()
+	#update_bot_slots()
 	SocketManager.emit("join-room", 
 	{
 		"roomId" : id_lobby,
 		"username" : "Bot" + str(bot_count)
 	})
 	
-	if bot_count + players_count >= players_limit:
+	if players_count >= players_limit:
 		add_bot_button.disabled = true
 
 
