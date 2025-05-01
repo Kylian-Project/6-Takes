@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=18 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -6,7 +6,9 @@
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
+[ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -26,12 +28,23 @@ font_size = 50
 font = ExtResource("3_r0b0d")
 font_size = 30
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2khg6"]
+bg_color = Color(0.6, 0.6, 0.6, 0.741176)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh6iy"]
+bg_color = Color(0.00566115, 0.00566115, 0.00566114, 0.937255)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_au8mm"]
 size = Vector2(1124.5, 737.75)
 
-[node name="gameboard" type="Node2D" node_paths=PackedStringArray("vbox_container", "hbox_container")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f52gu"]
+bg_color = Color(0, 0, 0, 0.65098)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(0.2484, 0.2484, 0.2484, 1)
+
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container")]
 script = ExtResource("1_yvybn")
-vbox_container = NodePath("hand_colom/rangeofcard")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -63,29 +76,35 @@ label_settings = SubResource("LabelSettings_bf7xg")
 
 [node name="nbheads" type="Label" parent="CanvasLayer/top_bar"]
 layout_mode = 2
-text = "        int"
+text = "0"
 label_settings = SubResource("LabelSettings_5oo11")
 horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_left = 648.0
+offset_left = 635.0
 offset_top = 8.0
-offset_right = 1008.0
+offset_right = 1400.0
 offset_bottom = 73.0
 alignment = 1
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="turnLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "Turn 1/10"
 label_settings = SubResource("LabelSettings_7rt8c")
 
-[node name="Label2" type="Label" parent="HBoxContainer"]
+[node name="gameStateLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 text = "              Waiting for players
 "
 label_settings = SubResource("LabelSettings_8de43")
 horizontal_alignment = 3
 vertical_alignment = 1
+
+[node name="timer" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_font_sizes/font_size = 34
+text = "00:00"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
 offset_left = 1828.0
@@ -99,12 +118,12 @@ theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
 
-[node name="hand_colom" type="HBoxContainer" parent="."]
+[node name="deckContainer" type="HBoxContainer" parent="." groups=["deck_grp"]]
 show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 428.0
+offset_left = 455.0
 offset_top = 143.0
 offset_right = 1551.0
 offset_bottom = 835.0
@@ -112,10 +131,10 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
 
-[node name="CanvasLayer" type="CanvasLayer" parent="hand_colom"]
+[node name="CanvasLayer" type="CanvasLayer" parent="deckContainer"]
 layer = -1
 
-[node name="background_depose" type="TextureRect" parent="hand_colom/CanvasLayer"]
+[node name="background_depose" type="TextureRect" parent="deckContainer/CanvasLayer"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -130,26 +149,103 @@ grow_vertical = 2
 texture = ExtResource("5_uo4x1")
 expand_mode = 1
 
-[node name="rangeofcard" type="VBoxContainer" parent="hand_colom"]
+[node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
 alignment = 1
 
-[node name="CardUI" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer/row1_panel"]
+layout_mode = 1
+offset_right = 100.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row1_panel/row1" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI2" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel/row1" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_direction = 2
+layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+flat = true
+expand_icon = true
+
+[node name="row2_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer/row2_panel"]
+layout_mode = 1
+offset_right = 100.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+
+[node name="CardUI2" parent="deckContainer/rowsContainer/row2_panel/row2" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI3" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel/row2" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+flat = true
+expand_icon = true
+
+[node name="row3_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer/row3_panel"]
+layout_mode = 1
+offset_right = 100.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+
+[node name="CardUI3" parent="deckContainer/rowsContainer/row3_panel/row3" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
 
-[node name="CardUI4" parent="hand_colom/rangeofcard" instance=ExtResource("3_8mab6")]
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel/row3" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+flat = true
+expand_icon = true
+
+[node name="row4_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer/row4_panel"]
+layout_mode = 1
+offset_right = 100.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+
+[node name="CardUI4" parent="deckContainer/rowsContainer/row4_panel/row4" instance=ExtResource("3_8mab6")]
 layout_mode = 2
 script = null
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel/row4" groups=["row_select"]]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("7_88qrw")
+flat = true
+expand_icon = true
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
@@ -161,7 +257,7 @@ shape = SubResource("RectangleShape2D_au8mm")
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
 layer = -1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2" groups=["hand_grp"]]
 custom_minimum_size = Vector2(75, 80)
 anchors_preset = 7
 anchor_left = 0.5
@@ -175,6 +271,7 @@ offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
+script = ExtResource("8_tuggc")
 
 [node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2
@@ -224,5 +321,32 @@ offset_right = 1564.0
 offset_bottom = 952.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="State_label" type="Label" parent="."]
+visible = false
+offset_left = -9.0
+offset_top = 269.0
+offset_right = 1920.0
+offset_bottom = 709.0
+theme_override_fonts/font = ExtResource("3_r0b0d")
+theme_override_font_sizes/font_size = 130
+theme_override_styles/normal = SubResource("StyleBoxFlat_f52gu")
+text = "Game Start"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 40.0
+offset_top = 140.0
+offset_right = 240.0
+offset_bottom = 852.0
+alignment = 1
+
+[node name="RPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 1693.0
+offset_top = 140.0
+offset_right = 1893.0
+offset_bottom = 852.0
+alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

@@ -80,7 +80,7 @@ func _process(_delta):
 	overlay_layer.visible = overlay_layer.get_child_count() > 0
 
 func _on_multi_player_button_pressed() -> void:
-	get_node("/root/Global").load_session()
+	#get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
 	
 	if logged_in == true:
