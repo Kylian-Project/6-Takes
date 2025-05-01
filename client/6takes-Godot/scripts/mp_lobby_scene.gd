@@ -72,47 +72,46 @@ func _ready():
 	id_lobby = get_node("/root/GameState").id_lobby
 	is_host = get_node("/root/GameState").is_host
 	is_public = get_node("/root/GameState").is_public
-	lobby_name = str(get_node("/root/GameState").lobby_name) 
-	
-	if is_host:
-		lobby_name_panel.text = lobby_name + "  LOBBY"
-		players_limit = get_node("/root/GameState").players_limit
-		
-	var data = get_node("/root/GameState").data
-	if data != null:
-		_refresh_player_list(get_node("/root/GameState").data)
-		
-	else:
-		if is_public:
-			print("emit get users in public room :", id_lobby)
-			SocketManager.emit("users-in-public-room", id_lobby)
-		else:
-			print("emit get users in private room :", id_lobby)
-			SocketManager.emit("users-in-private-room", id_lobby) 
-	
-	#fetch lobby info
-	if !is_host:
-		SocketManager.emit("get-lobby-info", id_lobby)
-
 	lobby_code_panel.text = str(id_lobby)
-	
+	print("id lobby DEBUG ", id_lobby)
 	settings_button.disabled = !is_host
 	start_button.disabled = !is_host
 	add_bot_button.disabled = !is_host
 	
 	if is_host:
-		# Hide Add Bot button if max bots are reached
-		add_bot_button.visible = bot_count < 9
+		lobby_name = str(get_node("/root/GameState").lobby_name) 
+		lobby_name_panel.text = lobby_name + "  LOBBY"
+		players_limit = get_node("/root/GameState").players_limit
+		
 		quit_button.text = "Remove Lobby"
-		#disable add bot button if player limit reached
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
-			
+	
+	else:
+		print("emit get lobby info")
+		#SocketManager.emit("users-in-private-room", id_lobby) 
+		SocketManager.emit("get-lobby-info", id_lobby)
+
+	var data = get_node("/root/GameState").data
+	if data != null:
+		_refresh_player_list(get_node("/root/GameState").data)
+		
+	else:
+		get_users()
+
 	#set confirmation panel
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
 	confirm_panel.connect("canceled",  Callable(self, "_on_canceled"))
 	
-
+	
+func get_users():
+	if is_public:
+		print("emit get users in public room :", id_lobby)
+		SocketManager.emit("users-in-public-room", id_lobby)
+	else:
+		print("emit get users in private room :", id_lobby)
+		SocketManager.emit("users-in-private-room", id_lobby)
+		
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
 	print("Raw packet string:", packet.get_string_from_utf8())
@@ -121,10 +120,10 @@ func _on_raw_packet(packet):
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
 		"users-in-your-private-room", "users-in-your-public-room" :
-			print("event users in room received \n", data)
+			print("event users in room received ")
 			_refresh_player_list(data)
 			
-		"user-left", "user-left":
+		"user-left":
 			print("user left room :", data)
 			
 			if is_public:
@@ -163,13 +162,14 @@ func _handle_game_starting():
 		scene_changed = true
 		print("game starting received, moving to gameboard")
 		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-		
+
 
 func _refresh_player_list(data):
 	var host_icon
 	var host_uname
+	var bot_slots := []
 	
-	print("refreshing players display with :", data)
+	print("refreshing players display")
 	# Clear old entries
 	for child in players_container.get_children():
 		child.queue_free()
@@ -211,7 +211,14 @@ func _refresh_player_list(data):
 		var user_dict = players[i] as Dictionary
 		
 		if user_dict.get("username", "").begins_with("Bot"):
-			update_bot_slots()
+			var bot_instance = bot_scene.instantiate()
+			bot_instance.bot_index = bot_slots.size() +1 #i + 1 
+			if !is_host:
+				bot_instance.get_node("BotHContainer/RemoveBotButton").disabled = true 
+			bot_instance.lobby_scene = self  # Provide reference to LobbyScene
+			players_container.add_child(bot_instance)
+			bot_slots.append(bot_instance)
+			#update_bot_slots()
 		else:
 			var entry     = player_entry_scene.instantiate()
 			entry.lobby_scene = self
@@ -227,8 +234,18 @@ func _refresh_player_list(data):
 			)
 			entry.get_node("PlayerInfoContainer/KickButton").disabled = !is_host
 			print("child added to scene")
+			
+		var max_bot_index := 0
+		for bs in bot_slots:
+		# parse “Bot23” → 23
+			var idx = bs.bot_index
+			max_bot_index = max(max_bot_index, idx)
+			
+		for bs in bot_slots:
+			var idx = bs.bot_index
+			var btn = bs.get_node("BotHContainer/RemoveBotButton")
+			btn.disabled = not is_host or idx != max_bot_index
 
-	
 func _on_start_button_pressed() -> void:
 	print("emit start game and move to gameboard")
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
@@ -252,7 +269,7 @@ func remove_bot(bot_instance):
 		#send remove bot to server
 		var bot_name = "Bot" + str(bot_instance.bot_index)
 		kick_player(bot_name)
-		update_bot_slots()
+		#update_bot_slots()
 
 
 func update_bot_slots():
@@ -265,6 +282,8 @@ func update_bot_slots():
 	for i in range(bot_count):
 		var bot_instance = bot_scene.instantiate()
 		bot_instance.bot_index = i + 1 
+		if !is_host:
+			bot_instance.get_node("BotHContainer/RemoveBotButton").disabled = true 
 		bot_instance.lobby_scene = self  # Provide reference to LobbyScene
 		players_container.add_child(bot_instance)
 
@@ -312,7 +331,7 @@ func _on_confirmed(action_type:String, payload) -> void:
 				"roomId": id_lobby,
 				"username": payload.username
 			})
-
+			get_users()
 		_:
 			push_error("Unknown action: %s" % action_type)
 
