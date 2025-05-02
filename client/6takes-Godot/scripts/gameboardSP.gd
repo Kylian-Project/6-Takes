@@ -75,7 +75,7 @@ func _on_tour_repris(cartes_choisies):
 				card_sprite.custom_minimum_size = Vector2(100, 150)
 				card_layer.add_child(card_sprite)
 				break
-
+var custom_font = preload("res://assets/fonts/kenvector_future.ttf")
 func _setup_bot_ui():
 	var bot_count = sp_game.jeu.joueurs.size()
 	var left_count = 0
@@ -115,14 +115,17 @@ func _setup_bot_ui():
 			bot_hbox.add_child(card_layer)
 			bot_hbox.add_child(spacer)
 			bot_hbox.add_child(bot_icon)
-
+		
 		var name_label = Label.new()
 		name_label.text = bot.nom
+		name_label.set("theme_override_fonts/font", custom_font)
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		bot_box.add_child(bot_hbox)
 		bot_box.add_child(name_label)
 		container_side.add_child(bot_box)
 
 		bot_display_data.append({"bot": bot, "card_layer": card_layer})
+		
 
 	var human = sp_game.jeu.joueurs[0]
 	var human_box = VBoxContainer.new()
@@ -143,6 +146,8 @@ func _setup_bot_ui():
 	human_hbox.add_child(human_icon)
 	var human_name_label = Label.new()
 	human_name_label.text = human.nom
+	human_name_label.set("theme_override_fonts/font", custom_font)
+	human_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	human_box.add_child(human_hbox)
 	human_box.add_child(human_name_label)
 	spplayerright.add_child(human_box)
@@ -171,7 +176,7 @@ func _update_heads():
 	heads_label.text = str(moi.score) + " 🐂"
 
 func _update_hand():
-	#hbox_container.clear()
+
 	var moi = sp_game.jeu.joueurs[0]
 	for i in range(moi.hand.cartes.size()):
 		var carte = moi.hand.cartes[i]

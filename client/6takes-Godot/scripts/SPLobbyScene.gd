@@ -1,6 +1,7 @@
 extends Control
 
 @onready var bot_grid = $MainVbox/BotGrid 
+@onready var player_name_input = $MainVbox/HostPlayer/PlayerHGroup/PlayerNameInput
 @onready var add_bot_button = $MainVbox/AddBotButton
 @onready var sp_start_button = $BottomButtons/SPStartButton
 @onready var sp_return_button = $BottomButtons/SPReturnButton
@@ -117,7 +118,10 @@ func start_game():
 	}
 
 	print("Lancement du jeu solo avec les paramètres :", Global.game_settings)
-	var player_name = "You"  # ou récupéré depuis un champ de saisie
+	var player_name = player_name_input.text.strip_edges()
+	if player_name == "":
+		player_name = "YOU"
+
 	print("Starting game for", player_name, "with", bot_count, "bots.")
 
 	var players = []

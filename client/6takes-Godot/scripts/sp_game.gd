@@ -15,11 +15,7 @@ signal carte_moi_attendue()
 
 
 func start_game(settings: Dictionary):
-	var noms = ["Moi"]
-	var bot_count = settings.get("bot_count", 3)
-	for i in range(bot_count):
-		noms.append("Bot" + str(i + 1))
-
+	var noms = Global.game_players  # 🟢 Prendre directement la liste exacte
 	var nb_cartes = settings.get("nb_cartes", 10)
 	var nb_max_heads = settings.get("nb_max_heads", 66)
 	var nb_max_manches = settings.get("nb_max_manches", 5)
@@ -38,10 +34,12 @@ func start_round():
 
 	print("\n🔁 Nouvelle manche :", current_round)
 
-	# Affichage de la main du joueur "Moi"
-	print("🖐️ Main de Moi :")
-	for c in joueur_moi.hand.cartes:
-		print(" -", c.numero, "(", c.tetes, "têtes)")
+	# Afficher les mains de tous les joueurs
+	for joueur in jeu.joueurs:
+		print("🧑 Main de", joueur.nom, ":")
+		for c in joueur.hand.cartes:
+			print("  -", c.numero, "(", c.tetes, "têtes)")
+
 
 	# Affichage du plateau
 	print("📦 Plateau :")
@@ -78,6 +76,8 @@ signal tour_repris(cartes_choisies)
 func reprendre_tour():
 	var cartes_choisies = [carte_choisie_moi]
 	for bot in bots:
+		await get_tree().create_timer(BotLogic.delai_aleatoire()).timeout  # délai simulé
+
 		var index = BotLogic.choisir_carte_aleatoire(bot.hand.cartes)
 		var carte = bot.hand.jouer_carte(index)
 		cartes_choisies.append({ "joueur": bot, "carte": carte })

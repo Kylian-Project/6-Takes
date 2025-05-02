@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=18 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_m51t2"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="9_c013t"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -345,14 +346,20 @@ alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="spplayerleft"]
 layout_mode = 2
 
-[node name="BotIcon" type="TextureRect" parent="spplayerleft/HBoxContainer"]
+[node name="icon&name" type="VBoxContainer" parent="spplayerleft/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="BotIcon" type="TextureRect" parent="spplayerleft/HBoxContainer/icon&name"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 
-[node name="CardLayer" type="Control" parent="spplayerleft/HBoxContainer"]
+[node name="name_bot" type="Label" parent="spplayerleft/HBoxContainer/icon&name"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("9_c013t")
+horizontal_alignment = 1
 
-[node name="name_bot" type="Label" parent="spplayerleft"]
+[node name="CardLayer" type="Control" parent="spplayerleft/HBoxContainer"]
 layout_mode = 2
 
 [node name="spplayerright" type="VBoxContainer" parent="."]
@@ -365,15 +372,24 @@ alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="spplayerright"]
 layout_mode = 2
 
-[node name="BotIcon" type="TextureRect" parent="spplayerright/HBoxContainer"]
+[node name="CardLayer" type="Control" parent="spplayerright/HBoxContainer"]
+layout_mode = 2
+
+[node name="icon&name" type="VBoxContainer" parent="spplayerright/HBoxContainer/CardLayer"]
+layout_mode = 2
+offset_left = 4.0
+offset_right = 104.0
+offset_bottom = 122.0
+alignment = 1
+
+[node name="BotIcon" type="TextureRect" parent="spplayerright/HBoxContainer/CardLayer/icon&name"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 stretch_mode = 1
 
-[node name="CardLayer" type="Control" parent="spplayerright/HBoxContainer"]
+[node name="name_bot" type="Label" parent="spplayerright/HBoxContainer/CardLayer/icon&name"]
 layout_mode = 2
-
-[node name="name_bot" type="Label" parent="spplayerright"]
-layout_mode = 2
+theme_override_fonts/font = ExtResource("9_c013t")
+horizontal_alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

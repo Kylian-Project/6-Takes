@@ -9,7 +9,6 @@ func _init(carte):
 func ajouter_carte(carte):
 	cartes.append(carte)
 
-
 func est_pleine() -> bool:
 	return cartes.size() == 6
 
