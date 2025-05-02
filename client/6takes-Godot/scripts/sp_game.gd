@@ -36,10 +36,26 @@ func start_round():
 		end_game()
 		return
 
+	print("\n🔁 Nouvelle manche :", current_round)
+
+	# Affichage de la main du joueur "Moi"
+	print("🖐️ Main de Moi :")
+	for c in joueur_moi.hand.cartes:
+		print(" -", c.numero, "(", c.tetes, "têtes)")
+
+	# Affichage du plateau
+	print("📦 Plateau :")
+	for i in range(jeu.table.rangs.size()):
+		var cartes = jeu.table.rangs[i].cartes
+		var texte = cartes.map(func(c): return str(c.numero) + "(" + str(c.tetes) + ")")
+		print(" Rangée", i + 1, ":", ", ".join(texte))
+
 	# Lancer le tour
 	attente_joueur = true
 	on_tour_en_cours = true
 	emit_signal("carte_moi_attendue")
+
+	
 var clic_valide_effectue := false
 
 
@@ -85,6 +101,12 @@ func reprendre_tour():
 
 	# ✅ Emission du signal pour l'interface
 	emit_signal("tour_repris", cartes_choisies)
+	print("\n🃏 Cartes jouées ce tour :")
+	for choix in cartes_choisies:
+		var joueur = choix["joueur"]
+		var carte = choix["carte"]
+		print(" -", joueur.nom, "a joué :", carte.numero, "(", carte.tetes, "têtes)")
+
 	
 	if jeu.check_end_manche():
 		current_round += 1

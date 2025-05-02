@@ -37,20 +37,20 @@ var card_index: int = -1  # Valeur par défaut -1
 # Fonction _ready qui s'exécute au démarrage
 func _ready() -> void:
 	#set_card_data(image_path, card_id):
-	print("Visibilité du nœud parent:", self.visible)
-	print("Sélection de TextureRect:", texture_rect)
-	print("Sélection de Back_texture:", back_texture)
+	#print("Visibilité du nœud parent:", self.visible)
+	#print("Sélection de TextureRect:", texture_rect)
+	#print("Sélection de Back_texture:", back_texture)
 
 	# Vérifie que TextureRect et Back_texture existent
 	if texture_rect == null:
 		print("Erreur : TextureRect est introuvable.")
-	else:
-		print("TextureRect trouvé.")
+	#else:
+		#print("TextureRect trouvé.")
 		
 	if back_texture == null:
 		print("Erreur : Back_texture est introuvable.")
-	else:
-		print("Back_texture trouvé.")
+	#else:
+		#print("Back_texture trouvé.")
 		
 	# Vérifie si SelectionContainer existe et l'initialise
 	if selection_container != null:
@@ -85,7 +85,7 @@ func _process(_delta):
 
 # Méthode pour assigner les données de la carte
 func set_card_data(card_path: String, card_id: int) -> void:
-	print("🃏 Appel de set_card_data avec:", card_id)
+	#print("🃏 Appel de set_card_data avec:", card_id)
 
 	if texture_rect == null or back_texture == null:
 		push_error("❌ texture_rect ou back_texture est null !")
