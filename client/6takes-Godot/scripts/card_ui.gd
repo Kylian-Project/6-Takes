@@ -87,11 +87,10 @@ func _on_deselect_button_pressed() -> void:
 	
 	show_selection_container(false)
 	z_index = 0
-	#selection_container.visible = false
-	#self.position = orig_tex_pos
-	#self.scale    = orig_tex_scale
-	
-	#selection_container.visible = is_lifted
+
+	if is_inside_tree() and get_parent().has_method("on_card_deselected"):
+		get_parent().on_card_deselected(self)
+
 	
 
 func _on_detector_mouse_entered() -> void:
@@ -119,21 +118,7 @@ func _on_detector_mouse_exited() -> void:
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if is_in_hand_grp():
-			if !is_lifted:
-				is_lifted = true
-				show_selection_container(true)
-				z_index = 100  # just so layer value high enough so it's not blocked
-				
-				var lift_tween = get_tree().create_tween()
-				lift_tween.tween_property(self, "scale", original_scale * SCALE_FACTOR, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			else:
-				is_lifted = false
-				show_selection_container(false)
-				z_index = 0  # back to normal
-				
-				var drop_tween = get_tree().create_tween()
-				drop_tween.tween_property(self, "scale", original_scale, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
+			get_parent()._on_card_clicked(self)
 
 func is_in_hand_grp():
 	return self.get_parent().is_in_group("hand_grp")
