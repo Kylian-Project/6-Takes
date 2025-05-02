@@ -19,6 +19,12 @@ extends Control
 	
 ]
 
+@onready var overlay_buttons = [
+	settings_button,
+	rules_button,
+]
+
+
 #validate token 
 var API_URL 
 
@@ -106,14 +112,32 @@ func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
 func open_overlay(overlay: Control):
-	settings_overlay.visible = false
+# hide any other overlays
+	settings_overlay.visible      = false
+	rules_overlay.visible         = false
+	# show this one
 	overlay.visible = true
+
+	# bring the dimmer / layer up if you have one
+	overlay_layer.visible = true
+
+	# disable the overlay-open buttons
+	for b in overlay_buttons:
+		b.disabled = true
 
 func _on_settings_pressed():
 	open_overlay(settings_overlay)
 
 func _on_close_overlay_pressed():
-	settings_overlay.visible = false
+	settings_overlay.visible      = false
+	rules_overlay.visible         = false
+
+	# hide the overlay layer / dimmer
+	overlay_layer.visible = false
+
+	# re-enable those buttons
+	for b in overlay_buttons:
+		b.disabled = false
 
 	
 func quit_game():
@@ -121,7 +145,7 @@ func quit_game():
 
 
 func _on_rules_pressed() -> void:
-	rules_overlay.visible = true
+	open_overlay(rules_overlay)
 	
 	
 func _on_profile_pressed():

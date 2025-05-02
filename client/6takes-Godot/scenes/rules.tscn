@@ -275,9 +275,12 @@ expand_icon = true
 
 [node name="logo" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(100, 100)
+layout_mode = 0
 offset_left = 1095.0
 offset_top = 107.0
 offset_right = 1323.0
 offset_bottom = 293.0
 texture = ExtResource("3_vj88w")
 expand_mode = 1
+
+[connection signal="pressed" from="MarginContainer/Control/Panel/CancelButton" to="." method="_on_cancel_button_pressed"]
