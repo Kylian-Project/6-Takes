@@ -32,6 +32,7 @@ priority = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
 position = Vector2(67.6168, 89.7304)
+scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_1peor")
 
 [node name="Front_texture" type="TextureRect" parent="."]
@@ -76,6 +77,7 @@ flat = true
 expand_icon = true
 
 [node name="deselectButton" type="Button" parent="SelectionContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 icon = ExtResource("4_fvx5b")

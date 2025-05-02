@@ -22,7 +22,6 @@ Global="*res://scripts/Global.gd"
 SoundManager="*res://scenes/SoundManager.tscn"
 GameState="*res://scripts/GameState.gd"
 SocketManager="*res://scripts/SocketManager.gd"
-Transition="*res://scenes/Transition.tscn"
 
 [display]
 

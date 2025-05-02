@@ -71,10 +71,9 @@ func _ready():
 	
 	game_state = GameState.WAITING_FOR_LOBBY
 	
-	print("player info stored ? ", get_node("/root/GameState").player_info)
+	#print("player info stored ? ", get_node("/root/GameState").player_info)
 	
 	player_username = get_node("/root/Global").player_name
-	
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
 	
@@ -176,6 +175,7 @@ func start_game():
 	
 
 func _start_turn():
+	highlight_row(false)
 	if room_id_global != null:
 		#hand_received = false
 		#table_received = false
@@ -219,9 +219,6 @@ func _handle_table(data):
 func _await_row_selection(data):
 	var player = data[0]["username"]
 	show_label(player + " Is Choosing a Row")
-
-func _on_invalid_card(message):
-	pass
 
 
 # --- Player Actions Signals---
@@ -420,7 +417,7 @@ func setup_players(player_data):
 		return
 	
 	# Clear existing visuals
-	print("player data received ", player_data)
+	#print("player data received ", player_data)
 	for container in [left_player_container, right_player_container]:
 		for child in container.get_children():
 			child.queue_free()
@@ -440,9 +437,6 @@ func setup_players(player_data):
 
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
-
-	print("players count ", players_count)
-	print("players debug ", players)
 	
 	var users = player_data[0]["users"]
 	var user_icon
@@ -458,7 +452,6 @@ func setup_players(player_data):
 	
 	for i in range(others.size()):
 		var user = others[i]
-		print("\nothers debug ;", others)
 		
 		if user.username.begins_with("Bot"):
 			user_icon = 10
