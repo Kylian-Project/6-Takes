@@ -61,10 +61,11 @@ func _on_create_lobby():
 	
 	GameState.player_info = {
 		"username": get_node("/root/Global").player_name,
-		 "id": get_node("/root/Global").player_id
+		 "id": get_node("/root/Global").player_id,
+		"icon": get_node("/root/Global").icon_id
 		}
 	
-	SocketManager.emit("create-room", message)  # PAS besoin de JSON.stringify
+	SocketManager.emit("create-room", message) 
 	print("create lobby event sent")
 
 func _on_socket_event(event: String, data: Variant, ns: String):

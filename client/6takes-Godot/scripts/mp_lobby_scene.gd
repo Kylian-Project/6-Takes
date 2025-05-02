@@ -160,8 +160,8 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 func _handle_game_starting():
 	if !is_host and !scene_changed:
 		scene_changed = true
-		print("game starting received, moving to gameboard")
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+		get_node("/root/Transition").fade_to_black_then_change_scene("res://scenes/GameBoard.tscn")
+		#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 
 func _refresh_player_list(data):
@@ -169,7 +169,6 @@ func _refresh_player_list(data):
 	var host_uname
 	var bot_slots := []
 	
-	print("refreshing players display")
 	# Clear old entries
 	for child in players_container.get_children():
 		child.queue_free()
@@ -190,7 +189,6 @@ func _refresh_player_list(data):
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
 
-	print("players count ", players_count)
 	players_count_panel.text = str(players_count) + " / " + str(players_limit)
 	
 	## Update HostPlayer node

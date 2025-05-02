@@ -31,7 +31,6 @@ func create_player_visual(uname, icon_id: int, host := false):
 	else:
 		button.text = "Kick"
 		button.icon = null  
-	
 
 func _on_kick_button_pressed() -> void:
 	if lobby_scene:

@@ -33,14 +33,6 @@ extends Node2D
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
 
-#players icons
-const ICON_PATH = "res://assets/images/icons/"
-const ICON_FILES = [
-	"dark_grey.png", "blue.png", "brown.png", "green.png", 
-	"orange.png", "pink.png", "purple.png", "red.png",
-	"reversed.png", "cyan.png"
-]
-
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
@@ -460,9 +452,7 @@ func setup_players(player_data):
 	for user_dict in players:
 		var name = user_dict.get("username", "")
 		if name == player_username:
-		#if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
 			current_player = user_dict
-			print("current player is anonyme")
 		else:
 			others.append(user_dict)
 	
@@ -470,47 +460,31 @@ func setup_players(player_data):
 		var user = others[i]
 		print("\nothers debug ;", others)
 		
-		if user.icon:
-			user_icon = user.icon
-		else:
-			user_icon = 0
-			
-		var vis = create_player_visual(user.username, user_icon, false)
+		if user.username.begins_with("Bot"):
+			user_icon = 10
+		
+		var player_visual_instance = player_visual_scene.instantiate()
+		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
+		var slot = VBoxContainer.new()
+		slot.add_child(vis)
+		
 		if i % 2 == 0:
-			left_player_container.add_child(vis)
+			left_player_container.add_child(slot)
 		else:
-			right_player_container.add_child(vis)
+			right_player_container.add_child(slot)
 
-	#for user_dict in users:
-		#if user_dict.username == player_username:
+
 	if current_player:
-		var icon_id 
-		if current_player.get("icon", 0) == null:
-			icon_id = 0
-		else:
-			icon_id = current_player.get("icon", 0)
-		var me_vis = create_player_visual(current_player.get("username",""),icon_id, true)
+		var player_visual_instance = player_visual_scene.instantiate()
+		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
 		right_player_container.add_child(me_vis)
+		
 	else:
 		print("Couldn’t find current_player in %s" , players)
 		return
 			
 	players_displayed = true
 	game_state = GameState.GAME_STARTED
-
-
-func create_player_visual(uname: String, icon_id: int, is_me := false) -> Control:
-	var visual: Control = player_visual_scene.instantiate()
-
-	visual.get_node("PlayerName").text = uname
-	var icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
-	visual.get_node("Icon").texture = load(icon_path)
-
-	if is_me:
-		visual.add_theme_color_override("font_color", Color(1, 1, 0))  # e.g. yellow
-		# Or: visual.modulate = Color(1, 1, 1, 1) to brighten, etc.
-	return visual
-
 
 func _handle_takes(data):
 	var player_takes = data[0]["username"]
