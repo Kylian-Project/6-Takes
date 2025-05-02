@@ -1,12 +1,13 @@
 class_name Carte
-extends Object
 
-var numero : int
-var tetes : int
+var numero: int
+var tetes: int
+var path: String  # Ajouter cette ligne si vous souhaitez un champ path
 
-func _init(_numero : int):
+func _init(_numero: int, _path: String):
 	numero = _numero
 	tetes = calculer_tetes()
+	path = _path  # Initialiser la propriété 'path' si nécessaire
 
 func calculer_tetes() -> int:
 	if numero == 55:

@@ -13,6 +13,7 @@ var on_tour_en_cours = false
 
 signal carte_moi_attendue()
 
+
 func start_game(settings: Dictionary):
 	var noms = ["Moi"]
 	var bot_count = settings.get("bot_count", 3)
@@ -29,6 +30,7 @@ func start_game(settings: Dictionary):
 	joueur_moi = jeu.joueurs[0]
 	start_round()
 
+
 func start_round():
 	if jeu.check_end_game():
 		end_game()
@@ -38,23 +40,27 @@ func start_round():
 	attente_joueur = true
 	on_tour_en_cours = true
 	emit_signal("carte_moi_attendue")
+var clic_valide_effectue := false
+
+
+var is_card_selected := false  # Flag visuel pour empêcher le double clic
 
 func joueur_moi_a_choisi(index: int):
-	if not attente_joueur or not on_tour_en_cours:
+	if not clic_valide_effectue:
+		print("⛔ Pas de clic détecté, on ignore.")
 		return
+	clic_valide_effectue = false  # reset après validation
 
-	if index >= joueur_moi.hand.cartes.size():
-		print("Index de carte invalide")
-		return
+	var moi = joueur_moi
+	var carte = moi.hand.cartes[index]
+	carte_choisie_moi = {"joueur": moi, "carte": carte}
 
-	var carte = joueur_moi.hand.jouer_carte(index)
-	carte_choisie_moi = { "joueur": joueur_moi, "carte": carte }
-	attente_joueur = false
 	reprendre_tour()
+
+signal tour_repris(cartes_choisies)
 
 func reprendre_tour():
 	var cartes_choisies = [carte_choisie_moi]
-
 	for bot in bots:
 		var index = BotLogic.choisir_carte_aleatoire(bot.hand.cartes)
 		var carte = bot.hand.jouer_carte(index)
@@ -66,6 +72,7 @@ func reprendre_tour():
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
 		var res = jeu.jouer_carte(joueur.nom, carte)
+
 		if res == "choix_rang_obligatoire":
 			var index = BotLogic.choisir_rang_aleatoire()
 			var cartes_ramassees = jeu.table.rangs[index].recuperer_cartes_special_case()
@@ -76,12 +83,16 @@ func reprendre_tour():
 	carte_choisie_moi = null
 	on_tour_en_cours = false
 
+	# ✅ Emission du signal pour l'interface
+	emit_signal("tour_repris", cartes_choisies)
+	
 	if jeu.check_end_manche():
 		current_round += 1
 		jeu.manche_suivante()
 		start_round()
 	else:
 		start_round()
+
 
 func get_etat_plateau():
 	return jeu.table.rangs

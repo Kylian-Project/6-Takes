@@ -6,7 +6,9 @@ var cartes: Array = []
 func _init(empty := true):
 	if empty:
 		for i in range(1, 105):
-			cartes.append(Carte.new(i))
+			# Supposons que les cartes sont stockées sous le format "res://assets/images/cartes/{id}.png"
+			var card_path = "res://assets/images/cartes/" + str(i) + ".png"
+			cartes.append(Carte.new(i, card_path))  # Passer à la fois l'ID et le chemin de l'image
 		melanger()
 
 func melanger():

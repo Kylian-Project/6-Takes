@@ -42,12 +42,8 @@ border_width_top = 10
 border_width_bottom = 10
 border_color = Color(0.2484, 0.2484, 0.2484, 1)
 
-[node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container", "top_bar", "spplayerleft", "spplayerright")]
+[node name="gameboard" type="Node2D"]
 script = ExtResource("1_m51t2")
-hbox_container = NodePath("CanvasLayer2/HBoxContainer")
-top_bar = NodePath("CanvasLayer/top_bar")
-spplayerleft = NodePath("spplayerleft")
-spplayerright = NodePath("spplayerright")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -125,9 +121,9 @@ show_behind_parent = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 487.0
+offset_left = 474.0
 offset_top = 143.0
-offset_right = 1541.0
+offset_right = 1528.0
 offset_bottom = 835.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -142,9 +138,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -557.0
+offset_left = -562.0
 offset_top = -417.0
-offset_right = 597.0
+offset_right = 592.0
 offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -253,7 +249,7 @@ expand_icon = true
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(957.75, 488.125)
+position = Vector2(984.75, 488.125)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
@@ -314,6 +310,9 @@ script = null
 layout_mode = 2
 script = null
 
+[node name="CardLayer" type="Control" parent="CanvasLayer2/HBoxContainer"]
+layout_mode = 2
+
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
 visible = false
 offset_left = 367.0
@@ -337,17 +336,44 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="spplayerleft" type="VBoxContainer" parent="."]
-offset_left = 40.0
-offset_top = 140.0
-offset_right = 240.0
-offset_bottom = 852.0
+offset_left = 36.0
+offset_top = 4.0
+offset_right = 384.0
+offset_bottom = 997.0
 alignment = 1
 
+[node name="HBoxContainer" type="HBoxContainer" parent="spplayerleft"]
+layout_mode = 2
+
+[node name="BotIcon" type="TextureRect" parent="spplayerleft/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="CardLayer" type="Control" parent="spplayerleft/HBoxContainer"]
+layout_mode = 2
+
+[node name="name_bot" type="Label" parent="spplayerleft"]
+layout_mode = 2
+
 [node name="spplayerright" type="VBoxContainer" parent="."]
-offset_left = 1693.0
-offset_top = 140.0
-offset_right = 1893.0
-offset_bottom = 852.0
+offset_left = 1611.0
+offset_top = -19.0
+offset_right = 1945.0
+offset_bottom = 1035.0
 alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="spplayerright"]
+layout_mode = 2
+
+[node name="BotIcon" type="TextureRect" parent="spplayerright/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+stretch_mode = 1
+
+[node name="CardLayer" type="Control" parent="spplayerright/HBoxContainer"]
+layout_mode = 2
+
+[node name="name_bot" type="Label" parent="spplayerright"]
+layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

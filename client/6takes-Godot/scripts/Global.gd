@@ -14,6 +14,7 @@ var BASE_URL := ""
 var header := ""
 
 var game_settings = {}
+var game_players: Array = []
 
 var icons = {
 	# NOTE: optimize using preload or load() caching if performance not good.
