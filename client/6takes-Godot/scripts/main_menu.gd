@@ -12,11 +12,12 @@ extends Control
 @onready var multiplayer_button = $VButtons/MultiPlayerButton
 @onready var profile_button = $Profile
 @onready var overlay_layer = $OverlayLayer
+@onready var settings_close_button   = $SettingsOverlay/Close
 
 
 @onready var close_buttons = [
-	$SettingsOverlay/Close
-	
+	$SettingsOverlay/Close,
+	$RulesOverlay/MarginContainer/Control/Panel/CancelButton
 ]
 
 @onready var overlay_buttons = [
@@ -36,7 +37,7 @@ func _ready() -> void:
 	rules_overlay.visible = false
 	settings_overlay.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
-	settings_button.pressed.connect(_on_settings_pressed)
+	settings_button.pressed.connect(show_settings)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
 		
@@ -60,7 +61,7 @@ func _ready() -> void:
 
 
 	for close_button in close_buttons:
-		close_button.pressed.connect(_on_close_overlay_pressed)
+		close_button.pressed.connect(hide_settings)
 		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
 		close_button.pressed.connect(SoundManager.play_click_sound)
 		
@@ -125,20 +126,17 @@ func open_overlay(overlay: Control):
 	for b in overlay_buttons:
 		b.disabled = true
 
-func _on_settings_pressed():
-	open_overlay(settings_overlay)
+func show_settings() -> void:
+	settings_overlay.visible = true
+	overlay_layer.visible   = true   # make sure your dim-layer shows
+	for b in overlay_buttons:
+		b.disabled = true
 
-func _on_close_overlay_pressed():
-	settings_overlay.visible      = false
-	rules_overlay.visible         = false
-
-	# hide the overlay layer / dimmer
-	overlay_layer.visible = false
-
-	# re-enable those buttons
+func hide_settings() -> void:
+	settings_overlay.visible = false
+	overlay_layer.visible   = false
 	for b in overlay_buttons:
 		b.disabled = false
-
 	
 func quit_game():
 	get_tree().quit()
