@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://b731ylwap623e"]
+[gd_scene load_steps=36 format=3 uid="uid://b731ylwap623e"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -150,6 +150,12 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7pv28"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_82t6k"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -453,7 +459,7 @@ theme_override_constants/separation = 5
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_c0883")
 text = "Display"
 
@@ -461,7 +467,7 @@ text = "Display"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_02ok7")
 text = "Resolution"
 
@@ -469,7 +475,7 @@ text = "Resolution"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_02ok7")
 text = "VSync"
 
@@ -486,7 +492,7 @@ theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/pressed = SubResource("StyleBoxFlat_bonse")
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
@@ -503,7 +509,7 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
 item_count = 2
@@ -517,7 +523,7 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_bonse")
 selected = 0
 item_count = 2
@@ -537,8 +543,8 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_left = -1.0
 offset_top = 17.0
-offset_right = -1.0
-offset_bottom = 139.0
+offset_right = -40.0
+offset_bottom = 190.0
 grow_horizontal = 2
 alignment = 1
 
@@ -551,6 +557,7 @@ alignment = 1
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_4xjjp")
 text = "Master Volume"
 
@@ -558,6 +565,7 @@ text = "Master Volume"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_4xjjp")
 text = "Music Volume"
 
@@ -565,6 +573,7 @@ text = "Music Volume"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_4xjjp")
 text = "SFX Volume"
 
@@ -604,8 +613,12 @@ offset_right = 20.4399
 offset_bottom = 24.28
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_7pv28")
 theme_override_styles/normal = SubResource("StyleBoxFlat_82t6k")
 text = "X"
 
@@ -613,23 +626,24 @@ text = "X"
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.684
+anchor_top = 0.639
 anchor_right = 0.5
-anchor_bottom = 0.684
-offset_left = -143.5
-offset_top = -18.772
-offset_right = 143.5
-offset_bottom = 19.228
+anchor_bottom = 0.639
+offset_left = -170.0
+offset_top = -27.037
+offset_right = 167.0
+offset_bottom = 27.963
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 30
 theme_override_styles/hover = ExtResource("10_3xae7")
 theme_override_styles/normal = ExtResource("11_tnfns")
-text = "Reset Default Settings"
+text = "Reset Settings"
 
 [node name="SettingsButton" type="Button" parent="."]
 layout_mode = 1
