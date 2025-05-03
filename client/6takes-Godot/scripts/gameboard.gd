@@ -64,18 +64,19 @@ var is_host
 var hand_received
 var table_received
 var turn_emitted 
+var turns
+var current_turn = 1
 
 func _ready():
-	print("in gameboard")
 	_load_cards()
 	
 	game_state = GameState.WAITING_FOR_LOBBY
-	
-	#print("player info stored ? ", get_node("/root/GameState").player_info)
-	
+
 	player_username = get_node("/root/Global").player_name
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
+	turns = get_node("/root/GameState").rounds
+	turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 	
 	#setting up row panels
 	players_displayed = false
@@ -129,7 +130,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_handle_takes(data)
 		"fin-tour":
 			print("fin tour")
-			#hand_received = false	
+			current_turn +=1
+			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
@@ -223,9 +225,10 @@ func _await_row_selection(data):
 
 # --- Player Actions Signals---
 func on_player_selects_row(data):
-	print("data received on row choice :", data)
+	for child in hbox_container.get_children():
+		child.mouse_filter = Control.MOUSE_FILTER_STOP
+		
 	show_label("Choose a row To take")
-	
 	highlight_row(true)
 	selection_buttons(true)
 
@@ -241,7 +244,6 @@ func _on_open_pause_button_pressed() -> void:
 		
 	pause_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
 	pause_instance.visible = true  # Afficher la pause
-
 
 
 func _load_cards():
@@ -347,6 +349,7 @@ func update_table_ui(table_data, animation):
 				var card_info = _find_card_data(card_id)
 				if card_info:
 					var card_instance = card_ui_scene.instantiate()
+					#card_instance.mouse_filter = Control.MOUSE_FILTER_PASS
 					container.add_child(card_instance)
 					
 					if card_instance.has_method("set_card_data"):
@@ -403,7 +406,7 @@ func _clear_row_selection_ui():
 func show_label(text: String) -> void:
 	state_label.text = text
 	state_label.visible = true
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(3).timeout
 	
 	hide_label()
 
@@ -488,4 +491,19 @@ func _handle_takes(data):
 
 
 func _handle_end_game(data):
-	print("Game ended event ", data)
+	get_node("/root/GameState").rankings = data[0].get("classement")
+	print("Game ended event ", data[0].get("classement"))
+	show_label("Game Ended !")
+	
+	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
+	await get_tree().create_timer(3).timeout
+	#TRANSITION FIX HERE 
+	#var transition_scene = load("res://scenes/Transition.tscn")
+	#var transition_instance = transition_scene.instantiate()
+	#get_tree().current_scene.add_child(transition_instance)
+	var overlay_layer = CanvasLayer.new()
+	overlay_layer.add_child(score_instance)
+	add_child(overlay_layer)
+	
+	get_tree().current_scene.add_child(score_instance)
+	

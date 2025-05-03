@@ -38,7 +38,6 @@ var is_host
 var scene_changed
 var is_public
 
-
 func _ready():
 	settings_overlay.visible = false
 	scene_changed = false 
@@ -143,16 +142,18 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			_refresh_player_list(data)
 			
 		"lobby-info":
-			print("room info received ", data)
+			print("lobby info received ", data)
 			if(data != null):
 				get_node("/root/GameState").lobby_name = data[0].get("room").get("settings").get("lobbyName")
 				get_node("/root/GameState").players_limit = data[0].get("room").get("settings").get("playerLimit")
+				get_node("/root/GameState").rounds = data[0].get("room").get("settings").get("rounds")
 				
-				#set lobby name
+				#set lobby info
 				lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
 				lobby_name_panel.text = lobby_name
 				players_limit = get_node("/root/GameState").players_limit
 				players_count_panel.text = str(players_count) + " / " + str(players_limit)
+				
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -160,8 +161,8 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 func _handle_game_starting():
 	if !is_host and !scene_changed:
 		scene_changed = true
-		get_node("/root/Transition").fade_to_black_then_change_scene("res://scenes/GameBoard.tscn")
-		#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+		#get_node("/root/Transition").fade_to_black_then_change_scene("res://scenes/GameBoard.tscn")
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 
 func _refresh_player_list(data):
@@ -188,7 +189,11 @@ func _refresh_player_list(data):
 
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
-
+	
+	if players_count == 1:
+		start_button.disabled = true
+	else:
+		start_button.disabled = false
 	players_count_panel.text = str(players_count) + " / " + str(players_limit)
 	
 	## Update HostPlayer node
@@ -244,8 +249,17 @@ func _refresh_player_list(data):
 			var btn = bs.get_node("BotHContainer/RemoveBotButton")
 			btn.disabled = not is_host or idx != max_bot_index
 
+
 func _on_start_button_pressed() -> void:
+	#TRANSITIN ANIMATION TO FIX
+	#var transition_scene = load("res://scenes/Transition.tscn")
+	#var transition_instance = transition_scene.instantiate()
+	#get_tree().current_scene.add_child(transition_instance)
+	#await transition_instance.ready
+	#queue_free()
+	
 	print("emit start game and move to gameboard")
+	#transition_instance.fade_out("res://scenes/gameboard.tscn")
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 

@@ -49,13 +49,13 @@ func _on_card_clicked(card: TCardUI) -> void:
 			card.set_meta("orig_pos", card.position)
 
 		var original_pos = card.get_meta("orig_pos")
-		var lift_amount = Vector2(0, -20)   # move 20px upward
+		var lift_amount = Vector2(0, -50)   # move 20px upward
 		var target_pos = original_pos + lift_amount
 		
 		
 		var lift_tween = get_tree().create_tween()
 		#lift_tween.tween_property(card, "scale", card.original_scale * card.SCALE_FACTOR, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		lift_tween.tween_property(card, "position", original_pos + Vector2(0, -30), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		lift_tween.tween_property(card, "position", target_pos, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			
 		selected_card = card
 

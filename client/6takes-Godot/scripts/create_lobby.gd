@@ -41,6 +41,7 @@ func _on_create_lobby():
 		lobby_name = " "
 		
 	var player_limit = int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected()))
+	var rounds = int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected()))
 	
 	var message = {
 		"event": "create-room",
@@ -50,7 +51,7 @@ func _on_create_lobby():
 		"numberOfCards": int(card_number_dropdown.get_item_text(card_number_dropdown.get_selected())),
 		"roundTimer": int(round_timer_dropdown.get_item_text(round_timer_dropdown.get_selected())),
 		"endByPoints": int(end_points_dropdown.get_item_text(end_points_dropdown.get_selected())),
-		"rounds": int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected())),
+		"rounds": rounds,
 		"isPrivate": visibility
 	}
 	
@@ -58,6 +59,7 @@ func _on_create_lobby():
 	get_node("/root/GameState").is_host = true
 	get_node("/root/GameState").is_public = !visibility
 	get_node("/root/GameState").players_limit = player_limit
+	get_node("/root/GameState").rounds = rounds
 	
 	GameState.player_info = {
 		"username": get_node("/root/Global").player_name,
