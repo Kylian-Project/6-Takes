@@ -11,10 +11,10 @@
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="8_mla8k"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="9_cxnqk"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icao8"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rx1hg"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m75b5"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q0uf2"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
 border_width_left = 15
 border_width_top = 15
@@ -22,7 +22,7 @@ border_width_right = 15
 border_width_bottom = 15
 border_color = Color(0.729412, 0.215686, 0.215686, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tuv7q"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n3io2"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 15
 border_width_top = 15
@@ -30,7 +30,7 @@ border_width_right = 15
 border_width_bottom = 15
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bk80c"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gtxw5"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 10
 border_width_top = 10
@@ -42,7 +42,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_flyyx"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yfjnn"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 10
 border_width_top = 10
@@ -54,7 +54,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vcb1"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7kr6o"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 7
 border_width_top = 7
@@ -66,7 +66,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o67av"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j0xw5"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
 border_width_left = 10
 border_width_top = 10
@@ -78,7 +78,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8u5y"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c47e"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 5
 border_width_right = 5
@@ -191,13 +191,11 @@ text = "LEAVE"
 
 [node name="SettingsOverlay" type="Control" parent="."]
 visible = false
-z_index = 1
 layout_mode = 1
 anchors_preset = 0
 script = ExtResource("6_uxr2t")
 
 [node name="MainMenuDimming" type="ColorRect" parent="SettingsOverlay"]
-modulate = Color(1, 1, 1, 0.588235)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -206,7 +204,7 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
+color = Color(0, 0, 0, 0.501961)
 
 [node name="TabContainer" type="TabContainer" parent="SettingsOverlay"]
 layout_mode = 1
@@ -215,10 +213,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 586.0
-offset_top = 279.0
-offset_right = 1368.0
-offset_bottom = 773.0
+offset_left = 593.0
+offset_top = 295.0
+offset_right = 1375.0
+offset_bottom = 789.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -226,9 +224,9 @@ theme_override_colors/font_hovered_color = Color(1, 1, 1, 1)
 theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 35
-theme_override_styles/panel = SubResource("StyleBoxFlat_icao8")
-theme_override_styles/tab_selected = SubResource("StyleBoxFlat_m75b5")
-theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_tuv7q")
+theme_override_styles/panel = SubResource("StyleBoxFlat_rx1hg")
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_q0uf2")
+theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_n3io2")
 current_tab = 0
 
 [node name="MainSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
@@ -247,43 +245,44 @@ offset_right = -49.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_override_constants/separation = 5
+theme_override_constants/separation = 8
 
 [node name="Display" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_bk80c")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_gtxw5")
 text = "Display"
 
 [node name="Resolution" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_flyyx")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_yfjnn")
 text = "Resolution"
 
 [node name="VSync" type="Label" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_flyyx")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_yfjnn")
 text = "VSync"
 
 [node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_constants/separation = 8
 
 [node name="DisplayOption" type="OptionButton" parent="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings"]
 layout_mode = 2
@@ -293,9 +292,9 @@ theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/pressed = SubResource("StyleBoxFlat_3vcb1")
-theme_override_styles/normal = SubResource("StyleBoxFlat_3vcb1")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7kr6o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_7kr6o")
 selected = 0
 item_count = 3
 popup/item_0/text = "Fullscreen"
@@ -310,8 +309,8 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_3vcb1")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_7kr6o")
 selected = 0
 item_count = 2
 popup/item_0/text = "1920x1080"
@@ -324,8 +323,8 @@ size_flags_vertical = 3
 theme_override_colors/font_hover_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_3vcb1")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_7kr6o")
 selected = 0
 item_count = 2
 popup/item_0/text = "Enabled"
@@ -344,8 +343,8 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_left = -1.0
 offset_top = 17.0
-offset_right = -1.0
-offset_bottom = 139.0
+offset_right = -40.0
+offset_bottom = 190.0
 grow_horizontal = 2
 alignment = 1
 
@@ -358,21 +357,24 @@ alignment = 1
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_styles/normal = SubResource("StyleBoxFlat_o67av")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_j0xw5")
 text = "Master Volume"
 
 [node name="Music" type="Label" parent="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_styles/normal = SubResource("StyleBoxFlat_o67av")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_j0xw5")
 text = "Music Volume"
 
 [node name="SFX" type="Label" parent="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VLabels"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_styles/normal = SubResource("StyleBoxFlat_o67av")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_j0xw5")
 text = "SFX Volume"
 
 [node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign"]
@@ -398,45 +400,45 @@ size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
 
-[node name="Close" type="Button" parent="SettingsOverlay"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.74
-anchor_top = 0.255
-anchor_right = 0.74
-anchor_bottom = 0.255
-offset_left = 955.2
-offset_top = 502.6
-offset_right = 994.2
-offset_bottom = 551.6
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_d8u5y")
-text = "X"
-
 [node name="ResetButton" type="Button" parent="SettingsOverlay"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.684
+anchor_top = 0.667
 anchor_right = 0.5
-anchor_bottom = 0.684
-offset_left = 833.5
-offset_top = 507.228
-offset_right = 1120.5
-offset_bottom = 545.228
+anchor_bottom = 0.667
+offset_left = 815.5
+offset_top = 702.0
+offset_right = 1152.5
+offset_bottom = 757.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("7_386n2")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 30
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
-text = "Reset Default Settings"
+text = "Reset Settings"
+
+[node name="Close" type="Button" parent="SettingsOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.693
+anchor_top = 0.384
+anchor_right = 0.693
+anchor_bottom = 0.384
+offset_left = 1339.0
+offset_top = 366.0
+offset_right = 1378.0
+offset_bottom = 415.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c47e")
+text = "X"
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
