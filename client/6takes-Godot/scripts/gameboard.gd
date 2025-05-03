@@ -236,15 +236,14 @@ func on_player_selects_row(data):
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
+
 		add_child(pause_instance)
 
-		# Centrer l'écran de pause
-		await get_tree().process_frame  # Assurer la mise à jour de la taille
-		pause_instance.position = get_viewport_rect().size / 2 - pause_instance.size / 2
-		
-	pause_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
-	pause_instance.visible = true  # Afficher la pause
+		await get_tree().process_frame
+		pause_instance.position = pause_instance.size
 
+	pause_instance.move_to_front()
+	pause_instance.visible = true
 
 func _load_cards():
 	var dir_path = "res://assets/images/cartes/"

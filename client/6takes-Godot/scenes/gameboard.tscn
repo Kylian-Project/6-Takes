@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
-[ext_resource type="PackedScene" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 [ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
@@ -109,13 +109,14 @@ text = "00:00"
 layout_mode = 2
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
-offset_left = 1828.0
-offset_top = -13.0
-offset_right = 1938.0
-offset_bottom = 137.0
+offset_left = 1812.0
+offset_right = 1920.0
+offset_bottom = 108.0
 
 [node name="Button" type="Button" parent="HBoxContainer3"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
@@ -262,12 +263,8 @@ script = ExtResource("8_tuggc")
 
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
 visible = false
-offset_left = 367.0
-offset_top = 101.0
-offset_right = 1564.0
-offset_bottom = 952.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
+offset_right = 1920.0
+offset_bottom = 1080.0
 
 [node name="State_label" type="Label" parent="."]
 visible = false
