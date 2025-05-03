@@ -6,7 +6,7 @@ extends Control
 @onready var rounds_label = $PanelContainer/MainVertical/AvailableOptions/Options/Rounds
 @onready var round_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 @onready var private_check_button = $PanelContainer/MainVertical/PublicPrivate/PrivateCheckButton
-@onready var create_button = $PanelContainer/MainVertical/CreateLobbyButton
+@onready var create_button = $PanelContainer/MainVertical/Button
 
 
 @onready var lobby_name_field = $PanelContainer/MainVertical/AvailableOptions/Choices/EditLobbyName
