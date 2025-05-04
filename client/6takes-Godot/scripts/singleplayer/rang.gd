@@ -10,7 +10,9 @@ func _init(carte):
 
 func ajouter_carte(carte):
 	cartes.append(carte)
+
 	print("[AJOUT RANG] Carte %d ajoutée, total cartes maintenant : %d" % [carte.numero, cartes.size()])
+
 
 func est_pleine() -> bool:
 	var pleine = cartes.size() >= 6

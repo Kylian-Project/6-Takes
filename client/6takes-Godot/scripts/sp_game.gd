@@ -33,11 +33,7 @@ func tous_les_joueurs_ont_choisi() -> bool:
 	return true
 
 func start_game(settings: Dictionary):
-	var noms = ["Moi"]
-	var bot_count = settings.get("bot_count", 3)
-	for i in range(bot_count):
-		noms.append("Bot" + str(i + 1))
-
+	var noms = Global.game_players  # 🟢 Prendre directement la liste exacte
 	var nb_cartes = settings.get("nb_cartes", 10)
 	var nb_max_heads = settings.get("nb_max_heads", 66)
 	var nb_max_manches = settings.get("nb_max_manches", 5)
@@ -52,9 +48,28 @@ func start_round():
 
 	print("\n🔁 Nouvelle manche :", current_round)
 
+
+	# Afficher les mains de tous les joueurs
+	for joueur in jeu.joueurs:
+		print("🧑 Main de", joueur.nom, ":")
+		for c in joueur.hand.cartes:
+			print("  -", c.numero, "(", c.tetes, "têtes)")
+
+
+	# Affichage du plateau
+	print("📦 Plateau :")
+	for i in range(jeu.table.rangs.size()):
+		var cartes = jeu.table.rangs[i].cartes
+		var texte = cartes.map(func(c): return str(c.numero) + "(" + str(c.tetes) + ")")
+		print(" Rangée", i + 1, ":", ", ".join(texte))
+
+	# Lancer le tour
 	attente_joueur = true
 	on_tour_en_cours = true
 	emit_signal("carte_moi_attendue")
+
+	
+
 
 func end_game():
 	print("🎉 Partie terminée !")
@@ -70,6 +85,7 @@ func joueur_moi_a_choisi(index: int):
 	reprendre_tour()
 
 func reprendre_tour():
+
 	var cartes_choisies = []
 	if carte_choisie_moi != null:
 		var moi = carte_choisie_moi["joueur"]
@@ -88,6 +104,7 @@ func reprendre_tour():
 			ajouter_carte_choisie(bot, carte)
 
 	afficher_cartes_bots()
+
 
 	cartes_choisies.sort_custom(func(a, b): return a["carte"].numero < b["carte"].numero)
 
@@ -117,9 +134,11 @@ func reprendre_tour():
 		board._update_plateau()
 
 	emit_signal("tour_repris", cartes_choisies)
+
 	print("🃏 Cartes jouées ce tour :")
 	for choix in cartes_choisies:
 		print(" -", choix["joueur"].nom, "a joué :", choix["carte"].numero, "(", choix["carte"].tetes, "têtes)")
+
 
 	if jeu.check_end_manche():
 		current_round += 1
