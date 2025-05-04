@@ -38,12 +38,8 @@ func jouer_tour(carte_joueur):
 		else:
 			print("[CHOIX] Bot %s n’a plus de cartes." % bot.nom)
 
-	for i in range(cartes_choisies.size() - 1):
-		for j in range(i + 1, cartes_choisies.size()):
-			if cartes_choisies[i]["carte"].numero > cartes_choisies[j]["carte"].numero:
-				var temp = cartes_choisies[i]
-				cartes_choisies[i] = cartes_choisies[j]
-				cartes_choisies[j] = temp
+	# Tri des cartes dans l’ordre croissant
+	cartes_choisies.sort_custom(func(a, b): return a["carte"].numero < b["carte"].numero)
 
 	for pair in cartes_choisies:
 		var joueur = pair["joueur"]
@@ -52,16 +48,24 @@ func jouer_tour(carte_joueur):
 		var rang_index = table.trouver_best_rang(carte)
 
 		if rang_index == -1:
-			var rang_a_ramasser = randi() % table.rangs.size()
-			var cartes_ramassees = table.ramasser_rang(rang_a_ramasser)
-			var total_tetes = 0
-			for c in cartes_ramassees:
-				total_tetes += c.tetes
-			joueur.update_score(total_tetes)
-			table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
-			print("[RAMASSAGE AUTO]", joueur.nom, "ramasse le rang", rang_a_ramasser, "et ajoute la carte", carte.numero)
+			if joueur == joueurs[0]:
+				# 🔴 On ne fait rien pour le joueur humain : on signale à l’interface qu’on attend son choix
+				print("[ATTENTE] Joueur humain doit choisir un rang.")
+				emit_signal("choix_rang_obligatoire", joueur, carte)
+				return  # On arrête ici
+			else:
+				# Bots → ramassage auto
+				var rang_a_ramasser = randi() % table.rangs.size()
+				var cartes_ramassees = table.ramasser_rang(rang_a_ramasser)
+				var total_tetes = 0
+				for c in cartes_ramassees:
+					total_tetes += c.tetes
+				joueur.update_score(total_tetes)
+				table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
+				print("[RAMASSAGE AUTO]", joueur.nom, "ramasse le rang", rang_a_ramasser, "et ajoute la carte", carte.numero)
 		else:
 			table.ajouter_carte(carte)
+
 
 func check_end_manche() -> bool:
 	return joueurs[0].hand.cartes.size() == 0

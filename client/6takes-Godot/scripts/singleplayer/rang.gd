@@ -8,10 +8,10 @@ func _init(carte):
 	cartes = [carte]
 	print("[INIT RANG] Créé avec la carte %d" % carte.numero)
 
-func ajouter_carte(carte):
+func ajouter_carte(carte: Carte, joueur = null):
 	cartes.append(carte)
-
 	print("[AJOUT RANG] Carte %d ajoutée, total cartes maintenant : %d" % [carte.numero, cartes.size()])
+
 
 
 func est_pleine() -> bool:

@@ -5,7 +5,7 @@ var saved_token
 var player_id
 var player_name = ""
 var icon_id = 0
-
+var rankings: Array = []   
 var config = ConfigFile.new()
 var file_path = "res://config/config.cfg"
 var response_load = config.load(file_path)

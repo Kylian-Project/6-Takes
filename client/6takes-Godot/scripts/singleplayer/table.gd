@@ -23,10 +23,11 @@ func trouver_best_rang(carte: Carte) -> int:
 	print("[CHOIX RANG] Carte %d choisit rang %d" % [carte.numero, best_index])
 	return best_index
 
-func ajouter_carte(carte: Carte):
+# ✅ MODIFIÉ pour accepter joueur
+func ajouter_carte(carte: Carte, joueur = null):
 	var best_index = trouver_best_rang(carte)
 	if best_index != -1:
-		rangs[best_index].ajouter_carte(carte)
+		rangs[best_index].ajouter_carte(carte, joueur)  # ✅ on passe joueur aussi
 		print("[AJOUT] Carte %d ajoutée au rang %d" % [carte.numero, best_index])
 		return best_index
 	print("[ERREUR] Aucun rang approprié trouvé pour la carte %d" % carte.numero)
