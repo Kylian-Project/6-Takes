@@ -79,13 +79,13 @@ func _on_create_lobby_pressed():
 	var create_lobby_scene = load("res://scenes/lobby_scenes/createLobby.tscn")
 	
 	if create_lobby_scene == null:
-		print(" Erreur : Impossible de charger la scène SignUp")
+		print(" Erreur : Impossible de charger la scène")
 		return 
 		
 	var create_lobby_instance = create_lobby_scene.instantiate()
 	
 	if create_lobby_instance == null:
-		print(" Erreur : Impossible d'instancier la scène SignUp")
+		print(" Erreur : Impossible d'instancier la scène")
 		return  # Stop l'exécution ici
 
 	get_tree().current_scene.add_child(create_lobby_instance)
@@ -97,13 +97,13 @@ func _on_join_lobby_pressed():
 	var join_lobby_scene = load("res://scenes/lobby_scenes/joinLobby.tscn")
 	
 	if join_lobby_scene == null:
-		print(" Erreur : Impossible de charger la scène SignUp")
+		print(" Erreur : Impossible de charger la scène")
 		return 
 		
 	var join_lobby_instance = join_lobby_scene.instantiate()
 	
 	if join_lobby_instance == null:
-		print(" Erreur : Impossible d'instancier la scène SignUp")
+		print(" Erreur : Impossible d'instancier la scène")
 		return  # Stop l'exécution ici
 
 	get_tree().current_scene.add_child(join_lobby_instance)
