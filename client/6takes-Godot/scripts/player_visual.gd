@@ -24,6 +24,13 @@ var is_ready: bool = false
 @onready var ready_panel = $ReadyCheck
 @onready var http_request: HTTPRequest = $HTTPRequest
 
+#players icons
+const ICON_PATH = "res://assets/images/icons/"
+const ICON_FILES = [
+	"dark_grey.png", "blue.png", "brown.png", "green.png", 
+	"orange.png", "pink.png", "purple.png", "red.png",
+	"reversed.png", "cyan.png", "bot.png"
+]
 
 # Constants
 const MAX_CARDS := 10
@@ -44,17 +51,7 @@ func setup_player(id: int, uname: String, icon: int):#, initial_cards: Array):
 	player_id = id
 	username = uname
 	icon_id = icon
-	#cards = initial_cards.slice(0, MAX_CARDS) # limit for extra safety, technically not necessary
-	
-	#update_visuals()
-#
-#func update_visuals():
-	#name_label.text = "usernametest"
-##loading of icon using global variables, default else in case of error
-	#if Global.icons.has(icon_id):
-		#icon_texture.texture = load(Global.icons[icon_id])
-	#else:
-		#icon_texture.texture = load(Global.icons[0])
+
 		
 func select_card(card):
 	if is_ready:
@@ -102,4 +99,17 @@ func on_round_resolved():
 		selected_card = null
 		is_ready = false
 		ready_panel.visible = false
-		print("🗑️ Card removed after round")
+		print(" Card removed after round")
+
+func create_player_visual(uname: String, icon_id: int, is_me := false) -> Control:
+	var visual = self
+	visual.get_node("PlayerName").text = uname
+	var icon_path
+	
+	icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
+		
+	visual.get_node("Icon").texture = load(icon_path)
+
+	if is_me:
+		visual.add_theme_color_override("font_color", Color(1, 1, 0)) 
+	return visual

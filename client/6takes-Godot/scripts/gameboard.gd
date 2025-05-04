@@ -33,14 +33,6 @@ extends Node2D
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
 
-#players icons
-const ICON_PATH = "res://assets/images/icons/"
-const ICON_FILES = [
-	"dark_grey.png", "blue.png", "brown.png", "green.png", 
-	"orange.png", "pink.png", "purple.png", "red.png",
-	"reversed.png", "cyan.png"
-]
-
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
@@ -72,19 +64,19 @@ var is_host
 var hand_received
 var table_received
 var turn_emitted 
+var turns
+var current_turn = 1
 
 func _ready():
-	print("in gameboard")
 	_load_cards()
 	
 	game_state = GameState.WAITING_FOR_LOBBY
-	
-	print("player info stored ? ", get_node("/root/GameState").player_info)
-	
-	player_username = "neila" #get_node("/root/Global").player_name
-	
+
+	player_username = get_node("/root/Global").player_name
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
+	turns = get_node("/root/GameState").rounds
+	turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 	
 	#setting up row panels
 	players_displayed = false
@@ -138,11 +130,14 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_handle_takes(data)
 		"fin-tour":
 			print("fin tour")
-			#hand_received = false	
+			current_turn +=1
+			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
 			_handle_next_round(data)
+		"end-game":
+			_handle_end_game(data)
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
 			
@@ -182,6 +177,7 @@ func start_game():
 	
 
 func _start_turn():
+	highlight_row(false)
 	if room_id_global != null:
 		#hand_received = false
 		#table_received = false
@@ -226,15 +222,13 @@ func _await_row_selection(data):
 	var player = data[0]["username"]
 	show_label(player + " Is Choosing a Row")
 
-func _on_invalid_card(message):
-	pass
-
 
 # --- Player Actions Signals---
 func on_player_selects_row(data):
-	print("data received on row choice :", data)
+	for child in hbox_container.get_children():
+		child.mouse_filter = Control.MOUSE_FILTER_STOP
+		
 	show_label("Choose a row To take")
-	
 	highlight_row(true)
 	selection_buttons(true)
 
@@ -242,16 +236,14 @@ func on_player_selects_row(data):
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
+
 		add_child(pause_instance)
 
-		# Centrer l'écran de pause
-		await get_tree().process_frame  # Assurer la mise à jour de la taille
-		pause_instance.position = get_viewport_rect().size / 2 - pause_instance.size / 2
-		
-	pause_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
-	pause_instance.visible = true  # Afficher la pause
+		await get_tree().process_frame
+		pause_instance.position = pause_instance.size
 
-
+	pause_instance.move_to_front()
+	pause_instance.visible = true
 
 func _load_cards():
 	var dir_path = "res://assets/images/cartes/"
@@ -356,6 +348,7 @@ func update_table_ui(table_data, animation):
 				var card_info = _find_card_data(card_id)
 				if card_info:
 					var card_instance = card_ui_scene.instantiate()
+					#card_instance.mouse_filter = Control.MOUSE_FILTER_PASS
 					container.add_child(card_instance)
 					
 					if card_instance.has_method("set_card_data"):
@@ -412,7 +405,7 @@ func _clear_row_selection_ui():
 func show_label(text: String) -> void:
 	state_label.text = text
 	state_label.visible = true
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(3).timeout
 	
 	hide_label()
 
@@ -426,7 +419,7 @@ func setup_players(player_data):
 		return
 	
 	# Clear existing visuals
-	print("player data received ", player_data)
+	#print("player data received ", player_data)
 	for container in [left_player_container, right_player_container]:
 		for child in container.get_children():
 			child.queue_free()
@@ -446,9 +439,6 @@ func setup_players(player_data):
 
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
-
-	print("players count ", players_count)
-	print("players debug ", players)
 	
 	var users = player_data[0]["users"]
 	var user_icon
@@ -458,37 +448,32 @@ func setup_players(player_data):
 	for user_dict in players:
 		var name = user_dict.get("username", "")
 		if name == player_username:
-		#if user_dict.username == "Anonyme" : #player_username:TO DO WHEN SEREVR LINK USERNAME
 			current_player = user_dict
-			print("current player is anonyme")
 		else:
 			others.append(user_dict)
 	
 	for i in range(others.size()):
 		var user = others[i]
-		print("\nothers debug ;", others)
 		
-		if user.icon:
-			user_icon = user.icon
-		else:
-			user_icon = 0
-			
-		var vis = create_player_visual(user.username, user_icon, false)
+		if user.username.begins_with("Bot"):
+			user_icon = 10
+		
+		var player_visual_instance = player_visual_scene.instantiate()
+		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
+		var slot = VBoxContainer.new()
+		slot.add_child(vis)
+		
 		if i % 2 == 0:
-			left_player_container.add_child(vis)
+			left_player_container.add_child(slot)
 		else:
-			right_player_container.add_child(vis)
+			right_player_container.add_child(slot)
 
-	#for user_dict in users:
-		#if user_dict.username == player_username:
+
 	if current_player:
-		var icon_id 
-		if current_player.get("icon", 0) == null:
-			icon_id = 0
-		else:
-			icon_id = current_player.get("icon", 0)
-		var me_vis = create_player_visual(current_player.get("username",""),icon_id, true)
+		var player_visual_instance = player_visual_scene.instantiate()
+		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
 		right_player_container.add_child(me_vis)
+		
 	else:
 		print("Couldn’t find current_player in %s" , players)
 		return
@@ -496,23 +481,28 @@ func setup_players(player_data):
 	players_displayed = true
 	game_state = GameState.GAME_STARTED
 
-
-func create_player_visual(uname: String, icon_id: int, is_me := false) -> Control:
-	var visual: Control = player_visual_scene.instantiate()
-
-	visual.get_node("PlayerName").text = uname
-	var icon_path = ICON_PATH + ICON_FILES[clamp(icon_id, 0, ICON_FILES.size() - 1)]
-	visual.get_node("Icon").texture = load(icon_path)
-
-	if is_me:
-		visual.add_theme_color_override("font_color", Color(1, 1, 0))  # e.g. yellow
-		# Or: visual.modulate = Color(1, 1, 1, 1) to brighten, etc.
-	return visual
-
-
 func _handle_takes(data):
 	var player_takes = data[0]["username"]
 	if player_takes == player_username:
 		show_label("You Take 6!")
 	else:
 		show_label(player_takes + " Takes 6!")
+
+
+func _handle_end_game(data):
+	get_node("/root/GameState").rankings = data[0].get("classement")
+	print("Game ended event ", data[0].get("classement"))
+	show_label("Game Ended !")
+	
+	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
+	await get_tree().create_timer(3).timeout
+	#TRANSITION FIX HERE 
+	#var transition_scene = load("res://scenes/Transition.tscn")
+	#var transition_instance = transition_scene.instantiate()
+	#get_tree().current_scene.add_child(transition_instance)
+	var overlay_layer = CanvasLayer.new()
+	overlay_layer.add_child(score_instance)
+	add_child(overlay_layer)
+	
+	get_tree().current_scene.add_child(score_instance)
+	

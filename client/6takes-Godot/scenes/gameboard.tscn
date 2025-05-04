@@ -1,8 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
-[ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="3_8mab6"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
@@ -94,7 +93,7 @@ label_settings = SubResource("LabelSettings_7rt8c")
 
 [node name="gameStateLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "              Waiting for players
+text = "              Do not Take 6!
 "
 label_settings = SubResource("LabelSettings_8de43")
 horizontal_alignment = 3
@@ -106,14 +105,18 @@ size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 34
 text = "00:00"
 
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
-offset_left = 1828.0
-offset_top = -13.0
-offset_right = 1938.0
-offset_bottom = 137.0
+offset_left = 1812.0
+offset_right = 1920.0
+offset_bottom = 108.0
 
 [node name="Button" type="Button" parent="HBoxContainer3"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
@@ -124,9 +127,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 455.0
-offset_top = 143.0
+offset_top = 194.0
 offset_right = 1551.0
-offset_bottom = 835.0
+offset_bottom = 886.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
@@ -143,7 +146,7 @@ anchor_bottom = 0.5
 offset_left = -557.0
 offset_top = -417.0
 offset_right = 597.0
-offset_bottom = 320.0
+offset_bottom = 331.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_uo4x1")
@@ -152,6 +155,7 @@ expand_mode = 1
 [node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
+theme_override_constants/separation = 30
 alignment = 1
 
 [node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
@@ -163,10 +167,6 @@ layout_mode = 1
 offset_right = 100.0
 offset_bottom = 170.0
 size_flags_vertical = 3
-
-[node name="CardUI" parent="deckContainer/rowsContainer/row1_panel/row1" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
 
 [node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel/row1" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
@@ -188,10 +188,6 @@ offset_right = 100.0
 offset_bottom = 170.0
 size_flags_vertical = 3
 
-[node name="CardUI2" parent="deckContainer/rowsContainer/row2_panel/row2" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
 [node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel/row2" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
@@ -211,10 +207,6 @@ offset_right = 100.0
 offset_bottom = 170.0
 size_flags_vertical = 3
 
-[node name="CardUI3" parent="deckContainer/rowsContainer/row3_panel/row3" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
 [node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel/row3" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
@@ -233,10 +225,6 @@ layout_mode = 1
 offset_right = 100.0
 offset_bottom = 170.0
 size_flags_vertical = 3
-
-[node name="CardUI4" parent="deckContainer/rowsContainer/row4_panel/row4" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
 
 [node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel/row4" groups=["row_select"]]
 custom_minimum_size = Vector2(50, 50)
@@ -273,54 +261,10 @@ grow_vertical = 0
 alignment = 1
 script = ExtResource("8_tuggc")
 
-[node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI2" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI3" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI4" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI5" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI6" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI7" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI8" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI9" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI10" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
 visible = false
-offset_left = 367.0
-offset_top = 101.0
-offset_right = 1564.0
-offset_bottom = 952.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
+offset_right = 1920.0
+offset_bottom = 1080.0
 
 [node name="State_label" type="Label" parent="."]
 visible = false
@@ -340,6 +284,9 @@ offset_left = 40.0
 offset_top = 140.0
 offset_right = 240.0
 offset_bottom = 852.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 30
 alignment = 1
 
 [node name="RPlayer_container" type="VBoxContainer" parent="."]
@@ -347,6 +294,7 @@ offset_left = 1693.0
 offset_top = 140.0
 offset_right = 1893.0
 offset_bottom = 852.0
+theme_override_constants/separation = 30
 alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=25 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
@@ -10,6 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="8_wbnmf"]
 [ext_resource type="Script" path="res://scripts/sp_settings.gd" id="9_8ivq5"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="10_eex3c"]
+[ext_resource type="Script" path="res://scripts/confirm_control.gd" id="11_s370a"]
+[ext_resource type="Texture2D" uid="uid://j1dgweq32xnf" path="res://assets/images/selection/verifier.png" id="12_42uao"]
+[ext_resource type="Texture2D" uid="uid://d4k8xhixraomr" path="res://assets/images/selection/fermer.png" id="13_qxa8q"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7n0kn"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -88,6 +91,22 @@ bg_color = Color(0.85098, 0.85098, 0.85098, 1)
 border_width_left = 5
 border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8iwxy"]
+bg_color = Color(0.0365646, 0.0678412, 0.191338, 0.792157)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(1, 0, 0, 0.521569)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo1wa"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 0.917647)
+border_blend = true
 
 [node name="MPLobbyScene" type="Control"]
 layout_mode = 3
@@ -589,5 +608,119 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="mssgLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -963.0
+offset_top = -82.0
+offset_right = 962.0
+offset_bottom = 205.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
+text = "You have been kicked from this lobby!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ConfirmControl" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -966.0
+offset_top = -86.0
+offset_right = 960.0
+offset_bottom = 207.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_s370a")
+
+[node name="dimming" type="ColorRect" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -970.0
+offset_top = -714.5
+offset_right = 970.0
+offset_bottom = 547.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.301961)
+
+[node name="mssg" type="Label" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -142.5
+offset_right = 965.0
+offset_bottom = 144.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
+text = "
+?"
+horizontal_alignment = 1
+
+[node name="buttonContainer" type="HBoxContainer" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -288.0
+offset_top = -80.0
+offset_right = 307.0
+offset_bottom = -17.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 120
+
+[node name="confirmButton" type="Button" parent="ConfirmControl/buttonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Confirm"
+icon = ExtResource("12_42uao")
+icon_alignment = 2
+expand_icon = true
+
+[node name="cancelButton" type="Button" parent="ConfirmControl/buttonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Cancel"
+icon = ExtResource("13_qxa8q")
+icon_alignment = 2
+expand_icon = true
+
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="MainVboxContainer/AddBotButton" to="." method="_on_add_bot_button_pressed"]

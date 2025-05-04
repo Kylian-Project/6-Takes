@@ -56,7 +56,7 @@ mouse_filter = 2
 texture = ExtResource("3_h10ga")
 expand_mode = 1
 
-[node name="SelectionConatiner" type="HBoxContainer" parent="."]
+[node name="SelectionContainer" type="HBoxContainer" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 1
@@ -67,7 +67,7 @@ offset_right = 77.0
 offset_bottom = 47.0
 grow_horizontal = 0
 
-[node name="selectButton" type="Button" parent="SelectionConatiner"]
+[node name="selectButton" type="Button" parent="SelectionContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.65
@@ -75,7 +75,8 @@ icon = ExtResource("3_c6akw")
 flat = true
 expand_icon = true
 
-[node name="deselectButton" type="Button" parent="SelectionConatiner"]
+[node name="deselectButton" type="Button" parent="SelectionContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 icon = ExtResource("4_fvx5b")
@@ -88,5 +89,5 @@ expand_icon = true
 [connection signal="input_event" from="detector" to="." method="_on_detector_input_event"]
 [connection signal="mouse_entered" from="detector" to="." method="_on_detector_mouse_entered"]
 [connection signal="mouse_exited" from="detector" to="." method="_on_detector_mouse_exited"]
-[connection signal="pressed" from="SelectionConatiner/selectButton" to="." method="_on_select_button_pressed"]
-[connection signal="pressed" from="SelectionConatiner/deselectButton" to="." method="_on_deselect_button_pressed"]
+[connection signal="pressed" from="SelectionContainer/selectButton" to="." method="_on_select_button_pressed"]
+[connection signal="pressed" from="SelectionContainer/deselectButton" to="." method="_on_deselect_button_pressed"]

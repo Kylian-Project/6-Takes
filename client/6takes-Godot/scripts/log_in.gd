@@ -76,7 +76,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 	var parsed = JSON.parse_string(response_str)
 	
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", response_str)
 	
 	if response_code != 200:
 		if parsed == null or response_code == 0 :
@@ -92,7 +91,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 	if "token" in response:
 		jwt_token = response["token"]
 		player_data = response["player"]
-		print(" Connexion réussie ! Token :", jwt_token)
+		print(" Connexion réussie ! ")
 		
 		var raw_response = body.get_string_from_utf8()
 		var result_string = JSON.parse_string(raw_response)

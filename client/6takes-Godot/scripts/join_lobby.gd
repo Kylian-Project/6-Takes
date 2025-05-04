@@ -12,7 +12,7 @@ var player_name
 
 
 func _ready():	
-	player_name = "neila" #get_node("/root/Global").player_name
+	player_name = get_node("/root/Global").player_name
 	available_rooms_list.custom_minimum_size = Vector2(200, 200)
 	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
@@ -63,31 +63,38 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 							room_ids.append(room_id)  # Stocke l'ID dans l'ordre
 							print("🔹 Lobby ajouté :", room_name, "ID:", room_id)
 
+
 	if event == "public-room-joined" or event == "private-room-joined" :
+		if event == "public-room-joined":
+			get_node("/root/GameState").is_public = true
+		elif event == "private-room-joined" :
+			get_node("/root/GameState").is_public = false
+			
 		if typeof(data) == TYPE_ARRAY and data.size() > 0:
 			var room_info = data[0]
 			if typeof(room_info) == TYPE_DICTIONARY:
 				var count = room_info.get("count", 0)
-				var usernames = room_info.get("usernames", [])
+				var usernames = room_info.get("users", [])
 				print("Tu as rejoint le lobby avec :", usernames)
 				print("Nombre actuel de joueurs : ", count)
 
 				if self.selected_room_id != "":
 					_update_room_in_list(self.selected_room_id, count, usernames)
-				else:
-					print("❌ Aucune ID de lobby sélectionnée pour mise à jour.")
 				
-					
 				get_node("/root/GameState").id_lobby = selected_room_id
 				get_node("/root/GameState").is_host = false
 				get_node("/root/GameState").other_players = usernames
-				
+				get_node("/root/GameState").players_count = count				
+				get_node("/root/GameState").data = data
+
 				get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-			else:
-				print("Format de données incorrect pour 'public-room-joined' :", room_info)
 		else:
 			print("Données vides ou mal formatées pour 'public-room-joined'")
-
+	
+	if event == "room-not-found":
+		$error_label.visible = true
+	else:
+		print("unhandled event received ", event, data)
 
 func _update_room_in_list(room_id: String, count: int, usernames: Array):
 	var room_found = false
@@ -97,7 +104,6 @@ func _update_room_in_list(room_id: String, count: int, usernames: Array):
 			var room_name = available_rooms_list.get_item_text(i).split(" ")[0]
 			var updated_display_text = "%s (%d/%d)" % [room_name, count, max_players]
 			available_rooms_list.set_item_text(i, updated_display_text)
-			print("Mise à jour du lobby :", room_name, "nouveau nombre :", count)
 			room_found = true
 			break
 

@@ -6,7 +6,7 @@ extends Control
 @onready var rounds_label = $PanelContainer/MainVertical/AvailableOptions/Options/Rounds
 @onready var round_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 @onready var private_check_button = $PanelContainer/MainVertical/PublicPrivate/PrivateCheckButton
-@onready var create_button = $PanelContainer/MainVertical/CreateLobbyButton
+@onready var create_button = $PanelContainer/MainVertical/Button
 
 
 @onready var lobby_name_field = $PanelContainer/MainVertical/AvailableOptions/Choices/EditLobbyName
@@ -37,44 +37,49 @@ func _on_create_lobby():
 	if !lobby_name_field.text.is_empty():
 		print("lobby name debug :", lobby_name)
 		lobby_name = lobby_name_field.text
+	else:
+		lobby_name = " "
 		
-		
+	var player_limit = int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected()))
+	var rounds = int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected()))
+	
 	var message = {
 		"event": "create-room",
 		"username" : uname,
 		"lobbyName": lobby_name,
-		"playerLimit": int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected())),
+		"playerLimit": player_limit,
 		"numberOfCards": int(card_number_dropdown.get_item_text(card_number_dropdown.get_selected())),
 		"roundTimer": int(round_timer_dropdown.get_item_text(round_timer_dropdown.get_selected())),
 		"endByPoints": int(end_points_dropdown.get_item_text(end_points_dropdown.get_selected())),
-		"rounds": int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected())),
+		"rounds": rounds,
 		"isPrivate": visibility
 	}
+	
 	get_node("/root/GameState").lobby_name = lobby_name
 	get_node("/root/GameState").is_host = true
+	get_node("/root/GameState").is_public = !visibility
+	get_node("/root/GameState").players_limit = player_limit
+	get_node("/root/GameState").rounds = rounds
+	
 	GameState.player_info = {
 		"username": get_node("/root/Global").player_name,
-		 "id": get_node("/root/Global").player_id
+		 "id": get_node("/root/Global").player_id,
+		"icon": get_node("/root/Global").icon_id
 		}
 	
-	SocketManager.emit("create-room", message)  # PAS besoin de JSON.stringify
-	print(" Demande de création envoyée :", message)
-	
+	SocketManager.emit("create-room", message) 
+	print("create lobby event sent")
 
 func _on_socket_event(event: String, data: Variant, ns: String):
 	print(" Événement reçu :", event)
 
 	if event == "private-room-created" or event == "public-room-created" :
-		print(" Le lobby privé a été créé.")
-		print(data)
+		print(" Le lobby a été créé.")
 		get_node("/root/GameState").id_lobby = data[0]
 		get_node("/root/GameState").is_host = true
 		
 		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-		
-	#elif event == "public-room-created":
-		#print("Le lobby public a été créé.")
-		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+
 	else :
 		print("unhandled event received ,",event, data)
 		
