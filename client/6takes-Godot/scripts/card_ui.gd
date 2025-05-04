@@ -37,20 +37,20 @@ var card_index: int = -1  # Valeur par défaut -1
 # Fonction _ready qui s'exécute au démarrage
 func _ready() -> void:
 	#set_card_data(image_path, card_id):
-	print("Visibilité du nœud parent:", self.visible)
-	print("Sélection de TextureRect:", texture_rect)
-	print("Sélection de Back_texture:", back_texture)
+	#print("Visibilité du nœud parent:", self.visible)
+	#print("Sélection de TextureRect:", texture_rect)
+	#print("Sélection de Back_texture:", back_texture)
 
 	# Vérifie que TextureRect et Back_texture existent
 	if texture_rect == null:
 		print("Erreur : TextureRect est introuvable.")
-	else:
-		print("TextureRect trouvé.")
+	#else:
+		#print("TextureRect trouvé.")
 		
 	if back_texture == null:
 		print("Erreur : Back_texture est introuvable.")
-	else:
-		print("Back_texture trouvé.")
+	#else:
+		#print("Back_texture trouvé.")
 		
 	# Vérifie si SelectionContainer existe et l'initialise
 	if selection_container != null:
@@ -85,7 +85,7 @@ func _process(_delta):
 
 # Méthode pour assigner les données de la carte
 func set_card_data(card_path: String, card_id: int) -> void:
-	print("🃏 Appel de set_card_data avec:", card_id)
+	#print("🃏 Appel de set_card_data avec:", card_id)
 
 	if texture_rect == null or back_texture == null:
 		push_error("❌ texture_rect ou back_texture est null !")
@@ -98,14 +98,17 @@ func set_card_data(card_path: String, card_id: int) -> void:
 		push_error("❌ Texture non valide pour la carte " + str(card_id))
 
 	self.name = "Card_" + str(card_id)
+	self.global_card_id = card_id 
 
 # Fonction pour sélectionner la carte (déclenche le signal)
+
 func _on_select_button_pressed() -> void:
+	if global_card_id == null:
+		print("❌ Erreur : global_card_id est null avant d’émettre le signal")
+		return
 	emit_signal("card_selected", global_card_id)
 	is_lifted = false
-	self.visible = false
-	#_on_deselect_button_pressed()
-
+	self.visible = false  # Optionnel : si tu veux cacher la carte après sélection
 # Fonction pour désélectionner la carte
 func _on_deselect_button_pressed() -> void:
 	if not is_lifted:
@@ -159,6 +162,7 @@ func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int)
 
 # Fonction pour vérifier si la carte est dans le groupe "hand_grp"
 func is_in_hand_grp():
+	
 	return self.get_parent().is_in_group("hand_grp")
 
 # Fonction pour démarrer un timer avant de faire une rotation de carte

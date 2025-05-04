@@ -10,9 +10,27 @@ var joueur_moi = null
 var carte_choisie_moi = null
 var attente_joueur = false
 var on_tour_en_cours = false
+var clic_valide_effectue := false
+var is_card_selected := false
+var cartes_choisies_bots = {}
 
 signal carte_moi_attendue()
+signal tour_repris(cartes_jouees)
 
+func ajouter_carte_choisie(bot, carte):
+	cartes_choisies_bots[bot] = carte
+
+func carte_choisie_par(bot):
+	return cartes_choisies_bots.get(bot, null)
+
+func tous_les_joueurs_ont_choisi() -> bool:
+	if carte_choisie_moi == null:
+		return false
+	for i in range(1, jeu.joueurs.size()):
+		var bot = jeu.joueurs[i]
+		if carte_choisie_par(bot) == null:
+			return false
+	return true
 
 func start_game(settings: Dictionary):
 	var noms = ["Moi"]
@@ -25,67 +43,84 @@ func start_game(settings: Dictionary):
 	var nb_max_manches = settings.get("nb_max_manches", 5)
 
 	jeu = Jeu6Takes.new(noms.size(), noms, nb_max_manches, nb_max_heads, nb_cartes)
-	bots = jeu.joueurs.slice(1, jeu.joueurs.size())
-	current_round = 1
-	joueur_moi = jeu.joueurs[0]
-	start_round()
-
+	print("[SP GAME] Jeu lancé avec %d joueurs." % noms.size())
 
 func start_round():
 	if jeu.check_end_game():
 		end_game()
 		return
 
-	# Lancer le tour
+	print("\n🔁 Nouvelle manche :", current_round)
+
 	attente_joueur = true
 	on_tour_en_cours = true
 	emit_signal("carte_moi_attendue")
-var clic_valide_effectue := false
 
-
-var is_card_selected := false  # Flag visuel pour empêcher le double clic
+func end_game():
+	print("🎉 Partie terminée !")
 
 func joueur_moi_a_choisi(index: int):
 	if not clic_valide_effectue:
 		print("⛔ Pas de clic détecté, on ignore.")
 		return
-	clic_valide_effectue = false  # reset après validation
-
+	clic_valide_effectue = false
 	var moi = joueur_moi
 	var carte = moi.hand.cartes[index]
 	carte_choisie_moi = {"joueur": moi, "carte": carte}
-
 	reprendre_tour()
 
-signal tour_repris(cartes_choisies)
-
 func reprendre_tour():
-	var cartes_choisies = [carte_choisie_moi]
-	for bot in bots:
-		var index = BotLogic.choisir_carte_aleatoire(bot.hand.cartes)
-		var carte = bot.hand.jouer_carte(index)
-		cartes_choisies.append({ "joueur": bot, "carte": carte })
+	var cartes_choisies = []
+	if carte_choisie_moi != null:
+		var moi = carte_choisie_moi["joueur"]
+		var carte = carte_choisie_moi["carte"]
+		moi.hand.cartes.erase(carte)
+		cartes_choisies.append({"joueur": moi, "carte": carte})
+	else:
+		print("❌ Erreur : aucune carte choisie pour le joueur humain.")
+		return
+
+	for bot in jeu.joueurs.slice(1, jeu.joueurs.size()):
+		var carte = BotLogic.choisir_carte_directe(bot.hand.cartes)
+		if carte != null:
+			bot.hand.cartes.erase(carte)
+			cartes_choisies.append({"joueur": bot, "carte": carte})
+			ajouter_carte_choisie(bot, carte)
+
+	afficher_cartes_bots()
 
 	cartes_choisies.sort_custom(func(a, b): return a["carte"].numero < b["carte"].numero)
 
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
-		var res = jeu.jouer_carte(joueur.nom, carte)
+		var rang_index = jeu.table.trouver_best_rang(carte)
 
-		if res == "choix_rang_obligatoire":
-			var index = BotLogic.choisir_rang_aleatoire()
-			var cartes_ramassees = jeu.table.rangs[index].recuperer_cartes_special_case()
-			var penalty = cartes_ramassees.reduce(func(acc, c): return acc + c.tetes, 0)
-			joueur.update_score(penalty)
-			jeu.table.rangs[index] = Rang.new(carte)
+		if rang_index == -1:
+			# Aucun rang adapté → choisir un rang aléatoire à ramasser
+			var rang_a_ramasser = randi() % jeu.table.rangs.size()
+			var cartes_ramassees = jeu.table.ramasser_rang(rang_a_ramasser)
+			var total_tetes = 0
+			for c in cartes_ramassees:
+				total_tetes += c.tetes
+			joueur.score += total_tetes
+			jeu.table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
+			print("[RAMASSAGE AUTO]", joueur.nom, "ramasse le rang", rang_a_ramasser, "et ajoute la carte", carte.numero)
+		else:
+			jeu.table.ajouter_carte(carte)
 
 	carte_choisie_moi = null
 	on_tour_en_cours = false
 
-	# ✅ Emission du signal pour l'interface
+	var board = get_node_or_null("/root/GameBoardSP")
+	if board:
+		board._update_plateau()
+
 	emit_signal("tour_repris", cartes_choisies)
-	
+	print("🃏 Cartes jouées ce tour :")
+	for choix in cartes_choisies:
+		print(" -", choix["joueur"].nom, "a joué :", choix["carte"].numero, "(", choix["carte"].tetes, "têtes)")
+
 	if jeu.check_end_manche():
 		current_round += 1
 		jeu.manche_suivante()
@@ -93,7 +128,15 @@ func reprendre_tour():
 	else:
 		start_round()
 
-
+func afficher_cartes_bots():
+	var board = get_node_or_null("/root/GameBoardSP")
+	if board:
+		for i in range(1, jeu.joueurs.size()):
+			var bot = jeu.joueurs[i]
+			var carte = carte_choisie_par(bot)
+			if carte != null:
+				board._place_card_next_to_icon(bot, carte.numero)
+				
 func get_etat_plateau():
 	return jeu.table.rangs
 
@@ -102,6 +145,3 @@ func get_main_joueur_moi():
 
 func get_scores():
 	return jeu.joueurs
-
-func end_game():
-	print("Partie terminée")

@@ -1,13 +1,16 @@
+### FICHIER corrigé : carte.gd ###
+
 class_name Carte
 
 var numero: int
 var tetes: int
-var path: String  # Ajouter cette ligne si vous souhaitez un champ path
+var path: String
 
 func _init(_numero: int, _path: String):
 	numero = _numero
 	tetes = calculer_tetes()
-	path = _path  # Initialiser la propriété 'path' si nécessaire
+	path = _path
+	print("[INIT CARTE] Carte %d initialisée avec %d têtes." % [numero, tetes])
 
 func calculer_tetes() -> int:
 	if numero == 55:
