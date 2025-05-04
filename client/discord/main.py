@@ -19,6 +19,8 @@ DISCORD_CHANNEL_ID = 1368689969752838276  # Remplace par l'ID du canal Discord
 DISCORD_TOKEN = 'MTM2ODY4Nzg1MzU2Mjc1NzI3MQ.GHkGkm._GX440GXuvCFjsmIJjCOmZoBRbJQV4DlyUgQWY'
 
 intents = discord.Intents.default()
+intents.message_content = True
+intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 def get_db_connection():
@@ -47,6 +49,26 @@ class FeedbackView(discord.ui.View):
         finally:
             cursor.close()
             conn.close()
+
+# Commande de clear pour supprimer les messages
+@bot.command(name='clear')
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount: int):
+    if amount < 1:
+        await ctx.send("❌ Vous devez supprimer au moins un message.")
+        return
+    
+    deleted = await ctx.channel.purge(limit=amount + 1)  # +1 pour inclure le message de commande
+    await ctx.send(f"🗑 {len(deleted) - 1} messages supprimés.", delete_after=5)
+
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("❌ Vous n'avez pas la permission de gérer les messages.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("❌ Veuillez entrer un nombre valide de messages à supprimer.")
+    else:
+        await ctx.send("❌ Une erreur est survenue lors de la suppression des messages.")
 
 @bot.event
 async def on_ready():
@@ -91,5 +113,6 @@ async def check_feedbacks():
         conn.commit()
 
     conn.close()
+
 
 bot.run(DISCORD_TOKEN)
