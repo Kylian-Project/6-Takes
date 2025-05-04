@@ -6,7 +6,7 @@ extends Control
 @onready var rounds_label = $PanelContainer/MainVertical/AvailableOptions/Options/Rounds
 @onready var round_dropdown = $PanelContainer/MainVertical/AvailableOptions/Choices/RoundsDropdown
 @onready var private_check_button = $PanelContainer/MainVertical/PublicPrivate/PrivateCheckButton
-@onready var create_button = $PanelContainer/MainVertical/Button
+@onready var create_button = $PanelContainer/MainVertical/CreateLobbyButton
 
 
 @onready var lobby_name_field = $PanelContainer/MainVertical/AvailableOptions/Choices/EditLobbyName
@@ -20,7 +20,7 @@ var uname
 
 func _ready():	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-	create_button.pressed.connect(_on_create_lobby)
+	#create_button.pressed.connect(_on_create_lobby)
 	
 	uname = get_node("/root/Global").player_name
 
@@ -75,8 +75,8 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 
 	if event == "private-room-created" or event == "public-room-created" :
 		print(" Le lobby a été créé.")
-		get_node("/root/GameState").id_lobby = data[0]
-		get_node("/root/GameState").is_host = true
+		GameState.id_lobby = data[0]
+		GameState.is_host = true
 		
 		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 

@@ -83,7 +83,10 @@ func save_session(token: String, uid, uname, icon):
 	if error != OK:
 		print("error saving session")
 
-		
+	player_id = uid
+	player_name = uname
+	icon_id = icon
+
 #load session data from file on startup
 func load_session():
 	#var config = ConfigFile.new()

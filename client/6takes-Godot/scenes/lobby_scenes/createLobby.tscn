@@ -340,4 +340,5 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_6oowm")
 text = "X"
 
+[connection signal="pressed" from="PanelContainer/MainVertical/CreateLobbyButton" to="." method="_on_create_lobby"]
 [connection signal="pressed" from="Close" to="." method="_on_close_pressed"]
