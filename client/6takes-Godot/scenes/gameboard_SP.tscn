@@ -108,6 +108,8 @@ size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 34
 text = "00:00"
 
+[node name="Timer" type="Timer" parent="."]
+
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
 offset_left = 1828.0
 offset_top = -13.0

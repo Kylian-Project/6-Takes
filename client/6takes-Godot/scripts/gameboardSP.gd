@@ -3,6 +3,7 @@ extends Node2D
 
 @export var top_bar: HBoxContainer
 @onready var timer_label = $HBoxContainer/timer
+@onready var game_timer =$Timer
 @onready var score_label = $CanvasLayer/top_bar/nbheads
 @onready var state_label = $State_label
 @onready var turn_label = $HBoxContainer/turnLabel
@@ -40,80 +41,214 @@ const SpGame = preload("res://scripts/sp_game.gd")
 @onready var heads_label = $CanvasLayer/top_bar/nbheads
 
 
+var time_left = 0
+var max_turns = 0
+var current_turn = 0
+var timer_active = false
+
 var sp_game: SpGame
-var timer_duration := 45
-var time_left = 45.0
+
 var bot_display_data: Array = []
 
 func _ready():
 	
+	# Initialisation des tours
+	if game_timer == null:
+		game_timer = $Timer  # Assurez-vous que le chemin est correct
+		print("Timer initialisé : ", game_timer != null)
+		
+	
+	max_turns = Global.game_settings["nb_cartes"]  # Nombre total de tours = nombre de cartes
+	current_turn = 1
+	update_turn_label()  # Affiche "1/nb_cartes"
+	
+	# Initialisation UI
+	timer_label.visible = false
 	$ScoreBoard.visible = false
-	print("🟢 Script prêt.")
-	if Global.game_settings == null or not Global.game_settings.has("bot_count"):
-		print("🔴 Erreur : paramètres jeu manquants")
+	
+	# Message de début
+	await show_label("Game Start")
+	
+	# Vérification des paramètres
+	if Global.game_settings == null:
+		print("🔴 Paramètres de jeu manquants")
 		return
 
-
+	# Initialisation du jeu
 	sp_game = SpGame.new()
 	add_child(sp_game)
 	sp_game.start_game(Global.game_settings)
 
+	# Synchronisation des tours
+	if max_turns != sp_game.jeu.nb_cartes:
+		max_turns = sp_game.jeu.nb_cartes
+		update_turn_label()
+
+	# Initialisation des composants
 	_setup_bot_ui()
 	_update_hand()
 	_update_plateau()
 	_update_heads()
-	_start_timer()
-
-	sp_game.tour_repris.connect(_on_tour_repris)
-
-
-	# Démarrer le premier round après avoir tout initialisé
-	await show_label("Game Start")
 	
-	sp_game.start_round()
+	# Démarrage du timer
+	timer_label.visible = true
+	if not game_timer.timeout.is_connected(_on_Timer_timeout):
+		game_timer.timeout.connect(_on_Timer_timeout)
+	
+	# Initialisation du temps
+	time_left = Global.game_settings["round_timer"]
+	start_timer()
+	
+	# Connexion des signaux
+	sp_game.tour_repris.connect(_on_tour_repris)
 	sp_game.choix_rang_obligatoire.connect(_on_choix_rang_obligatoire)
-
-
-
+	
+	# Début de la partie
+	sp_game.start_round()
+	
 func show_scoreboard(rankings):
+	# Arrêter définitivement le timer
+	stop_timer()
+	timer_active = false
+	
+	# Désactiver les interactions
+	set_process_input(false)
+	
 	$ScoreBoard.visible = true
 	$ScoreBoard.update_rankings(rankings)
-
+		
+signal rang_selectionne(rang_index)
 func _on_choix_rang_obligatoire(joueur, carte):
+	# 1. Placer la carte devant l'icône
+	_place_card_next_to_icon(joueur, carte.numero)
+	
+	# 2. Petit délai visuel
+	await get_tree().create_timer(0.3).timeout
+	
+	if joueur == sp_game.joueur_moi:
+		# --- CAS JOUEUR HUMAIN ---
+		await _handle_human_choice(joueur, carte)
+	else:
+		# --- CAS BOT ---
+		await _handle_bot_choice(joueur, carte)
+	
+	# 4. Nettoyer et reprendre le jeu
+	choix_rang_panel.visible = false
+	sp_game.reprendre_tour()
+
+func _handle_human_choice(joueur, carte):
+	"""Gère le choix de rang pour le joueur humain"""
+	await show_label("%s must take a ranger" % joueur.nom)
+	
+	# Afficher les boutons de choix
 	var rangs_dispo = []
 	for i in range(4):
 		rangs_dispo.append(i)
+	afficher_boutons_rang(rangs_dispo)
+	
+	# Attendre la sélection du joueur
+	var rang_selectionne = await self.rang_selectionne
+	
+	# Animation complète
+	await _animate_full_pickup_sequence(joueur, carte, rang_selectionne)
 
-	if joueur == sp_game.joueur_moi:
-		print("[UI] Joueur humain doit choisir un rang.")
-		await show_label("%s must take a ranger" % joueur.nom)
-		afficher_boutons_rang(rangs_dispo)
-	else:
-		print("[UI] Bot %s must take a ranger." % joueur.nom)
+func _handle_bot_choice(joueur, carte):
+	"""Gère le choix de rang pour un bot"""
+	await show_label("%s réfléchit..." % joueur.nom)
+	await get_tree().create_timer(1.0).timeout  # Délai plus naturel
+	
+	var rang_a_ramasser = randi() % sp_game.jeu.table.rangs.size()
+	await _animate_full_pickup_sequence(joueur, carte, rang_a_ramasser)
+	
+	await show_label("%s a choisi le rang %d" % [joueur.nom, rang_a_ramasser + 1])
 
-		# 👇 Montre d’abord un message indiquant que le bot réfléchit
-		await show_label("🤖 %s chose rank…" % joueur.nom)
+func _animate_full_pickup_sequence(joueur, carte, rang_index):
+	"""Séquence d'animation complète pour le ramassage"""
+	# 1. Ramasser les cartes du rang
+	var cartes_ramassees = sp_game.jeu.table.ramasser_rang(rang_index)
+	
+	# 2. Calcul des têtes
+	var total_tetes = 0
+	for c in cartes_ramassees:
+		total_tetes += c.tetes
+	
+	# 3. Animation des cartes ramassées vers le joueur
+	await _animate_cards_to_player(joueur, cartes_ramassees, rang_index)
+	
+	# 4. Faire disparaître la carte devant l'icône
+	await _clear_player_card(joueur)
+	
+	# 5. Animer la nouvelle carte vers le rang
+	await _animate_card_to_row(joueur, carte, rang_index)
+	
+	# 6. Mise à jour du score
+	joueur.score += total_tetes
+	
+	# 7. Réinitialiser le rang
+	sp_game.jeu.table.forcer_nouvelle_rangée(rang_index, carte)
+	
+	# 8. Mise à jour visuelle
+	_update_plateau()
+	_update_heads()
 
-		# Optionnel : simule un petit délai d’attente (pour le réalisme)
-		await get_tree().create_timer(1.0).timeout
+func _clear_player_card(joueur):
+	var card_layer = get_display_data_for_joueur(joueur)["card_layer"]
+	for child in card_layer.get_children():
+		var tween = create_tween()
+		tween.tween_property(child, "modulate:a", 0, 0.3)
+		await tween.finished
+		child.queue_free()
 
-		# Le bot choisit un rang aléatoire
-		var rang_a_ramasser = randi() % sp_game.jeu.table.rangs.size()
-		var cartes_ramassees = sp_game.jeu.table.ramasser_rang(rang_a_ramasser)
-		var total_tetes = 0
-		for c in cartes_ramassees:
-			total_tetes += c.tetes
-		joueur.score += total_tetes
-		sp_game.jeu.table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
+func _animate_cards_to_player(joueur, cartes, row_index):
+	var start_row = $deckContainer/rowsContainer.get_child(row_index).get_child(0)
+	var end_pos = get_display_data_for_joueur(joueur)["card_layer"].global_position
+	
+	for i in range(cartes.size()):
+		var card_ui = start_row.get_child(i) if i < start_row.get_child_count() else null
+		if card_ui:
+			var anim_card = CARD_UI_SCENE.instantiate()
+			add_child(anim_card)
+			anim_card.set_card_data("res://assets/images/cartes/%d.png" % cartes[i].numero, cartes[i].numero)
+			anim_card.global_position = card_ui.global_position
+			anim_card.z_index = 100
+			
+			var tween = create_tween()
+			tween.tween_property(anim_card, "global_position", end_pos, 0.5)
+			tween.parallel().tween_property(anim_card, "modulate:a", 0, 0.5)
+			await tween.finished
+			anim_card.queue_free()
+			await get_tree().create_timer(0.1).timeout
 
-		# 👇 Montre ensuite le message du résultat
-		await show_label("🤖 %s took the rank %d (+%d têtes)" % [joueur.nom, rang_a_ramasser + 1, total_tetes])
-		
-		# Continue le tour après le bot
-		sp_game.reprendre_tour()
+
+	
+
+func _animate_card_to_row(joueur, card_number, row_index):
+	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
+	var end_row = vbox_container.get_child(row_index).get_child(0)
+	
+	# Créer une carte animée
+	var anim_card = CARD_UI_SCENE.instantiate()
+	add_child(anim_card)
+	anim_card.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
+	anim_card.global_position = start_layer.global_position
+	anim_card.z_index = 100  # S'assurer qu'elle est au-dessus
+	
+	# Animation vers la rangée
+	var tween = create_tween()
+	tween.tween_property(anim_card, "global_position", end_row.global_position, 0.5)
+	tween.parallel().tween_property(anim_card, "scale", Vector2(0.8, 0.8), 0.5)
+	
+	await tween.finished
+	anim_card.queue_free()
+	
+	# Mise à jour visuelle
+	_update_plateau()
 
 
 
+
+
+	
 func _setup_bot_ui():
 	var bot_count = sp_game.jeu.joueurs.size()
 	var left_count = 0
@@ -258,9 +393,39 @@ func _update_plateau():
 			var card_ui = CARD_UI_SCENE.instantiate()
 			row.add_child(card_ui)
 			card_ui.set_card_data("res://assets/images/cartes/%d.png" % carte.numero, carte.numero)
-
-
-
+			card_ui.modulate.a = 1  
+			
+func move_card_to_row(joueur, card_number, row_index):
+	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
+	var end_row = vbox_container.get_child(row_index).get_child(0)
+	
+	if start_layer and end_row:
+		# Supprimer immédiatement la carte devant l'icône (avant l'animation)
+		for child in start_layer.get_children():
+			child.queue_free()
+		
+		# Crée une copie animée
+		var anim_card = CARD_UI_SCENE.instantiate()
+		add_child(anim_card)
+		anim_card.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
+		anim_card.global_position = start_layer.global_position
+		anim_card.z_index = 100
+		
+		# Calcul position finale
+		var card_count = end_row.get_child_count()
+		var target_pos = end_row.global_position + Vector2(card_count * 35, 0)
+		
+		# Animation
+		var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tween.tween_property(anim_card, "global_position", target_pos, 1.5)
+		tween.parallel().tween_property(anim_card, "scale", Vector2(0.8, 0.8), 1.5)
+		
+		await tween.finished
+		anim_card.queue_free()
+		
+		# Mise à jour réelle du plateau
+		_update_plateau()
+		
 func _on_carte_cliquee(global_card_id):
 	if global_card_id == null:
 		print("❌ Erreur : global_card_id est null")
@@ -287,12 +452,21 @@ func _on_carte_cliquee(global_card_id):
 func _place_card_next_to_icon(joueur, card_number):
 	var layer = get_display_data_for_joueur(joueur)["card_layer"]
 	if layer:
+		# Nettoyer avant d'ajouter
 		for child in layer.get_children():
 			child.queue_free()
+		
 		var card_ui = CARD_UI_SCENE.instantiate()
 		layer.add_child(card_ui)
 		card_ui.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
 		
+		# Animation d'apparition (1 seconde)
+		card_ui.modulate.a = 0
+		card_ui.scale = Vector2(0.5, 0.5)
+		var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tween.tween_property(card_ui, "modulate:a", 1.0, 1.0)
+		tween.parallel().tween_property(card_ui, "scale", Vector2(1, 1), 1.0)
+				
 func afficher_cartes_bots():
 	for i in range(1, sp_game.jeu.joueurs.size()):
 		var bot = sp_game.jeu.joueurs[i]
@@ -328,31 +502,110 @@ func _update_heads():
 	else:
 		heads_label.add_theme_color_override("font_color", Color.WHITE)
 
-func _start_timer():
-	time_left = timer_duration
+func start_timer():
+	if game_timer != null and not timer_active:
+		timer_active = true
+		game_timer.start(1.0)
+		print("Timer démarré")
+
+func _on_Timer_timeout():
+	if not timer_active or $ScoreBoard.visible:  # Ne rien faire si le scoreboard est visible
+		return
+		
+	time_left -= 1
+	timer_label.text = str(time_left)
+	
+	if time_left <= 0:
+		timer_timeout()
+	else:
+		game_timer.start(1.0)
+					
+func timer_timeout():
+	timer_active = false
+	game_timer.stop()
+	
+	if sp_game.carte_choisie_moi == null && sp_game.joueur_moi.hand.cartes.size() > 0:
+		var random_index = randi() % sp_game.joueur_moi.hand.cartes.size()
+		var random_card = sp_game.joueur_moi.hand.cartes[random_index]
+		
+		# Nouveau : Retirer physiquement la carte de la main
+		sp_game.joueur_moi.hand.cartes.remove_at(random_index)
+		
+		# Mettre à jour l'affichage de la main
+		_update_hand()
+		
+		sp_game.carte_choisie_moi = {
+			"joueur": sp_game.joueur_moi,
+			"carte": random_card,
+			"index": random_index
+		}
+		_place_card_next_to_icon(sp_game.joueur_moi, random_card.numero)
+		sp_game.reprendre_tour()
+
+func stop_timer():
+	if game_timer != null:
+		game_timer.stop()
+		timer_active = false
+		print("Timer arrêté")
+	
+func update_turn_label():
+	if turn_label == null:
+		push_error("Turn Label non trouvé!")
+		return
+	
+	# Formatage sécurisé avec vérification des valeurs
+	var display_turn = clamp(current_turn, 1, max_turns)
+	turn_label.text = "Turn %d/%d" % [display_turn, max_turns]
+	
+	# Optionnel : changement de couleur pour le dernier tour
+	if current_turn == max_turns:
+		turn_label.add_theme_color_override("font_color", Color.GOLD)
+	else:
+		turn_label.add_theme_color_override("font_color", Color.WHITE)
+
 
 func _on_tour_repris(cartes_choisies):
+	# 1. Mettre à jour le compteur de tours
+	current_turn += 1
+	update_turn_label()
+	
+	# 2. Réinitialiser le timer
+	game_timer.stop()
+	time_left = Global.game_settings["round_timer"]
+	timer_label.text = str(time_left)
+	timer_active = true
+	game_timer.start(1.0)
+	
+	# 3. Afficher les cartes devant les icônes
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
 		_place_card_next_to_icon(joueur, carte.numero)
-
-	await get_tree().create_timer(1.0).timeout  # délai pour visualiser devant l’icône
-
+	
+	# 4. Petit délai visuel
+	await get_tree().create_timer(0.8).timeout
+	
+	# 5. Faire disparaître les cartes devant les icônes
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
-		var data = get_display_data_for_joueur(joueur)
-		var layer = data["card_layer"]
+		var layer = get_display_data_for_joueur(joueur)["card_layer"]
 		for child in layer.get_children():
 			var tween = create_tween()
-			tween.tween_property(child, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tween.tween_property(child, "modulate:a", 0, 0.3)
 			await tween.finished
 			child.queue_free()
-
-	# Mettre à jour l’affichage des rangées après la logique
+	
+	# 6. Mettre à jour l'affichage
 	_update_plateau()
 	_update_heads()
-
+	
+	# 7. Démarrer le nouveau tour si la manche n'est pas terminée
+	if not sp_game.jeu.check_end_manche():
+		sp_game.start_round()
+	else:
+		# Si c'est la fin de la manche, attendre un peu avant de continuer
+		await get_tree().create_timer(1.0).timeout
+		sp_game.start_round()
   
 
 func show_label(text: String) -> void:
@@ -430,16 +683,18 @@ func _on_attente_choix_rang(rangs_disponibles):
 
 
 func _on_button_pressed() -> void:
-	if pause_instance == null:
-		pause_instance = pause_screen_scene.instantiate()
+	show_pause_menu()
 
-		add_child(pause_instance)
+func show_pause_menu():
+	# Arrête le timer quand la pause est activée
+	stop_timer()
+	
+	# Crée et affiche l'écran de pause
+	var pause_instance = pause_screen_scene.instantiate()
+	pause_instance.setup(self)  # Passe la référence au gameboard
+	add_child(pause_instance)
 
-		await get_tree().process_frame
-		pause_instance.position = pause_instance.size
 
-	pause_instance.move_to_front()
-	pause_instance.visible = true
 
 
 func _on_choose_rang_1_pressed():
@@ -456,16 +711,14 @@ func _on_choose_rang_4_pressed():
 
 func _on_rang_button_pressed(rang_index):
 	print("✅ Joueur a choisi le rang :", rang_index)
-
-	# Cache immédiatement le panel complet
 	choix_rang_panel.visible = false
 
-	# Désactive les boutons
+	# Désactiver les boutons
 	for bouton in rang_buttons:
 		if bouton != null:
 			bouton.hide()
 			bouton.disabled = true
 
-	# Appelle la suite logique du jeu
+	# Appeler la suite logique du jeu
 	if sp_game:
 		sp_game.reprendre_avec_rang(rang_index)

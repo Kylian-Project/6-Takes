@@ -36,5 +36,5 @@ func get_settings() -> Dictionary:
 		"round_timer": int($PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown.get_item_text($PanelContainer/MainVertical/AvailableOptions/Choices/RoundTimerDropdown.selected)),
 		"player_limit": int($PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown.get_item_text($PanelContainer/MainVertical/AvailableOptions/Choices/PlayerLimitDropdown.selected))
 	}
-	
+
 	return settings

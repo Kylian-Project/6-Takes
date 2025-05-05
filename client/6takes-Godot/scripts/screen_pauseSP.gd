@@ -8,6 +8,9 @@ extends Control
 @onready var leave_button = $PauseOverlay/VBoxContainer/leave
 @onready var close_button = $SettingsOverlay/Close
 
+# Référence au gameboard (à assigner depuis gameboardSP)
+var game_board : Node = null
+
 func _ready():
 	# Connect buttons
 	resume_button.pressed.connect(_on_resume_pressed)
@@ -15,12 +18,17 @@ func _ready():
 	leave_button.pressed.connect(_on_leave_pressed)
 	close_button.pressed.connect(_on_close_settings_pressed)
 	
-	# Show pause overlay by default
+	# Initial visibility
 	pause_overlay.visible = true
 	settings_overlay.visible = false
 
+func setup(game_board_ref: Node):
+	game_board = game_board_ref
+
 func _on_resume_pressed():
-	visible = false  # Hide the entire Screenpause overlay
+	if game_board:
+		game_board.start_timer()  # Redémarre le timer
+	queue_free()  # Supprime l'écran de pause
 
 func _on_settings_pressed():
 	pause_overlay.visible = false
@@ -31,4 +39,6 @@ func _on_close_settings_pressed():
 	pause_overlay.visible = true
 
 func _on_leave_pressed():
+	if game_board:
+		game_board.stop_timer()  # Arrête le timer proprement
 	get_tree().change_scene_to_file("res://scenes/SPLobbyScene.tscn")
