@@ -11,18 +11,39 @@ class Game
 	}
 }
 
+/**
+ * recevoir la liste des joueurs dans une room specefique
+ * 
+ * @param {string} roomId
+ * @returns {string[]}
+ * 
+*/
+
 function getUsers(roomId) 
 {
 	const room = rooms.find(r => r.id === roomId);
   	return room ? room.users.map(u => u.username) : [];
 }
 
+/**
+ * recevoir la liste des joueurs dans une room specefique et leur socket
+ * 
+ * @param {string} roomId 
+ * @returns {{username: string, idSocketUser: string}[]}
+ */
 function getUsersAndSocketId(roomId)
 {
   	const room = rooms.find(r => r.id === roomId);
   	return room ? room.users : [];
 }
 
+
+/**
+ * Retrieves the instance of Jeu6Takes for a specified room.
+ * 
+ * @param {string} roomId
+ * @returns {Jeu6Takes|null}
+ */
 function getGame(roomId) 
 {
   	const game = games.find(g => g.roomId === roomId);
@@ -41,6 +62,20 @@ const joueursPretPourTour = {};
 	  	//////////////////////////////////////////////////
 		/////// Deroulement du jeu ///////////////////////
   		//////////////////////////////////////////////////
+
+/**
+ * Handles the game flow for a room using Socket.IO events.
+ * 
+ * The function listens to several events including:
+ * - "start-game": Initializes a game instance for the room, notifies players, and distributes initial hands.
+ * - "tour": Prepares the room for a new round, checks player readiness, and manages bot actions.
+ * - "play-card": Handles card playing actions, manages timers, and processes the played cards.
+ * - "choisir-rangee": Manages the selection of rows by players.
+ * - "restore-game", "new-game", "leave-room", and "disconnect" for additional game management tasks.
+ * 
+ * @param {Socket} socket - The Socket.IO socket instance for the connected client.
+ * @param {SocketIO.Server} io - The Socket.IO server instance for emitting events to clients.
+ */
 
 export const PlayGame = (socket, io) =>
 {
@@ -78,7 +113,7 @@ export const PlayGame = (socket, io) =>
 		
 		games.push({ roomId, Jeu: jeu });
 
-		// On notify players que le jeu va commence
+		// On notifie players que le jeu va commencer
 		io.to(roomId).emit("game-starting");
 
 		// Distribution des cartes avec 2 secs de delay
@@ -247,27 +282,8 @@ export const PlayGame = (socket, io) =>
 	{
 		handleChoixRangee(roomId, indexRangee, username, io);
 	});
-	
-	  
-	// 4. Restaurer le jeu si besoin
-	socket.on("restore-game", ({ roomId, username }) => {
-	});
-  
-	// 6. Nouvelle partie
-	socket.on("new-game", (roomId) => {
-	});
-  
-	// 7. Quitter la room volontairement
-	socket.on("leave-room", (roomId) => {
-	});
-  
-	// 8. Déconnexion (abandon ou fermeture de navigateur)
-	socket.on("disconnect", () => {
-	});
 
 };
-
-
 
 
 	//////////////////////////////////////////////////
@@ -276,8 +292,14 @@ export const PlayGame = (socket, io) =>
 
 
 
-//fonction qui compare entre une liste de joueur ayant deja jouées et la liste des joueurs de la room 
-//pour retrouver qui na pas encore jouer
+/**
+ * Retourne la liste des joueurs qui n'ont pas encore jouées dans la room.
+ * compare entre une liste de joueur ayant deja jouées et la liste des joueurs de la room 
+ * 
+ * @param {string} roomId - ID de la room.
+ * @param {string[]} joueursDejaJoue - Liste des joueurs qui ont deja jouer.
+ * @returns {string[]} La liste des joueurs qui n'ont pas encore jouer.
+ */
 function retrouverJoueursAbsents(roomId, joueursDejaJoue) 
 {
 	const jeu = getGame(roomId);
@@ -290,6 +312,16 @@ function retrouverJoueursAbsents(roomId, joueursDejaJoue)
 }
   
 
+
+/**
+ * Notifie les joueurs d'une room de la mise à jour des scores.
+ * Envoie un tableau de scores, chaque élément contenant le nom du joueur et son score.
+ * Réinitialise également la liste cartesAJoueesParRoom[roomId] pour la prochaine ronde.
+ * 
+ * @param {SocketIO.Server} io - Instance du serveur Socket.IO pour l'émission d'événements.
+ * @param {string} roomId - ID de la room pour laquelle les scores sont notifiés.
+ * @param {Jeu6Takes} jeu - Instance du jeu en cours.
+ */
 function notifierScore(io, roomId, jeu) 
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
@@ -301,6 +333,16 @@ function notifierScore(io, roomId, jeu)
   
   
 
+
+/**
+ * Fait jouer automatiquement les cartes des joueurs qui n'ont pas encore joué dans la room.
+ * Fait cela en jouant la première carte de leur main.
+ * @param {string} roomId - ID de la room.
+ * @param {Jeu6Takes} jeu - Instance du jeu en cours.
+ * @param {SocketIO.Server} io - Instance du serveur Socket.IO pour l'émission d'événements.
+ * @param {Object} cartesAJoueesParRoom - Cartes jouées par salle.
+ * @param {Room[]} rooms - Liste des salles disponibles.
+ */
 function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms) 
 {
 	const room = rooms.find(r => r.id === roomId);
@@ -322,6 +364,25 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 }
 
 
+
+
+/**
+ * Lance un timer pour une salle de jeu,juste apres reception de 'tour' par tous les joueurs de la room .
+ * 
+ * Si un timer est déjà en cours pour la même salle, il ne fera rien.
+ * définie dans les paramètres de la salle (par défaut 45 secondes).
+ * 
+ * Lors de l'expiration du timer, les cartes des joueurs absents sont jouées automatiquement,
+ * les cartes sont triées et traitées séquentiellement, et les scores sont notifiés.
+ * 
+ * Le temps restant est émis à la salle chaque seconde pour mise à jour des joueurs.
+ * 
+ * @param {string} roomId - ID de la salle pour laquelle le timer est lancé.
+ * @param {Jeu6Takes} jeu - Instance du jeu en cours.
+ * @param {SocketIO.Server} io - Instance du serveur Socket.IO pour l'émission d'événements.
+ * @param {Object} cartesAJoueesParRoom - Cartes jouées par salle.
+ * @param {Room[]} rooms - Liste des salles disponibles.
+ */
 
 
 
@@ -367,8 +428,18 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		}
 	},1000);
 
-  }
+}
 
+
+
+/**
+ * gere le choix d'une rangee par un joueur
+ * 
+ * @param {string} roomId - The ID of the room where the game is taking place.
+ * @param {number} indexRangee - The index of the row chosen by the player.
+ * @param {string} username - The username of the player making the choice.
+ * @param {SocketIO.Server} io - The Socket.IO server instance for communication.
+ */
 
 function handleChoixRangee(roomId, indexRangee, username, io) 
 {
@@ -399,6 +470,14 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 //lors du traitement , utilise une file d’attente (fileTraitementParRoom[roomId]) pour
 //traiter les cartes dans l’ordre croissant sans chevauchement
 
+
+/**
+ * Traite la prochaine carte de la file d'attente fileTraitementParRoom[roomId]
+ * @param {Jeu6Takes} jeu - Jeu en cours
+ * @param {SocketIO.Server} io - Serveur Socket.IO
+ * @param {Room[]} rooms - Tableau des rooms
+ * 
+ */
 
 async function traiterProchaineCarte(roomId, jeu, io, rooms) 
 {
@@ -502,7 +581,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     // Traiter la prochaine carte après celle-ci
     traiterProchaineCarte(roomId, jeu, io, rooms);
 
-	//verifie si la game n'est pas finie 
+	//vérifie si la game n'est pas finie 
 	//si jamais ya pas eu de 'play-card' et que c'etais automatique
 	//comme ca on est sur de faire un check end game meme si ya pas eu de 'play-card'
 	if(jeu.checkEndManche())
@@ -540,6 +619,15 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 
 
 
+/**
+ * Envoie la table et la main de chaque joueur individuellement
+ * @param {SocketIO.Server} io
+ * @param {string} roomId
+ * @param {Jeu6Takes} jeu
+ * @param {Room[]} rooms
+ * 
+ * @return la table et les mains
+ */
 function envoyerMainEtTable(io, roomId, jeu, rooms) 
 {
 	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
@@ -563,6 +651,4 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
 			console.log(`🖐️ Main envoyée à ${joueur.nom}`);
 		}
 	}
-
-
 }
