@@ -45,13 +45,26 @@ var time_left = 0
 var max_turns = 0
 var current_turn = 0
 var timer_active = false
-
+var finish_shown = false
 var sp_game: SpGame
 
 var bot_display_data: Array = []
 
 func _ready():
+	var left_name = $"spplayerleft/HBoxContainer/icon&name/name_bot"
+	var right_name = $"spplayerright/HBoxContainer/icon&name/name_bot"
 	
+	left_name.custom_minimum_size.x = 20
+	right_name.custom_minimum_size.x = 20
+	left_name.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	right_name.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	
+	 # Force le positionnement initial à 50px de la gauche
+	$HBoxContainer/gameStateLabel.position.x = 450
+	$HBoxContainer/gameStateLabel.set_anchors_preset(Control.PRESET_LEFT_WIDE)
+	
+	# Désactive le repositionnement automatique
+	$HBoxContainer/gameStateLabel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	# Initialisation des tours
 	if game_timer == null:
 		game_timer = $Timer  # Assurez-vous que le chemin est correct
@@ -103,9 +116,23 @@ func _ready():
 	sp_game.tour_repris.connect(_on_tour_repris)
 	sp_game.choix_rang_obligatoire.connect(_on_choix_rang_obligatoire)
 	
+	await show_label(" Pick your cards")
+	update_game_state("                           Pick your cards")
+	await get_tree().create_timer(1.0).timeout
+	
 	# Début de la partie
 	sp_game.start_round()
-	
+
+func _process(delta):
+	if not sp_game :
+		return
+		
+	if sp_game.is_game_over():
+		update_game_state("            FINISH")
+		
+
+
+		
 func show_scoreboard(rankings):
 	# Arrêter définitivement le timer
 	stop_timer()
@@ -116,25 +143,26 @@ func show_scoreboard(rankings):
 	
 	$ScoreBoard.visible = true
 	$ScoreBoard.update_rankings(rankings)
-		
+var rang_auto_choisi = false		
 signal rang_selectionne(rang_index)
 func _on_choix_rang_obligatoire(joueur, carte):
-	# 1. Placer la carte devant l'icône
 	_place_card_next_to_icon(joueur, carte.numero)
-	
-	# 2. Petit délai visuel
+
 	await get_tree().create_timer(0.3).timeout
 	
 	if joueur == sp_game.joueur_moi:
-		# --- CAS JOUEUR HUMAIN ---
+		rang_auto_choisi = false  # Reset le flag
+		_start_timer_for_rang_choice()  # Démarre un timer pour laisser le temps de choisir
 		await _handle_human_choice(joueur, carte)
 	else:
-		# --- CAS BOT ---
 		await _handle_bot_choice(joueur, carte)
-	
-	# 4. Nettoyer et reprendre le jeu
+
 	choix_rang_panel.visible = false
 	sp_game.reprendre_tour()
+
+func _start_timer_for_rang_choice():
+	timer_active = true
+	game_timer.start()
 
 func _handle_human_choice(joueur, carte):
 	"""Gère le choix de rang pour le joueur humain"""
@@ -262,34 +290,55 @@ func _setup_bot_ui():
 	]
 	all_icons.shuffle()
 
+	# Style minimal pour les noms (sans marges parasites)
+	var name_style = StyleBoxFlat.new()
+	name_style.bg_color = Color("#E0E0E0")
+	name_style.corner_radius_top_left = 4
+	name_style.corner_radius_top_right = 4
+	name_style.corner_radius_bottom_left = 4
+	name_style.corner_radius_bottom_right = 4
+	name_style.content_margin_left = 50
+	name_style.content_margin_right = 50
+	name_style.content_margin_top = 2
+	name_style.content_margin_bottom = 2
+
 	# === BOTS ===
-	# Placer d'abord les bots à gauche ou à droite en fonction de leur nombre
 	for i in range(1, bot_count):
 		var bot = sp_game.jeu.joueurs[i]
 
+		# Choix du côté (gauche/droite)
 		var container_side: VBoxContainer
+		var is_left: bool
 		if left_count <= right_count:
 			container_side = spplayerleft
 			left_count += 1
+			is_left = true
 		else:
 			container_side = spplayerright
 			right_count += 1
+			is_left = false
 
+		# -- Conteneur principal --
 		var bot_box = VBoxContainer.new()
 		bot_box.name = "Bot" + str(i)
-
+		bot_box.alignment = BoxContainer.ALIGNMENT_CENTER
+		bot_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		bot_box.custom_minimum_size.x = 60  # Permet au label de rétrécir
+		
+		# -- Icône + CardLayer --
 		var bot_hbox = HBoxContainer.new()
 		bot_hbox.name = "BotHBox" + str(i)
+		bot_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		bot_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 		var bot_icon = TextureRect.new()
 		bot_icon.name = "BotIcon"
 		bot_icon.texture = load(ICON_PATH + all_icons[i % all_icons.size()])
-		bot_icon.tooltip_text = "Bot " + str(i)
 		bot_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		bot_icon.expand = true
-		bot_icon.custom_minimum_size = Vector2(150, 150)
-		bot_icon.scale = Vector2(0.6, 0.6)
-
+		bot_icon.custom_minimum_size = Vector2(100, 100)
+		bot_icon.scale = Vector2(0.5, 0.5)  # Taille affichée: 75x75px
+		
 		var card_layer = Control.new()
 		card_layer.name = "CardLayer"
 		card_layer.custom_minimum_size = Vector2(150, 100)
@@ -297,10 +346,14 @@ func _setup_bot_ui():
 		# Créer un spacer pour ajouter de l'espacement entre l'icône et les cartes
 		var spacer = Control.new()
 		spacer.name = "Spacer"
-		spacer.custom_minimum_size = Vector2(35, 0)  # L'espacement horizontal entre l'icône et les cartes
+		spacer.custom_minimum_size = Vector2(20, 0)  # L'espacement horizontal entre l'icône et les cartes
+		var spacere = Control.new()
+		spacere.name = "Spacer"
+		spacere.custom_minimum_size = Vector2(175, 0)  # L'espacement horizontal entre l'icône et les cartes
 
 		# Inverser l'ordre si à droite (cartes d'abord, puis l'icône)
 		if container_side == spplayerleft:
+			bot_hbox.add_child(spacere)
 			bot_hbox.add_child(bot_icon)
 			bot_hbox.add_child(spacer)  # Ajouter le spacer entre l'icône et les cartes
 			bot_hbox.add_child(card_layer)
@@ -308,14 +361,25 @@ func _setup_bot_ui():
 			bot_hbox.add_child(card_layer)
 			bot_hbox.add_child(spacer)  # Ajouter le spacer entre les cartes et l'icône
 			bot_hbox.add_child(bot_icon)
+			bot_hbox.add_child(spacere)
 
+		# -- Label du nom --
 		var name_label = Label.new()
 		name_label.name = "name_bot"
 		name_label.text = bot.nom if bot.has_method("nom") else "Bot " + str(i)
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		name_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		name_label.custom_minimum_size = Vector2.ZERO  # Force la réduction
+		name_label.clip_text = true  # Coupe le texte si trop long
+		name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		name_label.add_theme_stylebox_override("normal", name_style)
+		name_label.add_theme_color_override("font_color", Color.BLACK)
+		name_label.add_theme_font_size_override("font_size", 14)  # Texte plus petit
 
+		# Assemblage final
 		bot_box.add_child(bot_hbox)
 		bot_box.add_child(name_label)
-
 		container_side.add_child(bot_box)
 
 		bot_display_data.append({
@@ -323,56 +387,66 @@ func _setup_bot_ui():
 			"card_layer": card_layer
 		})
 
-	# === JOUEUR HUMAIN ===
-	# Le joueur humain sera toujours ajouté en dernier à droite après les bots
+	# === JOUEUR HUMAIN === (mêmes réglages que les bots)
 	var human = sp_game.jeu.joueurs[0]
+	
 	var human_box = VBoxContainer.new()
 	human_box.name = "Human"
+	human_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	human_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	human_box.custom_minimum_size.x = 100
 
 	var human_hbox = HBoxContainer.new()
 	human_hbox.name = "HumanHBox"
+	human_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	human_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var human_icon = TextureRect.new()
 	human_icon.name = "HumanIcon"
 	human_icon.texture = load(ICON_PATH + "red.png")
-	human_icon.tooltip_text = "Joueur Humain"
 	human_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	human_icon.expand = true
-	human_icon.custom_minimum_size = Vector2(150, 150)
-	human_icon.scale = Vector2(0.6, 0.6)
+	human_icon.custom_minimum_size = Vector2(100, 100)
+	human_icon.scale = Vector2(0.5, 0.5)
 
 	var human_card_layer = Control.new()
 	human_card_layer.name = "CardLayer"
-	human_card_layer.custom_minimum_size = Vector2(150, 100)
-
-	# Ajouter un spacer pour l'espacement entre l'icône et les cartes du joueur humain
+	human_card_layer.custom_minimum_size = Vector2(100, 80)
 	var human_spacer = Control.new()
 	human_spacer.name = "HumanSpacer"
-	human_spacer.custom_minimum_size = Vector2(35, 0)  # Espacement horizontal
-
-	# Ajouter l'icône et le spacer, puis la couche des cartes (inversé pour le joueur à droite)
+	human_spacer.custom_minimum_size = Vector2(175, 0) 
+	
+	# Espace de 35px pour le joueur
+	var human_flex_spacer = Control.new()
+	human_flex_spacer.custom_minimum_size = Vector2(65, 0)
+	
+	# Structure côté droit
 	human_hbox.add_child(human_card_layer)
-	human_hbox.add_child(human_spacer)  # Ajouter le spacer entre les cartes et l'icône
+	human_hbox.add_child(human_flex_spacer) # Espaceur flexible
 	human_hbox.add_child(human_icon)
+	human_hbox.add_child(human_spacer)  
 
 	var human_name_label = Label.new()
 	human_name_label.name = "name_human"
-	human_name_label.text = human.nom if human.has_method("nom") else "Moi"
+	human_name_label.text = Global.player_name if Global.get("player_name") else "Player"
+	human_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	human_name_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	human_name_label.custom_minimum_size = Vector2.ZERO
+	human_name_label.clip_text = true
+	human_name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	human_name_label.add_theme_stylebox_override("normal", name_style)
+	human_name_label.add_theme_color_override("font_color", Color.BLACK)
+	human_name_label.add_theme_font_size_override("font_size", 14)
 
 	human_box.add_child(human_hbox)
 	human_box.add_child(human_name_label)
-
-	# Ajouter à la droite après les bots
 	spplayerright.add_child(human_box)
+
 	bot_display_data.append({
 		"bot": human,
 		"card_layer": human_card_layer
 	})
-
 	
-
-	bot_display_data.append({"bot": human, "card_layer": human_card_layer})
-
 func _update_hand():
 	for child in hbox_container.get_children():
 		child.queue_free()
@@ -427,9 +501,12 @@ func move_card_to_row(joueur, card_number, row_index):
 		_update_plateau()
 		
 func _on_carte_cliquee(global_card_id):
+	update_game_state("            You chose card %d" % global_card_id)
 	if global_card_id == null:
 		print("❌ Erreur : global_card_id est null")
 		return
+
+	
 
 	var moi = sp_game.jeu.joueurs[0]
 	var index = moi.hand.trouver_index(global_card_id)
@@ -460,12 +537,13 @@ func _place_card_next_to_icon(joueur, card_number):
 		layer.add_child(card_ui)
 		card_ui.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
 		
+		# Réduire la taille de la carte ici (par exemple à 70% de sa taille originale)
+		card_ui.scale = Vector2(0.5, 0.5)
+		
 		# Animation d'apparition (1 seconde)
 		card_ui.modulate.a = 0
-		card_ui.scale = Vector2(0.5, 0.5)
 		var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card_ui, "modulate:a", 1.0, 1.0)
-		tween.parallel().tween_property(card_ui, "scale", Vector2(1, 1), 1.0)
 				
 func afficher_cartes_bots():
 	for i in range(1, sp_game.jeu.joueurs.size()):
@@ -521,19 +599,22 @@ func _on_Timer_timeout():
 		game_timer.start(1.0)
 					
 func timer_timeout():
+	update_game_state("           Times's up chose a random rand or card...")
 	timer_active = false
 	game_timer.stop()
-	
-	if sp_game.carte_choisie_moi == null && sp_game.joueur_moi.hand.cartes.size() > 0:
+
+	if choix_rang_panel.visible and !rang_auto_choisi:
+		rang_auto_choisi = true
+		choix_rang_auto()
+
+	elif sp_game.carte_choisie_moi == null and sp_game.joueur_moi.hand.cartes.size() > 0:
 		var random_index = randi() % sp_game.joueur_moi.hand.cartes.size()
 		var random_card = sp_game.joueur_moi.hand.cartes[random_index]
-		
-		# Nouveau : Retirer physiquement la carte de la main
+
+		# Retirer la carte de la main
 		sp_game.joueur_moi.hand.cartes.remove_at(random_index)
-		
-		# Mettre à jour l'affichage de la main
 		_update_hand()
-		
+
 		sp_game.carte_choisie_moi = {
 			"joueur": sp_game.joueur_moi,
 			"carte": random_card,
@@ -541,7 +622,13 @@ func timer_timeout():
 		}
 		_place_card_next_to_icon(sp_game.joueur_moi, random_card.numero)
 		sp_game.reprendre_tour()
+func choix_rang_auto():
+	# Choisir un rang aléatoire
+	var rang_index = randi() % vbox_container.get_child_count()
+	_on_rang_button_pressed(rang_index)
 
+
+	
 func stop_timer():
 	if game_timer != null:
 		game_timer.stop()
@@ -565,27 +652,34 @@ func update_turn_label():
 
 
 func _on_tour_repris(cartes_choisies):
-	# 1. Mettre à jour le compteur de tours
 	current_turn += 1
 	update_turn_label()
 	
-	# 2. Réinitialiser le timer
+	update_game_state("            New round")
+	await get_tree().create_timer(1.5).timeout
+	
+	# Mode solo - toujours votre tour
+	update_game_state("            Pick your cards")
+	
+	
+	
+	# 4. Réinitialiser le timer
 	game_timer.stop()
 	time_left = Global.game_settings["round_timer"]
 	timer_label.text = str(time_left)
 	timer_active = true
 	game_timer.start(1.0)
 	
-	# 3. Afficher les cartes devant les icônes
+	# 5. Afficher les cartes devant les icônes
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
 		_place_card_next_to_icon(joueur, carte.numero)
 	
-	# 4. Petit délai visuel
+	# 6. Petit délai visuel
 	await get_tree().create_timer(0.8).timeout
 	
-	# 5. Faire disparaître les cartes devant les icônes
+	# 7. Faire disparaître les cartes devant les icônes
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var layer = get_display_data_for_joueur(joueur)["card_layer"]
@@ -595,18 +689,14 @@ func _on_tour_repris(cartes_choisies):
 			await tween.finished
 			child.queue_free()
 	
-	# 6. Mettre à jour l'affichage
+	# 8. Mettre à jour l'affichage
 	_update_plateau()
 	_update_heads()
 	
-	# 7. Démarrer le nouveau tour si la manche n'est pas terminée
-	if not sp_game.jeu.check_end_manche():
-		sp_game.start_round()
-	else:
-		# Si c'est la fin de la manche, attendre un peu avant de continuer
-		await get_tree().create_timer(1.0).timeout
-		sp_game.start_round()
-  
+	# 9. Démarrer le nouveau tour
+	sp_game.start_round()
+	
+		
 
 func show_label(text: String) -> void:
 	state_label.text = text
@@ -675,7 +765,10 @@ func afficher_boutons_rang(rangs_disponibles):
 
 func setup_from_lobby(players: Array):
 	Global.game_players = players
-	
+	# Sauvegarder le nom du joueur principal
+	if players.size() > 0:
+		Global.player_name = players[0]
+		
 func _on_attente_choix_rang(rangs_disponibles):
 	afficher_boutons_rang(rangs_disponibles)
 
@@ -695,8 +788,26 @@ func show_pause_menu():
 	add_child(pause_instance)
 
 
+func update_game_state(message: String) -> void:
+	if has_node("HBoxContainer/gameStateLabel"):
+		$HBoxContainer/gameStateLabel.text = message
+	else:
+		print("Warning: gameStateLabel not found")
 
-
+func clear_game_state() -> void:
+	if has_node("HBoxContainer/gameStateLabel"):
+		$HBoxContainer/gameStateLabel.text = ""
+		
+func show_takes_message(joueur, row_index=null, card_count=null):
+	if joueur == sp_game.joueur_moi:
+		update_game_state("You take")
+		if row_index != null and card_count != null:
+			await show_label("You take row %d (%d cards)" % [row_index+1, card_count])
+	else:
+		update_game_state("%s takes" % joueur.nom)
+		if row_index != null and card_count != null:
+			await show_label("%s takes row %d (%d cards)" % [joueur.nom, row_index+1, card_count])
+			
 func _on_choose_rang_1_pressed():
 	_on_rang_button_pressed(0)
 
@@ -710,6 +821,7 @@ func _on_choose_rang_4_pressed():
 	_on_rang_button_pressed(3)
 
 func _on_rang_button_pressed(rang_index):
+	update_game_state("👉 Tu as choisi le rang %d" % (rang_index + 1))
 	print("✅ Joueur a choisi le rang :", rang_index)
 	choix_rang_panel.visible = false
 
@@ -719,6 +831,6 @@ func _on_rang_button_pressed(rang_index):
 			bouton.hide()
 			bouton.disabled = true
 
-	# Appeler la suite logique du jeu
+	# Informer le jeu
 	if sp_game:
 		sp_game.reprendre_avec_rang(rang_index)

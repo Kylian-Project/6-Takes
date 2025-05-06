@@ -13,6 +13,7 @@ var clic_valide_effectue := false
 var cartes_choisies_bots = {}
 var joueur_en_attente = null
 var carte_en_attente = null
+var attente_choix_rang := false
 
 signal carte_moi_attendue()
 signal tour_repris(cartes_jouees)
@@ -82,6 +83,7 @@ func end_game():
 		board.stop_timer()
 	await get_tree().create_timer(5.0).timeout
 	if board:
+		board.update_game_state("            FINISH")
 		board.show_scoreboard(rankings)
 		
 func joueur_moi_a_choisi(index: int):
@@ -141,9 +143,11 @@ func reprendre_tour():
 				return
 			else:
 				if board:
+					await board.update_game_state("            %s Pick a row to take" % [joueur.nom])
 					await board.show_label(" %s must take a ranger…" % joueur.nom)
 				await get_tree().create_timer(1.5).timeout
-
+				
+				
 				var rang_a_ramasser = randi() % jeu.table.rangs.size()
 				var cartes_ramassees = jeu.table.ramasser_rang(rang_a_ramasser)
 				var total_tetes = 0
@@ -153,6 +157,7 @@ func reprendre_tour():
 				jeu.table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
 
 				if board:
+					await board.update_game_state("            %s chose rank" % [joueur.nom])
 					await board.show_label(" %s chose rank %d (+%d têtes)" % [joueur.nom, rang_a_ramasser + 1, total_tetes])
 		else:
 			# Ajouter la carte avec animation
@@ -161,7 +166,7 @@ func reprendre_tour():
 			
 			jeu.table.ajouter_carte(carte, joueur)
 			await board.move_card_to_row(joueur, carte.numero, rang_index)
-				
+			await board.update_game_state("            Collecting cards...")	
 			# Vérifie dépassement
 			if jeu.table.rangs[rang_index].est_pleine():
 				var cartes_a_ramasser = jeu.table.rangs[rang_index].recuperer_cartes()
@@ -173,10 +178,20 @@ func reprendre_tour():
 
 				# Affiche le message du dépassement
 				if board:
+					await get_tree().create_timer(0.3).timeout
+					await board.update_game_state("              %s put down 6th card" % [joueur.nom])
+					
 					if joueur == joueur_moi:
+						
 						await board.show_label("%s put down 6th card → picks up rank %d (+%d têtes)" % [joueur.nom,rang_index + 1, total_tetes])
+						
+					
 					else:
+						
 						await board.show_label("%s put down 6th card → picks up rank %d (+%d têtes)" % [joueur.nom, rang_index + 1, total_tetes])
+					await board.update_game_state("             %s put down 6th card" % [joueur.nom])
+					
+				
 
 	# Terminer le tour
 	terminer_tour(cartes_choisies)
@@ -231,10 +246,7 @@ func reprendre_avec_rang(rang_index: int):
 		await board._animate_full_pickup_sequence(joueur, carte, rang_index, cartes_ramassees)
 		
 		# Message visuel adapté selon joueur/bot
-		if joueur == joueur_moi:
-			await board.show_label("👤 %s ramasse le rang %d (+%d têtes)" % [joueur.nom, rang_index + 1, total_tetes])
-		else:
-			await board.show_label("🤖 %s ramasse le rang %d (+%d têtes)" % [joueur.nom, rang_index + 1, total_tetes])
+		await board.show_label(" %s ramasse le rang %d (+%d têtes)" % [joueur.nom, rang_index + 1, total_tetes])
 	else:
 		# Fallback sans animation
 		jeu.table.forcer_nouvelle_rangée(rang_index, carte)
@@ -242,6 +254,7 @@ func reprendre_avec_rang(rang_index: int):
 	# 3. Vider les variables d'attente
 	joueur_en_attente = null
 	carte_en_attente = null
+	attente_choix_rang = false  # <-- Ajout ici
 
 	# 4. Continuer avec les autres joueurs
 	var cartes_choisies = [{ "joueur": joueur, "carte": carte }]
@@ -262,7 +275,6 @@ func reprendre_avec_rang(rang_index: int):
 			await get_tree().create_timer(0.5).timeout
 
 		if rang_index_bot == -1:
-			# Cas où le bot doit ramasser
 			var rang_a_ramasser = randi() % jeu.table.rangs.size()
 			var cartes_ramassees_bot = jeu.table.ramasser_rang(rang_a_ramasser)
 			var total_tetes_bot = 0
@@ -276,12 +288,10 @@ func reprendre_avec_rang(rang_index: int):
 			
 			jeu.table.forcer_nouvelle_rangée(rang_a_ramasser, bot_carte)
 		else:
-			# Ajout normal
 			jeu.table.ajouter_carte(bot_carte, bot)
 			if board:
 				await board.move_card_to_row(bot, bot_carte.numero, rang_index_bot)
 			
-			# Vérification rang plein
 			if jeu.table.rangs[rang_index_bot].est_pleine():
 				var cartes_a_ramasser = jeu.table.rangs[rang_index_bot].recuperer_cartes()
 				var tetes_ramassees = 0
@@ -297,7 +307,7 @@ func reprendre_avec_rang(rang_index: int):
 
 	# 6. Terminer le tour
 	terminer_tour(cartes_choisies)
-	
+
 
 
 func afficher_cartes_bots():
@@ -317,3 +327,16 @@ func get_main_joueur_moi():
 
 func get_scores():
 	return jeu.joueurs
+
+# Ajoutez ces méthodes
+func is_game_over() -> bool:
+	return jeu.check_end_game() if jeu else false
+
+func get_current_player_name() -> String:
+	if jeu and jeu.joueurs.size() > 0:
+		return jeu.joueurs[jeu.joueur_actif].nom
+	return "Bot"
+	
+func is_player_turn() -> bool:
+	# Le joueur humain est toujours à l'index 0
+	return true  # Mode solo = toujours le tour du joueur
