@@ -37,7 +37,7 @@ extends Node2D
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
 var player_username 
-
+var last_table_state := [[], [], [], []]  # table state of previous round
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
 @onready var card_ui_scene = preload("res://scenes/card_ui.tscn")  
@@ -155,11 +155,15 @@ func _handle_next_round(data):
 	
 func takes_row(data):
 	var user_takes = data[0].username
+	var row_index = data[0].indexRangee
+	
 	print("player takes ", user_takes)
 	if user_takes == player_username:
 		show_label("You Take 6 !")
 	else:
 		show_label(user_takes + " Takes 6!")
+	
+	await animate_row_removal(row_index)
 
 
 func start_game():
@@ -360,7 +364,55 @@ func update_table_ui(table_data, animation):
 							card_instance.texture_rect.visible = true
 				else:
 					print("No card info found for id:", card_id)
-
+	#var row_containers = [row1, row2, row3, row4]
+#
+	## Get row data
+	#if table_data.size() == 0:
+		#return
+#
+	#var rows = table_data[0]
+#
+	## Compare with previous state BEFORE clearing
+	#for i in range(4):
+		#var container = row_containers[i]
+		#var previous_row_data = last_table_state[i]
+		#var new_row_data = rows[i]
+#
+		## Clear UI
+		#for child in container.get_children():
+			#if child is Control and not (child is Button):
+				#child.queue_free()
+#
+		## Add new cards
+		#for card_id in new_row_data:
+			#var card_info = _find_card_data(card_id)
+			#if card_info:
+				#var card_instance = card_ui_scene.instantiate()
+				#container.add_child(card_instance)
+#
+				#if card_instance.has_method("set_card_data"):
+					#card_instance.set_card_data(card_info["path"], card_id)
+#
+					#if animation:
+						#card_instance.start_flip_timer(2.0)
+					#else:
+						## Animate only if the card_id is new
+						#if not previous_row_data.has(card_id):
+							#card_instance.modulate.a = 0
+							#card_instance.scale = Vector2(0.5, 0.5)
+							#var tw = create_tween()
+							#tw.tween_property(card_instance, "modulate:a", 1.0, 0.3)
+							#tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.3)
+							#await get_tree().create_timer(0.05).timeout
+						#else:
+							#card_instance.texture_rect.visible = true
+			#else:
+				#print("No card info found for id:", card_id)
+#
+	## Update saved state AFTER all comparisons are done
+	#last_table_state = []
+	#for row in rows:
+		#last_table_state.append(row.duplicate())  # Deep copy
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
@@ -388,6 +440,9 @@ func selection_buttons(visibility):
 func _on_select_row_button_pressed(row_index):
 	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
+	
+		# Animate row removal
+	#await animate_row_removal(row_index)
 	
 	SocketManager.emit("choisir-rangee", {
 		"roomId": room_id_global,
@@ -506,3 +561,27 @@ func _handle_end_game(data):
 	
 	get_tree().current_scene.add_child(score_instance)
 	
+func animate_row_removal(row_index):
+	var row_containers = [row1, row2, row3, row4]
+	var container = row_containers[row_index]
+
+	var cards = container.get_children().filter(func(c): return c is Control and not (c is Button))
+	
+	if cards.size() <= 1:
+		return  # Nothing to remove or only one card — skip
+
+	for i in range(cards.size() - 1):  # Keep the last card intact
+		var card = cards[i]
+		if is_instance_valid(card):
+			var tw = create_tween()
+			tw.tween_property(card, "modulate:a", 0.0, 0.2)
+			tw.tween_property(card, "scale", Vector2(0.5, 0.5), 0.2)
+			await tw.finished
+			card.queue_free()
+			await get_tree().create_timer(0.05).timeout
+	var updated_row := []
+	for c in container.get_children():
+		if c.has_method("get_card_id"):  # Or however you access the card_id
+			updated_row.append(c.get_card_id())
+
+	last_table_state[row_index] = updated_row.duplicate()
