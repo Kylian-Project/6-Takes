@@ -9,7 +9,7 @@
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="7_ruq61"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="8_emcms"]
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="8_xgmbc"]
-[ext_resource type="PackedScene" path="res://scenes/popUp.tscn" id="9_17sna"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_17sna"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aphmc"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
