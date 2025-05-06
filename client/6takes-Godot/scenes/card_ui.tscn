@@ -34,7 +34,7 @@ priority = 1
 position = Vector2(67.6168, 89.7304)
 shape = SubResource("RectangleShape2D_1peor")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Front_texture" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(149, 170)
 layout_mode = 1
 anchors_preset = 15
@@ -76,6 +76,7 @@ flat = true
 expand_icon = true
 
 [node name="deselectButton" type="Button" parent="SelectionContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 icon = ExtResource("4_fvx5b")

@@ -21,6 +21,8 @@ extends Control
 
 
 var bot_count = 1  # Start with 1 bot minimum
+	
+@onready var socket_io = $SocketIO
 
 func _ready():
 	if bot_scene == null:

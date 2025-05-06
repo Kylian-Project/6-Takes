@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
+import Player from "../models/player.js"
 
 
 const ID_LENGTH = 4;
@@ -103,19 +104,43 @@ export const roomHandler = (socket, io) =>
 	////////////// fonctions utilitaires /////////////
   	//////////////////////////////////////////////////
     const getAvailableRooms = () => {
-        return rooms.filter(room => room.private === false).map(room => room.id);
+    return rooms
+        .filter(room => room.private === false)
+        .map(room => ({
+        id: room.id,
+        name: room.settings?.lobbyName || "Lobby",
+        count: room.users.length,
+        playerLimit: room.settings?.playerLimit || 10
+        }));
     };
 
-    const getUsers = (roomId) => {
+
+
+    const getUsers = async (roomId) => {
         const room = rooms.find(r => r.id === roomId);
-        if (!room) return { count: 0, usernames: [] };
-      
-        const usernames = room.getUsernames();
-        return {
-          count: usernames.length,
-          usernames
-        };
-      };
+        if (!room) return { count: 0, users: [] };
+    
+        const users = [];
+    
+        for (let user of room.users)
+        {
+            try 
+            {
+                const player = await Player.findOne({ where: { username: user.username } });
+                users.push({
+                    username: user.username,
+                    icon: player?.icon || null
+                });
+            } 
+            catch (err) 
+            {
+                users.push({ username: user.username, icon: null });
+            }
+        }
+    
+        return { count: users.length, users };
+    };
+    
       
     
     //////////////////////////////////////////////////
@@ -132,7 +157,7 @@ export const roomHandler = (socket, io) =>
         } 
         catch (err)
         {
-            console.error("❌ Erreur JSON parsing :", err.message);
+            console.error("Erreur JSON parsing :", err.message);
             return;
         }
         //dé-structuration de l'objet en des variables
@@ -165,7 +190,7 @@ export const roomHandler = (socket, io) =>
             });
             console.log("✅ Room enregistrée en BDD :", roomId);
         } catch (err) {
-            console.error("❌ Erreur BDD :", err.message);
+            console.error("Erreur BDD :", err.message);
         }
 
         socket.join(roomId);
@@ -194,14 +219,14 @@ export const roomHandler = (socket, io) =>
         io.emit("available-rooms", getAvailableRooms());
     };
 
-/**
- * Permet à un utilisateur de rejoindre une room existante.
- * Émet un événement si la room est introuvable ou pleine.
- * @param {object} data - Informations nécessaires pour rejoindre la room
- * @param {string} data.roomId - ID de la room à rejoindre
- * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
- * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
- */
+    /**
+     * Permet à un utilisateur de rejoindre une room existante.
+     * Émet un événement si la room est introuvable ou pleine.
+     * @param {object} data - Informations nécessaires pour rejoindre la room
+     * @param {string} data.roomId - ID de la room à rejoindre
+     * @param {string} data.username - Nom d'utilisateur de la personne rejoignant la room
+     * @returns {object|boolean} - Retourne la room si l'utilisateur a réussi à rejoindre, sinon retourne false
+     */
 
     const joinRoom = ({ roomId, username }) => 
     {
@@ -280,7 +305,7 @@ export const roomHandler = (socket, io) =>
             }
         };
 
-    //io.emit("available-rooms", getAvailableRooms());
+    io.emit("available-rooms", getAvailableRooms());
 
 
     //////////////////////////////////////////////////
@@ -296,20 +321,35 @@ export const roomHandler = (socket, io) =>
         socket.emit("available-rooms", getAvailableRooms());
     });
 
+
     socket.on("leave-room", leaveRoom);
 
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
 
-    socket.on("users-in-private-room", (roomId) => {
-        socket.emit("users-in-your-private-room", getUsers(roomId));
-    });
+    socket.on("users-in-private-room", async (roomId) => {
+        const users = await getUsers(roomId);
+        socket.emit("users-in-your-private-room", {
+          count: users.length,
+          users
+        });
+      });
+      
 
-    socket.on("join-room", ({ roomId, username }) => {
+      socket.on("users-in-public-room", async (roomId) => {
+        const users = await getUsers(roomId);
+        socket.emit("users-in-your-public-room", {
+          count: users.length,
+          users
+        });
+      });
+      
+
+    socket.on("join-room", async({ roomId, username }) => {
         const room = joinRoom({ roomId, username });
         if (room) 
         {
             socket.join(roomId);
-            const users = getUsers(roomId);
+            const users = await getUsers(roomId);
             if (room.private) 
             {
                 socket.emit("private-room-joined", users);
