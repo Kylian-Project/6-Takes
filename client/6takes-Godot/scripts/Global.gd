@@ -11,6 +11,7 @@ var file_path = "res://config/config.cfg"
 var response_load = config.load(file_path)
 
 var BASE_URL := ""
+var BASE_HTTP := ""
 var header := ""
 
 var icons = {
@@ -33,11 +34,13 @@ func _ready():
 		return 
 		
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
+	var srv_http = config.get_value("DEFAULT", "SRV_HTTP", "")
 	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
 	var header_prefix =config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "")
 	
 	header = "Authorization: " + header_prefix +" "
 	BASE_URL = srv_url + ":" + srv_port 
+	BASE_HTTP = srv_http
 	print("BASE URL ", BASE_URL)
 	print("Header ", header)
 	#load_session()
@@ -45,6 +48,9 @@ func _ready():
 	
 func get_base_url():
 	return BASE_URL 
+
+func get_base_http():
+	return BASE_HTTP
 	
 func getLogged_in():
 	return logged_in
@@ -90,9 +96,8 @@ func session_validation(token : String):
 	var headers = ["Authorization: Bearer " + token]
 	print("\n headers debug \n", headers)
 	var json_body = JSON.stringify(token)
- 
 	
-	var url = "http://" + BASE_URL+ "/api/player/reconnect"
+	var url = BASE_HTTP + BASE_URL + "/api/player/reconnect"
 	print("\n url debug ", url)
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	

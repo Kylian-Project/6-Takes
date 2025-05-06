@@ -26,8 +26,9 @@ func _ready() -> void:
 	http_request.request_completed.connect(_on_http_request_completed)
 
 	var base_url = get_node("/root/Global").get_base_url()
-	API_VERIFY_URL = "http://" + base_url + "/api/player/password/verify"
-	API_RESEND_URL = "http://" + base_url + "/api/player/password/request"
+	var base_http = get_node("/root/Global").get_base_http()
+	API_VERIFY_URL = base_http + base_url + "/api/player/password/verify"
+	API_RESEND_URL = base_http + base_url + "/api/player/password/request"
 	
 	for i in code_fields.size():
 		var input = code_fields[i]

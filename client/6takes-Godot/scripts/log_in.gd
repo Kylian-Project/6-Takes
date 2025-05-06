@@ -33,7 +33,8 @@ func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/connexion"
 	WS_SERVER_URL = "ws://" + base_url
 	
 	# Soundboard

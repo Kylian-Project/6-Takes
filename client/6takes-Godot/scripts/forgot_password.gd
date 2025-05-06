@@ -17,6 +17,7 @@ extends Control
 
 var WS_SERVER_URL 
 var base_url
+var base_http
 var API_URL  
 var RESET_SUBMIT_URL
 var overlay_opened = false
@@ -30,8 +31,9 @@ func _ready() -> void:
 		http_request.request_completed.connect(_on_http_request_completed)
 	
 	base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/password/request"
-	RESET_SUBMIT_URL = "http://" + base_url + "/api/player/password/reset"
+	base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/password/request"
+	RESET_SUBMIT_URL = base_http + base_url + "/api/player/password/reset"
 	WS_SERVER_URL = "ws://" + base_url
 	
 	# Sons pour hover + clic
