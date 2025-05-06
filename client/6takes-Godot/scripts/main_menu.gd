@@ -153,7 +153,6 @@ func _on_profile_pressed():
 
 func _on_accessibility_button_pressed() -> void:
 	open_overlay(accessibility_overlay)
-	_on_reset_button_accessibility_pressed()
 
 
 func _on_brightness_slider_value_changed(value: float) -> void:
