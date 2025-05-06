@@ -2,10 +2,8 @@ import { Server } from "socket.io";
 import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 import Player from "../models/player.js"
-import { count } from "console";
 
 
-const ID_LENGTH = 4;
 
 class RoomUser {
     constructor(username, idSocketUser) {
@@ -65,28 +63,7 @@ class Room {
     isFull() {
         return this.users.length >= this.settings.playerLimit; 
     }
-    /*a voir par la suite si j'utilise ou pas
-    async save() 
-    {
-        try 
-        {
-            const lobby = await Lobby.create({
-                id: this.id,
-                name: this.settings.lobbyName,
-                state: this.private ? "PRIVATE" : "PUBLIC",
-                playerLimit: this.settings.playerLimit,
-                numberOfCards: this.settings.numberOfCards,
-                roundTimer: this.settings.roundTimer,
-                endByPoints: this.settings.endByPoints,
-                rounds: this.settings.rounds
-            });
-            console.log(`Room ${this.id} saved in database`);
-        } 
-        catch (error) 
-        {
-            console.log(`Error saving room ${this.id} in database: ${error}`);
-        }
-    }*/
+
   }
   
 
@@ -111,6 +88,19 @@ export const roomHandler = (socket, io) =>
 	////////////// fonctions principales /////////////
   	//////////////////////////////////////////////////
 
+    /**
+     * Crée une nouvelle salle de jeu.
+     * 
+     * @param {object|string} rawData - Données de la salle en JSON ou objet.
+     * @param {string} [rawData.username=Anonyme] - Nom de l'hôte.
+     * @param {string} [rawData.lobbyName=""] - Nom de la salle.
+     * @param {number} [rawData.playerLimit=10] - Nombre maximum de joueurs.
+     * @param {number} [rawData.numberOfCards=10] - Nombre de cartes distribuées.
+     * @param {number} [rawData.roundTimer=45] - Temps (en secondes) pour jouer une carte.
+     * @param {number} [rawData.endByPoints=66] - Nombre de points pour gagner.
+     * @param {number} [rawData.rounds=1] - Nombre de tours.
+     * @param {string} [rawData.isPrivate="PRIVATE"] - Si la salle est privée (true) ou publique (false).
+     */
     const createRoom = async (rawData) => 
     {
         //on parse le string en JSON
@@ -152,7 +142,7 @@ export const roomHandler = (socket, io) =>
             name: roomId,
             state: isPrivate
             });
-            console.log("✅ Room enregistrée en BDD :", roomId);
+            //console.log("✅ Room enregistrée en BDD :", roomId);
         } catch (err) {
             console.error("Erreur BDD :", err.message);
         }
@@ -161,6 +151,7 @@ export const roomHandler = (socket, io) =>
         io.emit("available-rooms", getAvailableRooms());
         socket.emit(isPrivateBool ? "private-room-created" : "public-room-created", roomId);
     };
+    
 
     /**
      * Supprime une room et emet des événements pour que les utilisateurs
@@ -360,14 +351,14 @@ export const roomHandler = (socket, io) =>
         if(room.private)
         {
             io.to(roomId).emit("users-in-your-private-room", users);
-            console.log("users in your private room", users);
+            //console.log("users in your private room", users);
         }
         else 
         {
             io.to(roomId).emit("users-in-your-public-room", users);
-            console.log("users in your public room", users);
+            //console.log("users in your public room", users);
         }
-        console.log(`🚫 ${username} a été expulsé de la room ${roomId}`);
+        //console.log(`🚫 ${username} a été expulsé de la room ${roomId}`);
 
 
     });
@@ -396,6 +387,15 @@ export const roomHandler = (socket, io) =>
     //////////////////////////////////////////////////
 	////////////// fonctions utilitaires /////////////
   	//////////////////////////////////////////////////
+    
+/**
+ * Retourne la liste des rooms publiques avec des informations de base.
+ * @returns {object[]} Un tableau d'objets avec les propriétés suivantes :
+ *  - id {string} - ID unique de la room
+ *  - name {string} - Nom de la room
+ *  - count {number} - Nombre d'utilisateurs dans la room
+ *  - playerLimit {number} - Nombre maximum de joueurs autorisés dans la room
+ */
 const getAvailableRooms = () => 
 {
     return rooms
@@ -410,6 +410,12 @@ const getAvailableRooms = () =>
 
 
 
+/**
+ * Renvoie la liste des utilisateurs dans une room spécifique.
+ * 
+ * @param {string} roomId - ID de la room.
+ * @returns {Promise<{count: number, users: {username: string, icon: string | null}[]}>}
+ */
 const getUsers = async (roomId) => 
 {
     const room = rooms.find(r => r.id === roomId);
@@ -432,11 +438,17 @@ const getUsers = async (roomId) =>
             users.push({ username: user.username, icon: null });
         }
     }
-
     return { count: users.length, users };
 };
 
 
+/**
+ * Retourne l'ID du joueur associ au pseudo fourni.
+ * Si le joueur n'existe pas, retourne null.
+ * 
+ * @param {string} username - Le pseudo du joueur.
+ * @returns {Promise<number | null>}
+ */
 async function getPlayerID(username) 
 {
     try
@@ -450,14 +462,4 @@ async function getPlayerID(username)
         console.log("erreur lors de la recuperation du pllayer ID");
         return null;
     }
-    
 }
-
-
-
-//////////////////////////////////////////////
-/////////////// A faire //////////////////////
-//////////////////////////////////////////////
-//remove bots de la room
-//exploitation base de données a la place de room[]
-//une fois room startgame elle disparait de available rooms , mais toujours en bdd pour le coup 
