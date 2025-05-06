@@ -12,6 +12,7 @@ var response_load = config.load(file_path)
 
 var BASE_URL := ""
 var header := ""
+@onready var popup_scene = preload("res://scenes/popUp.tscn")
 
 var icons = {
 	# NOTE: optimize using preload or load() caching if performance not good.
@@ -30,6 +31,20 @@ var icons = {
 func _ready():
 	if response_load != OK:
 		print("Config error load result: ", response_load)
+		if response_load == 7:
+			print("Config file not found Error")
+			var popup_instance = popup_scene.instantiate()
+			var label = popup_instance.get_node("message")
+			
+			if label:
+				label.text = "Config File missing"
+				await get_tree().create_timer(0.1).timeout
+				get_tree().current_scene.add_child(popup_instance)
+
+				popup_instance.make_visible()
+			else:
+				print("can't get message label in pop up scene ")
+				return 
 		return 
 		
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
@@ -39,8 +54,7 @@ func _ready():
 	header = "Authorization: " + header_prefix +" "
 	BASE_URL = srv_url + ":" + srv_port 
 	print("BASE URL ", BASE_URL)
-	print("Header ", header)
-	#load_session()
+
 	
 	
 func get_base_url():
@@ -57,20 +71,25 @@ func get_saved_token():
 
 func set_logged_in(state):
 	logged_in = state
-#script to save sessions token globally (for after quit)
-func save_session(token: String):
-	var config = ConfigFile.new()
+
+func save_session(token: String, uid, uname, icon):
+	#var config = ConfigFile.new()
 	config.set_value("session", "token", token)
-	#config.set_value("user", "email", email)
+	config.set_value("user", "uid", uid)
+	config.set_value("user", "username", uname)
+	config.set_value("user", "icon", icon)
 	
 	var error = config.save("user://session.cfg")
 	if error != OK:
 		print("error saving session")
 
-		
+	player_id = uid
+	player_name = uname
+	icon_id = icon
+
 #load session data from file on startup
 func load_session():
-	var config = ConfigFile.new()
+	#var config = ConfigFile.new()
 	var error = config.load("user://session.cfg")
 	if error == OK:
 		saved_token = config.get_value("session", "token")		
@@ -88,12 +107,9 @@ func session_validation(token : String):
 	http_request.request_completed.connect(_on_request_completed)
 
 	var headers = ["Authorization: Bearer " + token]
-	print("\n headers debug \n", headers)
 	var json_body = JSON.stringify(token)
- 
 	
 	var url = "http://" + BASE_URL+ "/api/player/reconnect"
-	print("\n url debug ", url)
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	
 	if error != OK:
@@ -102,7 +118,6 @@ func session_validation(token : String):
 
 func _on_request_completed(result, response_code, headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", body.get_string_from_utf8())
 	
 	var raw_response = body.get_string_from_utf8()
 	var result_string = JSON.parse_string(raw_response)
@@ -115,6 +130,8 @@ func _on_request_completed(result, response_code, headers, body):
 		player_name = result_string["player"]["username"]
 		icon_id = result_string["player"]["icon"]
 		player_id =  playerIid
+		
+		save_session(saved_token, player_id, player_name, icon_id)
 		print("Session validated!")
 		
 	else:

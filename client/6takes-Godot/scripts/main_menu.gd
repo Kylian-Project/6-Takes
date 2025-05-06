@@ -24,8 +24,18 @@ const DEFAULT_CONTRAST   = 1.0
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
+	$RulesOverlay/MarginContainer/Control/Panel/CancelButton,
 	$AccessibilityOverlay/Close
 ]
+
+@onready var settings_close_button   = $SettingsOverlay/Close
+
+
+@onready var overlay_buttons = [
+	settings_button,
+	rules_button,
+]
+
 
 #validate token 
 var API_URL 
@@ -39,7 +49,7 @@ func _ready() -> void:
 	settings_overlay.visible = false
 	accessibility_overlay.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
-	settings_button.pressed.connect(_on_settings_pressed)
+	settings_button.pressed.connect(show_settings)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
 	accessibility_button.pressed.connect(_on_accessibility_button_pressed)	
@@ -71,7 +81,7 @@ func _ready() -> void:
 	accessibility_button.pressed.connect(SoundManager.play_click_sound)
 
 	for close_button in close_buttons:
-		close_button.pressed.connect(_on_close_overlay_pressed)
+		close_button.pressed.connect(hide_settings)
 		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
 		close_button.pressed.connect(SoundManager.play_click_sound)
 		
@@ -101,7 +111,7 @@ func _process(_delta):
 	overlay_layer.visible = overlay_layer.get_child_count() > 0
 
 func _on_multi_player_button_pressed() -> void:
-	get_node("/root/Global").load_session()
+	#get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
 	
 	if logged_in == true:
@@ -126,22 +136,38 @@ func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
 func open_overlay(overlay: Control):
-	settings_overlay.visible = false
+# hide any other overlays
+	settings_overlay.visible      = false
+	rules_overlay.visible         = false
+	# show this one
 	overlay.visible = true
 
-func _on_settings_pressed():
-	open_overlay(settings_overlay)
+	# bring the dimmer / layer up if you have one
+	overlay_layer.visible = true
 
-func _on_close_overlay_pressed():
+	# disable the overlay-open buttons
+	for b in overlay_buttons:
+		b.disabled = true
+
+func show_settings() -> void:
+	settings_overlay.visible = true
+	overlay_layer.visible   = true   # make sure your dim-layer shows
+	for b in overlay_buttons:
+		b.disabled = true
+
+func hide_settings() -> void:
 	settings_overlay.visible = false
-	accessibility_overlay.visible = false
+	overlay_layer.visible   = false
+	for b in overlay_buttons:
+		b.disabled = false
 	
 func quit_game():
 	get_tree().quit()
 
 
 func _on_rules_pressed() -> void:
-	rules_overlay.visible = true
+	open_overlay(rules_overlay)
+	
 	
 func _on_profile_pressed():
 	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
