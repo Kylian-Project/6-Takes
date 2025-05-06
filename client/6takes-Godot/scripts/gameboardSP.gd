@@ -32,7 +32,7 @@ var pause_instance = null
 @onready var spplayerright = $spplayerright
 
 const ICON_PATH = "res://assets/images/icons/"
-const CARD_UI_SCENE = preload("res://scenes/card_ui.tscn")
+const CARD_UI_SCENE = preload("res://scenes/card_uiSP.tscn")
 const SpGame = preload("res://scripts/sp_game.gd")
 
 

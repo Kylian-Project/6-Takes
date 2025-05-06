@@ -1,4 +1,4 @@
-class_name TCardUI
+class_name TCardUIsp
 extends Control
 
 # Déclaration des nœuds avec @onready
@@ -34,43 +34,28 @@ const SCALE_FACTOR = 1.2  # Facteur de mise à l'échelle lors de l'élévation
 # Déclaration de la propriété card_index
 var card_index: int = -1  # Valeur par défaut -1
 
-# Fonction _ready qui s'exécute au démarrage
 func _ready() -> void:
-	#set_card_data(image_path, card_id):
-	#print("Visibilité du nœud parent:", self.visible)
-	#print("Sélection de TextureRect:", texture_rect)
-	#print("Sélection de Back_texture:", back_texture)
-
-	# Vérifie que TextureRect et Back_texture existent
-	if texture_rect == null:
-		print("Erreur : TextureRect est introuvable.")
-	#else:
-		#print("TextureRect trouvé.")
-		
-	if back_texture == null:
-		print("Erreur : Back_texture est introuvable.")
-	#else:
-		#print("Back_texture trouvé.")
-		
-	# Vérifie si SelectionContainer existe et l'initialise
-	if selection_container != null:
-		selection_container.visible = false
-		selection_container.modulate.a = 0.0  # Transparent
-	else:
-		print("Erreur : SelectionContainer est introuvable.")
-		
-	# Initialisation des variables de position et d'échelle
 	scale = Vector2(1, 1)
 	original_position = position
 	original_scale = scale
-	orig_tex_pos = texture_rect.position
+
+	if texture_rect == null:
+		print("Erreur : TextureRect est introuvable.")
+	else:
+		orig_tex_pos = texture_rect.position
+
 	orig_tex_scale = Vector2(1, 1)
 
-	# Cache la back_texture initialement
-	if back_texture != null:
-		back_texture.visible = false
-	else:
+	if back_texture == null:
 		print("Erreur : Back_texture est introuvable.")
+	else:
+		back_texture.visible = false
+
+	if selection_container == null:
+		print("Erreur : SelectionContainer est introuvable.")
+	else:
+		selection_container.visible = false
+		selection_container.modulate.a = 0.0
 
 # Fonction _process pour mettre à jour l'état à chaque frame
 func _process(_delta):
@@ -200,26 +185,25 @@ func toggle_texture_visibility(boolean):
 
 # Fonction pour afficher/masquer le container de sélection
 func show_selection_container(show: bool) -> void:
-	# Vérifie que SelectionContainer existe
 	if selection_container == null:
-		print("Erreur : SelectionContainer est introuvable.")
+		print("Erreur : SelectionContainer est null.")
 		return
-
+	
 	var tween = get_tree().create_tween()
 	
 	if show:
 		selection_container.visible = true
-		selection_container.position.y += 10
+		
+		# Ajoute une variable temporaire pour éviter une erreur
+		var new_y = selection_container.position.y + 10
+		selection_container.position.y = new_y
 		selection_container.modulate.a = 0.0
 		
-		# Tween opacity à 1
 		tween.tween_property(selection_container, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		# Tween position vers le haut de 10px
-		tween.tween_property(selection_container, "position:y", selection_container.position.y - 10, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_property(selection_container, "position:y", new_y - 10, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	else:
-		# Fade out
 		tween.tween_property(selection_container, "modulate:a", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		tween.tween_callback(Callable(selection_container, "hide"))  # Masquer après le fade
+		tween.tween_callback(Callable(selection_container, "hide"))
 
 # Fonction pour vérifier si la carte est la carte la plus en haut
 func is_topmost_card() -> bool:

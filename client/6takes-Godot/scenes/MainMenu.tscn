@@ -6,7 +6,7 @@
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_0m83s"]
 [ext_resource type="Texture2D" uid="uid://bemm3ngd55s2b" path="res://assets/images/title_screen_welcome_v2.png" id="4_7q4f1"]
 [ext_resource type="Texture2D" uid="uid://0cmgjgbawo0q" path="res://assets/images/rules.png" id="6_s440s"]
-[ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="7_bu2nq"]
+[ext_resource type="PackedScene" uid="uid://dswro2gf43iip" path="res://scenes/rules.tscn" id="7_bu2nq"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="8_8qsur"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="10_3xae7"]
