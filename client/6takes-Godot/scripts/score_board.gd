@@ -45,4 +45,8 @@ func update_rankings(rankings_list):
 
 
 func _on_leave_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+
+
+func _on_close_button_pressed() -> void:
+	queue_free()

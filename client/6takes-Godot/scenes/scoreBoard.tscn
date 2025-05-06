@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://btkcwru58g8yx"]
+[gd_scene load_steps=13 format=3 uid="uid://btkcwru58g8yx"]
 
 [ext_resource type="Script" path="res://scripts/score_board.gd" id="1_4ullc"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_w28lv"]
@@ -10,6 +10,7 @@
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="8_s5ir0"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="9_c1skm"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="10_gib8s"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="11_136iv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jlhy1"]
 bg_color = Color(0.921569, 0.921569, 0.921569, 0.133333)
@@ -482,4 +483,17 @@ theme_override_styles/hover = ExtResource("9_c1skm")
 theme_override_styles/normal = ExtResource("10_gib8s")
 text = "LEAVE"
 
+[node name="closeButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -59.0
+offset_bottom = 55.0
+grow_horizontal = 0
+theme_override_styles/normal = ExtResource("10_gib8s")
+icon = ExtResource("11_136iv")
+expand_icon = true
+
 [connection signal="pressed" from="leaveButton" to="." method="_on_leave_button_pressed"]
+[connection signal="pressed" from="closeButton" to="." method="_on_close_button_pressed"]

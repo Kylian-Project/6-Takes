@@ -3,11 +3,6 @@ extends HBoxContainer
 var current_hovered_card: TCardUI = null
 var selected_card: TCardUI = null
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	var mouse_pos = get_global_mouse_position()
@@ -34,10 +29,10 @@ func _process(_delta):
 
 func _on_card_clicked(card: TCardUI) -> void:
 	if is_instance_valid(selected_card) and selected_card != card:
-		selected_card._on_deselect_button_pressed()
+		selected_card._on_deselect_card()
 
 	if card.is_lifted:
-		card._on_deselect_button_pressed()
+		card._on_deselect_card()
 		selected_card = null
 	else:
 		card.is_lifted = true

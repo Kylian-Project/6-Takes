@@ -107,7 +107,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"initial-table", "update-table":
 			if !table_received:
 				table_received = true
-				_handle_table(data)
+				update_table_ui(data, setting_up_deck)
 		"update-scores":
 			_handle_update_scores(data)
 		"choix-rangee":
@@ -156,10 +156,11 @@ func _handle_next_round(data):
 	
 func show_turn_score(data):
 	print("turn score received , ", data)
+	GameState.rankings = data[0].get("classement")
 	showing_score = true
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("leaveButton").disabled = true
-	await get_tree().create_timer(2.5).timeout
+	#await get_tree().create_timer(2.5).timeout
 
 	var overlay_layer = CanvasLayer.new()
 	overlay_layer.add_child(score_instance)
@@ -167,8 +168,9 @@ func show_turn_score(data):
 	
 	get_tree().current_scene.add_child(score_instance)
 	
-	await get_tree().create_timer(5).timeout
-	queue_free()
+	await get_tree().create_timer(10).timeout
+	score_instance.queue_free()
+	#queue_free()
 	
 	
 func takes_row(data):
@@ -182,10 +184,7 @@ func takes_row(data):
 
 func start_game():
 	var start_data = {"roomId" : room_id_global}
-	start_game
-	setting_up_deck = true
-	#SocketManager.emit("start-game", room_id_global)
-	print("emit users in room to start game with ", room_id_global)
+
 	show_label("Game Starting")
 	SocketManager.emit("users-in-public-room", {
 		"roomId" : room_id_global
@@ -198,8 +197,6 @@ func _start_turn():
 	cards_sorted = false
 	highlight_row(false)
 	if room_id_global != null:
-		#hand_received = false
-		#table_received = false
 		print("emit tour")
 		SocketManager.emit("tour", {
 			"roomId": room_id_global, 
@@ -229,11 +226,6 @@ func _handle_update_scores(data):
 	
 	_start_turn()
 
-
-func _handle_table(data):
-	print("Data received for table:", data)
-	update_table_ui(data, setting_up_deck)
-	
 
 func _await_row_selection(data):
 	var player = data[0]["username"]
@@ -327,7 +319,6 @@ func _handle_your_hand(hand_data):
 		# only flip if it’s still a live node
 				if is_instance_valid(this_card) and this_card.is_inside_tree():
 					this_card.flip_card()
-					#card.flip_card()
 					await get_tree().create_timer(0.05).timeout
 
 			else:
@@ -346,7 +337,7 @@ func _on_card_selected(card_number):
 	SocketManager.emit("play-card", data)
 	
 	
-func update_table_ui(table_data, animation):
+func update_table_ui(table_data, settingup_deck):
 	for row in [row1, row2, row3, row4]:
 		for child in row.get_children():
 			if child is not Button:
@@ -370,12 +361,14 @@ func update_table_ui(table_data, animation):
 					if card_instance.has_method("set_card_data"):
 						card_instance.set_card_data(card_info["path"], card_id)
 						
-						if animation:
+						if setting_up_deck:
 							card_instance.start_flip_timer(2.0)
 						else:
 							card_instance.texture_rect.visible = true
 				else:
 					print("No card info found for id:", card_id)
+					
+	settingup_deck = false
 
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
@@ -512,6 +505,7 @@ func _handle_end_game(data):
 	show_label("Game Ended !")
 	
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
+	score_instance.get_node("closeButton").disabled = true
 	await get_tree().create_timer(3).timeout
 	#TRANSITION FIX HERE 
 	#var transition_scene = load("res://scenes/Transition.tscn")

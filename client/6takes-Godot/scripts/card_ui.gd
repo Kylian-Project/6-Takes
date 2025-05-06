@@ -63,7 +63,10 @@ func _on_detector_mouse_entered() -> void:
 		
 	is_hovered = true
 	
-	var hover_tween = get_tree().create_tween()
+	if hover_tween and hover_tween.is_valid():
+		hover_tween.kill()
+	
+	hover_tween = get_tree().create_tween()
 	hover_tween.tween_property(self, "scale", original_scale * 1.1, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	#self.scale = Vector2(1.2, 1.2)
 
@@ -135,3 +138,21 @@ func is_mouse_over() -> bool:
 	var mouse_pos = get_global_mouse_position()
 	var rect = Rect2(global_position - (size * scale * 0.5), size * scale)
 	return rect.has_point(mouse_pos)
+
+
+func _on_deselect_card() -> void:
+	if not is_lifted:
+		return
+	is_lifted = false
+	
+	var orig = get_meta("orig_pos")
+	
+	var cancel_tween = get_tree().create_tween()
+	#cancel_tween.tween_property(self, "scale", original_scale, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	cancel_tween.tween_property(self, "position", orig, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	remove_meta("orig_pos")
+	z_index = 0
+
+	if is_inside_tree() and get_parent().has_method("on_card_deselected"):
+		get_parent().on_card_deselected(self)
