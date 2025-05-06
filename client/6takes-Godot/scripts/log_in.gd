@@ -77,10 +77,12 @@ func _on_http_request_completed(result, response_code, headers, body):
 	var parsed = JSON.parse_string(response_str)
 	
 	print("Réponse HTTP reçue : code =", response_code)
-	print("Contenu brut:", response_str)
 	
 	if response_code != 200:
-		popup_message.text = parsed["message"]
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
 		popup_overlay.visible = true
 		return
 
@@ -90,9 +92,18 @@ func _on_http_request_completed(result, response_code, headers, body):
 	if "token" in response:
 		jwt_token = response["token"]
 		player_data = response["player"]
-		print(" Connexion réussie ! Token :", jwt_token)
+		print(" Connexion réussie ! ")
 		
-		get_node("/root/Global").save_session(jwt_token)
+		var raw_response = body.get_string_from_utf8()
+		var result_string = JSON.parse_string(raw_response)
+		
+		var playerIid = result_string["player"]["id"]
+		var player_name = result_string["player"]["username"]
+		var icon_id = result_string["player"]["icon"]
+		var player_id =  playerIid
+		
+		
+		get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:

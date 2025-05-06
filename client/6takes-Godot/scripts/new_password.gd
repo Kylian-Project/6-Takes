@@ -88,12 +88,18 @@ func _on_confirm_pressed() -> void:
 func _on_http_request_completed(result, response_code, headers, body):
 	print(" Réponse:", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
-
+	var parsed = JSON.parse_string(body.get_string_from_utf8())
+	
 	if response_code == 200:
 		print(" Mot de passe mis à jour. Redirection...")
 		queue_free()
 	else:
-		print("Code invalide ou expiré.")
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
+		popup_overlay.visible = true
+		return
 		
 			
 func hash_password(password: String) -> String:

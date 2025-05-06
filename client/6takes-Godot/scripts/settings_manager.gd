@@ -1,10 +1,11 @@
 extends Node
 
 var config = ConfigFile.new()
-const FILE_PATH = "res://config/settings.cfg"
+const FILE_PATH = "user://settings.cfg"
 
 func _ready():
-	write_default_settings()
+	if not FileAccess.file_exists(FILE_PATH):
+		write_default_settings()
 	load_settings()
 
 # Load settings from the config file

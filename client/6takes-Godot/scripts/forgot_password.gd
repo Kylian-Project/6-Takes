@@ -108,7 +108,10 @@ func _on_http_request_completed(result, response_code, headers, body):
 	print("Contenu brut:", body.get_string_from_utf8())
 
 	if response_code != 200:
-		popup_message.text = parsed["message"]
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
 		popup_overlay.visible = true
 		return
 		
