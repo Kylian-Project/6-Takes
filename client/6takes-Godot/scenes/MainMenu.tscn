@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://btyeei16grxj"]
+[gd_scene load_steps=38 format=3 uid="uid://btyeei16grxj"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -9,7 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://bi73u3o3qngk5" path="res://scenes/rules.tscn" id="7_bu2nq"]
 [ext_resource type="Texture2D" uid="uid://blkk5nyc1ahbo" path="res://assets/images/icon.png" id="7_r14rk"]
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="8_8qsur"]
-[ext_resource type="PackedScene" uid="uid://dswro2gf43iip" path="res://scenes/rules.tscn" id="9_jaad2"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="10_3xae7"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]

@@ -25,15 +25,14 @@ const DEFAULT_CONTRAST   = 1.0
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
 	$RulesOverlay/MarginContainer/Control/Panel/CancelButton,
-	$AccessibilityOverlay/Close
+	$AccessibilityOverlay/Close,
 ]
-
-@onready var settings_close_button   = $SettingsOverlay/Close
 
 
 @onready var overlay_buttons = [
 	settings_button,
 	rules_button,
+	accessibility_button,
 ]
 
 
@@ -135,10 +134,12 @@ func go_to_singleplayer():
 func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
+
 func open_overlay(overlay: Control):
 # hide any other overlays
 	settings_overlay.visible      = false
 	rules_overlay.visible         = false
+	accessibility_overlay.visible = false
 	# show this one
 	overlay.visible = true
 
@@ -158,6 +159,7 @@ func show_settings() -> void:
 func hide_settings() -> void:
 	settings_overlay.visible = false
 	overlay_layer.visible   = false
+	accessibility_overlay.visible = false
 	for b in overlay_buttons:
 		b.disabled = false
 	
@@ -178,6 +180,12 @@ func _on_profile_pressed():
 
 
 func _on_accessibility_button_pressed() -> void:
+	var b = GlobalWorldEnvironment.environment.adjustment_brightness
+	var c = GlobalWorldEnvironment.environment.adjustment_contrast
+
+	brightness_slider.value = b
+	contrast_slider.value   = c
+
 	open_overlay(accessibility_overlay)
 
 
