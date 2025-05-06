@@ -37,7 +37,8 @@ const MAX_CARDS := 10
 
 func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/playerinfo"
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/playerinfo"
 	WS_SERVER_URL = "ws://" + base_url
 	
 	#tsester
