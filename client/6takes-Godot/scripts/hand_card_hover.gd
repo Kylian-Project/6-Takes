@@ -41,7 +41,6 @@ func _on_card_clicked(card: TCardUI) -> void:
 		selected_card = null
 	else:
 		card.is_lifted = true
-		card.show_selection_container(true)
 		card.z_index = 100
 		
 		#add position scale######

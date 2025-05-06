@@ -45,17 +45,7 @@ var player_username
 # Instance de l'écran de pause
 var pause_instance = null
 
-enum GameState {
-	WAITING_FOR_LOBBY,
-	LOBBY_CREATED,
-	ROOM_JOINED,
-	SETTING_UP_DECK,
-	GAME_STARTED,
-	HAND_RECEIVED,
-	PLAYERS_HANDLED
-}
-
-var game_state 
+var setting_up_deck
 var room_id_global
 var players_displayed
 var cards_animated
@@ -66,12 +56,14 @@ var table_received
 var turn_emitted 
 var turns
 var current_turn = 1
+var game_ended 
+var showing_score
+var cards_sorted
 
 func _ready():
 	_load_cards()
 	
-	game_state = GameState.WAITING_FOR_LOBBY
-
+	setting_up_deck = false
 	player_username = get_node("/root/Global").player_name
 	room_id_global = get_node("/root/GameState").id_lobby
 	me = get_node("/root/GameState").player_info
@@ -84,6 +76,9 @@ func _ready():
 	hand_received = false
 	table_received = false
 	turn_emitted = false
+	game_ended = false
+	showing_score = false
+	cards_sorted = false
 	
 	highlight_row(false)
 	for i in range(row_buttons.size()):
@@ -108,9 +103,6 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			if !hand_received:
 				hand_received = true
 				_handle_your_hand(data)
-				#turn_emitted = true
-				#await get_tree().create_timer(3).timeout
-				#_start_turn()
 				
 		"initial-table", "update-table":
 			if !table_received:
@@ -134,23 +126,49 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 		"ramassage-rang":
 			takes_row(data)
-		"manche_suivante":
-			_handle_next_round(data)
 		"end-game":
 			_handle_end_game(data)
+		"manche-suivante":
+			_handle_next_round(data)
+		"score-manche":
+			show_turn_score(data)
+		"sorted-cards":
+			print("sorted cards received :", data)
+			if !cards_sorted:
+				cards_sorted = true
+				_handle_your_hand(data)
+				
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
 			
-	if hand_received and not turn_emitted:
+	if hand_received and not turn_emitted and not game_ended and not showing_score:
 		turn_emitted = true
-		print(" hand & table are ready — emitting tour")
 		_start_turn()
 
 
 func _handle_next_round(data):
-	print("next round event ereceived ")
+	print("next round event ereceived ", data)
 	show_label("Next Round")
-	turn_label.text = "Turn " + data[0] +"/" #add total turns
+	
+	current_turn = str(data[0])
+	turn_label.text = "Turn " + current_turn +" / " + str(turns)
+	
+	
+func show_turn_score(data):
+	print("turn score received , ", data)
+	showing_score = true
+	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
+	score_instance.get_node("leaveButton").disabled = true
+	await get_tree().create_timer(2.5).timeout
+
+	var overlay_layer = CanvasLayer.new()
+	overlay_layer.add_child(score_instance)
+	add_child(overlay_layer)
+	
+	get_tree().current_scene.add_child(score_instance)
+	
+	await get_tree().create_timer(5).timeout
+	queue_free()
 	
 	
 func takes_row(data):
@@ -165,7 +183,7 @@ func takes_row(data):
 func start_game():
 	var start_data = {"roomId" : room_id_global}
 	start_game
-	game_state = GameState.SETTING_UP_DECK
+	setting_up_deck = true
 	#SocketManager.emit("start-game", room_id_global)
 	print("emit users in room to start game with ", room_id_global)
 	show_label("Game Starting")
@@ -177,6 +195,7 @@ func start_game():
 	
 
 func _start_turn():
+	cards_sorted = false
 	highlight_row(false)
 	if room_id_global != null:
 		#hand_received = false
@@ -197,7 +216,7 @@ func _handle_update_scores(data):
 	#turn_emitted = false
 	hand_received = false
 	table_received = false
-	print("updata score data ", data)
+
 	var score = 0
 	var scores = data[0]
 	for entry in scores:
@@ -213,10 +232,8 @@ func _handle_update_scores(data):
 
 func _handle_table(data):
 	print("Data received for table:", data)
-	var animate = (game_state == GameState.SETTING_UP_DECK)
-	update_table_ui(data, animate)
+	update_table_ui(data, setting_up_deck)
 	
-	game_state = GameState.GAME_STARTED
 
 func _await_row_selection(data):
 	var player = data[0]["username"]
@@ -277,7 +294,6 @@ func _find_card_data(card_id: int) -> Dictionary:
 # --- UI Update Functions ---
 
 func _handle_your_hand(hand_data):
-	hand_received = true
 	print("Update hand UI ", hand_data)
 	for child in hbox_container.get_children():
 		child.queue_free()
@@ -479,7 +495,7 @@ func setup_players(player_data):
 		return
 			
 	players_displayed = true
-	game_state = GameState.GAME_STARTED
+
 
 func _handle_takes(data):
 	var player_takes = data[0]["username"]
@@ -490,7 +506,8 @@ func _handle_takes(data):
 
 
 func _handle_end_game(data):
-	get_node("/root/GameState").rankings = data[0].get("classement")
+	game_ended = true
+	GameState.rankings = data[0].get("classement")
 	print("Game ended event ", data[0].get("classement"))
 	show_label("Game Ended !")
 	
@@ -506,3 +523,9 @@ func _handle_end_game(data):
 	
 	get_tree().current_scene.add_child(score_instance)
 	
+
+func _on_sort_cards_pressed() -> void:
+	SocketManager.emit("sort-cards", {
+		"roomId" : room_id_global,
+		"username" : player_username
+	})

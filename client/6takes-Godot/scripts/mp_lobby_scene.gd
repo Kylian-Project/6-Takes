@@ -29,7 +29,7 @@ extends Control
 @onready var confirm_panel = $ConfirmControl
 
 var player_username
-var bot_count = 0
+var bot_count
 var players_count
 var players_limit
 var id_lobby
@@ -41,6 +41,7 @@ var is_public
 func _ready():
 	settings_overlay.visible = false
 	scene_changed = false 
+	bot_count = 0
 	
 	player_username = get_node("/root/Global").player_name
 	players_count = get_node("/root/GameState").players_count
@@ -71,8 +72,12 @@ func _ready():
 	id_lobby = get_node("/root/GameState").id_lobby
 	is_host = get_node("/root/GameState").is_host
 	is_public = get_node("/root/GameState").is_public
-	lobby_code_panel.text = str(id_lobby)
-	print("id lobby DEBUG ", id_lobby)
+	
+	var code = ""
+	for i in range(len(str(id_lobby))):
+		code += (" " + str(id_lobby)[i])
+		
+	lobby_code_panel.text = str(code)
 	settings_button.disabled = !is_host
 	start_button.disabled = !is_host
 	add_bot_button.disabled = !is_host
@@ -153,7 +158,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				lobby_name_panel.text = lobby_name
 				players_limit = get_node("/root/GameState").players_limit
 				players_count_panel.text = str(players_count) + " / " + str(players_limit)
-				
+
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -257,8 +262,7 @@ func _on_start_button_pressed() -> void:
 	#get_tree().current_scene.add_child(transition_instance)
 	#await transition_instance.ready
 	#queue_free()
-	
-	print("emit start game and move to gameboard")
+
 	#transition_instance.fade_out("res://scenes/gameboard.tscn")
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
@@ -266,7 +270,7 @@ func _on_start_button_pressed() -> void:
 func _on_quit_button_pressed() -> void:
 	confirm_panel.action_type    = "quit"
 	if is_host:
-		confirm_panel.message = "Remove \""+ lobby_name+ "\" ?"
+		confirm_panel.message = "Remove \""+ lobby_name+ "\" Lobby ?"
 	else :
 		confirm_panel.message = "Quit lobby ?"
 	confirm_panel.action_payload = {}
@@ -335,7 +339,8 @@ func _on_confirmed(action_type:String, payload) -> void:
 	match action_type:
 		"quit":
 			SocketManager.emit("leave-room", { "roomId": id_lobby })
-			get_node("/root/GameState").data = null
+			reinit_gameState()
+			
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 		"kick":
@@ -351,3 +356,12 @@ func _on_confirmed(action_type:String, payload) -> void:
 func _on_canceled():
 	#hide panel handled in confirm panel script
 	pass
+
+
+func reinit_gameState():
+	GameState.players_count = 0
+	GameState.data = null
+	GameState.id_lobby = ""
+	GameState.lobby_name = ""
+	GameState.other_players = []
+	GameState.rankings = null 

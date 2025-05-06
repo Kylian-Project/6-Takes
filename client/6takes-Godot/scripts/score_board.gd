@@ -24,7 +24,6 @@ func _ready():
 	
 	
 func update_rankings(rankings_list):
-
 	for i in range(len(rankings_list)):
 		var player = rankings_list[i]
 		

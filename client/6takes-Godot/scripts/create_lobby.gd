@@ -82,8 +82,8 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 
 	else :
 		print("unhandled event received ,",event, data)
-		
-		
+
+
 func _on_close_pressed() -> void:
 	self.visible = false
 	queue_free()

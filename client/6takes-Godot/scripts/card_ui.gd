@@ -1,10 +1,6 @@
 class_name TCardUI
 extends Control
 
-@onready var selection_container = $SelectionContainer
-@onready var selection_modulate: CanvasItem = $SelectionContainer
-@onready var select_card = $SelectionConatiner/selectButton
-@onready var deselect_card = $SelectionConatiner/deselectButton
 @onready var drop_point: Area2D=$detector
 @onready var texture_rect = $Front_texture
 @onready var back_texture = $Back_texture
@@ -40,19 +36,10 @@ func _ready() -> void:
 	orig_tex_pos   = texture_rect.position
 	orig_tex_scale = Vector2(1,1)
 	
-	selection_container.visible = false
-	selection_container.modulate.a = 0.0  #transparent
-	
-	#selection_container.visible = is_lifted
-	#original_position = card_control.position
-	#original_scale = card_control.scale
-	
 	back_texture.visible = false
 	
 
-func _process(_delta):
-	selection_container.visible = is_lifted
-	
+func _process(_delta):	
 # Manual check for hover-exit if card is scaled
 	if is_hovered and !is_lifted:
 		if not is_mouse_over():
@@ -69,34 +56,6 @@ func set_card_data(image_path, card_id):
 	else:
 		print(" Erreur : Impossible de charger l'image", image_path)
 
-
-func _on_select_button_pressed() -> void:
-	emit_signal("card_selected", global_card_id)
-	is_lifted = false
-	self.visible = false
-
-
-func _on_deselect_button_pressed() -> void:
-	if not is_lifted:
-		return
-	is_lifted = false
-	
-	var orig = get_meta("orig_pos")
-	
-	var cancel_tween = get_tree().create_tween()
-	#cancel_tween.tween_property(self, "scale", original_scale, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	cancel_tween.tween_property(self, "position", orig, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	
-	remove_meta("orig_pos")
-
-
-	show_selection_container(false)
-	z_index = 0
-
-	if is_inside_tree() and get_parent().has_method("on_card_deselected"):
-		get_parent().on_card_deselected(self)
-
-	
 
 func _on_detector_mouse_entered() -> void:
 	if !is_in_hand_grp() or is_lifted:
@@ -122,8 +81,13 @@ func _on_detector_mouse_exited() -> void:
 
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if is_in_hand_grp():
+		if is_in_hand_grp() and !is_lifted:
 			get_parent()._on_card_clicked(self)
+		elif is_lifted:
+			emit_signal("card_selected", global_card_id)
+			is_lifted = false
+			self.visible = false
+
 
 func is_in_hand_grp():
 	return self.get_parent().is_in_group("hand_grp")
@@ -155,25 +119,6 @@ func toggle_texture_visibility(boolean):
 	texture_rect.visible = boolean
 	back_texture.visible = !boolean
 
-func show_selection_container(show: bool) -> void:
-	var tween = get_tree().create_tween()
-	if show:
-		selection_container.visible = true
-		
-		# reset initial position (slightly lower)
-		selection_container.position.y += 10
-		selection_container.modulate.a = 0.0
-		
-		# Tween opacity to 1
-		tween.tween_property(selection_container, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		# Tween position upward by 10px
-		tween.tween_property(selection_container, "position:y", selection_container.position.y - 10, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	else:
-		# Fade out
-		print("fade out tween")
-		tween.tween_property(selection_container, "modulate:a", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		
-		tween.tween_callback(Callable(selection_container, "hide"))  # hide after fade
 
 func is_topmost_card() -> bool:
 	var parent = get_parent()

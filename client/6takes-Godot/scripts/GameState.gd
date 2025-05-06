@@ -6,7 +6,7 @@ var lobby_name = ""
 var player_info = {}
 var is_host = false
 var is_public = true
-var players_limit
+var players_limit = 10
 var players_count = 1
 var other_players = []
 var data

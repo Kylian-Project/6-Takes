@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=19 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -7,7 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="8_b6qql"]
 [ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="9_wh5ub"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -261,6 +263,24 @@ grow_vertical = 0
 alignment = 1
 script = ExtResource("8_tuggc")
 
+[node name="sortCards" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1709.0
+offset_top = 1002.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 26
+theme_override_styles/hover = ExtResource("8_b6qql")
+theme_override_styles/normal = ExtResource("9_wh5ub")
+text = "Sort Cards"
+flat = true
+
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
 visible = false
 offset_right = 1920.0
@@ -298,3 +318,4 @@ theme_override_constants/separation = 30
 alignment = 1
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]
+[connection signal="pressed" from="sortCards" to="." method="_on_sort_cards_pressed"]
