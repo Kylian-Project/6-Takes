@@ -373,63 +373,45 @@ func update_table_ui(table_data, animation):
 							#card_instance.texture_rect.visible = true
 				#else:
 					#print("No card info found for id:", card_id)
-	var new_rows = table_data[0]  # array of 4 subarrays
-	var old_rows = last_table_state.duplicate()  # local copy of previous state
-	last_table_state = new_rows.duplicate()  # store new state for next diff
-
+	var new_rows = table_data[0]
+	var old_rows = last_table_state.duplicate()
+	last_table_state = new_rows.duplicate() 
+	
 	var row_containers = [row1, row2, row3, row4]
 
-	# Iterate over each row to handle additions/removals
 	for i in range(4):
-		var old_row = old_rows[i]
 		var new_row = new_rows[i]
+		var old_row = old_rows[i]
 		var container = row_containers[i]
 
-		# Track current card nodes by ID for easy lookup
-		var existing_card_nodes := {}
-		for child in container.get_children():
-			if child.has_method("get_card_id"):
-				existing_card_nodes[child.get_card_id()] = child
-			elif child is Control and not (child is Button):
-				child.queue_free()  # remove unrecognized elements
+		# Clear children except buttons
+		clear_children_except_buttons(container)
 
-		# Determine removed and added cards
-		var removed_ids = old_row.filter(func(id): return not new_row.has(id))
-		var added_ids = new_row.filter(func(id): return not old_row.has(id))
+		for card_id in new_row:
+			var card_info = _find_card_data(card_id)
+			if not card_info:
+				print("No card info for:", card_id)
+				continue
 
-		# Animate removal
-		for id in removed_ids:
-			if existing_card_nodes.has(id):
-				var card = existing_card_nodes[id]
+			var card_instance = card_ui_scene.instantiate()
+			container.add_child(card_instance)
+
+			card_instance.set_card_data(card_info["path"], card_id)
+
+			var is_new_card = not old_row.has(card_id)
+
+			# Animation conditions
+			if animation:
+				# Flip all cards on initial setup
+				card_instance.start_flip_timer(2.0)
+			elif is_new_card:
+				# Only animate newly added cards
+				card_instance.modulate.a = 0
+				card_instance.scale = Vector2(0.5, 0.5)
+
 				var tw = create_tween()
-				tw.tween_property(card, "modulate:a", 0.0, 0.2)
-				tw.tween_property(card, "scale", Vector2(0.5, 0.5), 0.2)
-				await tw.finished
-				if is_instance_valid(card):
-					card.queue_free()
-
-		# Add new cards
-		for id in new_row:
-			if existing_card_nodes.has(id):
-				continue  # already there
-
-			var card_info = _find_card_data(id)
-			if card_info:
-				var card_instance = card_ui_scene.instantiate()
-				container.add_child(card_instance)
-				card_instance.set_card_data(card_info["path"], id)
-
-				if animation:
-					card_instance.start_flip_timer(2.0)
-				else:
-					# Animate appearance for new cards
-					card_instance.modulate.a = 0
-					card_instance.scale = Vector2(0.5, 0.5)
-					card_instance.texture_rect.visible = true
-					var tw = create_tween()
-					tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
-					tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-					await tw.finished
+				tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+				tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
 
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
