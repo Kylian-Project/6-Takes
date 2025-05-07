@@ -373,45 +373,61 @@ func update_table_ui(table_data, animation):
 							#card_instance.texture_rect.visible = true
 				#else:
 					#print("No card info found for id:", card_id)
-	var new_rows = table_data[0]
-	var old_rows = last_table_state.duplicate()
-	last_table_state = new_rows.duplicate() 
-	
+	var new_rows = table_data[0]  # new state from server
 	var row_containers = [row1, row2, row3, row4]
 
 	for i in range(4):
+		var old_row = last_table_state[i]
 		var new_row = new_rows[i]
-		var old_row = old_rows[i]
 		var container = row_containers[i]
 
-		# Clear children except buttons
-		clear_children_except_buttons(container)
+		var existing_cards = {}
+		# Collect existing cards in container (by card_id)
+		for child in container.get_children():
+			if child.has_method("get_card_id"):
+				var id = child.get_card_id()
+				existing_cards[id] = child
 
+		# Clear out cards no longer in the new row
+		for id in existing_cards.keys():
+			if not new_row.has(id):
+				var card = existing_cards[id]
+				if is_instance_valid(card):
+					var tw = create_tween()
+					tw.tween_property(card, "modulate:a", 0.0, 0.2)
+					tw.tween_property(card, "scale", Vector2(0.5, 0.5), 0.2)
+					await tw.finished
+					card.queue_free()
+
+		# Now go through the new row and build/keep cards
 		for card_id in new_row:
 			var card_info = _find_card_data(card_id)
-			if not card_info:
-				print("No card info for:", card_id)
+			if card_info == {}:
+				print("Missing card info for id: ", card_id)
 				continue
 
-			var card_instance = card_ui_scene.instantiate()
-			container.add_child(card_instance)
+			if existing_cards.has(card_id):
+				# Already exists, skip re-adding
+				continue
+			else:
+				# New card, instantiate and add
+				var card_instance = card_ui_scene.instantiate()
+				container.add_child(card_instance)
+				card_instance.set_card_data(card_info["path"], card_id)
 
-			card_instance.set_card_data(card_info["path"], card_id)
+				if animation:
+					card_instance.modulate.a = 0.0
+					card_instance.scale = Vector2(0.5, 0.5)
 
-			var is_new_card = not old_row.has(card_id)
+					var tw = create_tween()
+					tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+					tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+					await tw.finished
+				else:
+					card_instance.texture_rect.visible = true
 
-			# Animation conditions
-			if animation:
-				# Flip all cards on initial setup
-				card_instance.start_flip_timer(2.0)
-			elif is_new_card:
-				# Only animate newly added cards
-				card_instance.modulate.a = 0
-				card_instance.scale = Vector2(0.5, 0.5)
-
-				var tw = create_tween()
-				tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
-				tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+	# Save new table state
+	last_table_state = new_rows.duplicate()
 
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
