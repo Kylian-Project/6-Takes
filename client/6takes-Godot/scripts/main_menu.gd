@@ -205,10 +205,12 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
 
 func _on_color_blind_options_item_selected(index: int) -> void:
-	# index==0 (“Off”) → hide; index==1 (“On”) → show
-	color_blind.visible = (index == 1)
+	# use the 'index' parameter, not 'id'
+	ColorBlindness.Type = index
+	# save so it sticks across scenes / sessions
 	ProjectSettings.set_setting("accessibility/colorblind_mode", index)
 	ProjectSettings.save()
+
 
 
 func _on_reset_button_accessibility_pressed() -> void:

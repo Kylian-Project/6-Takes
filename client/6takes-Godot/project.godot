@@ -8,6 +8,10 @@
 
 config_version=5
 
+[accessibility]
+
+colorblind_mode=0
+
 [application]
 
 config/name="6Takes_main"
@@ -23,6 +27,7 @@ SoundManager="*res://scenes/SoundManager.tscn"
 GlobalWorldEnvironment="*res://scenes/world_environment.tscn"
 SocketManager="*res://scripts/SocketManager.gd"
 GameState="*res://scripts/GameState.gd"
+ColorBlindness="*res://addons/paulloz.colorblindness/colorblindness.gd"
 
 [display]
 
