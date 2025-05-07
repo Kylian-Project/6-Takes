@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cypa8pvu3mhfe"]
+[gd_scene load_steps=28 format=3 uid="uid://cypa8pvu3mhfe"]
 
 [ext_resource type="Script" path="res://scripts/SPLobbyScene.gd" id="1_ltkyy"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_1ebn2"]
