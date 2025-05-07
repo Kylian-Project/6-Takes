@@ -139,9 +139,9 @@ const resetPassword = async (req, res) => {
 };
 
 
-// ? CONNEXION
+// ? LOGIN
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, device_id } = req.body;
 
   try {
     const player = await Player.findOne({ where: { username } });
@@ -152,46 +152,45 @@ const login = async (req, res) => {
 
     const now = new Date();
 
-    // Réutiliser une session encore valide
-    const existingSession = await Session.findOne({
+    // Vérifier s'il existe déjà une session active pour ce joueur sur un autre appareil
+    const differentDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
-        expire_at: { [Op.gt]: now }
+        device_id: { [Op.ne]: device_id }, // Appareil différent
       }
     });
 
-    if (existingSession) {
-      console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})`);
-      return res.status(200).json({
-        message: "Connexion réussie (session existante)",
-        token: existingSession.token,
-        expire_at: existingSession.expire_at,
-        player: {
-          id: player.id,
-          username: player.username,
-          email: player.email,
-          icon: player.icon,
-          created_at: player.created_at,
-          first_login: player.first_login,
-          total_played: player.total_played,
-          total_won: player.total_won,
-          score: player.score
-        }
-      });
+
+    // Refuser la connexion si une session est déjà active sur un autre appareil
+    if (differentDeviceSession) {
+      return res.status(403).json({ message: "Account in use on another device !" });
     }
 
-    // Supprimer sessions expirées
-    await Session.destroy({
+    // Vérifier s'il existe une session active pour le même joueur et le même appareil
+    const sameDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
-        expire_at: { [Op.lte]: now }
+        device_id: device_id, // Même appareil
+        expire_at: { [Op.gt]: now } // Session encore valide
       }
     });
+
+    // Si une session avec le même appareil existe -> Delete
+    if (sameDeviceSession) {
+      await Session.destroy({
+        where: {
+          id_player: player.id,
+          device_id: device_id,
+          expire_at: { [Op.gt]: now }
+        }
+      });
+      console.log(` Old session pour ${player.username} sur le même appareil supprimée.`);
+    }
 
     // Créer une nouvelle session
     const tokenDuration = 24 * 60 * 60;   // 1 jour
     const token = jwt.sign(
-      { id: player.id, 
+      { id: player.id,
         username: player.username,
         email: player.email
       },
@@ -201,15 +200,16 @@ const login = async (req, res) => {
 
     const expireAt = new Date(now.getTime() + tokenDuration * 1000);
 
+    // Enregistrer new session dans bdd
     await Session.create({
       id_player: player.id,
-      token,
+      token: token,
+      device_id: device_id,
       created_at: now,
       expire_at: expireAt
     });
 
-    console.log(`? [EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
-    console.log(`Token généré pour ${player.username} (ID ${player.id}) : ${token}`);
+    console.log(`[EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
 
     res.status(200).json({
       message: "Connexion réussie",
@@ -229,9 +229,11 @@ const login = async (req, res) => {
     });
 
   } catch (err) {
+    console.error("Erreur lors de la connexion :", err);
     res.status(500).json({ message: "Erreur serveur", error: err });
   }
 };
+
 
 // ? DECONNEXION Volontairement
 const logout = async (req, res) => {
