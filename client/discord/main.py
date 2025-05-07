@@ -61,6 +61,11 @@ async def clear(ctx, amount: int):
     deleted = await ctx.channel.purge(limit=amount + 1)  # +1 pour inclure le message de commande
     await ctx.send(f"🗑 {len(deleted) - 1} messages supprimés.", delete_after=5)
 
+# Commande de ping pour vérifier si le bot est en ligne
+@bot.command(name='ping')
+async def ping(ctx):
+    await ctx.send("🏓 Pong !")
+
 @clear.error
 async def clear_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
@@ -73,46 +78,49 @@ async def clear_error(ctx, error):
 @bot.event
 async def on_ready():
     print(f"Connecté en tant que {bot.user}")
-    check_feedbacks.start()
+    if not check_feedbacks.is_running():
+        check_feedbacks.start()
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=15)
 async def check_feedbacks():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM feedback WHERE discord_send = 0 ORDER BY created_at ASC")
-    feedbacks = cursor.fetchall()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM feedback WHERE discord_send = 0 ORDER BY created_at ASC")
+        feedbacks = cursor.fetchall()
 
-    if not feedbacks:
+        if not feedbacks:
+            conn.close()
+            return
+
+        channel = bot.get_channel(DISCORD_CHANNEL_ID)
+        if not channel:
+            print("Canal introuvable")
+            conn.close()
+            return
+
+        for feedback in feedbacks:
+            embed = discord.Embed(title="📝 Nouveau Feedback", color=0x9b59b6)
+            feedback['type'] = feedback['type'].upper()
+            embed.add_field(name="Type", value=feedback['type'], inline=True)
+            embed.add_field(name="Message", value=feedback['message'], inline=False)
+            embed.set_footer(text=f"ID: {feedback['id']} - Reçu le {feedback['created_at']}")
+
+            file = None
+            if feedback['screenshot']:
+                image_data = BytesIO(feedback['screenshot'])
+                file = discord.File(fp=image_data, filename="screenshot.png")
+                embed.set_image(url="attachment://screenshot.png")
+
+            view = FeedbackView(feedback_id=feedback['id'], message_to_delete=None)
+            message = await channel.send(embed=embed, file=file, view=view)
+            view.message_to_delete = message
+
+            cursor.execute("UPDATE feedback SET discord_send = 1 WHERE id = %s", (feedback['id'],))
+            conn.commit()
+
         conn.close()
-        return
-
-    channel = bot.get_channel(DISCORD_CHANNEL_ID)
-    if not channel:
-        print("Canal introuvable")
-        conn.close()
-        return
-
-    for feedback in feedbacks:
-        embed = discord.Embed(title="📝 Nouveau Feedback", color=0x9b59b6)
-        feedback['type'] = feedback['type'].upper()
-        embed.add_field(name="Type", value=feedback['type'], inline=True)
-        embed.add_field(name="Message", value=feedback['message'], inline=False)
-        embed.set_footer(text=f"ID: {feedback['id']} - Reçu le {feedback['created_at']}")
-
-        file = None
-        if feedback['screenshot']:
-            image_data = BytesIO(feedback['screenshot'])
-            file = discord.File(fp=image_data, filename="screenshot.png")
-            embed.set_image(url="attachment://screenshot.png")
-
-        view = FeedbackView(feedback_id=feedback['id'], message_to_delete=None)
-        message = await channel.send(embed=embed, file=file, view=view)
-        view.message_to_delete = message
-
-        cursor.execute("UPDATE feedback SET discord_send = 1 WHERE id = %s", (feedback['id'],))
-        conn.commit()
-
-    conn.close()
-
+    except Exception as e:
+        print(f"Erreur dans la boucle check_feedbacks : {e}")
 
 bot.run(DISCORD_TOKEN)
