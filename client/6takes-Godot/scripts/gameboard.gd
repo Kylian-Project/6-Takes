@@ -66,6 +66,7 @@ var table_received
 var turn_emitted 
 var turns
 var current_turn = 1
+var card_selected = true
 
 func _ready():
 	_load_cards()
@@ -115,13 +116,13 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"initial-table", "update-table":
 			if !table_received:
 				table_received = true
-				_handle_table(data)
+				_handle_table(data) 
 		"update-scores":
 			_handle_update_scores(data)
 		"choix-rangee":
 			on_player_selects_row(data)
 		"temps-room":
-			_handle_timer(data)
+			_handle_timer(data) 
 		"attente-choix-rangee":
 			_await_row_selection(data)
 		"users-in-your-private-room", "users-in-your-public-room":
@@ -132,6 +133,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			print("fin tour")
 			current_turn +=1
 			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
+			card_selected = false
 		"ramassage-rang":
 			takes_row(data)
 		"manche_suivante":
@@ -162,8 +164,6 @@ func takes_row(data):
 		show_label("You Take 6 !")
 	else:
 		show_label(user_takes + " Takes 6!")
-	
-	await animate_row_removal(row_index)
 
 
 func start_game():
@@ -181,6 +181,7 @@ func start_game():
 	
 
 func _start_turn():
+	card_selected = false 
 	highlight_row(false)
 	if room_id_global != null:
 		#hand_received = false
@@ -325,6 +326,9 @@ func _handle_your_hand(hand_data):
 
 
 func _on_card_selected(card_number):
+	if card_selected:
+		return  # already picked this round
+	card_selected = true
 	var data = {
 		"roomId" : room_id_global,
 		"card" : card_number,
@@ -335,6 +339,11 @@ func _on_card_selected(card_number):
 	
 	
 func update_table_ui(table_data, animation):
+	var new_rows = table_data[0]  # array of 4 subarrays
+	# keep a local copy of last state for diffing
+	var old_rows = last_table_state.duplicate()
+	last_table_state = new_rows.duplicate() 
+	
 	for row in [row1, row2, row3, row4]:
 		for child in row.get_children():
 			if child is not Button:
@@ -364,55 +373,64 @@ func update_table_ui(table_data, animation):
 							card_instance.texture_rect.visible = true
 				else:
 					print("No card info found for id:", card_id)
+	#var new_rows = table_data[0]  # Array of 4 sub-arrays
 	#var row_containers = [row1, row2, row3, row4]
 #
-	## Get row data
-	#if table_data.size() == 0:
+	#if animation:
+		## ─── First-time setup: exactly your old "start_flip_timer" logic ───
+		#for i in range(4):
+			#var container = row_containers[i]
+			#clear_children_except_buttons(container)
+			#for card_id in new_rows[i]:
+				#var card_info = _find_card_data(card_id)
+				#if not card_info: continue
+#
+				#var card = card_ui_scene.instantiate()
+				#container.add_child(card)
+				#card.set_card_data(card_info.path, card_id)
+				#card.start_flip_timer(2.0)
+		## record for next diff
+		#last_table_state = new_rows.duplicate(true)  # Deep copy
 		#return
-#
-	#var rows = table_data[0]
-#
-	## Compare with previous state BEFORE clearing
+	## ─── Subsequent updates: diff logic ───
 	#for i in range(4):
+		#var old_ids = last_table_state[i]
+		#var new_ids = new_rows[i]
 		#var container = row_containers[i]
-		#var previous_row_data = last_table_state[i]
-		#var new_row_data = rows[i]
-#
-		## Clear UI
+		## A) animate out removed cards
 		#for child in container.get_children():
-			#if child is Control and not (child is Button):
-				#child.queue_free()
+			#if not child.has_method("get_card_id"):
+				#continue
+			#var id = child.get_card_id()
+			#if not new_ids.has(id):
+				#var tw = create_tween()
+				#tw.tween_property(child, "modulate:a", 0.0, 0.2)
+				#tw.tween_property(child, "scale", Vector2(0.5,0.5), 0.2)
+				#await tw.finished
+				#if is_instance_valid(child):
+					#child.queue_free()
 #
-		## Add new cards
-		#for card_id in new_row_data:
-			#var card_info = _find_card_data(card_id)
-			#if card_info:
-				#var card_instance = card_ui_scene.instantiate()
-				#container.add_child(card_instance)
+		## B) add new cards (only ids in new_ids but not in old_ids)
+		#for card_id in new_ids:
+			#if old_ids.has(card_id):
+				#continue  # already there—skip
+			#var info = _find_card_data(card_id)
+			#if not info: continue
 #
-				#if card_instance.has_method("set_card_data"):
-					#card_instance.set_card_data(card_info["path"], card_id)
+			#var card = card_ui_scene.instantiate()
+			#container.add_child(card)
+			#card.set_card_data(info.path, card_id)
 #
-					#if animation:
-						#card_instance.start_flip_timer(2.0)
-					#else:
-						## Animate only if the card_id is new
-						#if not previous_row_data.has(card_id):
-							#card_instance.modulate.a = 0
-							#card_instance.scale = Vector2(0.5, 0.5)
-							#var tw = create_tween()
-							#tw.tween_property(card_instance, "modulate:a", 1.0, 0.3)
-							#tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.3)
-							#await get_tree().create_timer(0.05).timeout
-						#else:
-							#card_instance.texture_rect.visible = true
-			#else:
-				#print("No card info found for id:", card_id)
-#
-	## Update saved state AFTER all comparisons are done
-	#last_table_state = []
-	#for row in rows:
-		#last_table_state.append(row.duplicate())  # Deep copy
+			## entry animation
+			#card.modulate.a = 0.0
+			#card.scale = Vector2(0.5,0.5)
+			#var tw2 = create_tween()
+			#tw2.tween_property(card, "modulate:a", 1.0, 0.3)
+			#tw2.tween_property(card, "scale", Vector2(1,1), 0.3)
+			## leave unchanged cards as is
+		## C) update for next time
+		#last_table_state = new_rows.duplicate(true)  # Deep copy
+
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
@@ -585,3 +603,22 @@ func animate_row_removal(row_index):
 			updated_row.append(c.get_card_id())
 
 	last_table_state[row_index] = updated_row.duplicate()
+
+func _animate_removed_from_row(row_index, removed_ids):
+	var container = [row1, row2, row3, row4][row_index]
+	for child in container.get_children():
+		if child.has_method("get_card_id"):
+			var id = child.get_card_id()
+			if removed_ids.has(id):
+				var tw = create_tween()
+				tw.tween_property(child, "modulate:a", 0.0, 0.2)
+				tw.tween_property(child, "scale", Vector2(0.5,0.5), 0.2)
+				await tw.finished
+				if is_instance_valid(child):
+					child.queue_free()
+
+func clear_children_except_buttons(node: Node) -> void:
+	for child in node.get_children():
+		if child is Button:
+			continue
+		child.queue_free()
