@@ -68,7 +68,15 @@ func _ready() -> void:
 	colorblind_option.add_item("Off", 0)
 	colorblind_option.add_item("On",  1)
 	colorblind_option.item_selected.connect(self._on_color_blind_options_item_selected)
-	_on_color_blind_options_item_selected(colorblind_option.get_selected_id())
+
+	 # 2) load whatever they last picked (default to “Off” → 0):
+	var last = 0
+	if ProjectSettings.has_setting("accessibility/colorblind_mode"):
+		last = ProjectSettings.get_setting("accessibility/colorblind_mode")
+		colorblind_option.select(last)
+		# run the handler once so the filter actually reflects it:
+		_on_color_blind_options_item_selected(last)
+		
 		
 	# Click Soundboard
 	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
@@ -199,7 +207,8 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 func _on_color_blind_options_item_selected(index: int) -> void:
 	# index==0 (“Off”) → hide; index==1 (“On”) → show
 	color_blind.visible = (index == 1)
-
+	ProjectSettings.set_setting("accessibility/colorblind_mode", index)
+	ProjectSettings.save()
 
 
 func _on_reset_button_accessibility_pressed() -> void:

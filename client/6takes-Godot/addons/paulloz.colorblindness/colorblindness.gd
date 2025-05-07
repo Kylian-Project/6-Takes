@@ -1,4 +1,3 @@
-@tool
 @icon("res://addons/paulloz.colorblindness/colorblindness.svg")
 class_name Colorblindness
 extends CanvasLayer
