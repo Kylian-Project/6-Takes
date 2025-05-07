@@ -22,7 +22,7 @@ if (!in_array($type, ['bug', 'suggestion'])) {
 }
 
 // Clear les données pour éviter les injections SQL*
-$message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+$message = strip_tags($message);
 $type = htmlspecialchars($type, ENT_QUOTES, 'UTF-8');
 
 // Enregistrement du fichier s’il y en a un
