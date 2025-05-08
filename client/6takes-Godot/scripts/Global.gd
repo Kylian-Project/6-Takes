@@ -102,6 +102,7 @@ func save_session(token: String, uid, uname, icon):
 	player_id = uid
 	player_name = uname
 	icon_id = icon
+	logged_in = true
 
 #load session data from file on startup
 func load_session():
