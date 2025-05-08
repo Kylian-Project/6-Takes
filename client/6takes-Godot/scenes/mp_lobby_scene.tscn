@@ -608,29 +608,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="mssgLabel" type="Label" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -963.0
-offset_top = -82.0
-offset_right = 962.0
-offset_bottom = 205.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_utsmw")
-theme_override_font_sizes/font_size = 40
-theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
-text = "You have been kicked from this lobby!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="ConfirmControl" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -676,8 +654,7 @@ grow_vertical = 2
 theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
-text = "
-?"
+text = "."
 horizontal_alignment = 1
 
 [node name="buttonContainer" type="HBoxContainer" parent="ConfirmControl"]
@@ -721,6 +698,81 @@ icon = ExtResource("13_qxa8q")
 icon_alignment = 2
 expand_icon = true
 
+[node name="mssgControl" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -966.0
+offset_top = -86.0
+offset_right = 960.0
+offset_bottom = 207.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="dimming" type="ColorRect" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -970.0
+offset_top = -714.5
+offset_right = 970.0
+offset_bottom = 547.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.301961)
+
+[node name="mssg" type="Label" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -142.5
+offset_right = 965.0
+offset_bottom = 144.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
+text = "
+?"
+horizontal_alignment = 1
+
+[node name="closeButton" type="Button" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -99.0
+offset_top = -107.0
+offset_right = 128.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Close"
+icon = ExtResource("13_qxa8q")
+icon_alignment = 2
+expand_icon = true
+
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="MainVboxContainer/AddBotButton" to="." method="_on_add_bot_button_pressed"]
+[connection signal="pressed" from="mssgControl/closeButton" to="." method="_on_close_pressed"]

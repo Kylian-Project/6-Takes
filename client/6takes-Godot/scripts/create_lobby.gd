@@ -20,9 +20,7 @@ var uname
 
 func _ready():	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-	#create_button.pressed.connect(_on_create_lobby)
-	
-	uname = get_node("/root/Global").player_name
+	uname = Global.player_name
 
 
 func _on_socket_connected(ns: String):
@@ -32,7 +30,7 @@ func _on_socket_disconnected():
 	print(" Socket déconnecté.")
 
 func _on_create_lobby():
-	var visibility = "PRIVATE" if private_check_button.button_pressed else "PUBLIC"
+	var visibility = "PRIVATE" if private_check_button.button_pressed else "PUBLIC "
 	
 	if !lobby_name_field.text.is_empty():
 		print("lobby name debug :", lobby_name)

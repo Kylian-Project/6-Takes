@@ -8,7 +8,7 @@
 default_font = ExtResource("1_8c31k")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1peor"]
-size = Vector2(131.64, 176.59)
+size = Vector2(103.453, 176.59)
 
 [node name="CardUI" type="Control"]
 custom_minimum_size = Vector2(100, 170)
@@ -29,7 +29,8 @@ collision_mask = 2
 priority = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
-position = Vector2(67.6168, 89.7304)
+position = Vector2(67.4855, 89.7304)
+scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_1peor")
 
 [node name="Front_texture" type="TextureRect" parent="."]

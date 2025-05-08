@@ -30,7 +30,11 @@ func _process(_delta):
 func _on_card_clicked(card: TCardUI) -> void:
 	if is_instance_valid(selected_card) and selected_card != card:
 		selected_card._on_deselect_card()
-
+	
+	if selected_card == card:
+		card._on_deselect_card()
+		selected_card = null
+		
 	if card.is_lifted:
 		card._on_deselect_card()
 		selected_card = null

@@ -54,59 +54,97 @@ func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
 	var password_hashed = hash_password(password)
-	
+
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
 		return
 	
+	# Récupérer l'ID unique de l'appareil
+	var device_id = OS.get_unique_id()
+	
 	var payload = {
 		"username": username_email,
-		"password": password_hashed
+		"password": password_hashed,
+		"device_id": device_id
 	}
 
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
 
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
+	print("ID de l'appareil :", device_id)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
-
+#
+#func _on_http_request_completed(result, response_code, headers, body):
+	#var response_str = body.get_string_from_utf8()
+	#var parsed = JSON.parse_string(response_str)
+	#
+	#print("Réponse HTTP reçue : code =", response_code)
+	#
+	#if response_code != 200:
+		#if parsed == null or response_code == 0 :
+			#popup_message.text = "Server Connexion Error"
+		#else:
+			#popup_message.text = parsed["message"]
+		#popup_overlay.visible = true
+		#return
 func _on_http_request_completed(result, response_code, headers, body):
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
-	
+
 	print("Réponse HTTP reçue : code =", response_code)
-	
+	print("Corps de la réponse :", response_str)
+
+	# Vérification si la réponse est une erreur
 	if response_code != 200:
-		if parsed == null or response_code == 0 :
+		if parsed == null or response_code == 0:
 			popup_message.text = "Server Connexion Error"
 		else:
-			popup_message.text = parsed["message"]
+			# Affichage du message d'erreur retourné par le serveur
+			popup_message.text = parsed.get("message", "Erreur inconnue")
 		popup_overlay.visible = true
 		return
 
-
+	# Si le code est 200 (succès), traiter la connexion
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
 		player_data = response["player"]
 		print(" Connexion réussie ! ")
-		
-		var raw_response = body.get_string_from_utf8()
-		var result_string = JSON.parse_string(raw_response)
-		
-		var playerIid = result_string["player"]["id"]
-		var player_name = result_string["player"]["username"]
-		var icon_id = result_string["player"]["icon"]
-		var player_id =  playerIid
-		
-		
+
+		var player_id = response["player"]["id"]
+		var player_name = response["player"]["username"]
+		var icon_id = response["player"]["icon"]
+
 		get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
 		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
+
+	#var json = JSON.parse_string(body.get_string_from_utf8())
+	#var response = json
+	#if "token" in response:
+		#jwt_token = response["token"]
+		#player_data = response["player"]
+		#print(" Connexion réussie ! ")
+		#
+		#var raw_response = body.get_string_from_utf8()
+		#var result_string = JSON.parse_string(raw_response)
+		#
+		#var playerIid = result_string["player"]["id"]
+		#var player_name = result_string["player"]["username"]
+		#var icon_id = result_string["player"]["icon"]
+		#var player_id =  playerIid
+		#
+		#
+		#get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
+		#_connect_to_websocket()
+		#_move_to_multiplayer_pressed()
+	#else:
+		#print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
 
 
 func _connect_to_websocket():

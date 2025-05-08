@@ -59,15 +59,16 @@ var current_turn = 1
 var game_ended 
 var showing_score
 var cards_sorted
+var can_select_card
 
 func _ready():
 	_load_cards()
 	
 	setting_up_deck = false
-	player_username = get_node("/root/Global").player_name
-	room_id_global = get_node("/root/GameState").id_lobby
-	me = get_node("/root/GameState").player_info
-	turns = get_node("/root/GameState").rounds
+	player_username = Global.player_name
+	room_id_global = GameState.id_lobby
+	me = GameState.player_info
+	turns = GameState.rounds
 	turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
 	
 	#setting up row panels
@@ -160,7 +161,7 @@ func show_turn_score(data):
 	showing_score = true
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("leaveButton").disabled = true
-	#await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5).timeout
 
 	var overlay_layer = CanvasLayer.new()
 	overlay_layer.add_child(score_instance)
@@ -194,6 +195,7 @@ func start_game():
 	
 
 func _start_turn():
+	can_select_card = true
 	cards_sorted = false
 	highlight_row(false)
 	if room_id_global != null:
@@ -210,7 +212,7 @@ func _handle_timer(data):
 
 
 func _handle_update_scores(data):
-	#turn_emitted = false
+	turn_emitted = false
 	hand_received = false
 	table_received = false
 
@@ -297,6 +299,7 @@ func _handle_your_hand(hand_data):
 		if card_id:
 			var card = card_ui_scene.instantiate()
 			hbox_container.add_child(card)
+			card.gameboard = self
 			card.connect("card_selected", Callable(self, "_on_card_selected"))
 			
 			card.set_card_data(path, card_id)
@@ -466,7 +469,9 @@ func setup_players(player_data):
 		
 		if user.username.begins_with("Bot"):
 			user_icon = 10
-		
+		else:
+			user_icon = user.icon
+
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
 		var slot = VBoxContainer.new()

@@ -121,7 +121,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6hv8q")
 
 [node name="BGDetails" type="TextureRect" parent="EditProfilePanel"]
-self_modulate = Color(1, 1, 1, 0.196078)
+self_modulate = Color(1, 1, 1, 0.0980392)
 layout_mode = 2
 texture = ExtResource("2_17if4")
 expand_mode = 1

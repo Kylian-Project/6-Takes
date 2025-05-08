@@ -8,6 +8,7 @@ extends Control
 @onready var card_control = $"."
 
 var global_card_id 
+var gameboard :Node = null
 var original_position := position
 var original_scale := scale
 
@@ -84,12 +85,24 @@ func _on_detector_mouse_exited() -> void:
 
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		#event.accept()
+		print("clicked. is_lifted:", is_lifted, ", can_select_card:", gameboard.can_select_card)
+
+		if gameboard and !gameboard.can_select_card:
+			return 
+			
 		if is_in_hand_grp() and !is_lifted:
 			get_parent()._on_card_clicked(self)
+			
 		elif is_lifted:
-			emit_signal("card_selected", global_card_id)
-			is_lifted = false
-			self.visible = false
+			if gameboard and gameboard.can_select_card:
+				print("can select card debug :", gameboard.can_select_card)
+				emit_signal("card_selected", global_card_id)
+				is_lifted = false
+				self.visible = false
+				gameboard.can_select_card = false
+			else:
+				return
 
 
 func is_in_hand_grp():
@@ -142,7 +155,7 @@ func is_mouse_over() -> bool:
 
 func _on_deselect_card() -> void:
 	if not is_lifted:
-		return
+		return 
 	is_lifted = false
 	
 	var orig = get_meta("orig_pos")

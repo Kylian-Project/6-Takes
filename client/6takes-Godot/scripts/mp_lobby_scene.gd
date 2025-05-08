@@ -17,7 +17,7 @@ extends Control
 @onready var players_container = $MainVboxContainer/playersContainer
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 @onready var bot_scene = preload("res://scenes/BotSlot.tscn")
-@onready var message_label = $mssgLabel
+@onready var message_control = $mssgControl
 @onready var host_node = $MainVboxContainer/HBoxContainer/HostPlayer
 
 #lobby info 
@@ -43,8 +43,8 @@ func _ready():
 	scene_changed = false 
 	bot_count = 0
 	
-	player_username = get_node("/root/Global").player_name
-	players_count = get_node("/root/GameState").players_count
+	player_username = Global.player_name
+	players_count = GameState.players_count
 	
 	# Hover sounds
 	start_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -139,10 +139,9 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			_handle_game_starting()
 			
 		"kicked":
-			message_label.visible = true
-			await get_tree().create_timer(3).timeout
-			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-			
+			message_control.get_node("mssg").text = "\nYou have been kicked from this lobby!"
+			message_control.visible = true
+
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
 			
@@ -195,10 +194,11 @@ func _refresh_player_list(data):
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
 	
-	if players_count == 1:
-		start_button.disabled = true
-	else:
+	if players_count > 1 and is_host:
 		start_button.disabled = false
+	else:
+		start_button.disabled = true
+		
 	players_count_panel.text = str(players_count) + " / " + str(players_limit)
 	
 	## Update HostPlayer node
@@ -365,3 +365,7 @@ func reinit_gameState():
 	GameState.lobby_name = ""
 	GameState.other_players = []
 	GameState.rankings = null 
+
+
+func _on_close_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
