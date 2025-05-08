@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://btkcwru58g8yx"]
+[gd_scene load_steps=14 format=3 uid="uid://btkcwru58g8yx"]
 
 [ext_resource type="Script" path="res://scripts/score_board.gd" id="1_4ullc"]
 [ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_w28lv"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bxec0nhbpwwh" path="res://assets/images/scoreboard/medal1.png" id="4_s3lmw"]
 [ext_resource type="Texture2D" uid="uid://s4xtij5nnecl" path="res://assets/images/scoreboard/medal2.png" id="5_vtcfa"]
 [ext_resource type="Texture2D" uid="uid://drevf1evdc1cm" path="res://assets/images/scoreboard/medal3.png" id="6_ikr82"]
+[ext_resource type="Texture2D" uid="uid://bjllyidvqypde" path="res://assets/images/scoreboard/medaille.png" id="8_82tcj"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="8_s5ir0"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="9_c1skm"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="10_gib8s"]
@@ -259,6 +260,12 @@ horizontal_alignment = 2
 visible = false
 layout_mode = 2
 
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player4"]
+custom_minimum_size = Vector2(70, 60)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player4"]
 layout_mode = 2
 size_flags_horizontal = 6
@@ -288,6 +295,12 @@ horizontal_alignment = 2
 [node name="player5" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
 visible = false
 layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player5"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
 
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player5"]
 layout_mode = 2
@@ -319,6 +332,12 @@ horizontal_alignment = 2
 visible = false
 layout_mode = 2
 
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player6"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player6"]
 layout_mode = 2
 size_flags_horizontal = 7
@@ -348,6 +367,12 @@ horizontal_alignment = 2
 [node name="player7" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
 visible = false
 layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player7"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
 
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player7"]
 layout_mode = 2
@@ -379,6 +404,12 @@ horizontal_alignment = 2
 visible = false
 layout_mode = 2
 
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player8"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player8"]
 layout_mode = 2
 size_flags_horizontal = 7
@@ -409,6 +440,12 @@ horizontal_alignment = 2
 visible = false
 layout_mode = 2
 
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player9"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player9"]
 layout_mode = 2
 size_flags_horizontal = 7
@@ -438,6 +475,12 @@ horizontal_alignment = 2
 [node name="player10" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
 visible = false
 layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player10"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
 
 [node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player10"]
 layout_mode = 2

@@ -161,6 +161,7 @@ func show_turn_score(data):
 	showing_score = true
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("leaveButton").disabled = true
+	score_instance.gameboard = self
 	await get_tree().create_timer(2.5).timeout
 
 	var overlay_layer = CanvasLayer.new()
@@ -168,9 +169,7 @@ func show_turn_score(data):
 	add_child(overlay_layer)
 	
 	get_tree().current_scene.add_child(score_instance)
-	
-	await get_tree().create_timer(10).timeout
-	score_instance.queue_free()
+
 	#queue_free()
 	
 	
@@ -511,6 +510,7 @@ func _handle_end_game(data):
 	
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("closeButton").disabled = true
+	score_instance.gameboard = self
 	await get_tree().create_timer(3).timeout
 	#TRANSITION FIX HERE 
 	#var transition_scene = load("res://scenes/Transition.tscn")

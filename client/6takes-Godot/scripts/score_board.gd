@@ -3,6 +3,7 @@ extends Control
 var top_ranks
 var others 
 var rankings_list
+var gameboard
 
 func _ready():
 	top_ranks = [$rankingsControl/Panel/rankingsList/first,
@@ -21,6 +22,9 @@ func _ready():
 
 	rankings_list = get_node("/root/GameState").rankings
 	update_rankings(rankings_list)
+	
+	if !gameboard.game_ended:
+		start_auto_close_timer()
 	
 	
 func update_rankings(rankings_list):
@@ -49,4 +53,11 @@ func _on_leave_button_pressed() -> void:
 
 
 func _on_close_button_pressed() -> void:
-	queue_free()
+	if is_instance_valid(self):
+		queue_free()
+
+
+func start_auto_close_timer():
+	await get_tree().create_timer(8).timeout
+	if is_instance_valid(self):
+		queue_free()
