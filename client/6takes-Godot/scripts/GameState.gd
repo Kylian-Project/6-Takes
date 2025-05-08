@@ -8,7 +8,10 @@ var is_host = false
 var is_public = true
 var players_limit = 10
 var players_count = 1
+var bot_count
 var other_players = []
+var card_number = 10
+var timer = 45
 var data
 var rounds
 var rankings

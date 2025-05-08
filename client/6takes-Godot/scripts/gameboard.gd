@@ -133,6 +133,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_handle_next_round(data)
 		"score-manche":
 			show_turn_score(data)
+		"remove-room":
+			_handle_remove_room()
 		"sorted-cards":
 			print("sorted cards received :", data)
 			if !cards_sorted:
@@ -145,6 +147,10 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	if hand_received and not turn_emitted and not game_ended and not showing_score:
 		turn_emitted = true
 		_start_turn()
+
+
+func _handle_remove_room():
+	pass
 
 
 func _handle_next_round(data):

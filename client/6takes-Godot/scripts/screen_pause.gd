@@ -8,6 +8,10 @@ extends Control
 @onready var leave_button = $PauseOverlay/VBoxContainer/leave
 @onready var close_button = $SettingsOverlay/Close
 
+var id_lobby
+var username
+var is_host
+
 func _ready():
 	# Connect buttons
 	resume_button.pressed.connect(_on_resume_pressed)
@@ -18,6 +22,11 @@ func _ready():
 	# Show pause overlay by default
 	pause_overlay.visible = true
 	settings_overlay.visible = false
+	
+	id_lobby = GameState.id_lobby
+	is_host = GameState.is_host
+	username = Global.player_name
+	
 
 func _on_resume_pressed():
 	visible = false  # Hide the entire Screenpause overlay
@@ -31,4 +40,6 @@ func _on_close_settings_pressed():
 	pause_overlay.visible = true
 
 func _on_leave_pressed():
+	if is_host:
+		SocketManager.emit("leave-room", { "roomId": id_lobby })
 	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")

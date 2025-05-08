@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
-[ext_resource type="PackedScene" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" uid="uid://c1bikqhwekjd3" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="8_b6qql"]
 [ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="9_wh5ub"]

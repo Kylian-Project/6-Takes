@@ -92,8 +92,6 @@ func _ready():
 			add_bot_button.disabled = true
 	
 	else:
-		print("emit get lobby info")
-		#SocketManager.emit("users-in-private-room", id_lobby) 
 		SocketManager.emit("get-lobby-info", id_lobby)
 
 	var data = get_node("/root/GameState").data
@@ -145,23 +143,48 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
 			
+		"remove-room":
+			_handle_remove_room()
+			
+		"room-settings-updated":
+			_handle_update_settings(data)
+			
 		"lobby-info":
 			print("lobby info received ", data)
 			if(data != null):
-				get_node("/root/GameState").lobby_name = data[0].get("room").get("settings").get("lobbyName")
-				get_node("/root/GameState").players_limit = data[0].get("room").get("settings").get("playerLimit")
-				get_node("/root/GameState").rounds = data[0].get("room").get("settings").get("rounds")
+				GameState.lobby_name = data[0].get("room").get("settings").get("lobbyName")
+				GameState.players_limit = data[0].get("room").get("settings").get("playerLimit")
+				GameState.rounds = data[0].get("room").get("settings").get("rounds")
 				
 				#set lobby info
-				lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+				lobby_name = str(GameState.lobby_name) + "  LOBBY"
 				lobby_name_panel.text = lobby_name
-				players_limit = get_node("/root/GameState").players_limit
+				players_limit = GameState.players_limit
 				players_count_panel.text = str(players_count) + " / " + str(players_limit)
 
 		_:
 			print("unhandled event received \n", event, data)
 
 
+func _handle_update_settings(data):
+	print("lobby settings updated ", data)
+	if(data != null):
+		GameState.players_limit = data[0].get("playerLimit")
+		GameState.rounds = data[0].get("rounds")
+		GameState.card_number = data[0].get("numberOfCards")
+		GameState.timer = data[0].get("roundTimer")
+		
+		#set lobby info
+		lobby_name = str(GameState.lobby_name) + "  LOBBY"
+		lobby_name_panel.text = lobby_name
+		players_limit = GameState.players_limit
+		players_count_panel.text = str(players_count) + " / " + str(players_limit)
+
+	
+	
+func _handle_remove_room():
+	message_control.get_node("mssg").text = "\n Lobby has been removed"
+	
 func _handle_game_starting():
 	if !is_host and !scene_changed:
 		scene_changed = true
@@ -214,6 +237,7 @@ func _refresh_player_list(data):
 		host_user.get("icon", 0),
 		true # is_host = true
 	)
+	
 	#add players to scene
 	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
@@ -281,7 +305,8 @@ func remove_bot(bot_instance):
 	if bot_count > 0:
 		bot_count -= 1
 		players_count -= 1
-		get_node("/root/GameState").players_count = players_count
+		GameState.players_count = players_count
+		GameState.bot_count = bot_count
 		#send remove bot to server
 		var bot_name = "Bot" + str(bot_instance.bot_index)
 		kick_player(bot_name)
@@ -308,8 +333,9 @@ func _on_add_bot_button_pressed() -> void:
 	bot_count += 1
 	
 	players_count += 1
-	get_node("/root/GameState").players_count = players_count
-	#update_bot_slots()
+	GameState.players_count = players_count
+	GameState.bot_count = bot_count
+	
 	SocketManager.emit("join-room", 
 	{
 		"roomId" : id_lobby,
@@ -369,3 +395,7 @@ func reinit_gameState():
 
 func _on_close_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
+
+func _on_settings_button_pressed() -> void:
+	get_node("lobbySettings").visible = true
