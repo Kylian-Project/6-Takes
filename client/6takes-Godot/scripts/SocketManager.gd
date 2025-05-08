@@ -8,7 +8,7 @@ signal event_received(event: String, data: Variant, ns: String)
 
 func _ready():
 	add_child(socket_io)
-	var base = "http://" + Global.get_base_url()
+	var base = Global.get_base_http() + Global.get_base_url()
 	socket_io.base_url = base
 	socket_io.connect_socket()
 

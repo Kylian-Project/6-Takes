@@ -65,7 +65,7 @@ func _ready():
 	_load_cards()
 	
 	setting_up_deck = false
-	player_username = Global.player_name
+	player_username = "neila" #Global.player_name
 	room_id_global = GameState.id_lobby
 	me = GameState.player_info
 	turns = GameState.rounds
@@ -231,7 +231,7 @@ func _handle_update_scores(data):
 	score = JSON.stringify(score)
 	score_label.text = score
 	
-	_start_turn()
+	#_start_turn()
 
 
 func _await_row_selection(data):
@@ -262,24 +262,9 @@ func _on_open_pause_button_pressed() -> void:
 	pause_instance.visible = true
 
 func _load_cards():
-	var dir_path = "res://assets/images/cartes/"
-	var dir = DirAccess.open(dir_path)
-	
-	if dir == null:
-		print(" Erreur : Impossible d'ouvrir le dossier des cartes. Vérifiez le chemin !")
-		return
-
-	dir.list_dir_begin()
-
-	var file_name = dir.get_next()
-	while file_name != "":
-		if file_name.ends_with(".png") and not file_name.ends_with(".import"):  
-			var card_id = int(file_name.get_basename())  # L'ID est le nom du fichier sans l'extension
-			var card_path = dir_path + file_name
-			all_cards.append({"id": card_id, "path": card_path})
-		file_name = dir.get_next()
-	
-	dir.list_dir_end()
+	for i in range(1, 105):  # pour les cartes de 1 à 104
+		var path = "res://assets/images/cartes/%d.png" % i
+		all_cards.append({"id": i, "path": path})
 
 
 #utility function 

@@ -11,7 +11,6 @@ var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-var WS_SERVER_URL
 var API_URL
 
 #new password
@@ -41,8 +40,8 @@ func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/inscription"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/inscription"
 
 
 func hash_password(password: String) -> String:
@@ -112,21 +111,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 	self.hide_overlay()
 	self._on_log_in_pressed()
 	return
-
-
-func _connect_to_websocket():
-	if jwt_token == null:
-		print(" Aucun token pour la connexion WebSocket")
-		return
-
-	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
-	var err = ws.connect_to_url(ws_url)
-	if err != OK:
-		print("!! Erreur de connexion WebSocket :", err)
-		return
-
-	print(" WebSocket initialisé, en attente de connexion...")
-	ws_connected = false
 
 
 func _process(_delta):

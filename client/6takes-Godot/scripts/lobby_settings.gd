@@ -19,7 +19,7 @@ var uname
 
 # Called when the node enters the scene tree for the first time.
 func _initialize_settings() -> void:
-	uname = Global.player_name
+	uname ="neila" #Global.player_name
 	
 	lobby_name_field.editable = false 
 	lobby_name_field.placeholder_text = GameState.lobby_name 

@@ -43,7 +43,7 @@ func _ready():
 	scene_changed = false 
 	bot_count = 0
 	
-	player_username = Global.player_name
+	player_username = "neila" #Global.player_name
 	players_count = GameState.players_count
 	
 	# Hover sounds
@@ -69,9 +69,9 @@ func _ready():
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
-	id_lobby = get_node("/root/GameState").id_lobby
-	is_host = get_node("/root/GameState").is_host
-	is_public = get_node("/root/GameState").is_public
+	id_lobby = GameState.id_lobby
+	is_host = GameState.is_host
+	is_public = GameState.is_public
 	
 	var code = ""
 	for i in range(len(str(id_lobby))):
@@ -143,7 +143,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
 			
-		"remove-room":
+		"remove-room", "remove-public-room", "remove-private-room":
 			_handle_remove_room()
 			
 		"room-settings-updated":
@@ -184,6 +184,7 @@ func _handle_update_settings(data):
 	
 func _handle_remove_room():
 	message_control.get_node("mssg").text = "\n Lobby has been removed"
+	message_control.visible = true
 	
 func _handle_game_starting():
 	if !is_host and !scene_changed:

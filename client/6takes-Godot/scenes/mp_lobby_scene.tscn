@@ -806,6 +806,7 @@ icon_alignment = 2
 expand_icon = true
 
 [node name="lobbySettings" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

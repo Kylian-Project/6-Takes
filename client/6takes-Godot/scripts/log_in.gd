@@ -5,7 +5,7 @@ extends Control
 @onready var login_button = $LoginButton
 @onready var sign_up_button = $HBoxContainer/SignUp
 @onready var forgot_password_button = $ForgotPassword
-@onready var cancel_button = $Control/CancelButton
+@onready var cancel_button = $CancelButton
 
 @onready var http_request = $HTTPRequest_auth
 @onready var visibility_button = $VBoxContainer/password_input/visibility_button
@@ -15,7 +15,6 @@ var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-var WS_SERVER_URL 
 var API_URL  
 
 #pop Up panel 
@@ -33,8 +32,8 @@ func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/connexion"
 	
 	# Soundboard
 	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -114,12 +113,13 @@ func _on_http_request_completed(result, response_code, headers, body):
 		player_data = response["player"]
 		print(" Connexion réussie ! ")
 
+
 		var player_id = response["player"]["id"]
 		var player_name = response["player"]["username"]
 		var icon_id = response["player"]["icon"]
 
-		get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
-		_connect_to_websocket()
+		
+		Global.save_session(jwt_token, player_id, player_name, icon_id)
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
@@ -147,19 +147,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 		#print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
 
 
-func _connect_to_websocket():
-	if jwt_token == null:
-		print(" Aucun token pour la connexion WebSocket")
-		return
 
-	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
-	var err = ws.connect_to_url(ws_url)
-	if err != OK:
-		print("!! Erreur de connexion WebSocket :", err)
-		return
-
-	print("WebSocket initialisé, en attente de connexion...")
-	ws_connected = false
 
 func _process(_delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
