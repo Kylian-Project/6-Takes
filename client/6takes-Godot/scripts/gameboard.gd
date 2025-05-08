@@ -139,6 +139,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"manche_suivante":
 			_handle_next_round(data)
 		"cartes-jouees":
+			print("I AM IMPORTANT FIND ME IN THE TERMINAL")
+			print("yurrrrrrr")
 			_cards_from_players(data)
 		"end-game":
 			_handle_end_game(data)
@@ -223,6 +225,7 @@ func _handle_update_scores(data):
 func _handle_table(data):
 	print("Data received for table:", data)
 	var animate = (game_state == GameState.SETTING_UP_DECK)
+	#_clear_card_containers()
 	update_table_ui(data, animate)
 	
 	game_state = GameState.GAME_STARTED
@@ -242,7 +245,39 @@ func on_player_selects_row(data):
 	selection_buttons(true)
 
 func _cards_from_players(data) -> void:
-	return
+	print(data)
+	_clear_card_containers()
+
+	if data.size() == 0:
+		push_warning("Received empty data list")
+		return
+
+	var players = data[0]  # Unwrap the outer list
+
+	for player_data in players:
+		var username = player_data.username
+		var carte = player_data.carte
+		var numero = carte.numero
+
+		# Instantiate card
+		var card_info = _find_card_data(numero)
+		var target_container = null
+		if card_info:
+			var card_instance = card_ui_scene.instantiate()
+			# Determine the correct container
+			print("we made it?")
+			if left_player_container.has_node(username):
+				target_container = left_player_container.get_node(username)
+			elif right_player_container.has_node(username):
+				target_container = right_player_container.get_node(username)
+			else:
+				push_warning("No container found for user: %s" % username)
+				continue
+
+			# Add card to player's container
+			target_container.add_child(card_instance)
+			card_instance.set_card_data(card_info["path"], numero)
+			card_instance.start_flip_timer(2.0)
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -333,6 +368,7 @@ func _on_card_selected(card_number):
 	
 	
 func update_table_ui(table_data, animation):
+	#_clear_card_containers()
 	var row_containers = [row1, row2, row3, row4]
 	
 	if table_data.size() > 0:
@@ -498,19 +534,26 @@ func setup_players(player_data):
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
 		var slot = HBoxContainer.new()
+		vis.name = "PlayerVisual"
 		slot.name = user.username
 		slot.add_child(vis)
 		
 		if i % 2 == 0:
 			left_player_container.add_child(slot)
 		else:
+			slot.layout_direction = BoxContainer.LAYOUT_DIRECTION_RTL
 			right_player_container.add_child(slot)
 
 
 	if current_player:
 		var player_visual_instance = player_visual_scene.instantiate()
 		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
-		right_player_container.add_child(me_vis)
+		var slot = HBoxContainer.new()
+		me_vis.name = "PlayerVisual"
+		slot.name = current_player.get("username","")
+		slot.layout_direction = BoxContainer.LAYOUT_DIRECTION_RTL
+		slot.add_child(me_vis)
+		right_player_container.add_child(slot)
 		
 	else:
 		print("Couldn’t find current_player in %s" , players)
@@ -579,3 +622,12 @@ func clear_children_except_buttons(node: Node) -> void:
 		if child is Button:
 			continue
 		child.queue_free()
+
+func _clear_card_containers():
+	for container in [left_player_container, right_player_container]:
+		for player_container in container.get_children():
+			if player_container is HBoxContainer:
+				for child in player_container.get_children():
+				# Keep the base visual, assumed to be named "PlayerVisual"
+					if child.name != "PlayerVisual":
+						child.queue_free()
