@@ -231,7 +231,7 @@ func _handle_update_scores(data):
 	score = JSON.stringify(score)
 	score_label.text = score
 	
-	#_start_turn()
+	_start_turn()
 
 
 func _await_row_selection(data):
