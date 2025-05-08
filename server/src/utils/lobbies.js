@@ -311,7 +311,9 @@ export const roomHandler = (socket, io) =>
                 socket.emit("public-room-joined", users);
                 socket.to(roomId).emit("users-in-your-public-room", users);
             }
-        } 
+
+        }
+
         else
         {
             socket.emit("room-join-failed");
@@ -380,28 +382,14 @@ export const roomHandler = (socket, io) =>
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return socket.emit("error", "Lobby introuvable");
-        
     
         // Mettre à jour en mémoire (rooms[])
         room.settings = { ...room.settings, ...newSettings };
-        console.log(`🔧 Paramètres du lobby ${roomId} mis à jour:`, room.settings);
-    
-        // // Mettre à jour dans la base de données
-        // try {
-        //     await Lobby.update(newSettings, { where: { id: roomId } });
-        //     console.log("✅ Paramètres du lobby mis à jour en BDD");
-        // } catch (err) {
-        //     console.error("❌ Erreur lors de la mise à jour des paramètres en BDD :", err.message);
-        //     return socket.emit("error", "Erreur lors de la mise à jour des paramètres");
-        // }
-    
+        // console.log(`🔧 Paramètres du lobby ${roomId} mis à jour:`, room.settings);
+
         // Notifier tous les membres de la room
-        io.to(roomId).emit("room-settings-updated", room.settings);
+        io.to(roomId).emit("room-settings-updated", room.settings);    
     });
-    
-
-
-
 
 }
 

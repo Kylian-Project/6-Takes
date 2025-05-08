@@ -57,7 +57,7 @@ const timers = {};  // un timer par room
 const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 const joueursPretPourTour = {};
-
+const carte_animation =  {};
 
 	  	//////////////////////////////////////////////////
 		/////// Deroulement du jeu ///////////////////////
@@ -161,7 +161,6 @@ export const PlayGame = (socket, io) =>
 		
 		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const joueursAttendus = usernames.length - nombreBots;
-		  
 
 		//on lance tour que si ils sont tous la 
 		//histoire de tout factoriser a l'interieur de tour 
@@ -207,7 +206,7 @@ export const PlayGame = (socket, io) =>
 
 		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
 		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
-	  
+
 	  
 		const room = rooms.find(r => r.id === roomId);	  
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
@@ -227,6 +226,8 @@ export const PlayGame = (socket, io) =>
 			//pour traiter les cartes une par une on ajoute une file
 			//on copie le contenu exct de CarteAJou dans fileTraitement
 			fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+			carte_animation[roomId] = [];
+			carte_animation[roomId] = cartesAJoueesParRoom[roomId];
 
 			await traiterProchaineCarte(roomId, jeu, io, rooms);
 
@@ -340,10 +341,10 @@ function notifierScore(io, roomId, jeu)
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
-	let carteJouee = cartesAJoueesParRoom[roomId];
-	console.log("cartes jouees", carteJouee);
+	//let carteJouee = cartesAJoueesParRoom[roomId];
+	console.log("cartes jouees", carte_animation[roomId]);
 
-	io.to(roomId).emit("cartes-jouees", carteJouee);
+	io.to(roomId).emit("cartes-jouees", carte_animation[roomId]);
 	io.to(roomId).emit("update-scores", scores);
   
 	cartesAJoueesParRoom[roomId] = [];
@@ -423,6 +424,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
         fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+        cartesAJoueesParRoom[roomId] = [];
         traiterProchaineCarte(roomId, jeu, io, rooms);
         
 
@@ -500,6 +502,7 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 async function traiterProchaineCarte(roomId, jeu, io, rooms) 
 {
     const file = fileTraitementParRoom[roomId];
+
     const room = rooms.find(r => r.id === roomId);
     if (!file || !file.length || !room) return;
 
