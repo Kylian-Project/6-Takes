@@ -119,7 +119,12 @@ func _ready() -> void:
 
 
 func _process(_delta):
-	overlay_layer.visible = overlay_layer.get_child_count() > 0
+	overlay_layer.visible = (
+		settings_overlay.visible or
+		rules_overlay.visible or
+		accessibility_overlay.visible
+	)
+	
 
 func _on_multi_player_button_pressed() -> void:
 	#get_node("/root/Global").load_session()
@@ -147,16 +152,22 @@ func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
 
-func open_overlay(overlay: Control):
+func open_overlay(panel: Control):
+	 # 1) hide all panels
 	settings_overlay.visible      = false
 	rules_overlay.visible         = false
 	accessibility_overlay.visible = false
-	overlay.visible = true
-	# bring the dimmer / layer up
+	# 2) show & reorder the blocker (OverlayLayer)
 	overlay_layer.visible = true
-	 # disable the overlay-open buttons
+	# move OverlayLayer to be the last child so it draws on top
+	move_child(overlay_layer, get_child_count() - 1)
+	# 3) show & reorder your chosen panel above the blocker
+	panel.visible = true
+	move_child(panel, get_child_count() - 1)
+
 	for b in overlay_buttons:
 		b.disabled = true
+
 
 func show_settings() -> void:
 	open_overlay(settings_overlay)

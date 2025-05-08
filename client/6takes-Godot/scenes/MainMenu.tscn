@@ -380,6 +380,15 @@ icon = ExtResource("7_r14rk")
 icon_alignment = 1
 expand_icon = true
 
+[node name="OverlayLayer" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="RulesOverlay" parent="." instance=ExtResource("7_bu2nq")]
 visible = false
 layout_mode = 1
@@ -874,15 +883,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_uyiyq")
 icon = ExtResource("6_s440s")
 icon_alignment = 1
 expand_icon = true
-
-[node name="OverlayLayer" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [connection signal="pressed" from="VButtons/SinglePlayerButton" to="." method="_on_single_player_button_pressed"]
 [connection signal="pressed" from="VButtons/MultiPlayerButton" to="." method="_on_multi_player_button_pressed"]
