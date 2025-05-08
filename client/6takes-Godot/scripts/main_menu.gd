@@ -45,6 +45,9 @@ var rules_instance = null
 var logged_in 
 
 func _ready() -> void:
+	if OS.get_name() == "Web":
+		quit_button.hide()
+	
 	rules_overlay.visible = false
 	settings_overlay.visible = false
 	accessibility_overlay.visible = false

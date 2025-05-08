@@ -5,7 +5,6 @@ class_name Player
 var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
-var WS_SERVER_URL
 var API_URL
 
 # --- External Data (Need to fecth from server)
@@ -37,8 +36,8 @@ const MAX_CARDS := 10
 
 func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/playerinfo"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/playerinfo"
 	
 	#tsester
 	#name_label.text = ""

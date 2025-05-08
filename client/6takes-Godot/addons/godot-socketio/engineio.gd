@@ -270,7 +270,10 @@ func _get_url():
 		_url = "%s&sid=%s" % [_url, session_id]
 
 	if _transport_type == TransportType.WEBSOCKET:
+		print("Converting HTTP to WebSocket URL")
 		_url = _convert_http_to_ws(_url)
+
+	print("EngineIO URL: %s" % _url)
 
 	return _url
 

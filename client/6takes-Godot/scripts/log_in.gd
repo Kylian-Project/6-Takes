@@ -15,7 +15,6 @@ var player_data = {}
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-var WS_SERVER_URL 
 var API_URL  
 
 #pop Up panel 
@@ -33,8 +32,8 @@ func _ready():
 	http_request.request_completed.connect(_on_http_request_completed)
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/connexion"
 	
 	# Soundboard
 	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -59,69 +58,59 @@ func _on_login_button_pressed():
 		popup_overlay.visible = true
 		return
 	
+	# Récupérer l'ID unique de l'appareil
+	var device_id = OS.get_unique_id()
+	
 	var payload = {
 		"username": username_email,
-		"password": password_hashed
+		"password": password_hashed,
+		"device_id": device_id
 	}
 
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
 
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
+	print("ID de l'appareil :", device_id)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
 
 func _on_http_request_completed(result, response_code, headers, body):
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
-	
+
 	print("Réponse HTTP reçue : code =", response_code)
-	
+	print("Corps de la réponse :", response_str)
+
+	# Vérification si la réponse est une erreur
 	if response_code != 200:
 		if parsed == null or response_code == 0 :
 			popup_message.text = "Server Connexion Error"
 		else:
-			popup_message.text = parsed["message"]
+			# Affichage du message d'erreur retourné par le serveur
+			popup_message.text = parsed.get("message", "Erreur inconnue")
 		popup_overlay.visible = true
 		return
 
-
+	# Si le code est 200 (succès), traiter la connexion
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	var response = json
 	if "token" in response:
 		jwt_token = response["token"]
 		player_data = response["player"]
 		print(" Connexion réussie ! ")
-		
+
 		var raw_response = body.get_string_from_utf8()
 		var result_string = JSON.parse_string(raw_response)
 		
-		var playerIid = result_string["player"]["id"]
+		var player_id = result_string["player"]["id"]
 		var player_name = result_string["player"]["username"]
 		var icon_id = result_string["player"]["icon"]
-		var player_id =  playerIid
-		
 		
 		get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
-		_connect_to_websocket()
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
-
-
-func _connect_to_websocket():
-	if jwt_token == null:
-		print(" Aucun token pour la connexion WebSocket")
-		return
-
-	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
-	var err = ws.connect_to_url(ws_url)
-	if err != OK:
-		print("!! Erreur de connexion WebSocket :", err)
-		return
-
-	print("WebSocket initialisé, en attente de connexion...")
-	ws_connected = false
 
 func _process(_delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:

@@ -45,4 +45,3 @@ script = SubResource("GDScript_3auvx")
 
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("3_bj0xr")
-base_url = "ws://185.155.93.105:14001"
