@@ -66,16 +66,22 @@ func _ready():
 	print("BASE URL ", BASE_URL)
 
 	
-	
+# Server Info GET
 func get_base_url():
 	return BASE_URL 
-
 func get_base_http():
 	return BASE_HTTP
-
 func get_ws_prefix():
 	return WS_PREFIX
 	
+# Server Info SET
+func set_base_url(url):
+	BASE_URL = url
+func set_base_http(http):
+	BASE_HTTP = http
+func set_ws_prefix(prefix):
+	WS_PREFIX = prefix
+
 func getLogged_in():
 	return logged_in
 	
