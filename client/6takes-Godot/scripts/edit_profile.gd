@@ -13,7 +13,6 @@ extends Control
 @onready var popup_panel = $popupPanel
 
 var API_URL
-var WS_SERVER_URL
 var player_id
 var selected_icon = "dark_grey.png"  # Default icon
 var current_action = ""  # Used to distinguish between "logout" and "update_icon"
@@ -33,8 +32,8 @@ func _ready():
 	close_button.pressed.connect(func(): self.queue_free())
 	
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/logout"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/logout"
 	
 	player_id = get_node("/root/Global").get_player_id()
 	
@@ -79,8 +78,8 @@ func send_icon_to_database(icon_name):
 	print("DEBUG | Icon ID to send:", icon_id)
 
 	var json_body = JSON.stringify({ "icon": icon_id })
-
-	var url = "http://" + get_node("/root/Global").get_base_url() + "/api/player/updateProfile"
+	
+	var url = get_node("/root/Global").get_base_http() + get_node("/root/Global").get_base_url() + "/api/player/updateProfile"
 	var token = get_node("/root/Global").get_saved_token()
 	var headers = ["Authorization: Bearer " + token, "Content-Type: application/json"]
 
