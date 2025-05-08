@@ -3,7 +3,7 @@ import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 import Player from "../models/player.js"
 
-
+const ID_LENGTH = 4;
 
 class RoomUser {
     constructor(username, idSocketUser) {
@@ -117,7 +117,7 @@ export const roomHandler = (socket, io) =>
         //dé-structuration de l'objet en des variables
         const 
         {
-            username = "Anonyme",       //TODO : a recuperer de la bdd une fois la liaison faite avec login 
+            username = "Anonyme",       //TODO : a recuperer de la bdd une fois la liaison faite avec login !!!
             lobbyName = "",
             playerLimit = 10,
             numberOfCards = 10,
@@ -376,12 +376,34 @@ export const roomHandler = (socket, io) =>
     });
     
 
+    socket.on("update-room-settings", async ({ roomId, newSettings }) => 
+    {
+        const room = rooms.find(r => r.id === roomId);
+        if (!room) return socket.emit("error", "Lobby introuvable");
+        
+    
+        // Mettre à jour en mémoire (rooms[])
+        room.settings = { ...room.settings, ...newSettings };
+        console.log(`🔧 Paramètres du lobby ${roomId} mis à jour:`, room.settings);
+    
+        // // Mettre à jour dans la base de données
+        // try {
+        //     await Lobby.update(newSettings, { where: { id: roomId } });
+        //     console.log("✅ Paramètres du lobby mis à jour en BDD");
+        // } catch (err) {
+        //     console.error("❌ Erreur lors de la mise à jour des paramètres en BDD :", err.message);
+        //     return socket.emit("error", "Erreur lors de la mise à jour des paramètres");
+        // }
+    
+        // Notifier tous les membres de la room
+        io.to(roomId).emit("room-settings-updated", room.settings);
+    });
+    
 
 
-};
 
 
-
+}
 
 
     //////////////////////////////////////////////////
