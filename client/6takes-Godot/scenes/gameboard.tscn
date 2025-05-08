@@ -302,7 +302,7 @@ vertical_alignment = 1
 [node name="LPlayer_container" type="VBoxContainer" parent="."]
 offset_left = 40.0
 offset_top = 140.0
-offset_right = 240.0
+offset_right = 320.0
 offset_bottom = 852.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -310,9 +310,9 @@ theme_override_constants/separation = 30
 alignment = 1
 
 [node name="RPlayer_container" type="VBoxContainer" parent="."]
-offset_left = 1693.0
+offset_left = 1612.0
 offset_top = 140.0
-offset_right = 1893.0
+offset_right = 1892.0
 offset_bottom = 852.0
 theme_override_constants/separation = 30
 alignment = 1
