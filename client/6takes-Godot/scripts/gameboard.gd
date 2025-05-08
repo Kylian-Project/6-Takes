@@ -138,6 +138,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			takes_row(data)
 		"manche_suivante":
 			_handle_next_round(data)
+		"cartes-jouees":
+			_cards_from_players(data)
 		"end-game":
 			_handle_end_game(data)
 		_:
@@ -239,6 +241,8 @@ func on_player_selects_row(data):
 	highlight_row(true)
 	selection_buttons(true)
 
+func _cards_from_players(data) -> void:
+	return
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -508,7 +512,8 @@ func setup_players(player_data):
 		
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
-		var slot = VBoxContainer.new()
+		var slot = HBoxContainer.new()
+		slot.name = user.username
 		slot.add_child(vis)
 		
 		if i % 2 == 0:
