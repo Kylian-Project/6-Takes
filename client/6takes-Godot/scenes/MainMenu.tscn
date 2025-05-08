@@ -12,7 +12,7 @@
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="10_3xae7"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="10_dnsu6"]
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
-[ext_resource type="Texture2D" uid="uid://cq60c45jg1ve7" path="res://scenes/accessibilite.png" id="11_3dgwy"]
+[ext_resource type="Texture2D" uid="uid://d1retdvnppn7q" path="res://assets/images/accessibilite.png" id="11_3dgwy"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="11_tnfns"]
 [ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="15_3wg6b"]
