@@ -6,7 +6,7 @@ const DEFAULT_CONTRAST   = 1.0
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
 @onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
-@onready var color_blind= $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions/Colorblindness
+@onready var color_blind = get_node("/root/ColorBlindness")     
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
 @onready var rules_button = $Rules
@@ -21,6 +21,7 @@ const DEFAULT_CONTRAST   = 1.0
 @onready var brightness_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider
 @onready var contrast_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider
 @onready var reset_button = $AccessibilityOverlay/ResetButtonAccessibility
+const USER_SETTINGS : String = "user://settings.cfg"
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
@@ -47,6 +48,8 @@ func _ready() -> void:
 	rules_overlay.visible = false
 	settings_overlay.visible = false
 	accessibility_overlay.visible = false
+	overlay_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay_layer.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
 	settings_button.pressed.connect(show_settings)
 	profile_button.pressed.connect(_on_profile_pressed)
@@ -67,16 +70,17 @@ func _ready() -> void:
 	colorblind_option.clear()
 	colorblind_option.add_item("Off", 0)
 	colorblind_option.add_item("On",  1)
-	colorblind_option.item_selected.connect(self._on_color_blind_options_item_selected)
 
 	 # 2) load whatever they last picked (default to “Off” → 0):
+	# read the last-saved choice (default to 0)
 	var last = 0
-	if ProjectSettings.has_setting("accessibility/colorblind_mode"):
-		last = ProjectSettings.get_setting("accessibility/colorblind_mode")
-		colorblind_option.select(last)
-		# run the handler once so the filter actually reflects it:
-		_on_color_blind_options_item_selected(last)
-		
+	var cfg = ConfigFile.new()
+	if cfg.load(USER_SETTINGS) == OK:
+		last = int(cfg.get_value("accessibility", "colorblind_mode", 0))
+	colorblind_option.select(last)
+	_on_color_blind_options_item_selected(last)
+
+	colorblind_option.item_selected.connect(_on_color_blind_options_item_selected)
 		
 	# Click Soundboard
 	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
@@ -144,30 +148,24 @@ func _on_cancel_button_pressed() -> void:
 
 
 func open_overlay(overlay: Control):
-# hide any other overlays
 	settings_overlay.visible      = false
 	rules_overlay.visible         = false
 	accessibility_overlay.visible = false
-	# show this one
 	overlay.visible = true
-
-	# bring the dimmer / layer up if you have one
+	# bring the dimmer / layer up
 	overlay_layer.visible = true
-
-	# disable the overlay-open buttons
+	 # disable the overlay-open buttons
 	for b in overlay_buttons:
 		b.disabled = true
 
 func show_settings() -> void:
-	settings_overlay.visible = true
-	overlay_layer.visible   = true   # make sure your dim-layer shows
-	for b in overlay_buttons:
-		b.disabled = true
+	open_overlay(settings_overlay)
 
 func hide_settings() -> void:
-	settings_overlay.visible = false
-	overlay_layer.visible   = false
+	settings_overlay.visible     = false
 	accessibility_overlay.visible = false
+	rules_overlay. visible = false
+	overlay_layer.visible = false
 	for b in overlay_buttons:
 		b.disabled = false
 	
@@ -205,12 +203,16 @@ func _on_contrast_slider_value_changed(value: float) -> void:
 	GlobalWorldEnvironment.environment.adjustment_contrast = value
 
 func _on_color_blind_options_item_selected(index: int) -> void:
-	# use the 'index' parameter, not 'id'
-	ColorBlindness.Type = index
-	# save so it sticks across scenes / sessions
-	ProjectSettings.set_setting("accessibility/colorblind_mode", index)
-	ProjectSettings.save()
+	color_blind.visible = (index == 1)
+	# persist it to user://settings.cfg
+	var cfg = ConfigFile.new()
+	# try to load existing so you don’t wipe out other keys
+	if cfg.load(USER_SETTINGS) != OK:
+		# no file yet — that’s fine
+		pass
 
+	cfg.set_value("accessibility", "colorblind_mode", index)
+	cfg.save(USER_SETTINGS)
 
 
 func _on_reset_button_accessibility_pressed() -> void:
