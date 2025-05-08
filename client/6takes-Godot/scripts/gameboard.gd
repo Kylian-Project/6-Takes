@@ -244,10 +244,13 @@ func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
 
-		add_child(pause_instance)
+		var overlay_layer = CanvasLayer.new()
+		overlay_layer.layer = 10  # Higher layer to make sure it is on top of the cards
+		overlay_layer.add_child(pause_instance)
+		add_child(overlay_layer)
 
 		await get_tree().process_frame
-		pause_instance.position = pause_instance.size
+		#pause_instance.position = pause_instance.size #no longer needed because of canvas layer
 
 	pause_instance.move_to_front()
 	pause_instance.visible = true
@@ -580,20 +583,6 @@ func animate_row_removal(row_index: int) -> void:
 	for card in cards:
 		card.scale = Vector2(1, 1)
 		card.modulate = Color(1, 1, 1, 1)
-
-
-func _animate_removed_from_row(row_index, removed_ids):
-	var container = [row1, row2, row3, row4][row_index]
-	for child in container.get_children():
-		if child.has_method("get_card_id"):
-			var id = child.get_card_id()
-			if removed_ids.has(id):
-				var tw = create_tween()
-				tw.tween_property(child, "modulate:a", 0.0, 0.2)
-				tw.tween_property(child, "scale", Vector2(0.5,0.5), 0.2)
-				await tw.finished
-				if is_instance_valid(child):
-					child.queue_free()
 
 func clear_children_except_buttons(node: Node) -> void:
 	for child in node.get_children():
