@@ -85,6 +85,7 @@ border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [node name="ScreenPause" type="Control"]
+z_index = 30
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -106,6 +107,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.588235)
@@ -201,7 +203,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 1250.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)

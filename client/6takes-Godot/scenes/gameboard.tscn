@@ -62,7 +62,7 @@ script = ExtResource("1_yvybn")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -1
+layer = -5
 
 [node name="background_board" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = 15
@@ -142,10 +142,10 @@ z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 445.0
-offset_top = 144.0
-offset_right = 1595.0
-offset_bottom = 894.0
+offset_left = 382.0
+offset_top = 123.0
+offset_right = 1532.0
+offset_bottom = 873.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_i1c86")
@@ -264,6 +264,7 @@ shape = SubResource("RectangleShape2D_au8mm")
 layer = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2" groups=["hand_grp"]]
+z_index = -5
 custom_minimum_size = Vector2(75, 80)
 anchors_preset = 7
 anchor_left = 0.5
@@ -281,6 +282,7 @@ script = ExtResource("8_tuggc")
 
 [node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
 visible = false
+z_index = 2
 offset_right = 1920.0
 offset_bottom = 1080.0
 
