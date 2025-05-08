@@ -122,6 +122,7 @@ func _ready() -> void:
 
 
 func _process(_delta):
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
 	overlay_layer.visible = (
 		settings_overlay.visible or
 		rules_overlay.visible or
@@ -155,24 +156,28 @@ func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
 
-func open_overlay(panel: Control):
-	 # 1) hide all panels
+func open_overlay(overlay : Control):
+	overlay.visible = true
+	
 	settings_overlay.visible      = false
 	rules_overlay.visible         = false
 	accessibility_overlay.visible = false
-	# 2) show & reorder the blocker (OverlayLayer)
 	overlay_layer.visible = true
-	# move OverlayLayer to be the last child so it draws on top
+	
 	move_child(overlay_layer, get_child_count() - 1)
-	# 3) show & reorder your chosen panel above the blocker
-	panel.visible = true
-	move_child(panel, get_child_count() - 1)
+
+	#move_child(panel, get_child_count() - 1)
 
 	for b in overlay_buttons:
 		b.disabled = true
 
 
 func show_settings() -> void:
+	settings_overlay.visible = true
+	overlay_layer.visible   = true  
+	for b in overlay_buttons:
+		b.disabled = true
+
 	open_overlay(settings_overlay)
 
 func hide_settings() -> void:
