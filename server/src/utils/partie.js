@@ -200,7 +200,6 @@ export const PlayGame = (socket, io) =>
 	socket.on("play-card", async ({ roomId, card, username }) =>
 	{
 
-
 		const jeu = getGame(roomId);
 		if (!jeu) return ;
 	  
@@ -228,7 +227,6 @@ export const PlayGame = (socket, io) =>
 			//pour traiter les cartes une par une on ajoute une file
 			//on copie le contenu exct de CarteAJou dans fileTraitement
 			fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
-			cartesAJoueesParRoom[roomId] = [];
 
 			await traiterProchaineCarte(roomId, jeu, io, rooms);
 
@@ -283,7 +281,23 @@ export const PlayGame = (socket, io) =>
 		handleChoixRangee(roomId, indexRangee, username, io);
 	});
 
-};
+
+	/***************************/
+	/*    5. trier les cartes  */
+	/***************************/
+	socket.on("sort-cards", ({ roomId, username }) => 
+	{
+		const jeu = getGame(roomId);
+		let joueur = jeu.joueurs.find(j => j.nom === username);
+		joueur.trierCarte();
+		socket.emit("sorted-cards", joueur.getHand().map(c => c.numero));
+	});
+
+
+}
+
+
+
 
 
 	//////////////////////////////////////////////////
@@ -326,6 +340,10 @@ function notifierScore(io, roomId, jeu)
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
+	let carteJouee = cartesAJoueesParRoom[roomId];
+	console.log("cartes jouees", carteJouee);
+
+	io.to(roomId).emit("cartes-jouees", carteJouee);
 	io.to(roomId).emit("update-scores", scores);
   
 	cartesAJoueesParRoom[roomId] = [];
@@ -350,13 +368,14 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 
 	const dejaJoue = (cartesAJoueesParRoom[roomId] || []).map(p => p.username);
 	const absents = retrouverJoueursAbsents(roomId, dejaJoue);
+	console.log("absents", absents);
 
 	for (const username of absents) 
 	{
 		const joueur = jeu.joueurs.find(j => j.nom === username);
-		if (!joueur || joueur.getHand().length === 0) continue;
+		if (!joueur || joueur.getHand().length === 0) continue;		
 
-		const carte = joueur.getHand()[0]; // Joue la première carte
+		const carte = joueur.getHand()[0]; // Joue la première carte !!
 		cartesAJoueesParRoom[roomId].push({ username, carte });
 
 		console.log(`🤖 ${username} a joué automatiquement la carte ${carte.numero}`);
@@ -404,7 +423,6 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
         fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
-        cartesAJoueesParRoom[roomId] = [];
         traiterProchaineCarte(roomId, jeu, io, rooms);
         
 
@@ -515,7 +533,6 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 				delete joueur.carteEnAttente;
 				traiterProchaineCarte(roomId, jeu, io, rooms);
 			}
-
 			else
 			{
 				const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
@@ -543,7 +560,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 					
 					//  Lancement écoute du choix
 					socketTarget.on("choisir-rangee", handler);
-					let timer=15;	// on laisse au joueur 15s pour choisir son rang
+					let timer=10;	// on laisse au joueur 15s pour choisir son rang
 
 					//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
 					const timeoutId = setTimeout(() =>  
@@ -560,10 +577,8 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 						resolve();		//on arrete la promesse
 					}, timer*1000);
 				});
-			}	  
+			}
         }
-
-
 		//pour le cas de la 6eme carte
 		else if (res=== "ramassage_rang")
 		{
@@ -598,13 +613,12 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 
 				io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
 
-
 				jeu.mancheSuivante();
 				envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
 				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
 		
 			}
-			else 
+			else
 			{
 				const classement = jeu.joueurs
 				.map(j => ({ nom: j.nom, score: j.score }))
