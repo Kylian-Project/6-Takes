@@ -60,6 +60,8 @@ var game_ended
 var showing_score
 var cards_sorted
 var can_select_card
+var scores_handled
+
 
 func _ready():
 	_load_cards()
@@ -110,7 +112,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 				table_received = true
 				update_table_ui(data, setting_up_deck)
 		"update-scores":
-			_handle_update_scores(data)
+			if !scores_handled:
+				_handle_update_scores(data)
 		"choix-rangee":
 			on_player_selects_row(data)
 		"temps-room":
@@ -143,9 +146,12 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 				
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
-			
-	if hand_received and not turn_emitted and not game_ended and not showing_score:
+	
+	if not turn_emitted and not game_ended:
 		turn_emitted = true
+		
+		print("emit tour")
+		scores_handled = false
 		_start_turn()
 
 
@@ -209,6 +215,7 @@ func _start_turn():
 			"roomId": room_id_global, 
 			"username": player_username
 		})
+	
 
 
 func _handle_timer(data):
@@ -217,6 +224,7 @@ func _handle_timer(data):
 
 
 func _handle_update_scores(data):
+	scores_handled = true
 	turn_emitted = false
 	hand_received = false
 	table_received = false
@@ -231,7 +239,7 @@ func _handle_update_scores(data):
 	score = JSON.stringify(score)
 	score_label.text = score
 	
-	_start_turn()
+	#_start_turn()
 
 
 func _await_row_selection(data):
@@ -273,6 +281,7 @@ func _find_card_data(card_id: int) -> Dictionary:
 		if card["id"] == card_id:
 			return card
 	return {}  
+
 
 
 # --- UI Update Functions ---

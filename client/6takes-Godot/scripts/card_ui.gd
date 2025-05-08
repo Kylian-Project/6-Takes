@@ -86,8 +86,6 @@ func _on_detector_mouse_exited() -> void:
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		#event.accept()
-		print("clicked. is_lifted:", is_lifted, ", can_select_card:", gameboard.can_select_card)
-
 		if gameboard and !gameboard.can_select_card:
 			return 
 			
