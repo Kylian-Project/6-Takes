@@ -13,7 +13,6 @@ extends Control
 @onready var popup_panel = $popupPanel
 
 var API_URL
-var WS_SERVER_URL
 var player_id
 var selected_icon = "dark_grey.png"  # Default icon
 var current_action = ""  # Used to distinguish between "logout" and "update_icon"
@@ -34,9 +33,7 @@ func _ready():
 	
 	var base_url = get_node("/root/Global").get_base_url()
 	var base_http = get_node("/root/Global").get_base_http()
-	var base_ws = get_node("/root/Global").get_ws_prefix()
 	API_URL = base_http + base_url + "/api/player/logout"
-	WS_SERVER_URL = base_ws + base_url
 	
 	player_id = get_node("/root/Global").get_player_id()
 	
