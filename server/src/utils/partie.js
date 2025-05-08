@@ -226,6 +226,8 @@ export const PlayGame = (socket, io) =>
 			//pour traiter les cartes une par une on ajoute une file
 			//on copie le contenu exct de CarteAJou dans fileTraitement
 			fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+
+			//on copie le contenu exct de CarteAJouée dans carte_animation pour pouvoir l'envoyer au client pour l'animation
 			carte_animation[roomId] = [];
 			carte_animation[roomId] = cartesAJoueesParRoom[roomId];
 
@@ -424,6 +426,11 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
         fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+
+		//on copie le contenu exct de CarteAJouée dans carte_animation pour pouvoir l'envoyer au client pour l'animation
+		carte_animation[roomId] = [];
+		carte_animation[roomId] = cartesAJoueesParRoom[roomId];
+
         cartesAJoueesParRoom[roomId] = [];
         traiterProchaineCarte(roomId, jeu, io, rooms);
         
