@@ -34,8 +34,9 @@ func _ready():
 	
 	var base_url = get_node("/root/Global").get_base_url()
 	var base_http = get_node("/root/Global").get_base_http()
+	var base_ws = get_node("/root/Global").get_ws_prefix()
 	API_URL = base_http + base_url + "/api/player/logout"
-	WS_SERVER_URL = "ws://" + base_url
+	WS_SERVER_URL = base_ws + base_url
 	
 	player_id = get_node("/root/Global").get_player_id()
 	

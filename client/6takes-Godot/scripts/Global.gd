@@ -12,6 +12,7 @@ var response_load = config.load(file_path)
 
 var BASE_URL := ""
 var BASE_HTTP := ""
+var WS_PREFIX := ""
 var header := ""
 @onready var popup_scene = preload("res://scenes/popUp.tscn")
 
@@ -51,11 +52,17 @@ func _ready():
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
 	var srv_http = config.get_value("DEFAULT", "SRV_HTTP", "")
 	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
+	var ws_prefix = config.get_value("DEFAULT", "WS_PREFIX", "")
 	var header_prefix =config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "")
 	
 	header = "Authorization: " + header_prefix +" "
-	BASE_URL = srv_url + ":" + srv_port 
+	# si un port est spécifié, on l'ajoute à l'url
+	if srv_port != "":
+		srv_url = srv_url + ":" + srv_port
+	
+	BASE_URL = srv_url
 	BASE_HTTP = srv_http
+	WS_PREFIX = ws_prefix
 	print("BASE URL ", BASE_URL)
 
 	
@@ -65,6 +72,9 @@ func get_base_url():
 
 func get_base_http():
 	return BASE_HTTP
+
+func get_ws_prefix():
+	return WS_PREFIX
 	
 func getLogged_in():
 	return logged_in
