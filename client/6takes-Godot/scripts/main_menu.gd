@@ -3,7 +3,6 @@ extends Control
 const DEFAULT_BRIGHTNESS = 1.0
 const DEFAULT_CONTRAST   = 1.0
 
-@onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
 @onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
 @onready var color_blind = get_node("/root/ColorBlindness")     
@@ -56,6 +55,7 @@ func _ready() -> void:
 	singleplayer_button.pressed.connect(go_to_singleplayer)
 	settings_button.pressed.connect(show_settings)
 	profile_button.pressed.connect(_on_profile_pressed)
+	rules_button.pressed.connect(_on_rules_pressed)
 	quit_button.pressed.connect(quit_game)
 	accessibility_button.pressed.connect(_on_accessibility_button_pressed)	
 	
@@ -104,8 +104,8 @@ func _ready() -> void:
 	
 	colorblind_option.item_selected.connect(_on_color_blind_options_item_selected)
 	
-	get_node("/root/Global").load_session()
-	logged_in = get_node("/root/Global").getLogged_in()
+	Global.load_session()
+	logged_in = Global.getLogged_in()
 	
 	profile_button.visible = logged_in
 	print("visibilty : ", profile_button.visible) 
@@ -122,16 +122,17 @@ func _ready() -> void:
 
 
 func _process(_delta):
-	overlay_layer.visible = (
-		settings_overlay.visible or
-		rules_overlay.visible or
-		accessibility_overlay.visible
-	)
+	overlay_layer.visible = overlay_layer.get_child_count() > 0
+	#overlay_layer.visible = (
+		#settings_overlay.visible or
+		#rules_overlay.visible or
+		#accessibility_overlay.visible
+	#)
 	
 
 func _on_multi_player_button_pressed() -> void:
 	#get_node("/root/Global").load_session()
-	logged_in = get_node("/root/Global").getLogged_in()
+	logged_in = Global.getLogged_in()
 	
 	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
@@ -155,24 +156,29 @@ func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
 
-func open_overlay(panel: Control):
-	 # 1) hide all panels
-	settings_overlay.visible      = false
-	rules_overlay.visible         = false
+func open_overlay(overlay: Control):
+	# Hide all overlays first
+	settings_overlay.visible = false
+	rules_overlay.visible = false
 	accessibility_overlay.visible = false
-	# 2) show & reorder the blocker (OverlayLayer)
+
+	# Show the selected overlay
+	overlay.visible = true
 	overlay_layer.visible = true
-	# move OverlayLayer to be the last child so it draws on top
+
 	move_child(overlay_layer, get_child_count() - 1)
-	# 3) show & reorder your chosen panel above the blocker
-	panel.visible = true
-	move_child(panel, get_child_count() - 1)
 
 	for b in overlay_buttons:
 		b.disabled = true
 
 
+
 func show_settings() -> void:
+	#settings_overlay.visible = true
+	#overlay_layer.visible   = true  
+	for b in overlay_buttons:
+		b.disabled = true
+
 	open_overlay(settings_overlay)
 
 func hide_settings() -> void:
@@ -197,7 +203,21 @@ func _on_profile_pressed():
 	
 	overlay_layer.add_child(edit_profile_instance)
 	overlay_layer.visible = true
+	
+	await get_tree().process_frame
 
+	# Récupère les boutons de l'instance ajoutée
+	var save_button = edit_profile_instance.get_node("EditProfilePanel/MainVertical/SaveIconButton")
+	var close_button = edit_profile_instance.get_node("Close")
+
+	# Connecte les sons si les boutons existent
+	if save_button:
+		save_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		save_button.pressed.connect(SoundManager.play_click_sound)
+
+	if close_button:
+		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
+		close_button.pressed.connect(SoundManager.play_click_sound)
 
 func _on_accessibility_button_pressed() -> void:
 	var b = GlobalWorldEnvironment.environment.adjustment_brightness
