@@ -409,17 +409,18 @@ func _on_card_selected(card_number):
 	
 	
 func update_table_ui(table_data, animation):
-	#_clear_card_containers()
 	var row_containers = [row1, row2, row3, row4]
-	
+	var new_cards_global: Array = []
+
 	if table_data.size() > 0:
 		var rows = table_data[0]
-		
+
 		for i in range(4):
 			var row_data = rows[i]  # New row from server
 			var container = row_containers[i]
 			var previous_row = last_table_state[i]  # Old row
-			
+
+			# Remove old cards that no longer exist
 			var removed_card_ids = []
 			for old_card_id in previous_row:
 				if not row_data.has(old_card_id):
@@ -428,90 +429,54 @@ func update_table_ui(table_data, animation):
 			for child in container.get_children():
 				if child.has_method("get_card_id") and removed_card_ids.has(child.get_card_id()):
 					var tw2 = create_tween()
-					tw2.parallel()  # Start parallel mode
-					
+					tw2.parallel()
 					tw2.tween_property(child, "modulate:a", 0.0, 0.2)
 					tw2.tween_property(child, "scale", Vector2(0.5, 0.5), 0.2)
-					
-					tw2.chain()  # Exit parallel mode if you want to chain something after
+					tw2.chain()
 					await tw2.finished
-					
 					if is_instance_valid(child):
 						child.queue_free()
-			# Update children
+
+			# Clear old cards but keep any UI buttons (if present)
 			clear_children_except_buttons(container)
-			
-			#for card_id in row_data:
-				#var card_info = _find_card_data(card_id)
-				#if card_info:
-					#var card_instance = card_ui_scene.instantiate()
-					#container.add_child(card_instance)
-					#
-					#card_instance.set_card_data(card_info["path"], card_id)
-					#
-					#var is_new = not previous_row.has(card_id)
-					#
-					#if animation:
-						## Starting animation (game start)
-						#card_instance.start_flip_timer(2.0)
-					#elif is_new:
-						## Only animate newly added cards
-						#card_instance.modulate.a = 0
-						#card_instance.scale = Vector2(0.5, 0.5)
-						#
-						#var tw = create_tween()
-						#tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
-						#tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-						#await tw.finished
-						#if is_instance_valid(card_instance):
-							#card_instance.flip_card()
-					#else:
-						## Already present card (no animation)
-						#card_instance.texture_rect.visible = true
-			## Gather and sort new cards by value
-			var new_cards := []
+
+			# Add new cards and collect newly added ones
 			for card_id in row_data:
-				var is_new = not previous_row.has(card_id)
-				if is_new:
-					var card_info = _find_card_data(card_id)
-					if card_info:
-						new_cards.append({
+				var card_info = _find_card_data(card_id)
+				if card_info:
+					var card_instance = card_ui_scene.instantiate()
+					container.add_child(card_instance)
+					card_instance.set_card_data(card_info["path"], card_id)
+
+					var is_new = not previous_row.has(card_id)
+
+					if animation:
+						card_instance.start_flip_timer(2.0)
+					elif is_new:
+						card_instance.modulate.a = 0
+						card_instance.scale = Vector2(0.5, 0.5)
+						new_cards_global.append({
 							"card_id": card_id,
-							"card_info": card_info
+							"card_instance": card_instance
 						})
-
-			new_cards.sort_custom(func(a, b): return a.card_info["value"] < b.card_info["value"])
-
-			# Instantiate and animate new cards in order
-			for entry in new_cards:
-				var card_id = entry.card_id
-				var card_info = entry.card_info
-
-				var card_instance = card_ui_scene.instantiate()
-				container.add_child(card_instance)
-				card_instance.set_card_data(card_info["path"], card_id)
-
-				if animation:
-					card_instance.start_flip_timer(2.0)
-				else:
-					var player_id = card_to_player_map.get(card_id, "")
-					await animate_card_from_player(card_instance, player_id, container)
-
-				if is_instance_valid(card_instance):
-					card_instance.flip_card()
-
-			# Add existing cards without animation
-			for card_id in row_data:
-				if previous_row.has(card_id):
-					var card_info = _find_card_data(card_id)
-					if card_info:
-						var card_instance = card_ui_scene.instantiate()
-						container.add_child(card_instance)
-						card_instance.set_card_data(card_info["path"], card_id)
+					else:
 						card_instance.texture_rect.visible = true
 
-			# Update tracked table state
+			# Update the tracked table state
 			last_table_state[i] = row_data.duplicate()
+
+	# Animate all new cards globally in ascending card_id order
+	if new_cards_global.size() > 0:
+		new_cards_global.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
+		for card_dict in new_cards_global:
+			var card_instance = card_dict["card_instance"]
+			var tw = create_tween()
+			tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+			tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+			await tw.finished
+			if is_instance_valid(card_instance):
+				card_instance.flip_card()
+				
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
@@ -712,41 +677,3 @@ func _clear_card_containers():
 				# Keep the base visual, assumed to be named "PlayerVisual"
 					if child.name != "PlayerVisual":
 						child.queue_free()
-
-func animate_card_simple(card_instance: Node):
-	card_instance.modulate.a = 0
-	card_instance.scale = Vector2(0.5, 0.5)
-
-	var tween = create_tween()
-	tween.tween_property(card_instance, "modulate:a", 1.0, 0.25)
-	tween.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-
-	await tween.finished
-
-#func animate_card_from_player(card_instance: Node, source_pos: Vector2, target_pos: Vector2):
-	#card_instance.global_position = source_pos
-	#card_instance.modulate.a = 0
-	#card_instance.scale = Vector2(0.5, 0.5)
-#
-	#var tween = create_tween()
-	#tween.tween_property(card_instance, "global_position", target_pos, 0.3)
-	#tween.parallel().tween_property(card_instance, "modulate:a", 1.0, 0.25)
-	#tween.parallel().tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-#
-	#await tween.finished
-
-func animate_card_from_player(card_instance: Node2D, player_id: String, target_node: Node2D) -> void:
-	var source_node = player_card_nodes.get(player_id, null)
-	if source_node:
-		card_instance.global_position = source_node.global_position
-	else:
-		# Fallback if player position not found
-		card_instance.scale = Vector2(0.5, 0.5)
-		card_instance.modulate.a = 0.0
-		card_instance.global_position = target_node.global_position
-
-	var tween = create_tween()
-	tween.tween_property(card_instance, "global_position", target_node.global_position, 0.3)
-	tween.parallel().tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-	tween.parallel().tween_property(card_instance, "modulate:a", 1.0, 0.25)
-	await tween.finished
