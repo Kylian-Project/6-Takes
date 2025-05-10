@@ -74,12 +74,12 @@ func _on_signup_pressed():
 		popup_overlay.visible = true
 		return 
 	
-	var hashed_password = hash_password(password)
+	# var hashed_password = hash_password(password)
 	
 	var payload = {
 		"username": username,
 		"email": email,
-		"password": hashed_password #password
+		"password": password #password
 	}
 
 	var json_body = JSON.stringify(payload)
