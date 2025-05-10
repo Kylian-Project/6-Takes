@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cs6sternte2t8"
-path="res://.godot/imported/accessibilite_.png-a65b7dadc56010b7eeacc12f0728d206.ctex"
+uid="uid://bvcca6f031bmj"
+path="res://.godot/imported/Screenshot 2025-05-07 at 18.14.32.png-7a9d2004f3b05e0345572b0a6badc813.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/accessibilite_.png"
-dest_files=["res://.godot/imported/accessibilite_.png-a65b7dadc56010b7eeacc12f0728d206.ctex"]
+source_file="res://addons/paulloz.colorblindness/Screenshot 2025-05-07 at 18.14.32.png"
+dest_files=["res://.godot/imported/Screenshot 2025-05-07 at 18.14.32.png-7a9d2004f3b05e0345572b0a6badc813.ctex"]
 
 [params]
 
