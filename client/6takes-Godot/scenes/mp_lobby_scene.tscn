@@ -1087,6 +1087,31 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_g3w62")
 icon = ExtResource("13_qxa8q")
 expand_icon = true
 
+[node name="SavePopupLabel" type="Label" parent="."]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -240.0
+offset_right = 210.0
+offset_bottom = -179.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Settings  Changed !"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="BottomButtons/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]

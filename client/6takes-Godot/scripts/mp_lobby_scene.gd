@@ -27,6 +27,7 @@ extends Control
 
 #confirmation control
 @onready var confirm_panel = $ConfirmControl
+@onready var notif_label 	= $SavePopupLabel
 
 var player_username
 var bot_count
@@ -148,6 +149,10 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			
 		"room-settings-updated":
 			_handle_update_settings(data)
+			
+			notif_label.visible = true
+			await get_tree().create_timer(2.5).timeout
+			notif_label.visible = false
 			
 		"lobby-info":
 			print("lobby info received ", data)
