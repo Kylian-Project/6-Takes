@@ -68,6 +68,10 @@ var turns
 var current_turn = 1
 var card_selected = true
 
+var card_to_player_map := {}  # Maps card_id -> player_id (username)
+var player_card_nodes := {}   # Maps username -> card_instance (used to get global_position)
+
+
 func _ready():
 	_load_cards()
 	
@@ -245,8 +249,43 @@ func on_player_selects_row(data):
 	selection_buttons(true)
 
 func _cards_from_players(data) -> void:
+	#print(data)
+	#_clear_card_containers()
+#
+	#if data.size() == 0:
+		#push_warning("Received empty data list")
+		#return
+#
+	#var players = data[0]  # Unwrap the outer list
+#
+	#for player_data in players:
+		#var username = player_data.username
+		#var carte = player_data.carte
+		#var numero = carte.numero
+#
+		## Instantiate card
+		#var card_info = _find_card_data(numero)
+		#var target_container = null
+		#if card_info:
+			#var card_instance = card_ui_scene.instantiate()
+			## Determine the correct container
+			#if left_player_container.has_node(username):
+				#target_container = left_player_container.get_node(username)
+			#elif right_player_container.has_node(username):
+				#target_container = right_player_container.get_node(username)
+			#else:
+				#push_warning("No container found for user: %s" % username)
+				#continue
+#
+			## Add card to player's container
+			#target_container.add_child(card_instance)
+			#card_instance.set_card_data(card_info["path"], numero)
+			#card_instance.start_flip_timer(2.0)
 	print(data)
 	_clear_card_containers()
+
+	card_to_player_map.clear()
+	player_card_nodes.clear()
 
 	if data.size() == 0:
 		push_warning("Received empty data list")
@@ -259,13 +298,12 @@ func _cards_from_players(data) -> void:
 		var carte = player_data.carte
 		var numero = carte.numero
 
-		# Instantiate card
 		var card_info = _find_card_data(numero)
 		var target_container = null
 		if card_info:
 			var card_instance = card_ui_scene.instantiate()
+
 			# Determine the correct container
-			print("we made it?")
 			if left_player_container.has_node(username):
 				target_container = left_player_container.get_node(username)
 			elif right_player_container.has_node(username):
@@ -274,10 +312,13 @@ func _cards_from_players(data) -> void:
 				push_warning("No container found for user: %s" % username)
 				continue
 
-			# Add card to player's container
 			target_container.add_child(card_instance)
 			card_instance.set_card_data(card_info["path"], numero)
 			card_instance.start_flip_timer(2.0)
+
+			# --- Register mappings for animation sync ---
+			card_to_player_map[numero] = username
+			player_card_nodes[username] = card_instance
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -400,37 +441,77 @@ func update_table_ui(table_data, animation):
 			# Update children
 			clear_children_except_buttons(container)
 			
+			#for card_id in row_data:
+				#var card_info = _find_card_data(card_id)
+				#if card_info:
+					#var card_instance = card_ui_scene.instantiate()
+					#container.add_child(card_instance)
+					#
+					#card_instance.set_card_data(card_info["path"], card_id)
+					#
+					#var is_new = not previous_row.has(card_id)
+					#
+					#if animation:
+						## Starting animation (game start)
+						#card_instance.start_flip_timer(2.0)
+					#elif is_new:
+						## Only animate newly added cards
+						#card_instance.modulate.a = 0
+						#card_instance.scale = Vector2(0.5, 0.5)
+						#
+						#var tw = create_tween()
+						#tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+						#tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+						#await tw.finished
+						#if is_instance_valid(card_instance):
+							#card_instance.flip_card()
+					#else:
+						## Already present card (no animation)
+						#card_instance.texture_rect.visible = true
+			## Gather and sort new cards by value
+			var new_cards := []
 			for card_id in row_data:
-				var card_info = _find_card_data(card_id)
-				if card_info:
-					var card_instance = card_ui_scene.instantiate()
-					container.add_child(card_instance)
-					
-					card_instance.set_card_data(card_info["path"], card_id)
-					
-					var is_new = not previous_row.has(card_id)
-					
-					if animation:
-						# Starting animation (game start)
-						card_instance.start_flip_timer(2.0)
-					elif is_new:
-						# Only animate newly added cards
-						card_instance.modulate.a = 0
-						card_instance.scale = Vector2(0.5, 0.5)
-						
-						var tw = create_tween()
-						tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
-						tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
-						await tw.finished
-						if is_instance_valid(card_instance):
-							card_instance.flip_card()
-					else:
-						# Already present card (no animation)
+				var is_new = not previous_row.has(card_id)
+				if is_new:
+					var card_info = _find_card_data(card_id)
+					if card_info:
+						new_cards.append({
+							"card_id": card_id,
+							"card_info": card_info
+						})
+
+			new_cards.sort_custom(func(a, b): return a.card_info["value"] < b.card_info["value"])
+
+			# Instantiate and animate new cards in order
+			for entry in new_cards:
+				var card_id = entry.card_id
+				var card_info = entry.card_info
+
+				var card_instance = card_ui_scene.instantiate()
+				container.add_child(card_instance)
+				card_instance.set_card_data(card_info["path"], card_id)
+
+				if animation:
+					card_instance.start_flip_timer(2.0)
+				else:
+					var player_id = card_to_player_map.get(card_id, "")
+					await animate_card_from_player(card_instance, player_id, container)
+
+				if is_instance_valid(card_instance):
+					card_instance.flip_card()
+
+			# Add existing cards without animation
+			for card_id in row_data:
+				if previous_row.has(card_id):
+					var card_info = _find_card_data(card_id)
+					if card_info:
+						var card_instance = card_ui_scene.instantiate()
+						container.add_child(card_instance)
+						card_instance.set_card_data(card_info["path"], card_id)
 						card_instance.texture_rect.visible = true
 
 			# Update tracked table state
 			last_table_state[i] = row_data.duplicate()
-
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
@@ -631,3 +712,41 @@ func _clear_card_containers():
 				# Keep the base visual, assumed to be named "PlayerVisual"
 					if child.name != "PlayerVisual":
 						child.queue_free()
+
+func animate_card_simple(card_instance: Node):
+	card_instance.modulate.a = 0
+	card_instance.scale = Vector2(0.5, 0.5)
+
+	var tween = create_tween()
+	tween.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+	tween.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+
+	await tween.finished
+
+#func animate_card_from_player(card_instance: Node, source_pos: Vector2, target_pos: Vector2):
+	#card_instance.global_position = source_pos
+	#card_instance.modulate.a = 0
+	#card_instance.scale = Vector2(0.5, 0.5)
+#
+	#var tween = create_tween()
+	#tween.tween_property(card_instance, "global_position", target_pos, 0.3)
+	#tween.parallel().tween_property(card_instance, "modulate:a", 1.0, 0.25)
+	#tween.parallel().tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+#
+	#await tween.finished
+
+func animate_card_from_player(card_instance: Node2D, player_id: String, target_node: Node2D) -> void:
+	var source_node = player_card_nodes.get(player_id, null)
+	if source_node:
+		card_instance.global_position = source_node.global_position
+	else:
+		# Fallback if player position not found
+		card_instance.scale = Vector2(0.5, 0.5)
+		card_instance.modulate.a = 0.0
+		card_instance.global_position = target_node.global_position
+
+	var tween = create_tween()
+	tween.tween_property(card_instance, "global_position", target_node.global_position, 0.3)
+	tween.parallel().tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+	tween.parallel().tween_property(card_instance, "modulate:a", 1.0, 0.25)
+	await tween.finished
