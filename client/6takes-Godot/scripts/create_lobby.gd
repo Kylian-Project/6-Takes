@@ -20,7 +20,7 @@ var uname
 
 func _ready():	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-	uname = "neila" #Global.player_name
+	uname = Global.player_name
 
 
 func _on_socket_connected(ns: String):

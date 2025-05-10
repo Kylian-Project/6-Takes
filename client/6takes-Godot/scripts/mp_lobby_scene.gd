@@ -44,7 +44,7 @@ func _ready():
 	scene_changed = false 
 	bot_count = 0
 	
-	player_username = "neila" #Global.player_name
+	player_username = Global.player_name
 	players_count = GameState.players_count
 	
 	# Hover sounds
