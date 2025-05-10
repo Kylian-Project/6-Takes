@@ -1,8 +1,12 @@
 extends Control
 
+const DEFAULT_BRIGHTNESS = 1.0
+const DEFAULT_CONTRAST   = 1.0
+
 @onready var rules = preload("res://scenes/rules.tscn")
 @onready var login_scene = preload("res://scenes/logIn.tscn")
-
+@onready var colorblind_option = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions
+@onready var color_blind = get_node("/root/ColorBlindness")     
 @onready var settings_overlay = $SettingsOverlay
 @onready var settings_button = $SettingsButton
 @onready var rules_button = $Rules
@@ -12,17 +16,24 @@ extends Control
 @onready var multiplayer_button = $VButtons/MultiPlayerButton
 @onready var profile_button = $Profile
 @onready var overlay_layer = $OverlayLayer
-@onready var settings_close_button   = $SettingsOverlay/Close
-
+@onready var accessibility_button = $AccessibilityButton
+@onready var accessibility_overlay = $AccessibilityOverlay
+@onready var brightness_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer/BrightnessSlider
+@onready var contrast_slider = $AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider
+@onready var reset_button = $AccessibilityOverlay/ResetButtonAccessibility
+const USER_SETTINGS : String = "user://settings.cfg"
 
 @onready var close_buttons = [
 	$SettingsOverlay/Close,
-	$RulesOverlay/MarginContainer/Control/Panel/CancelButton
+	$RulesOverlay/MarginContainer/Control/Panel/CancelButton,
+	$AccessibilityOverlay/Close,
 ]
+
 
 @onready var overlay_buttons = [
 	settings_button,
 	rules_button,
+	accessibility_button,
 ]
 
 
@@ -39,11 +50,14 @@ func _ready() -> void:
 	
 	rules_overlay.visible = false
 	settings_overlay.visible = false
+	accessibility_overlay.visible = false
+	overlay_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay_layer.visible = false
 	singleplayer_button.pressed.connect(go_to_singleplayer)
 	settings_button.pressed.connect(show_settings)
 	profile_button.pressed.connect(_on_profile_pressed)
 	quit_button.pressed.connect(quit_game)
-		
+	accessibility_button.pressed.connect(_on_accessibility_button_pressed)	
 	
 	# Hover Soundboard
 	singleplayer_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -52,7 +66,24 @@ func _ready() -> void:
 	settings_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	profile_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	rules_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	accessibility_button.mouse_entered.connect(SoundManager.play_hover_sound)
+	
+	# Populate or verify your Off/On items have IDs 0/1,
+	# connect the signal, then force one initial call:
+	colorblind_option.clear()
+	colorblind_option.add_item("Off", 0)
+	colorblind_option.add_item("On",  1)
 
+	 # 2) load whatever they last picked (default to “Off” → 0):
+	# read the last-saved choice (default to 0)
+	var last = 0
+	var cfg = ConfigFile.new()
+	if cfg.load(USER_SETTINGS) == OK:
+		last = int(cfg.get_value("accessibility", "colorblind_mode", 0))
+	colorblind_option.select(last)
+	_on_color_blind_options_item_selected(last)
+
+	colorblind_option.item_selected.connect(_on_color_blind_options_item_selected)
 		
 	# Click Soundboard
 	singleplayer_button.pressed.connect(SoundManager.play_click_sound)
@@ -61,7 +92,7 @@ func _ready() -> void:
 	settings_button.pressed.connect(SoundManager.play_click_sound)
 	profile_button.pressed.connect(SoundManager.play_click_sound)
 	rules_button.pressed.connect(SoundManager.play_click_sound)
-
+	accessibility_button.pressed.connect(SoundManager.play_click_sound)
 
 	for close_button in close_buttons:
 		close_button.pressed.connect(hide_settings)
@@ -71,6 +102,7 @@ func _ready() -> void:
 	# Background Music
 	SoundManager.play_music()
 	
+	colorblind_option.item_selected.connect(_on_color_blind_options_item_selected)
 	
 	get_node("/root/Global").load_session()
 	logged_in = get_node("/root/Global").getLogged_in()
@@ -86,9 +118,16 @@ func _ready() -> void:
 		singleplayer_button.text ="Singleplayer"
 		multiplayer_button.text = "Multiplayer"
 		
+	reset_button.pressed.connect(self._on_reset_button_accessibility_pressed)
+
 
 func _process(_delta):
-	overlay_layer.visible = overlay_layer.get_child_count() > 0
+	overlay_layer.visible = (
+		settings_overlay.visible or
+		rules_overlay.visible or
+		accessibility_overlay.visible
+	)
+	
 
 func _on_multi_player_button_pressed() -> void:
 	#get_node("/root/Global").load_session()
@@ -115,29 +154,32 @@ func go_to_singleplayer():
 func _on_cancel_button_pressed() -> void:
 	rules_overlay.visible = false
 
-func open_overlay(overlay: Control):
-# hide any other overlays
+
+func open_overlay(panel: Control):
+	 # 1) hide all panels
 	settings_overlay.visible      = false
 	rules_overlay.visible         = false
-	# show this one
-	overlay.visible = true
-
-	# bring the dimmer / layer up if you have one
+	accessibility_overlay.visible = false
+	# 2) show & reorder the blocker (OverlayLayer)
 	overlay_layer.visible = true
+	# move OverlayLayer to be the last child so it draws on top
+	move_child(overlay_layer, get_child_count() - 1)
+	# 3) show & reorder your chosen panel above the blocker
+	panel.visible = true
+	move_child(panel, get_child_count() - 1)
 
-	# disable the overlay-open buttons
 	for b in overlay_buttons:
 		b.disabled = true
+
 
 func show_settings() -> void:
-	settings_overlay.visible = true
-	overlay_layer.visible   = true   # make sure your dim-layer shows
-	for b in overlay_buttons:
-		b.disabled = true
+	open_overlay(settings_overlay)
 
 func hide_settings() -> void:
-	settings_overlay.visible = false
-	overlay_layer.visible   = false
+	settings_overlay.visible     = false
+	accessibility_overlay.visible = false
+	rules_overlay. visible = false
+	overlay_layer.visible = false
 	for b in overlay_buttons:
 		b.disabled = false
 	
@@ -152,22 +194,50 @@ func _on_rules_pressed() -> void:
 func _on_profile_pressed():
 	var edit_profile_scene = load("res://scenes/edit_profile.tscn")
 	var edit_profile_instance = edit_profile_scene.instantiate()
-
+	
 	overlay_layer.add_child(edit_profile_instance)
 	overlay_layer.visible = true
 
-	# Attendre un frame pour s'assurer que les noeuds enfants sont accessibles
-	await get_tree().process_frame
 
-	# Récupère les boutons de l'instance ajoutée
-	var save_button = edit_profile_instance.get_node("EditProfilePanel/MainVertical/SaveIconButton")
-	var close_button = edit_profile_instance.get_node("Close")
+func _on_accessibility_button_pressed() -> void:
+	var b = GlobalWorldEnvironment.environment.adjustment_brightness
+	var c = GlobalWorldEnvironment.environment.adjustment_contrast
 
-	# Connecte les sons si les boutons existent
-	if save_button:
-		save_button.mouse_entered.connect(SoundManager.play_hover_sound)
-		save_button.pressed.connect(SoundManager.play_click_sound)
+	brightness_slider.value = b
+	contrast_slider.value   = c
 
-	if close_button:
-		close_button.mouse_entered.connect(SoundManager.play_hover_sound)
-		close_button.pressed.connect(SoundManager.play_click_sound)
+	open_overlay(accessibility_overlay)
+
+
+func _on_brightness_slider_value_changed(value: float) -> void:
+	GlobalWorldEnvironment.environment.adjustment_brightness = value
+
+
+func _on_contrast_slider_value_changed(value: float) -> void:
+	GlobalWorldEnvironment.environment.adjustment_contrast = value
+
+func _on_color_blind_options_item_selected(index: int) -> void:
+	color_blind.visible = (index == 1)
+	# persist it to user://settings.cfg
+	var cfg = ConfigFile.new()
+	# try to load existing so you don’t wipe out other keys
+	if cfg.load(USER_SETTINGS) != OK:
+		# no file yet — that’s fine
+		pass
+
+	cfg.set_value("accessibility", "colorblind_mode", index)
+	cfg.save(USER_SETTINGS)
+
+
+func _on_reset_button_accessibility_pressed() -> void:
+	# 1) Reset slider positions
+	brightness_slider.value = DEFAULT_BRIGHTNESS
+	contrast_slider.value   = DEFAULT_CONTRAST
+	# 2) Reset option button (ID 0 = Off)
+	colorblind_option.select(0)
+	
+	# 3) Reapply each setting to the environment/filter	
+	#    (you probably already have these handlers—call them directly)
+	_on_brightness_slider_value_changed(DEFAULT_BRIGHTNESS)
+	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
+	_on_color_blind_options_item_selected(0)
