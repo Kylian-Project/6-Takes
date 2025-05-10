@@ -45,7 +45,7 @@ shadow_color = Color(0.144063, 0.144063, 0.144063, 0.6)
 shadow_size = 3
 shadow_offset = Vector2(-2, 2)
 
-[node name="Control2" type="Control"]
+[node name="Control3" type="Control"]
 process_mode = 3
 z_index = 5
 custom_minimum_size = Vector2(300, 300)
