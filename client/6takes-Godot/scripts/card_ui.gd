@@ -94,7 +94,6 @@ func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int)
 			
 		elif is_lifted:
 			if gameboard and gameboard.can_select_card:
-				print("can select card debug :", gameboard.can_select_card)
 				emit_signal("card_selected", global_card_id)
 				is_lifted = false
 				self.visible = false
