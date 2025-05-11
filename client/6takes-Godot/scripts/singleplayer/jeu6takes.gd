@@ -81,6 +81,7 @@ func manche_suivante():
 	for joueur in joueurs:
 		joueur.hand = Hand.new(deck.distribuer(nb_cartes))
 
+		
 func reset_game():
 	var noms = []
 	for j in joueurs:

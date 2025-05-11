@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=22 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_m51t2"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="9_c013t"]
 [ext_resource type="PackedScene" uid="uid://btkcwru58g8yx" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="11_7shf8"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="12_xxojd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
 line_spacing = 30.0
@@ -424,9 +426,9 @@ layout_mode = 2
 
 [node name="spplayerright" type="VBoxContainer" parent="."]
 offset_left = 1652.0
-offset_top = 50.0
+offset_top = 54.0
 offset_right = 1954.0
-offset_bottom = 979.0
+offset_bottom = 983.0
 alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="spplayerright"]
@@ -456,8 +458,24 @@ offset_top = 79.0
 offset_right = 1569.0
 offset_bottom = 1013.0
 
+[node name="Button_order" type="Button" parent="."]
+offset_left = 1586.0
+offset_top = 954.0
+offset_right = 1724.0
+offset_bottom = 1027.0
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.0605303, 0.0605303, 0.0605303, 1)
+theme_override_colors/font_color = Color(0.0295066, 0.0295066, 0.0295065, 1)
+theme_override_fonts/font = ExtResource("3_r0b0d")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = ExtResource("11_7shf8")
+theme_override_styles/normal = ExtResource("12_xxojd")
+text = "Sorted cards"
+
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Panel/choix_rang/choose_rang_1" to="." method="_on_choose_rang_1_pressed"]
 [connection signal="pressed" from="Panel/choix_rang/choose_rang_2" to="." method="_on_choose_rang_2_pressed"]
 [connection signal="pressed" from="Panel/choix_rang/choose_rang_3" to="." method="_on_choose_rang_3_pressed"]
 [connection signal="pressed" from="Panel/choix_rang/choose_rang_4" to="." method="_on_choose_rang_4_pressed"]
+[connection signal="pressed" from="Button_order" to="." method="_on_Button_order_pressed"]

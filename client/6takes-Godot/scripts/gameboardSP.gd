@@ -9,7 +9,7 @@ extends Node2D
 @onready var turn_label = $HBoxContainer/turnLabel
 @onready var pause_screen_scene = preload("res://scenes/screen_pauseSP.tscn")
 
-
+var game_paused = false
 var pause_instance = null
 
 @onready var row_panels = [
@@ -49,6 +49,9 @@ var finish_shown = false
 var sp_game: SpGame
 
 var bot_display_data: Array = []
+var cards_clickable = true 
+var round_active = false
+
 
 func _ready():
 	var left_name = $"spplayerleft/HBoxContainer/icon&name/name_bot"
@@ -71,9 +74,14 @@ func _ready():
 		print("Timer initialisé : ", game_timer != null)
 		
 	
-	max_turns = Global.game_settings["nb_cartes"]  # Nombre total de tours = nombre de cartes
+	# Initialise max_turns en fonction du mode
+	if Global.game_settings.get("use_max_points", false):
+		max_turns = 999  # Ou un nombre très grand pour le mode points
+	else:
+		max_turns = Global.game_settings["nb_cartes"]
+	
 	current_turn = 1
-	update_turn_label()  # Affiche "1/nb_cartes"
+	update_turn_label()
 	
 	# Initialisation UI
 	timer_label.visible = false
@@ -122,6 +130,31 @@ func _ready():
 	
 	# Début de la partie
 	sp_game.start_round()
+	round_active = false
+	cards_clickable = true
+	# Activer les cartes immédiatement
+	cards_clickable = true
+	_update_hand_clickability(true)  # Nouvelle fonction à créer
+
+func _update_hand_clickability(clickable: bool):
+	cards_clickable = clickable
+	for card in hbox_container.get_children():
+		if card.has_method("set_clickable"):
+			card.set_clickable(clickable)
+
+func is_player_turn() -> bool:
+	return sp_game.joueur_moi == sp_game.jeu.joueurs[0] and cards_clickable
+	
+func _animate_card_play(joueur, carte):
+	var layer = get_display_data_for_joueur(joueur)["card_layer"]
+	if layer:
+		# Animation de mise en avant de la carte
+		var card_ui = layer.get_child(0) if layer.get_child_count() > 0 else null
+		if card_ui:
+			var tween = create_tween()
+			tween.tween_property(card_ui, "scale", Vector2(0.7, 0.7), 0.3)
+			tween.tween_property(card_ui, "scale", Vector2(0.5, 0.5), 0.3)
+			await tween.finished		
 
 func _process(delta):
 	if not sp_game :
@@ -191,34 +224,49 @@ func _handle_bot_choice(joueur, carte):
 	await show_label("%s a choisi le rang %d" % [joueur.nom, rang_a_ramasser + 1])
 
 func _animate_full_pickup_sequence(joueur, carte, rang_index):
-	"""Séquence d'animation complète pour le ramassage"""
-	# 1. Ramasser les cartes du rang
-	var cartes_ramassees = sp_game.jeu.table.ramasser_rang(rang_index)
+	"""Version optimisée qui réutilise les cartes visuelles"""
+	cards_clickable = false
 	
-	# 2. Calcul des têtes
+	# 1. Ramasser les cartes du jeu
+	var cartes_ramassees = sp_game.jeu.table.ramasser_rang(rang_index)
 	var total_tetes = 0
 	for c in cartes_ramassees:
 		total_tetes += c.tetes
 	
-	# 3. Animation des cartes ramassées vers le joueur
-	await _animate_cards_to_player(joueur, cartes_ramassees, rang_index)
+	# 2. Récupérer les cartes visuelles existantes
+	var row = vbox_container.get_child(rang_index).get_child(0)
+	var cartes_visuelles = []
+	for child in row.get_children():
+		if child.has_method("get_card_id"):
+			cartes_visuelles.append(child)
 	
-	# 4. Faire disparaître la carte devant l'icône
-	await _clear_player_card(joueur)
+	# 3. Animation des cartes existantes vers le joueur
+	await _animate_existing_cards_to_player(joueur, cartes_visuelles)
 	
-	# 5. Animer la nouvelle carte vers le rang
-	await _animate_card_to_row(joueur, carte, rang_index)
+	# 4. Gérer la carte du joueur
+	await _place_card_next_to_icon(joueur, carte.numero)
+	await _animate_card_to_row(joueur, carte.numero, rang_index)
 	
-	# 6. Mise à jour du score
+	# 5. Mise à jour du jeu
 	joueur.score += total_tetes
-	
-	# 7. Réinitialiser le rang
 	sp_game.jeu.table.forcer_nouvelle_rangée(rang_index, carte)
 	
-	# 8. Mise à jour visuelle
-	_update_plateau()
+	# 6. Mise à jour minimale
 	_update_heads()
+	if sp_game.joueur_moi == sp_game.jeu.joueurs[0]:
+		cards_clickable = true
 
+func _animate_existing_cards_to_player(joueur, cartes_visuelles):
+	var end_pos = get_display_data_for_joueur(joueur)["card_layer"].global_position
+	
+	for card_ui in cartes_visuelles:
+		var tween = create_tween()
+		tween.tween_property(card_ui, "global_position", end_pos, 0.5)
+		tween.parallel().tween_property(card_ui, "modulate:a", 0, 0.5)
+		await tween.finished
+		card_ui.queue_free()
+	await get_tree().create_timer(0.1).timeout
+	
 func _clear_player_card(joueur):
 	var card_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	for child in card_layer.get_children():
@@ -253,26 +301,25 @@ func _animate_cards_to_player(joueur, cartes, row_index):
 func _animate_card_to_row(joueur, card_number, row_index):
 	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	var end_row = vbox_container.get_child(row_index).get_child(0)
-	
-	# Créer une carte animée
-	var anim_card = CARD_UI_SCENE.instantiate()
-	add_child(anim_card)
-	anim_card.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
-	anim_card.global_position = start_layer.global_position
-	anim_card.z_index = 100  # S'assurer qu'elle est au-dessus
-	
-	# Animation vers la rangée
-	var tween = create_tween()
-	tween.tween_property(anim_card, "global_position", end_row.global_position, 0.5)
-	tween.parallel().tween_property(anim_card, "scale", Vector2(0.8, 0.8), 0.5)
-	
-	await tween.finished
-	anim_card.queue_free()
-	
-	# Mise à jour visuelle
+
+	var card_to_move = null
+	for child in start_layer.get_children():
+		card_to_move = child
+		break  # il devrait y en avoir qu'une seule
+
+	if card_to_move:
+		card_to_move.reparent(self)  # sortir du layer pour l'animation
+		card_to_move.z_index = 100
+
+		var tween = create_tween()
+		tween.tween_property(card_to_move, "global_position", end_row.global_position, 0.5)
+		tween.parallel().tween_property(card_to_move, "scale", Vector2(0.8, 0.8), 0.5)
+
+		await tween.finished
+		card_to_move.queue_free()
+
+	# Mise à jour du plateau
 	_update_plateau()
-
-
 
 
 
@@ -450,25 +497,79 @@ func _setup_bot_ui():
 func _update_hand():
 	for child in hbox_container.get_children():
 		child.queue_free()
+	
 	var moi = sp_game.jeu.joueurs[0]
 	for carte in moi.hand.cartes:
 		var card_ui = CARD_UI_SCENE.instantiate()
 		hbox_container.add_child(card_ui)
 		card_ui.set_card_data("res://assets/images/cartes/%d.png" % carte.numero, carte.numero)
 		card_ui.connect("card_selected", Callable(self, "_on_carte_cliquee"))
+		
+		# Désactive le réarrangement automatique
+		card_ui.position = Vector2.ZERO
+		card_ui.set_anchors_preset(Control.PRESET_CENTER)
 
-func _update_plateau():
+func _on_Button_order_pressed():
+	if not is_player_turn() or not cards_clickable:
+		return  # Ne pas trier si ce n'est pas le tour du joueur
+	
+	var joueur = sp_game.jeu.joueurs[0]
+	
+	# Sauvegarde l'état de sélection actuel
+	var carte_selectionnee = null
+	for card_ui in hbox_container.get_children():
+		if card_ui.is_lifted:
+			carte_selectionnee = card_ui.global_card_id
+			break
+	
+	# Trie les cartes
+	joueur.hand.cartes.sort_custom(func(a, b): return a.numero < b.numero)
+	
+	# Met à jour l'affichage
+	_update_hand()
+	
+	# Restaure la sélection si nécessaire
+	if carte_selectionnee:
+		for card_ui in hbox_container.get_children():
+			if card_ui.global_card_id == carte_selectionnee:
+				card_ui.is_lifted = true
+				card_ui.show_selection_container(true)
+				card_ui.z_index = 100
+				card_ui.scale = card_ui.original_scale * card_ui.SCALE_FACTOR
+				break
+	
+	# Réactive toutes les cartes
+	_update_hand_clickability(true)
+	
+	# Effet visuel
+	var tween = create_tween()
+	tween.tween_property($Button_order, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property($Button_order, "scale", Vector2(1.0, 1.0), 0.1)
+	
+
+func _update_plateau(animate: bool = false):
 	for i in range(vbox_container.get_child_count()):
 		var row = vbox_container.get_child(i).get_child(0)
-		for child in row.get_children():
-			child.queue_free()
 
-		for carte in sp_game.jeu.table.rangs[i].cartes:
-			var card_ui = CARD_UI_SCENE.instantiate()
-			row.add_child(card_ui)
-			card_ui.set_card_data("res://assets/images/cartes/%d.png" % carte.numero, carte.numero)
-			card_ui.modulate.a = 1  
-			
+		var cartes_plateau = sp_game.jeu.table.rangs[i].cartes
+		var enfants_actuels = row.get_children()
+
+		# S'il y a un écart dans le nombre de cartes, on met à jour
+		if enfants_actuels.size() != cartes_plateau.size():
+			# Supprimer toutes les anciennes cartes
+			for child in enfants_actuels:
+				child.queue_free()
+
+			# Ajouter les nouvelles cartes
+			for carte in cartes_plateau:
+				var card_ui = CARD_UI_SCENE.instantiate()
+				row.add_child(card_ui)
+				card_ui.set_card_data("res://assets/images/cartes/%d.png" % carte.numero, carte.numero)
+				card_ui.modulate.a = 1.0
+				card_ui.scale = Vector2(0.8, 0.8)
+				card_ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+				
 func move_card_to_row(joueur, card_number, row_index):
 	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	var end_row = vbox_container.get_child(row_index).get_child(0)
@@ -499,14 +600,57 @@ func move_card_to_row(joueur, card_number, row_index):
 		
 		# Mise à jour réelle du plateau
 		_update_plateau()
+
+func _animate_bot_play(bot, card_number):
+	var layer = get_display_data_for_joueur(bot)["card_layer"]
+	if layer and layer.get_child_count() > 0:
+		var card_ui = layer.get_child(0)
+		var tween = create_tween()
+		tween.tween_property(card_ui, "scale", Vector2(0.7, 0.7), 0.2)
+		tween.tween_property(card_ui, "scale", Vector2(0.5, 0.5), 0.2)
+		await tween.finished
 		
+func set_cards_clickable(clickable: bool):
+	cards_clickable = clickable
+	# Désactiver aussi l'interaction avec les cartes du plateau
+	for row in vbox_container.get_children():
+		for card in row.get_child(0).get_children():
+			card.mouse_filter = Control.MOUSE_FILTER_IGNORE if not clickable else Control.MOUSE_FILTER_PASS
+
+
+
+
+
+var card_played_this_round = false
+func start_round():
+	print("Début du round - Activation des cartes")
+	cards_clickable = true
+	
+	# Active physiquement chaque carte
+	for card in hbox_container.get_children():
+		if card.has_method("set_clickable"):
+			card.set_clickable(true)
+			card.mouse_filter = Control.MOUSE_FILTER_PASS  # <-- Important
+			print("Carte ", card.global_card_id, " activée")
+	
+	update_game_state("Pick your cards - READY")
+	
+var carte_deja_cliquee = false	
 func _on_carte_cliquee(global_card_id):
+	if not cards_clickable or carte_deja_cliquee:
+		return
+
+	# Désactiver toutes les cartes immédiatement
+	_update_hand_clickability(false)
+
+	carte_deja_cliquee = true
+	cards_clickable = false
+	sp_game.round_started = false
+	
 	update_game_state("            You chose card %d" % global_card_id)
 	if global_card_id == null:
 		print("❌ Erreur : global_card_id est null")
 		return
-
-	
 
 	var moi = sp_game.jeu.joueurs[0]
 	var index = moi.hand.trouver_index(global_card_id)
@@ -523,8 +667,8 @@ func _on_carte_cliquee(global_card_id):
 
 	_place_card_next_to_icon(moi, moi.hand.cartes[index].numero)
 	sp_game.attente_joueur = false
-
 	sp_game.reprendre_tour()
+	
 
 func _place_card_next_to_icon(joueur, card_number):
 	var layer = get_display_data_for_joueur(joueur)["card_layer"]
@@ -532,18 +676,19 @@ func _place_card_next_to_icon(joueur, card_number):
 		# Nettoyer avant d'ajouter
 		for child in layer.get_children():
 			child.queue_free()
-		
+
 		var card_ui = CARD_UI_SCENE.instantiate()
 		layer.add_child(card_ui)
 		card_ui.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
-		
-		# Réduire la taille de la carte ici (par exemple à 70% de sa taille originale)
+
+		# Réduire la taille de la carte
 		card_ui.scale = Vector2(0.5, 0.5)
-		
-		# Animation d'apparition (1 seconde)
+
+		# Animation d'apparition
 		card_ui.modulate.a = 0
 		var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card_ui, "modulate:a", 1.0, 1.0)
+
 				
 func afficher_cartes_bots():
 	for i in range(1, sp_game.jeu.joueurs.size()):
@@ -640,28 +785,42 @@ func update_turn_label():
 		push_error("Turn Label non trouvé!")
 		return
 	
-	# Formatage sécurisé avec vérification des valeurs
-	var display_turn = clamp(current_turn, 1, max_turns)
-	turn_label.text = "Turn %d/%d" % [display_turn, max_turns]
+	# Vérifie si on est en mode "Fin par points"
+	var end_by_points = Global.game_settings.get("use_max_points", false)
+	var max_points = Global.game_settings.get("nb_max_heads", 999)
+	var current_score = sp_game.jeu.joueurs[0].score if sp_game and sp_game.jeu else 0
 	
-	# Optionnel : changement de couleur pour le dernier tour
-	if current_turn == max_turns:
-		turn_label.add_theme_color_override("font_color", Color.GOLD)
+	if end_by_points:
+		# Mode Points - Affiche le score actuel / score max
+		var display_turn = clamp(current_turn, 1, max_turns)
+		turn_label.text = "Turn %d" % [display_turn]
+		turn_label.add_theme_color_override("font_color", 
+			Color.RED if current_score >= max_points else Color.WHITE)
 	else:
-		turn_label.add_theme_color_override("font_color", Color.WHITE)
-
+		# Mode Tours - Affiche Tour X/Y
+		var display_turn = clamp(current_turn, 1, max_turns)
+		turn_label.text = "Turn %d/%d" % [display_turn, max_turns]
+		
+		# Changement de couleur pour le dernier tour
+		turn_label.add_theme_color_override("font_color", 
+			Color.GOLD if current_turn >= max_turns else Color.WHITE)
+				
 
 func _on_tour_repris(cartes_choisies):
+	carte_deja_cliquee = false
 	current_turn += 1
 	update_turn_label()
 	
 	update_game_state("            New round")
 	await get_tree().create_timer(1.5).timeout
 	
-	# Mode solo - toujours votre tour
-	update_game_state("            Pick your cards")
-	
-	
+	# Activer les clics seulement si c'est le tour du joueur
+	if sp_game.joueur_moi == sp_game.jeu.joueurs[0]:
+		_update_hand_clickability(true)  # Utilisez la nouvelle fonction
+		update_game_state("            Pick your cards")
+	else:
+		_update_hand_clickability(false)
+		update_game_state("%s's turn" % sp_game.get_current_player_name())
 	
 	# 4. Réinitialiser le timer
 	game_timer.stop()
@@ -670,33 +829,20 @@ func _on_tour_repris(cartes_choisies):
 	timer_active = true
 	game_timer.start(1.0)
 	
-	# 5. Afficher les cartes devant les icônes
-	for choix in cartes_choisies:
-		var joueur = choix["joueur"]
-		var carte = choix["carte"]
-		_place_card_next_to_icon(joueur, carte.numero)
-	
-	# 6. Petit délai visuel
-	await get_tree().create_timer(0.8).timeout
-	
-	# 7. Faire disparaître les cartes devant les icônes
+	# 5. Supprimer toutes les cartes devant les icônes
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var layer = get_display_data_for_joueur(joueur)["card_layer"]
 		for child in layer.get_children():
-			var tween = create_tween()
-			tween.tween_property(child, "modulate:a", 0, 0.3)
-			await tween.finished
 			child.queue_free()
 	
-	# 8. Mettre à jour l'affichage
-	_update_plateau()
+	# 6. Mettre à jour l'affichage sans flash
+	_update_plateau(false)
 	_update_heads()
 	
-	# 9. Démarrer le nouveau tour
+	# 7. Démarrer le nouveau round
 	sp_game.start_round()
 	
-		
 
 func show_label(text: String) -> void:
 	state_label.text = text
@@ -779,14 +925,41 @@ func _on_button_pressed() -> void:
 	show_pause_menu()
 
 func show_pause_menu():
-	# Arrête le timer quand la pause est activée
+	get_tree().paused = true
 	stop_timer()
+	cards_clickable = false
 	
-	# Crée et affiche l'écran de pause
-	var pause_instance = pause_screen_scene.instantiate()
-	pause_instance.setup(self)  # Passe la référence au gameboard
+	pause_instance = pause_screen_scene.instantiate()
+	pause_instance.setup(self)
 	add_child(pause_instance)
+	
 
+func _on_resume_pressed():
+	resume_game()
+
+
+func cleanup_before_exit():
+	stop_timer()
+	get_tree().paused = false
+	if pause_instance:
+		pause_instance.queue_free()
+		pause_instance = null
+
+func resume_game():
+	get_tree().paused = false
+	cards_clickable = sp_game.joueur_moi == sp_game.jeu.joueurs[0]
+	if timer_label.visible and not $ScoreBoard.visible:
+		start_timer()
+
+
+func set_game_paused(paused: bool):
+	game_paused = paused
+	get_tree().paused = paused
+	cards_clickable = not paused
+	if paused:
+		stop_timer()
+	elif sp_game.joueur_moi == sp_game.jeu.joueurs[0] and round_active:
+		start_timer()
 
 func update_game_state(message: String) -> void:
 	if has_node("HBoxContainer/gameStateLabel"):
@@ -821,6 +994,8 @@ func _on_choose_rang_4_pressed():
 	_on_rang_button_pressed(3)
 
 func _on_rang_button_pressed(rang_index):
+	if game_paused:
+		return
 	update_game_state("👉 Tu as choisi le rang %d" % (rang_index + 1))
 	print("✅ Joueur a choisi le rang :", rang_index)
 	choix_rang_panel.visible = false

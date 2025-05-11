@@ -35,6 +35,8 @@ const SCALE_FACTOR = 1.2  # Facteur de mise à l'échelle lors de l'élévation
 var card_index: int = -1  # Valeur par défaut -1
 
 func _ready() -> void:
+	modulate.a = 1.0  # Pas de fade-in
+	#scale = Vector2(0.8, 0.8)  # Taille fixe
 	scale = Vector2(1, 1)
 	original_position = position
 	original_scale = scale
@@ -58,6 +60,8 @@ func _ready() -> void:
 		selection_container.modulate.a = 0.0
 
 # Fonction _process pour mettre à jour l'état à chaque frame
+
+
 func _process(_delta):
 	# Assurer que le container de sélection est visible lorsqu'une carte est levée
 	if selection_container != null:
@@ -67,11 +71,12 @@ func _process(_delta):
 	if is_hovered and !is_lifted:
 		if not is_mouse_over():
 			_on_detector_mouse_exited()
+var disable_animations: bool = false
 
 # Méthode pour assigner les données de la carte
 func set_card_data(card_path: String, card_id: int) -> void:
 	#print("🃏 Appel de set_card_data avec:", card_id)
-
+	
 	if texture_rect == null or back_texture == null:
 		push_error("❌ texture_rect ou back_texture est null !")
 		return
@@ -86,7 +91,22 @@ func set_card_data(card_path: String, card_id: int) -> void:
 	self.global_card_id = card_id 
 
 # Fonction pour sélectionner la carte (déclenche le signal)
+func set_clickable(clickable: bool):
+	mouse_filter = Control.MOUSE_FILTER_PASS if clickable else Control.MOUSE_FILTER_IGNORE
+	modulate.a = 1.0 if clickable else 0.6
+	
+	# Réinitialiser l'état de la carte
+	if not clickable:
+		is_lifted = false
+		show_selection_container(false)
+		scale = original_scale
+				
+func set_disabled(disabled: bool):
+	mouse_filter = Control.MOUSE_FILTER_IGNORE if disabled else Control.MOUSE_FILTER_PASS
+	modulate.a = 0.3 if disabled else 1.0  # Feedback visuel
 
+  
+	
 func _on_select_button_pressed() -> void:
 	if global_card_id == null:
 		print("❌ Erreur : global_card_id est null avant d’émettre le signal")
@@ -112,10 +132,10 @@ func _on_detector_mouse_entered() -> void:
 		return 
 	
 	is_hovered = true
-	
+	# On ne change que l'échelle, pas la position
 	var hover_tween = get_tree().create_tween()
-	hover_tween.tween_property(self, "scale", original_scale * 1.1, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
+	hover_tween.tween_property(self, "scale", original_scale * 1.1, 0.15) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 # Fonction pour gérer la sortie de la souris de la carte
 func _on_detector_mouse_exited() -> void:
 	if !is_in_hand_grp() or is_lifted:
@@ -128,23 +148,42 @@ func _on_detector_mouse_exited() -> void:
 
 # Fonction pour gérer l'événement de clic sur la carte
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	# Debug: Affiche quelle carte reçoit l'input
+	print("Carte ", global_card_id, " reçoit input - cliquable: ", mouse_filter == Control.MOUSE_FILTER_PASS)
+	
+	# Ne pas réagir si la carte n'est pas cliquable
+	if mouse_filter == Control.MOUSE_FILTER_IGNORE:
+		print("Carte ", global_card_id, " ignorée (mouse_filter=IGNORE)")
+		return
+		
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("Clic sur carte ", global_card_id)
 		if is_in_hand_grp():
+			# S'assurer que la carte est bien devant les autres temporairement
+			var parent = get_parent()
+			if parent:
+				# Déplace la carte en dernier dans l'ordre des enfants (devant les autres)
+				parent.move_child(self, parent.get_child_count() - 1)
+				z_index = 0  # Réinitialise puis laisse le parent gérer l'ordre
+				
 			if !is_lifted:
 				is_lifted = true
 				show_selection_container(true)
-				z_index = 100  # juste pour que la carte soit au-dessus des autres
 				
 				var lift_tween = get_tree().create_tween()
-				lift_tween.tween_property(self, "scale", original_scale * SCALE_FACTOR, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				lift_tween.tween_property(self, "scale", original_scale * SCALE_FACTOR, 0.2) \
+					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				lift_tween.parallel().tween_property(self, "position", original_position + LIFT_OFFSET, 0.2)
+				
 			else:
 				is_lifted = false
 				show_selection_container(false)
-				z_index = 0  # revenir à la normale
 				
 				var drop_tween = get_tree().create_tween()
-				drop_tween.tween_property(self, "scale", original_scale, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
+				drop_tween.tween_property(self, "scale", original_scale, 0.2) \
+					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				drop_tween.parallel().tween_property(self, "position", original_position, 0.2)
+							
 # Fonction pour vérifier si la carte est dans le groupe "hand_grp"
 func is_in_hand_grp():
 	
