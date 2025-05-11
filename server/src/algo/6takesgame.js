@@ -215,10 +215,20 @@ class Jeu6Takes {
         }
     }
     
-
     resetGame() {
-        this.constructor(this.nbJoueurs, this.joueurs.map(j => j.nom), this.nbMaxManches, this.nbMaxHeads, this.nbCarte);
+        this.deck = new Deck(true);
+        this.table = new Table(this.deck);
+        this.mancheActuelle = 0;
+    
+        this.joueurs.forEach(joueur => {
+            joueur.hand = new Hand(this.deck.distribuer(this.nbCarte));
+            joueur.resetScore();
+        });
+    
+        console.log("Nouvelle partie");
     }
+    
+    
 
     jouerCarte(nomJoueur, carte) {
         const joueur = this.joueurs.find(j => j.nom === nomJoueur);
