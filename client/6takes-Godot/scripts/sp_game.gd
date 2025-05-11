@@ -44,8 +44,15 @@ func start_game(settings: Dictionary):
 	jeu = Jeu6Takes.new(noms.size(), noms, nb_max_manches, nb_max_heads, nb_cartes)
 	joueur_moi = jeu.joueurs[0]
 	print("[SP GAME] Jeu lancé avec %d joueurs." % noms.size())
-
+	
+var round_started := false
 func start_round():
+	round_started = true
+	if joueur_moi == jeu.joueurs[0]:  # Si c'est le tour du joueur
+		var board = get_tree().current_scene
+		if board and board.has_method("set_cards_clickable"):
+			board.set_cards_clickable(true)  # Réactive les clics
+	
 	if jeu.check_end_game():
 		end_game()
 		return
@@ -97,9 +104,13 @@ func joueur_moi_a_choisi(index: int):
 
 func reprendre_tour():
 	
+	
 	var cartes_choisies = []
 	var board = get_tree().current_scene  # Déclaration UNIQUE de board au début
-
+	
+	if board and board.has_method("set_cards_clickable"):
+		board.set_cards_clickable(false)  # Désactiver les clics
+	
 	# Joueur humain
 	if carte_choisie_moi != null:
 		var carte = carte_choisie_moi["carte"]
@@ -129,11 +140,17 @@ func reprendre_tour():
 	cartes_choisies.sort_custom(func(a, b): return a["carte"].numero < b["carte"].numero)
 
 	# Jouer les cartes une par une
+	# Jouer les cartes une par une avec animations
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
+		
+		# Animation pour montrer quelle carte est jouée (pour tous les joueurs)
+		if board:
+			await board._animate_card_play(joueur, carte)
+			await get_tree().create_timer(0.5).timeout
+		
 		var rang_index = jeu.table.trouver_best_rang(carte)
-
 		if rang_index == -1:
 			# Cas spécial : choix manuel
 			if joueur == joueur_moi:
@@ -197,33 +214,39 @@ func reprendre_tour():
 	terminer_tour(cartes_choisies)
 
 func terminer_tour(cartes_choisies):
-	carte_choisie_moi = null
-	on_tour_en_cours = false
-	
-	emit_signal("tour_avance", current_round, jeu.nb_cartes)
-	carte_choisie_moi = null
-	on_tour_en_cours = false
-
-	var board = get_node_or_null("/root/GameBoardSP")
-	if board:
-		board._update_plateau()
-
-	emit_signal("tour_repris", cartes_choisies)
-
-	print("🃏 Cartes jouées ce tour :")
-	for choix in cartes_choisies:
-		print(" - %s a joué : %d (%d têtes)" % [choix["joueur"].nom, choix["carte"].numero, choix["carte"].tetes])
-
-	print("🎯 Scores actuels :")
+	# Vérifier fin de manche (toutes mains vides)
+	var fin_manche = true
 	for joueur in jeu.joueurs:
-		print(" - %s : %d têtes" % [joueur.nom, joueur.score])
-
-	if jeu.check_end_manche():
+		if joueur.hand.cartes.size() > 0:
+			fin_manche = false
+			break
+	
+	if fin_manche:
 		current_round += 1
 		jeu.manche_suivante()
-
+		
+		# Vérifier fin de partie
+		var fin_partie = false
+		if Global.game_settings.get("use_max_points", false):
+			# Mode Points - vérifier si un joueur a atteint le score max
+			fin_partie = jeu.joueurs.any(func(j): return j.score >= jeu.nb_max_heads)
+		else:
+			# Mode Tours - vérifier si on a atteint le nombre max de manches
+			fin_partie = current_round > jeu.nb_max_manches
+		
+		if fin_partie:
+			end_game()
+			return
+	
+	# Continuer le jeu normalement
+	carte_choisie_moi = null
+	cartes_choisies_bots.clear()
+	emit_signal("tour_repris", cartes_choisies)
+	
+	# Démarrer le prochain tour après un court délai
+	await get_tree().create_timer(1.0).timeout
 	start_round()
-
+	
 func reprendre_avec_rang(rang_index: int):
 	var joueur = joueur_en_attente
 	var carte = carte_en_attente
