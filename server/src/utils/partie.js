@@ -343,10 +343,6 @@ function notifierScore(io, roomId, jeu)
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
-	//let carteJouee = cartesAJoueesParRoom[roomId];
-	console.log("cartes jouees", carte_animation[roomId]);
-
-	io.to(roomId).emit("cartes-jouees", carte_animation[roomId]);
 	io.to(roomId).emit("update-scores", scores);
   
 	cartesAJoueesParRoom[roomId] = [];
@@ -654,6 +650,11 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
  */
 function envoyerMainEtTable(io, roomId, jeu, rooms) 
 {
+	//les cartes jouées par salle poru faire l'animation
+	console.log("cartes jouees", carte_animation[roomId]);
+	io.to(roomId).emit("cartes-jouees", carte_animation[roomId]);
+
+	//puis envoie de la nouvelle table et de la nouvelle main (aprs retrait de la carte )
 	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 	console.log("🎯 Table mise à jour :", table);
 	io.to(roomId).emit("update-table", table);
