@@ -70,7 +70,7 @@ func _on_confirm_pressed() -> void:
 		popup_overlay.visible = true
 		return  
 		
-	var hashed_password = hash_password(new_password_text)
+	var hashed_password = new_password_text
 	var payload = {
 		"email": global_email,
 		"code": global_code,
