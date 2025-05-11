@@ -325,6 +325,7 @@ func _animate_card_to_row(joueur, card_number, row_index):
 
 	
 func _setup_bot_ui():
+	var custom_font: Font = load("res://assets/fonts/kenvector_future.ttf")
 	var bot_count = sp_game.jeu.joueurs.size()
 	var left_count = 0
 	var right_count = 0
@@ -367,7 +368,7 @@ func _setup_bot_ui():
 
 		# -- Conteneur principal --
 		var bot_box = VBoxContainer.new()
-		bot_box.name = "Bot" + str(i)
+		bot_box.name = "BOT" + str(i)
 		bot_box.alignment = BoxContainer.ALIGNMENT_CENTER
 		bot_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		bot_box.custom_minimum_size.x = 60  # Permet au label de rétrécir
@@ -413,7 +414,7 @@ func _setup_bot_ui():
 		# -- Label du nom --
 		var name_label = Label.new()
 		name_label.name = "name_bot"
-		name_label.text = bot.nom if bot.has_method("nom") else "Bot " + str(i)
+		name_label.text = bot.nom if bot.has_method("nom") else "BOT " + str(i)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		name_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -423,6 +424,7 @@ func _setup_bot_ui():
 		name_label.add_theme_stylebox_override("normal", name_style)
 		name_label.add_theme_color_override("font_color", Color.BLACK)
 		name_label.add_theme_font_size_override("font_size", 14)  # Texte plus petit
+		name_label.add_theme_font_override("font", custom_font)
 
 		# Assemblage final
 		bot_box.add_child(bot_hbox)
@@ -442,6 +444,7 @@ func _setup_bot_ui():
 	human_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	human_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	human_box.custom_minimum_size.x = 100
+	
 
 	var human_hbox = HBoxContainer.new()
 	human_hbox.name = "HumanHBox"
@@ -484,6 +487,7 @@ func _setup_bot_ui():
 	human_name_label.add_theme_stylebox_override("normal", name_style)
 	human_name_label.add_theme_color_override("font_color", Color.BLACK)
 	human_name_label.add_theme_font_size_override("font_size", 14)
+	human_name_label.add_theme_font_override("font", custom_font)
 
 	human_box.add_child(human_hbox)
 	human_box.add_child(human_name_label)

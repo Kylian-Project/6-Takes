@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=24 format=3 uid="uid://bs2dnxpx8yi80"]
 
 [ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_m51t2"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -7,9 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
-[ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="9_c013t"]
-[ext_resource type="PackedScene" uid="uid://btkcwru58g8yx" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
+[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="10_op4uk"]
+[ext_resource type="PackedScene" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="11_7shf8"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="12_xxojd"]
 
@@ -48,6 +49,9 @@ bg_color = Color(0, 0, 0, 0.65098)
 border_width_top = 10
 border_width_bottom = 10
 border_color = Color(0.2484, 0.2484, 0.2484, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_vyhay"]
+font = ExtResource("10_op4uk")
 
 [node name="gameboard" type="Node2D"]
 script = ExtResource("1_m51t2")
@@ -367,7 +371,7 @@ grow_vertical = 2
 [node name="choose_rang_1" type="Button" parent="Panel/choix_rang"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
-text = "Rang one"
+text = "rang 1"
 
 [node name="choose_rang_2" type="Button" parent="Panel/choix_rang"]
 custom_minimum_size = Vector2(0, 80)
@@ -386,6 +390,7 @@ text = "rang 4"
 
 [node name="State_label" type="Label" parent="."]
 visible = false
+z_index = 2
 offset_left = 20.0
 offset_top = 269.0
 offset_right = 1952.0
@@ -419,6 +424,7 @@ layout_mode = 2
 [node name="name_bot" type="Label" parent="spplayerleft/HBoxContainer/icon&name"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("9_c013t")
+label_settings = SubResource("LabelSettings_vyhay")
 horizontal_alignment = 1
 
 [node name="CardLayer" type="Control" parent="spplayerleft/HBoxContainer"]
@@ -467,11 +473,11 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.0605303, 0.0605303, 0.0605303, 1)
 theme_override_colors/font_color = Color(0.0295066, 0.0295066, 0.0295065, 1)
-theme_override_fonts/font = ExtResource("3_r0b0d")
+theme_override_fonts/font = ExtResource("10_op4uk")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = ExtResource("11_7shf8")
 theme_override_styles/normal = ExtResource("12_xxojd")
-text = "Sorted cards"
+text = "SORT"
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Panel/choix_rang/choose_rang_1" to="." method="_on_choose_rang_1_pressed"]
