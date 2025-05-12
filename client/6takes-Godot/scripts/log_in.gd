@@ -52,7 +52,7 @@ func _ready():
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
-	var password_hashed = hash_password(password)
+	# var password_hashed = hash_password(password)
 	
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
@@ -63,7 +63,7 @@ func _on_login_button_pressed():
 	
 	var payload = {
 		"username": username_email,
-		"password": password_hashed,
+		"password": password,
 		"device_id": device_id
 	}
 
