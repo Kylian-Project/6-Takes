@@ -68,9 +68,7 @@ var turns
 var current_turn = 1
 var card_selected = true
 
-var card_to_player_map := {}  # Maps card_id -> player_id (username)
-var player_card_nodes := {}   # Maps username -> card_instance (used to get global_position)
-
+var played_card_instances := {}  # key: card_id, value: card_instance
 
 func _ready():
 	_load_cards()
@@ -143,8 +141,6 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"manche_suivante":
 			_handle_next_round(data)
 		"cartes-jouees":
-			print("I AM IMPORTANT FIND ME IN THE TERMINAL")
-			print("yurrrrrrr")
 			_cards_from_players(data)
 		"end-game":
 			_handle_end_game(data)
@@ -229,7 +225,6 @@ func _handle_update_scores(data):
 func _handle_table(data):
 	print("Data received for table:", data)
 	var animate = (game_state == GameState.SETTING_UP_DECK)
-	#_clear_card_containers()
 	update_table_ui(data, animate)
 	
 	game_state = GameState.GAME_STARTED
@@ -249,50 +244,19 @@ func on_player_selects_row(data):
 	selection_buttons(true)
 
 func _cards_from_players(data) -> void:
-	#print(data)
-	#_clear_card_containers()
-#
-	#if data.size() == 0:
-		#push_warning("Received empty data list")
-		#return
-#
-	#var players = data[0]  # Unwrap the outer list
-#
-	#for player_data in players:
-		#var username = player_data.username
-		#var carte = player_data.carte
-		#var numero = carte.numero
-#
-		## Instantiate card
-		#var card_info = _find_card_data(numero)
-		#var target_container = null
-		#if card_info:
-			#var card_instance = card_ui_scene.instantiate()
-			## Determine the correct container
-			#if left_player_container.has_node(username):
-				#target_container = left_player_container.get_node(username)
-			#elif right_player_container.has_node(username):
-				#target_container = right_player_container.get_node(username)
-			#else:
-				#push_warning("No container found for user: %s" % username)
-				#continue
-#
-			## Add card to player's container
-			#target_container.add_child(card_instance)
-			#card_instance.set_card_data(card_info["path"], numero)
-			#card_instance.start_flip_timer(2.0)
-	print(data)
+	played_card_instances.clear()
 	_clear_card_containers()
-
-	card_to_player_map.clear()
-	player_card_nodes.clear()
 
 	if data.size() == 0:
 		push_warning("Received empty data list")
 		return
 
-	var players = data[0]  # Unwrap the outer list
-
+	var players = data[0]
+	
+	if players == null:
+		push_warning("Received empty data list")
+		return
+		
 	for player_data in players:
 		var username = player_data.username
 		var carte = player_data.carte
@@ -302,8 +266,6 @@ func _cards_from_players(data) -> void:
 		var target_container = null
 		if card_info:
 			var card_instance = card_ui_scene.instantiate()
-
-			# Determine the correct container
 			if left_player_container.has_node(username):
 				target_container = left_player_container.get_node(username)
 			elif right_player_container.has_node(username):
@@ -314,11 +276,13 @@ func _cards_from_players(data) -> void:
 
 			target_container.add_child(card_instance)
 			card_instance.set_card_data(card_info["path"], numero)
-			card_instance.start_flip_timer(2.0)
+			card_instance.texture_rect.visible = true
+			#card_instance.start_flip_timer(2.0)
 
-			# --- Register mappings for animation sync ---
-			card_to_player_map[numero] = username
-			player_card_nodes[username] = card_instance
+			played_card_instances[numero] = card_instance
+
+
+
 
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
@@ -407,7 +371,7 @@ func _on_card_selected(card_number):
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
 	
-	
+
 func update_table_ui(table_data, animation):
 	var row_containers = [row1, row2, row3, row4]
 	var new_cards_global: Array = []
@@ -416,12 +380,11 @@ func update_table_ui(table_data, animation):
 		var rows = table_data[0]
 
 		for i in range(4):
-			var row_data = rows[i]  # New row from server
+			var row_data = rows[i]
 			var container = row_containers[i]
-			var previous_row = last_table_state[i]  # Old row
-
-			# Remove old cards that no longer exist
+			var previous_row = last_table_state[i]
 			var removed_card_ids = []
+
 			for old_card_id in previous_row:
 				if not row_data.has(old_card_id):
 					removed_card_ids.append(old_card_id)
@@ -437,35 +400,70 @@ func update_table_ui(table_data, animation):
 					if is_instance_valid(child):
 						child.queue_free()
 
-			# Clear old cards but keep any UI buttons (if present)
 			clear_children_except_buttons(container)
 
-			# Add new cards and collect newly added ones
+			var cards_to_add := []
+
 			for card_id in row_data:
+				var is_new = not previous_row.has(card_id)
 				var card_info = _find_card_data(card_id)
-				if card_info:
+				if not card_info:
+					continue
+
+				cards_to_add.append({
+					"card_id": card_id,
+					"card_info": card_info,
+					"is_new": is_new
+				})
+
+			# Sort cards before adding to ensure correct order
+			cards_to_add.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
+
+			for card_data in cards_to_add:
+				var card_id = card_data["card_id"]
+				var card_info = card_data["card_info"]
+				var is_new = card_data["is_new"]
+
+				if is_new and played_card_instances.has(card_id):
+					var player_card = played_card_instances[card_id]
+					var global_start = player_card.get_global_position()
+					var global_target = container.get_global_position()
+
+					player_card.get_parent().remove_child(player_card)
+					get_tree().root.add_child(player_card)
+					player_card.global_position = global_start
+
+					var tw = create_tween()
+					tw.tween_property(player_card, "global_position", global_target, 0.5)
+					await tw.finished
+
+					get_tree().root.remove_child(player_card)
+					container.add_child(player_card)
+					player_card.global_position = Vector2.ZERO
+					player_card.position = Vector2.ZERO
+					player_card.flip_card()
+
+					played_card_instances.erase(card_id)
+
+				elif is_new:
 					var card_instance = card_ui_scene.instantiate()
 					container.add_child(card_instance)
 					card_instance.set_card_data(card_info["path"], card_id)
+					card_instance.modulate.a = 0
+					card_instance.scale = Vector2(0.5, 0.5)
 
-					var is_new = not previous_row.has(card_id)
+					new_cards_global.append({
+						"card_id": card_id,
+						"card_instance": card_instance
+					})
+				else:
+					var card_instance = card_ui_scene.instantiate()
+					container.add_child(card_instance)
+					card_instance.set_card_data(card_info["path"], card_id)
+					card_instance.texture_rect.visible = true
 
-					if animation:
-						card_instance.start_flip_timer(2.0)
-					elif is_new:
-						card_instance.modulate.a = 0
-						card_instance.scale = Vector2(0.5, 0.5)
-						new_cards_global.append({
-							"card_id": card_id,
-							"card_instance": card_instance
-						})
-					else:
-						card_instance.texture_rect.visible = true
-
-			# Update the tracked table state
 			last_table_state[i] = row_data.duplicate()
 
-	# Animate all new cards globally in ascending card_id order
 	if new_cards_global.size() > 0:
 		new_cards_global.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
 		for card_dict in new_cards_global:
@@ -476,7 +474,6 @@ func update_table_ui(table_data, animation):
 			await tw.finished
 			if is_instance_valid(card_instance):
 				card_instance.flip_card()
-				
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
