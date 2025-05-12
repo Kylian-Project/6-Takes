@@ -68,7 +68,7 @@ var showing_score
 var cards_sorted
 var can_select_card
 var scores_handled
-
+var selecting_row
 
 func _ready():
 	_load_cards()
@@ -125,7 +125,6 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 				_handle_update_scores(data)
 				
 		"choix-rangee":
-			print("chooe row event received")
 			on_player_selects_row(data)
 			
 		"temps-room":
@@ -136,20 +135,27 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			
 		"users-in-your-private-room", "users-in-your-public-room":
 			setup_players(data)
+			
 		"fin-tour":
 			print("fin tour")
 			current_turn +=1
 			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
+		
 		"ramassage-rang":
 			takes_row(data)
+			
 		"end-game":
 			_handle_end_game(data)
+			
 		"manche-suivante":
 			_handle_next_round(data)
+			
 		"score-manche":
 			show_turn_score(data)
+			
 		"remove-room":
 			_handle_remove_room()
+			
 		"sorted-cards":
 			print("sorted cards received :", data)
 			if !cards_sorted:
@@ -218,6 +224,7 @@ func start_game():
 func _start_turn():
 	can_select_card = true
 	cards_sorted = false
+	selecting_row = false
 	#highlight_row(false)
 	if room_id_global != null:
 		print("emit tour")
@@ -259,6 +266,7 @@ func _await_row_selection(data):
 
 # --- Player Actions Signals---
 func on_player_selects_row(data):
+	selecting_row = true
 	for child in hbox_container.get_children():
 		child.mouse_filter = Control.MOUSE_FILTER_STOP
 		
