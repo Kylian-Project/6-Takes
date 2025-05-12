@@ -22,20 +22,24 @@ extends Node2D
 ]
 
 @onready var row_buttons = [
-	$deckContainer/rowsContainer/row1_panel/row1/selectRowButton,
-	$deckContainer/rowsContainer/row2_panel/row2/selectRowButton,
-	$deckContainer/rowsContainer/row3_panel/row3/selectRowButton,
-	$deckContainer/rowsContainer/row4_panel/row4/selectRowButton
+	$deckContainer/rowsContainer/row1_panel/selectRowButton,
+	$deckContainer/rowsContainer/row2_panel/selectRowButton,
+	$deckContainer/rowsContainer/row3_panel/selectRowButton,
+	$deckContainer/rowsContainer/row4_panel/selectRowButton
+]
+
+@onready var row_collision_areas = [
+	$deckContainer/rowsContainer/row1_panel/Area2D,
+	$deckContainer/rowsContainer/row2_panel/Area2D,
+	$deckContainer/rowsContainer/row3_panel/Area2D,
+	$deckContainer/rowsContainer/row4_panel/Area2D
 ]
 
 #players ui
 @onready var player_visual_scene = preload("res://scenes/PlayerVisual.tscn")
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
-
-#mssg panels
-@onready var mssg_panel    = $mssgControl
-
+@onready var rows_manager := $deckContainer/rowsContainer
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
@@ -70,7 +74,7 @@ func _ready():
 	_load_cards()
 	
 	setting_up_deck = false
-	player_username = Global.player_name
+	player_username = "neila" #Global.player_name
 	room_id_global = GameState.id_lobby
 	me = GameState.player_info
 	turns = GameState.rounds
@@ -86,17 +90,18 @@ func _ready():
 	showing_score = false
 	cards_sorted = false
 	
-	highlight_row(false)
-	for i in range(row_buttons.size()):
-		var btn = row_buttons[i]
-		btn.visible = false
-		btn.pressed.connect(_on_select_row_button_pressed.bind(i)) 
-	
+	##highlight_row(false)
+	#for i in range(row_buttons.size()):
+		#var btn = row_buttons[i]
+		#btn.visible = false
+		#btn.pressed.connect(_on_select_row_button_pressed.bind(i)) 
+	#connect row selection signal
+	rows_manager.connect("row_selected", Callable(self, "_on_row_confirmed"))
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 	#start game
-	is_host = GameState.is_host
+	is_host = get_node("/root/GameState").is_host
 	if is_host:
 		SocketManager.emit("start-game", room_id_global)
 	start_game()
@@ -120,6 +125,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 				_handle_update_scores(data)
 				
 		"choix-rangee":
+			print("chooe row event received")
 			on_player_selects_row(data)
 			
 		"temps-room":
@@ -130,68 +136,38 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			
 		"users-in-your-private-room", "users-in-your-public-room":
 			setup_players(data)
-			
-		"ramassage_rang":
-			_handle_takes(data)
-			
 		"fin-tour":
 			print("fin tour")
 			current_turn +=1
 			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
-			
 		"ramassage-rang":
 			takes_row(data)
-			
 		"end-game":
 			_handle_end_game(data)
-			
 		"manche-suivante":
 			_handle_next_round(data)
-			
 		"score-manche":
 			show_turn_score(data)
-			
 		"remove-room":
 			_handle_remove_room()
-			
 		"sorted-cards":
 			print("sorted cards received :", data)
 			if !cards_sorted:
 				cards_sorted = true
 				_handle_your_hand(data)
-		"user-left":
-			_handle_user_left(data)
+				
 		_:
-			print("Unhandled event received: ", event, " data: ", data)
+			print("Unhandled event received: ", event, "data: ", data)
 	
 	if not turn_emitted and not game_ended:
 		turn_emitted = true
 		
-		print("emit tour")
 		scores_handled = false
 		_start_turn()
 
 
 func _handle_remove_room():
-	mssg_panel.get_node("mssg").text = "\n Host Left the Game "
-	mssg_panel.visible = true
-	#game_ended = true
-
-func _handle_user_left(data):
-	#if data[0].size == 1:
-	print("user left , ", data)
-	GameState.players_count -= 1
-	
-	mssg_panel.get_node("mssg").text = "\n Opponent left the game"
-	mssg_panel.visible = true
-	
-	if GameState.is_public:
-		SocketManager.emit("users-in-public-room", room_id_global)
-	else:
-		SocketManager.emit("users-in-private-room", room_id_global)
-		
-	if GameState.players_count == 1:
-		game_ended = true
+	pass
 
 
 func _handle_next_round(data):
@@ -228,17 +204,21 @@ func takes_row(data):
 	else:
 		show_label(user_takes + " Takes 6!")
 
-
 func start_game():
 	var start_data = {"roomId" : room_id_global}
-	show_label("Game Starting")	
+
+	show_label("Game Starting")
+	SocketManager.emit("users-in-public-room", {
+		"roomId" : room_id_global
+	})
+	
 	SocketManager.emit("users-in-public-room", room_id_global)
 	
 
 func _start_turn():
 	can_select_card = true
 	cards_sorted = false
-	highlight_row(false)
+	#highlight_row(false)
 	if room_id_global != null:
 		print("emit tour")
 		SocketManager.emit("tour", {
@@ -283,14 +263,23 @@ func on_player_selects_row(data):
 		child.mouse_filter = Control.MOUSE_FILTER_STOP
 		
 	show_label("Choose a row To take")
-	highlight_row(true)
-	selection_buttons(true)
+	print("calling row selection in row manager")
+	rows_manager.show_row_selection_ui()
+	#highlight_row(true)
+	#selection_buttons(true)
+# Called when player confirms a row
+func _on_row_confirmed(row_index):
+	print("Player selected row:", row_index)
 
-
+	SocketManager.emit("choisir-rangee", {
+		"roomId": room_id_global,
+		"indexRangee": row_index,
+		"username": player_username
+	})
+	
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
-		pause_instance.scene = self
 
 		add_child(pause_instance)
 
@@ -321,7 +310,10 @@ func _handle_your_hand(hand_data):
 	print("Update hand UI ", hand_data)
 	for child in hbox_container.get_children():
 		child.queue_free()
-	
+
+	if !cards_animated:
+		can_select_card = false
+
 	for card_id in hand_data[0]:
 		var card_info = _find_card_data(card_id)
 		var path = card_info["path"]
@@ -358,6 +350,7 @@ func _handle_your_hand(hand_data):
 				card.toggle_texture_visibility(true)
 	
 	cards_animated = true
+	can_select_card = true
 
 
 func _on_card_selected(card_number):
@@ -393,7 +386,8 @@ func update_table_ui(table_data, settingup_deck):
 					
 					if card_instance.has_method("set_card_data"):
 						card_instance.set_card_data(card_info["path"], card_id)
-						
+						card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
 						if setting_up_deck:
 							card_instance.start_flip_timer(2.0)
 						else:
@@ -404,27 +398,27 @@ func update_table_ui(table_data, settingup_deck):
 	settingup_deck = false
 
 
-func highlight_row(boolean): #, is_selected: bool) -> void:
-	var style = StyleBoxFlat.new()
-	style.set_border_width_all(4)
-	style.bg_color = Color.TRANSPARENT
-	
-	if boolean:
-		style.border_color = Color.BLUE
-	else:
-		style.border_color = Color.TRANSPARENT
-	
-	for i in range(row_panels.size()):
-		var panel = row_panels[i]
-		var btn   = row_buttons[i]
-		panel.add_theme_stylebox_override("panel", style)
-	selection_buttons(false)
+#func highlight_row(boolean): #, is_selected: bool) -> void:
+	#var style = StyleBoxFlat.new()
+	#style.set_border_width_all(4)
+	#style.bg_color = Color.TRANSPARENT
+	#
+	#if boolean:
+		#style.border_color = Color.BLUE
+	#else:
+		#style.border_color = Color.TRANSPARENT
+	#
+	#for i in range(row_panels.size()):
+		#var panel = row_panels[i]
+		#var btn   = row_buttons[i]
+		#panel.add_theme_stylebox_override("panel", style)
+	#selection_buttons(false)
 	
 
-func selection_buttons(visibility):
-	for i in range(row_buttons.size()):
-		var btn = row_buttons[i]
-		btn.visible = visibility
+#func selection_buttons(visibility):
+	#for i in range(row_buttons.size()):
+		#var btn = row_buttons[i]
+		#btn.visible = visibility
 	
 	
 func _on_select_row_button_pressed(row_index):
@@ -487,7 +481,6 @@ func setup_players(player_data):
 	var others := []
 	var current_player
 	
-	print("players DEBUG : ", players)
 	for user_dict in players:
 		var name = user_dict.get("username", "")
 		if name == player_username:
@@ -504,7 +497,6 @@ func setup_players(player_data):
 			user_icon = user.icon
 
 		var player_visual_instance = player_visual_scene.instantiate()
-
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
 		var slot = VBoxContainer.new()
 		slot.add_child(vis)
@@ -519,20 +511,8 @@ func setup_players(player_data):
 		var player_visual_instance = player_visual_scene.instantiate()
 		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
 		right_player_container.add_child(me_vis)
-		
-	else:
-		print("Couldn’t find current_player in %s" , players)
-		return
 			
 	players_displayed = true
-
-
-func _handle_takes(data):
-	var player_takes = data[0]["username"]
-	if player_takes == player_username:
-		show_label("You Take 6!")
-	else:
-		show_label(player_takes + " Takes 6!")
 
 
 func _handle_end_game(data):
@@ -543,6 +523,7 @@ func _handle_end_game(data):
 	
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("closeButton").disabled = true
+	score_instance.gameboard = self
 	await get_tree().create_timer(3).timeout
 	#TRANSITION FIX HERE 
 	#var transition_scene = load("res://scenes/Transition.tscn")
@@ -560,13 +541,3 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
-
-
-func _on_close_button_pressed() -> void:
-	if game_ended:
-		if !is_host:
-			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-		else:
-			get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-	else:
-		mssg_panel.visible = false
