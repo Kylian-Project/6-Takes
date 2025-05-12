@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://4nwch3h4c523"]
+[gd_scene load_steps=13 format=3 uid="uid://4nwch3h4c523"]
 
 [ext_resource type="Script" path="res://scripts/join_lobby.gd" id="1_7m17b"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_ocxai"]
@@ -59,6 +59,33 @@ border_width_left = 5
 border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cba7b"]
+bg_color = Color(0.404511, 0.404511, 0.404511, 0.270588)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.403922, 0.403922, 0.403922, 0.270588)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0etuy"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.0562916, 0.0562916, 0.0562916, 0.6)
+
 [node name="JoinLobby" type="Control"]
 layout_mode = 3
 anchors_preset = 8
@@ -86,10 +113,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -236.5
-offset_top = -272.0
-offset_right = 236.5
-offset_bottom = 272.0
+offset_left = -318.5
+offset_top = -366.0
+offset_right = 321.5
+offset_bottom = 364.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -115,7 +142,7 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("3_yv3f1")
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "Join a Lobby!"
 
 [node name="JoinCodeContainer" type="HBoxContainer" parent="JoinPanel/MainVertical"]
@@ -126,12 +153,16 @@ alignment = 1
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_j64rt")
 text = "Join by code"
 
 [node name="SpinBox" type="LineEdit" parent="JoinPanel/MainVertical/JoinCodeContainer"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+theme_override_colors/selection_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
 max_length = 4
 
 [node name="JoinCodeButton" type="Button" parent="JoinPanel/MainVertical/JoinCodeContainer"]
@@ -139,17 +170,21 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/hover = SubResource("StyleBoxFlat_teeib")
 theme_override_styles/normal = SubResource("StyleBoxFlat_tsl6c")
 text = "Join"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="JoinPanel/MainVertical"]
 layout_mode = 2
+size_flags_vertical = 2
 alignment = 1
 
 [node name="RoomsList" type="ItemList" parent="JoinPanel/MainVertical/AvailableOptions"]
+custom_minimum_size = Vector2(500, 400)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
 
 [node name="Button" type="Button" parent="JoinPanel/MainVertical"]
 visible = false
@@ -169,10 +204,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 198.0
-offset_top = -272.0
-offset_right = 237.0
-offset_bottom = -223.0
+offset_left = 283.0
+offset_top = -366.0
+offset_right = 322.0
+offset_bottom = -317.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -181,15 +216,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_c848d")
 text = "X"
 
 [node name="Button2" type="Button" parent="."]
-modulate = Color(0.223529, 1, 1, 1)
-self_modulate = Color(0.129412, 1, 1, 1)
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-offset_left = -236.0
-offset_top = 186.0
-offset_right = -144.0
-offset_bottom = 272.0
+offset_left = -318.0
+offset_top = 277.0
+offset_right = -226.0
+offset_bottom = 363.0
 size_flags_horizontal = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_cba7b")
+theme_override_styles/normal = SubResource("StyleBoxFlat_0etuy")
 icon = ExtResource("5_d1nde")
 expand_icon = true
 
