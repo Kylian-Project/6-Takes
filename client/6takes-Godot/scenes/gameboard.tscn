@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://duifho84rqy3k"]
+[gd_scene load_steps=24 format=3 uid="uid://duifho84rqy3k"]
 
 [ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -30,6 +30,21 @@ font_size = 50
 [sub_resource type="LabelSettings" id="LabelSettings_8de43"]
 font = ExtResource("3_r0b0d")
 font_size = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1c86"]
+content_margin_left = 50.0
+content_margin_top = 30.0
+content_margin_bottom = 60.0
+bg_color = Color(0.329412, 0.607843, 0.341176, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2khg6"]
 bg_color = Color(0.6, 0.6, 0.6, 0.741176)
@@ -67,7 +82,7 @@ script = ExtResource("1_yvybn")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -1
+layer = -5
 
 [node name="background_board" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = 15
@@ -141,23 +156,26 @@ theme_override_font_sizes/font_size = 1
 icon = ExtResource("4_7flow")
 flat = true
 
-[node name="deckContainer" type="HBoxContainer" parent="." groups=["deck_grp"]]
+[node name="deckContainer" type="PanelContainer" parent="." groups=["deck_grp"]]
 show_behind_parent = true
+z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 455.0
-offset_top = 194.0
-offset_right = 1551.0
-offset_bottom = 886.0
+offset_left = 382.0
+offset_top = 123.0
+offset_right = 1532.0
+offset_bottom = 873.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_i1c86")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="deckContainer"]
 layer = -1
+visible = false
 
 [node name="background_depose" type="TextureRect" parent="deckContainer/CanvasLayer"]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -175,7 +193,7 @@ expand_mode = 1
 [node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
 custom_minimum_size = Vector2(75, 100)
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 45
 alignment = 1
 
 [node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
@@ -259,13 +277,14 @@ expand_icon = true
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(957.75, 488.125)
+position = Vector2(960, 490)
 shape = SubResource("RectangleShape2D_au8mm")
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
-layer = -1
+layer = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2" groups=["hand_grp"]]
+z_index = -5
 custom_minimum_size = Vector2(75, 80)
 anchors_preset = 7
 anchor_left = 0.5
@@ -293,6 +312,9 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/hover = ExtResource("8_b6qql")
@@ -323,7 +345,7 @@ vertical_alignment = 1
 [node name="LPlayer_container" type="VBoxContainer" parent="."]
 offset_left = 40.0
 offset_top = 140.0
-offset_right = 240.0
+offset_right = 320.0
 offset_bottom = 852.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -331,9 +353,9 @@ theme_override_constants/separation = 30
 alignment = 1
 
 [node name="RPlayer_container" type="VBoxContainer" parent="."]
-offset_left = 1693.0
+offset_left = 1612.0
 offset_top = 140.0
-offset_right = 1893.0
+offset_right = 1892.0
 offset_bottom = 852.0
 theme_override_constants/separation = 30
 alignment = 1
