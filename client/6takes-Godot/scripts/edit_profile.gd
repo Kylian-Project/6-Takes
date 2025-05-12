@@ -109,7 +109,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 	if current_action == "logout":
 		if response_code == 200:
 			print("Déconnexion réussie")
-			get_node("/root/Global").set_logged_in(false)
+			Global.logged_in = false
 			get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 		else:
 			var popup_message = popup_label.get_node("message")

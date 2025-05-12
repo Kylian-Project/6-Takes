@@ -184,6 +184,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = SubResource("StyleBoxFlat_j0hpf")
+max_length = 8
 
 [node name="PlayerLimitDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
@@ -304,11 +305,15 @@ alignment = 1
 
 [node name="PrivateCheckButton" type="CheckButton" parent="PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
+size_flags_horizontal = 6
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_lrct7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_lrct7")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lrct7")
-text = "Public"
+text = "Public  "
+alignment = 1
 
 [node name="CreateLobbyButton" type="Button" parent="PanelContainer/MainVertical"]
 layout_mode = 2

@@ -12,7 +12,7 @@ var player_name
 
 
 func _ready():	
-	player_name = get_node("/root/Global").player_name
+	player_name = Global.player_name
 	available_rooms_list.custom_minimum_size = Vector2(200, 200)
 	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
