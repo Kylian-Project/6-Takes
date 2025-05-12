@@ -184,6 +184,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = SubResource("StyleBoxFlat_j0hpf")
+max_length = 8
 
 [node name="PlayerLimitDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2

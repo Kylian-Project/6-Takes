@@ -393,10 +393,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -99.0
-offset_top = -107.0
-offset_right = 128.0
-offset_bottom = -38.0
+offset_left = -110.0
+offset_top = 48.0
+offset_right = 117.0
+offset_bottom = 117.0
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 3
@@ -412,3 +412,4 @@ expand_icon = true
 
 [connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]
 [connection signal="pressed" from="sortCards" to="." method="_on_sort_cards_pressed"]
+[connection signal="pressed" from="mssgControl/closeButton" to="." method="_on_close_button_pressed"]

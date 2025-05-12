@@ -96,7 +96,7 @@ func _ready():
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 	#start game
-	is_host = get_node("/root/GameState").is_host
+	is_host = GameState.is_host
 	if is_host:
 		SocketManager.emit("start-game", room_id_global)
 	start_game()
@@ -114,41 +114,55 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			if !table_received:
 				table_received = true
 				update_table_ui(data, setting_up_deck)
+				
 		"update-scores":
 			if !scores_handled:
 				_handle_update_scores(data)
+				
 		"choix-rangee":
 			on_player_selects_row(data)
+			
 		"temps-room":
 			_handle_timer(data)
+			
 		"attente-choix-rangee":
 			_await_row_selection(data)
+			
 		"users-in-your-private-room", "users-in-your-public-room":
 			setup_players(data)
+			
 		"ramassage_rang":
 			_handle_takes(data)
+			
 		"fin-tour":
 			print("fin tour")
 			current_turn +=1
 			turn_label.text = "Turn " + str(current_turn) + " / " + str(turns)
+			
 		"ramassage-rang":
 			takes_row(data)
+			
 		"end-game":
 			_handle_end_game(data)
+			
 		"manche-suivante":
 			_handle_next_round(data)
+			
 		"score-manche":
 			show_turn_score(data)
+			
 		"remove-room":
 			_handle_remove_room()
+			
 		"sorted-cards":
 			print("sorted cards received :", data)
 			if !cards_sorted:
 				cards_sorted = true
 				_handle_your_hand(data)
-				
+		"user-left":
+			_handle_user_left(data)
 		_:
-			print("Unhandled event received: ", event, "data: ", data)
+			print("Unhandled event received: ", event, " data: ", data)
 	
 	if not turn_emitted and not game_ended:
 		turn_emitted = true
@@ -159,7 +173,25 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 
 
 func _handle_remove_room():
-	pass
+	mssg_panel.get_node("mssg").text = "\n Host Left the Game "
+	mssg_panel.visible = true
+	#game_ended = true
+
+func _handle_user_left(data):
+	#if data[0].size == 1:
+	print("user left , ", data)
+	GameState.players_count -= 1
+	
+	mssg_panel.get_node("mssg").text = "\n Opponent left the game"
+	mssg_panel.visible = true
+	
+	if GameState.is_public:
+		SocketManager.emit("users-in-public-room", room_id_global)
+	else:
+		SocketManager.emit("users-in-private-room", room_id_global)
+		
+	if GameState.players_count == 1:
+		game_ended = true
 
 
 func _handle_next_round(data):
@@ -199,12 +231,7 @@ func takes_row(data):
 
 func start_game():
 	var start_data = {"roomId" : room_id_global}
-
-	show_label("Game Starting")
-	SocketManager.emit("users-in-public-room", {
-		"roomId" : room_id_global
-	})
-	
+	show_label("Game Starting")	
 	SocketManager.emit("users-in-public-room", room_id_global)
 	
 
@@ -533,3 +560,13 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
+
+
+func _on_close_button_pressed() -> void:
+	if game_ended:
+		if !is_host:
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+		else:
+			get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+	else:
+		mssg_panel.visible = false

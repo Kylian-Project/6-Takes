@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://5ls8lmrlon1d"]
+[gd_scene load_steps=4 format=3 uid="uid://c0kw71qy3eh2s"]
 
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_1bh6i"]
 [ext_resource type="Texture2D" uid="uid://cwse4voc3wfn0" path="res://assets/images/exit overlay.png" id="2_05dw2"]

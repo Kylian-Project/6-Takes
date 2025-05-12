@@ -1,9 +1,8 @@
-[gd_scene load_steps=24 format=3 uid="uid://c1bikqhwekjd3"]
+[gd_scene load_steps=23 format=3 uid="uid://c1bikqhwekjd3"]
 
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Script" path="res://scripts/screen_pause.gd" id="1_slec1"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
-[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_amim0"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_qk851"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_alrgk"]
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="6_uxr2t"]
@@ -176,7 +175,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -190,7 +189,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -204,7 +203,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -462,6 +461,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_5c47e")
 text = "X"
 
 [node name="ConfirmControl" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 0
 offset_left = 955.0
@@ -483,7 +483,7 @@ offset_right = 970.0
 offset_bottom = 547.5
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.301961)
+color = Color(0, 0, 0, 0.184314)
 
 [node name="mssg" type="Label" parent="ConfirmControl"]
 layout_mode = 1
