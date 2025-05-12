@@ -85,9 +85,6 @@ func get_player_id():
 func get_saved_token():
 	return saved_token
 
-func set_logged_in(state):
-	logged_in = state
-
 func save_session(token: String, uid, uname, icon):
 	#var config = ConfigFile.new()
 	config.set_value("session", "token", token)
@@ -102,7 +99,7 @@ func save_session(token: String, uid, uname, icon):
 	player_id = uid
 	player_name = uname
 	icon_id = icon
-	
+
 	logged_in = true
 
 #load session data from file on startup
