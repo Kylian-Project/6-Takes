@@ -10,10 +10,12 @@ signal canceled()
 var action_type    := ""
 var action_payload
 var message = ""
+var scene
 
 func _ready():
 	visible = false
 	$mssg.text = message
+
 	confirm_button.pressed.connect(_on_confirm_pressed)
 	cancel_button.pressed.connect(_on_cancel_pressed)
 
@@ -29,5 +31,8 @@ func _on_confirm_pressed():
 	emit_signal("confirmed", action_type, action_payload)
 
 func _on_cancel_pressed():
-	hide()
+	#hide()
+	print("cancel pressed")
+	self.visible = false
+	print("visibility :", self.visible)
 	emit_signal("canceled")

@@ -33,6 +33,9 @@ extends Node2D
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
 
+#mssg panels
+@onready var mssg_panel    = $mssgControl
+
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
@@ -260,6 +263,7 @@ func on_player_selects_row(data):
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
+		pause_instance.scene = self
 
 		add_child(pause_instance)
 
@@ -456,6 +460,7 @@ func setup_players(player_data):
 	var others := []
 	var current_player
 	
+	print("players DEBUG : ", players)
 	for user_dict in players:
 		var name = user_dict.get("username", "")
 		if name == player_username:
@@ -472,6 +477,7 @@ func setup_players(player_data):
 			user_icon = user.icon
 
 		var player_visual_instance = player_visual_scene.instantiate()
+
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
 		var slot = VBoxContainer.new()
 		slot.add_child(vis)
@@ -510,7 +516,6 @@ func _handle_end_game(data):
 	
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("closeButton").disabled = true
-	score_instance.gameboard = self
 	await get_tree().create_timer(3).timeout
 	#TRANSITION FIX HERE 
 	#var transition_scene = load("res://scenes/Transition.tscn")

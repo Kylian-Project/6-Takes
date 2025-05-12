@@ -166,7 +166,13 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				lobby_name_panel.text = lobby_name
 				players_limit = GameState.players_limit
 				players_count_panel.text = str(players_count) + " / " + str(players_limit)
-
+		
+		"remove-public-room", "remove-private-room":
+			message_control.get_node("mssg").text = "\nThis lobby has been removed!"
+			message_control.visible = true
+			await get_tree().create_timer(2.5).timeout
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+			
 		_:
 			print("unhandled event received \n", event, data)
 
@@ -299,6 +305,7 @@ func _on_start_button_pressed() -> void:
 
 func _on_quit_button_pressed() -> void:
 	confirm_panel.action_type    = "quit"
+	confirm_panel.scene = self
 	if is_host:
 		confirm_panel.message = "Remove \""+ lobby_name+ "\" Lobby ?"
 	else :

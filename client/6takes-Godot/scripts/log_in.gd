@@ -12,8 +12,6 @@ extends Control
 
 var jwt_token = null
 var player_data = {}
-var ws = WebSocketPeer.new()
-var ws_connected = false
 
 var API_URL  
 
@@ -31,8 +29,8 @@ func _ready():
 	self.visible = true
 	http_request.request_completed.connect(_on_http_request_completed)
 	
-	var base_url = get_node("/root/Global").get_base_url()
-	var base_http = get_node("/root/Global").get_base_http()
+	var base_url = Global.get_base_url()
+	var base_http = Global.get_base_http()
 	API_URL = base_http + base_url + "/api/player/connexion"
 	
 	# Soundboard
@@ -49,11 +47,14 @@ func _ready():
 	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
 
+func _on_signup_placeholder(u_name_placeholder):
+	username_email_input.text = u_name_placeholder
+	
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
-	var password_hashed = hash_password(password)
 
+	
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
 		return
@@ -63,7 +64,7 @@ func _on_login_button_pressed():
 	
 	var payload = {
 		"username": username_email,
-		"password": password_hashed,
+		"password": password,
 		"device_id": device_id
 	}
 
@@ -74,20 +75,7 @@ func _on_login_button_pressed():
 	print("ID de l'appareil :", device_id)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
 
-#
-#func _on_http_request_completed(result, response_code, headers, body):
-	#var response_str = body.get_string_from_utf8()
-	#var parsed = JSON.parse_string(response_str)
-	#
-	#print("Réponse HTTP reçue : code =", response_code)
-	#
-	#if response_code != 200:
-		#if parsed == null or response_code == 0 :
-			#popup_message.text = "Server Connexion Error"
-		#else:
-			#popup_message.text = parsed["message"]
-		#popup_overlay.visible = true
-		#return
+
 func _on_http_request_completed(result, response_code, headers, body):
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
@@ -123,54 +111,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
-
-	#var json = JSON.parse_string(body.get_string_from_utf8())
-	#var response = json
-	#if "token" in response:
-		#jwt_token = response["token"]
-		#player_data = response["player"]
-		#print(" Connexion réussie ! ")
-		#
-		#var raw_response = body.get_string_from_utf8()
-		#var result_string = JSON.parse_string(raw_response)
-		#
-		#var playerIid = result_string["player"]["id"]
-		#var player_name = result_string["player"]["username"]
-		#var icon_id = result_string["player"]["icon"]
-		#var player_id =  playerIid
-		#
-		#
-		#get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
-		#_connect_to_websocket()
-		#_move_to_multiplayer_pressed()
-	#else:
-		#print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
-
-
-
-
-func _process(_delta):
-	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
-		ws_connected = true
-		print(" WebSocket connecté avec succès !")
-
-	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
-		if ws_connected:
-			ws_connected = false
-			print(" WebSocket déconnecté.")
-	
-	ws.poll()
-
-	if ws.get_available_packet_count() > 0:
-		var data = ws.get_packet().get_string_from_utf8()
-		_on_ws_data(data)
-
-func _on_ws_data(data):
-	print(" Données reçues :", data)
-	var response = JSON.parse_string(data)
-	if response == null:
-		print(" Donnée non-JSON :", data)
-		return
 
 
 var overlay_opened = false

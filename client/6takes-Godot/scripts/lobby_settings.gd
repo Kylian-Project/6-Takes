@@ -17,16 +17,34 @@ extends Control
 var lobby_name 
 var uname
 
+func _ready() -> void:
+	_initialize_settings()
+	
 # Called when the node enters the scene tree for the first time.
 func _initialize_settings() -> void:
+	print("GameState values:", GameState.lobby_name, GameState.players_limit, GameState.card_number)
+	
 	uname = Global.player_name
+	 
+	lobby_name_field.text = GameState.lobby_name 
 	
-	lobby_name_field.editable = false 
-	lobby_name_field.placeholder_text = GameState.lobby_name 
-	
-	player_limit_dropdown.select(GameState.players_limit - 2)
-	#card_number_dropdown.select(GameState.card_number - 1)
-	card_number_dropdown.selected = GameState.card_number - 1
+	var target_value = int(GameState.players_limit)
+	var index = player_limit_dropdown.get_item_index(target_value)
+	if index != -1:
+		player_limit_dropdown.select(index)
+		
+		# Card number
+	var card_value = int(GameState.card_number)
+	var card_index = card_number_dropdown.get_item_index(card_value)
+	if card_index != -1:
+		card_number_dropdown.select(card_index)
+
+	# Round timer
+	var round_time_value = int(GameState.timer)
+	var round_time_index = round_timer_dropdown.get_item_index(round_time_value)
+	if round_time_index != -1:
+		round_timer_dropdown.select(round_time_index)
+
 
 
 func _on_save_settings() -> void:
@@ -62,4 +80,4 @@ func _on_visibility_changed():
 
 func _on_close_pressed() -> void:
 	self.visible = false
-	queue_free()
+	#queue_free()

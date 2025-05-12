@@ -1,7 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://c760lcovw6pdf"]
+[gd_scene load_steps=3 format=3 uid="uid://rgren65hho4r"]
 
-[ext_resource type="Script" path="res://scripts/transition.gd" id="1_wm63e"]
 [ext_resource type="AudioStream" uid="uid://c5u0ngub4ei63" path="res://assets/sounds/mixkit-fast-air-sweep-transition-168.wav" id="2_qxlkf"]
+
+[sub_resource type="GDScript" id="GDScript_q3xnt"]
+script/source = "extends Control
+
+@onready var anim = $AnimationPlayer
+@onready var audio_player = $AudioStreamPlayer
+
+signal transition_finished
+	
+func fade_out(new_scene: String):
+	if audio_player:
+		audio_player.play()
+	anim.play(\"fade_out\")
+	await anim.animation_finished
+	queue_free() 
+	get_tree().change_scene_to_file(new_scene)
+
+func play_fade_in():
+	anim.play(\"fade_in\")
+	await anim.animation_finished
+	queue_free()  
+"
 
 [node name="Transition" type="Control"]
 layout_mode = 3
@@ -10,7 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_wm63e")
+script = SubResource("GDScript_q3xnt")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
