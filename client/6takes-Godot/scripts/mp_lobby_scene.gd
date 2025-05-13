@@ -47,6 +47,8 @@ func _ready():
 	player_username = Global.player_name
 	players_count = GameState.players_count
 	
+	check_ban_status()
+	
 	# Hover sounds
 	start_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	quit_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -110,16 +112,38 @@ func _ready():
 func get_users():
 	if is_public:
 		print("emit get users in public room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-public-room", id_lobby)
 	else:
 		print("emit get users in private room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-private-room", id_lobby)
 		
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
 	print("Raw packet string:", packet.get_string_from_utf8())
 	
-	
+func check_ban_status():
+	if Global.is_banned():
+		start_button.disabled = true
+		message_control.get_node("mssg").text = "You are banned for: " + str(Global.get_ban_time_left()) + " seconds"
+		message_control.visible = true
+	else:
+		start_button.disabled = false
+
+func update_player_list():
+	# Vider la liste actuelle des joueurs
+	for child in players_container.get_children():
+		child.queue_free()
+
+	# Récupérer les informations des joueurs depuis GameState
+	var players = GameState.other_players
+	for player in players:
+		var player_entry = player_entry_scene.instantiate()
+		player_entry.get_node("PlayerInfoContainer/PlayerName").text = player["username"]
+		player_entry.get_node("PlayerInfoContainer/Icon").texture = load("res://assets/icons/" + str(player["icon"]) + ".png")
+		players_container.add_child(player_entry)
+
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
 		"users-in-your-private-room", "users-in-your-public-room" :
