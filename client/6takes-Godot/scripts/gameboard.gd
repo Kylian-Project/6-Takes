@@ -76,7 +76,7 @@ func _ready():
 	_load_cards()
 	
 	setting_up_deck = false
-	player_username = "neila" #Global.player_name
+	player_username = Global.player_name
 	room_id_global = GameState.id_lobby
 	me = GameState.player_info
 	turns = GameState.rounds
