@@ -225,15 +225,13 @@ func show_turn_score(data):
 	
 func takes_row(data):
 	var user_takes = data[0].username
-	var row_index = data[0].indexRangee
+	var row_index = data[0].index
 	
 	print("player takes ", user_takes)
 	if user_takes == player_username:
 		show_label("You Take 6 !")
 	else:
 		show_label(user_takes + " Takes 6!")
-	# Animate removal of the selected row
-	await animate_row_removal(row_index)
 
 
 func start_game():
@@ -509,6 +507,8 @@ func update_table_ui(table_data, settingup_deck):
 					container.add_child(card_instance)
 					card_instance.set_card_data(card_info["path"], card_id)
 					card_instance.texture_rect.visible = true
+					card_instance.modulate.a = 1.0
+					card_instance.scale = Vector2(1, 1)
 
 			last_table_state[i] = row_data.duplicate()
 
@@ -522,6 +522,22 @@ func update_table_ui(table_data, settingup_deck):
 			await tw.finished
 			if is_instance_valid(card_instance):
 				card_instance.flip_card()
+				
+	# Clean up leftover player cards (not placed on table)
+	if played_card_instances.size() > 0:
+		for leftover_card_id in played_card_instances.keys():
+			var leftover_card = played_card_instances[leftover_card_id]
+			if is_instance_valid(leftover_card):
+				var tw = create_tween()
+				tw.parallel()
+				tw.tween_property(leftover_card, "modulate:a", 0.0, 0.4)
+				tw.tween_property(leftover_card, "scale", Vector2(0.5, 0.5), 0.4)
+				tw.chain()
+				await tw.finished
+				if is_instance_valid(leftover_card):
+					leftover_card.queue_free()
+
+		played_card_instances.clear()
 
 func highlight_row(boolean): #, is_selected: bool) -> void:
 	var style = StyleBoxFlat.new()
@@ -684,35 +700,6 @@ func _handle_end_game(data):
 	
 	get_tree().current_scene.add_child(score_instance)
 	
-@onready var tween = $Tween  # Reference to Tween node
-
-func animate_row_removal(row_index: int) -> void:
-	var row = row_panels[row_index]
-	var cards = row.get_children()
-	
-	# Sort cards from right to left
-	cards = cards.sorted_custom(func(a, b):
-		return a.global_position.x > b.global_position.x
-	)
-	
-	var delay_step := 0.1  # seconds between each card animation
-	var duration := 0.4    # duration of each card's fade
-	
-	for i in range(cards.size()):
-		var card = cards[i]
-		var delay = i * delay_step
-		
-		tween.tween_property(card, "modulate:a", 0.0, duration).set_delay(delay)
-		tween.tween_property(card, "scale", Vector2(0.0, 0.0), duration, Tween.TRANS_BACK, Tween.EASE_IN_OUT).set_delay(delay)
-	
-	# Wait until last animation is done
-	var total_duration = (cards.size() - 1) * delay_step + duration
-	await get_tree().create_timer(total_duration).timeout
-	
-	row.visible = false
-	for card in cards:
-		card.scale = Vector2(1, 1)
-		card.modulate = Color(1, 1, 1, 1)
 
 func clear_children_except_buttons(node: Node) -> void:
 	for child in node.get_children():
