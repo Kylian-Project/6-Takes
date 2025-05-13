@@ -52,8 +52,8 @@ func _on_save_settings() -> void:
 	var player_limit = int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected()))
 	var rounds = int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected()))
 	
-	if GameState.players_count - GameState.bot_count > player_limit:
-		player_limit =GameState.players_limit
+	if GameState.players_count > player_limit:
+		player_limit = GameState.players_limit
 		
 	var message = {
 		"event": "create-room",
@@ -66,7 +66,6 @@ func _on_save_settings() -> void:
 		"rounds": rounds,
 	}
 	
-	print("sending setting changed")
 	SocketManager.emit("update-room-settings", {
 		"roomId" : GameState.id_lobby,
 		"newSettings" : message

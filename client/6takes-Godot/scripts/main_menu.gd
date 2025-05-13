@@ -35,7 +35,7 @@ const USER_SETTINGS : String = "user://settings.cfg"
 	accessibility_button,
 ]
 
-
+@onready var message_control = $mssgControl
 #validate token 
 var API_URL 
 
@@ -261,3 +261,8 @@ func _on_reset_button_accessibility_pressed() -> void:
 	_on_brightness_slider_value_changed(DEFAULT_BRIGHTNESS)
 	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
 	_on_color_blind_options_item_selected(0)
+
+
+func show_ban_mssg():
+	message_control.get_node("mssg").text = "You have been banned from Multi-player for not respecting game rules \n and leaving an active game!"
+	message_control.visible = true
