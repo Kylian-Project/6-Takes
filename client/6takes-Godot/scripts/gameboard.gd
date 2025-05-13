@@ -226,14 +226,13 @@ func show_turn_score(data):
 func takes_row(data):
 	print("takes row event ", data)
 	var user_takes = data[0].username
-	var row_index = data[0].index
 	
 	print("player takes ", user_takes)
 	if user_takes == player_username:
 		show_label("You Take 6 !")
 	else:
 		show_label(user_takes + " Takes 6!")
-		
+
 func start_game():
 
 	show_label("Game Starting")
@@ -519,8 +518,6 @@ func update_table_ui(table_data, settingup_deck):
 					container.add_child(card_instance)
 					card_instance.set_card_data(card_info["path"], card_id)
 					card_instance.texture_rect.visible = true
-					card_instance.modulate.a = 1.0
-					card_instance.scale = Vector2(1, 1)
 
 			last_table_state[i] = row_data.duplicate()
 
@@ -535,8 +532,7 @@ func update_table_ui(table_data, settingup_deck):
 			await tw.finished
 			if is_instance_valid(card_instance):
 				card_instance.flip_card()
-				
-	# Clean up leftover player cards (not placed on table)
+		# Clean up leftover player cards (not placed on table)
 	if played_card_instances.size() > 0:
 		for leftover_card_id in played_card_instances.keys():
 			var leftover_card = played_card_instances[leftover_card_id]
@@ -682,7 +678,6 @@ func _handle_end_game(data):
 	add_child(overlay_layer)
 	
 	get_tree().current_scene.add_child(score_instance)
-	
 
 func clear_children_except_buttons(node: Node) -> void:
 	for child in node.get_children():
