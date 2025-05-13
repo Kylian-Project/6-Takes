@@ -15,3 +15,4 @@ var timer = 45
 var data
 var rounds
 var rankings
+var first_game = true

@@ -24,65 +24,27 @@ const NORMAL_SCALE = Vector2(1, 1)
 	$"row4_panel"
 ]
 
+signal row_selected(row_index : int)
+
 var selected_row := -1
 var selected_area : Area2D
 var row_selection_enabled := false
 
+
 func _ready():
-	# connect each area’s signals
-	#for area in areas:
-		#area.input_pickable = true
-		#area.mouse_entered.connect(func (): _on_mouse_entered(area))
-		#area.mouse_exited.connect(func (): _on_mouse_exited(area))
-		#area.input_event.connect(func (viewport, event, shape_idx): _on_area_input_event(viewport, event, shape_idx, area))
-		 
+
 	for i in range(4):
 		row_areas[i].connect("mouse_entered", Callable(self, "_on_row_hover").bind(i))
 		row_areas[i].connect("mouse_exited", Callable(self, "_on_row_unhover").bind(i))
 		row_areas[i].connect("input_event", Callable(self, "_on_row_input_event").bind(i))
 		row_buttons[i].connect("pressed", Callable(self, "_on_row_button_pressed").bind(i))
 	hide_all_buttons()
-		#var btn = area.get_parent().get_node("selectRowButton")
-		#btn.visible = false
 
-#func _on_mouse_entered(area: Area2D):
-	#_tween_scale(area, HOVER_SCALE)
-#
-#func _on_mouse_exited(area: Area2D):
-	## only reset if it isn’t selected
-	#var btn = area.get_parent().get_node("selectRowButton")
-	#if btn and not btn.visible:
-		#_tween_scale(area, NORMAL_SCALE)
-#
-#func _on_area_input_event(viewport, event: InputEvent, shape_idx, area: Area2D):
-	#if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		#_select_area(area)
-#
-#func _select_area(area: Area2D):
-	## deselect previous
-	#if selected_area and selected_area != area:
-		#_reset_area(selected_area)
-	## select this one
-	#selected_area = area
-	#var btn = area.get_parent().get_node("selectRowButton")
-	#btn.visible = true
-	#_tween_scale(area, HOVER_SCALE)
-#
-#func _reset_area(area: Area2D):
-	#var btn = area.get_parent().get_node("selectRowButton")
-	#btn.visible = false
-	#_tween_scale(area, NORMAL_SCALE)
-#
-#func _tween_scale(area: Area2D, to_scale: Vector2):
-	#var row_panel = area.get_parent()  # Node2D
-	#var tw = Tween.new()
-	#tw.kill()
-	#tw.tween_property(row_panel, "scale", to_scale, 0.15)
-	
+
 func _on_row_hover(index):
 	if not row_selection_enabled or selected_row == index:
 		return
-	row_panels[index].scale = Vector2(1.05, 1.05)
+	row_panels[index].scale = Vector2(1.1, 1.1)
 
 func _on_row_unhover(index):
 	if not row_selection_enabled or selected_row == index:
@@ -96,22 +58,47 @@ func show_row_selection_ui():
 	selected_row = -1
 
 func hide_all_buttons():
-	row_selection_enabled = true
+	row_selection_enabled = false
 	for btn in row_buttons:
 		btn.visible = false
+#
+#func _on_row_input_event(viewport, event, shape_idx, index):
+	#print("--- ROW ", index, " GOT EVENT:", event)
+	#if not row_selection_enabled:
+		#return
+	#
+	#
+	#print("  → MouseButton: pressed=", event.pressed, "  button_index=", event.button_index)
+	#if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		## Player clicked a row → show button
+		#print("row selected input detected")
+		#
+		#if selected_row != -1:
+			#row_panels[selected_row].scale = Vector2(1, 1)
+			#row_buttons[selected_row].visible = false
+		#selected_row = index
+		#row_buttons[index].visible = true
+		#row_panels[index].scale = Vector2(1.1, 1.1)
 
 func _on_row_input_event(viewport, event, shape_idx, index):
-	if not row_selection_enabled:
-		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		# Player clicked a row → show button
-		print("row selected input detected")
-		if selected_row != -1:
-			row_panels[selected_row].scale = Vector2(1, 1)
-			row_buttons[selected_row].visible = false
-		selected_row = index
-		row_buttons[index].visible = true
-		row_panels[index].scale = Vector2(1.1, 1.1)
+
+	if event is InputEventMouseButton:
+		print("    → MouseButton event: pressed=", event.pressed, " button_index=", event.button_index)
+		if row_selection_enabled and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			_handle_row_click(index)
+		return  # we’re done with mouse events
+
+func _handle_row_click(index):
+	print("row selected input detected for row", index)
+	# Deselect old
+	if selected_row != -1 and selected_row != index:
+		row_buttons[selected_row].visible = false
+		row_panels[selected_row].scale = NORMAL_SCALE
+
+	# Select new
+	selected_row = index
+	row_buttons[index].visible = true
+	row_panels[index].scale = HOVER_SCALE
 
 func _on_row_button_pressed(index):
 	row_selection_enabled = false

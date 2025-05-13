@@ -40,11 +40,12 @@ extends Node2D
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
 @onready var rows_manager := $deckContainer/rowsContainer
+
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
 var selected_cards = []  # Liste des cartes déjà utilisées
 var player_username 
-
+var last_table_state := [[], [], [], []]  # table state of previous round
 # Chargement des scènes
 @onready var pause_screen_scene = preload("res://scenes/screen_pause.tscn")
 @onready var card_ui_scene = preload("res://scenes/card_ui.tscn")  
@@ -68,7 +69,7 @@ var showing_score
 var cards_sorted
 var can_select_card
 var scores_handled
-var selecting_row
+var played_card_instances := {}  # key: card_id, value: card_instance
 
 func _ready():
 	_load_cards()
@@ -90,12 +91,7 @@ func _ready():
 	showing_score = false
 	cards_sorted = false
 	
-	##highlight_row(false)
-	#for i in range(row_buttons.size()):
-		#var btn = row_buttons[i]
-		#btn.visible = false
-		#btn.pressed.connect(_on_select_row_button_pressed.bind(i)) 
-	#connect row selection signal
+
 	rows_manager.connect("row_selected", Callable(self, "_on_row_confirmed"))
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
@@ -125,7 +121,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 				_handle_update_scores(data)
 				
 		"choix-rangee":
-			on_player_selects_row(data)
+			on_player_selects_row()
 			
 		"temps-room":
 			_handle_timer(data)
@@ -143,7 +139,10 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		
 		"ramassage-rang":
 			takes_row(data)
-			
+
+		"cartes-jouees":
+			_cards_from_players(data)
+
 		"end-game":
 			_handle_end_game(data)
 			
@@ -204,14 +203,17 @@ func show_turn_score(data):
 	
 func takes_row(data):
 	var user_takes = data[0].username
+	var row_index = data[0].indexRangee
+	
 	print("player takes ", user_takes)
 	if user_takes == player_username:
 		show_label("You Take 6 !")
 	else:
 		show_label(user_takes + " Takes 6!")
+	# Animate removal of the selected row
+	await animate_row_removal(row_index)
 
 func start_game():
-	var start_data = {"roomId" : room_id_global}
 
 	show_label("Game Starting")
 	SocketManager.emit("users-in-public-room", {
@@ -224,8 +226,6 @@ func start_game():
 func _start_turn():
 	can_select_card = true
 	cards_sorted = false
-	selecting_row = false
-	#highlight_row(false)
 	if room_id_global != null:
 		print("emit tour")
 		SocketManager.emit("tour", {
@@ -255,8 +255,6 @@ func _handle_update_scores(data):
 	
 	score = JSON.stringify(score)
 	score_label.text = score
-	
-	#_start_turn()
 
 
 func _await_row_selection(data):
@@ -265,34 +263,71 @@ func _await_row_selection(data):
 
 
 # --- Player Actions Signals---
-func on_player_selects_row(data):
-	selecting_row = true
-	for child in hbox_container.get_children():
-		child.mouse_filter = Control.MOUSE_FILTER_STOP
-		
+func on_player_selects_row():
 	show_label("Choose a row To take")
 	print("calling row selection in row manager")
 	rows_manager.show_row_selection_ui()
-	#highlight_row(true)
-	#selection_buttons(true)
+	
 # Called when player confirms a row
 func _on_row_confirmed(row_index):
 	print("Player selected row:", row_index)
-
 	SocketManager.emit("choisir-rangee", {
-		"roomId": room_id_global,
-		"indexRangee": row_index,
-		"username": player_username
+	"roomId": room_id_global,
+	"indexRangee": row_index,
+	"username": player_username
 	})
+
+func _cards_from_players(data) -> void:
+	played_card_instances.clear()
+	_clear_card_containers()
+
+	if data.size() == 0:
+		push_warning("Received empty data list")
+		return
+
+	var players = data[0]
+	
+	if players == null:
+		push_warning("Received empty data list")
+		return
+		
+	for player_data in players:
+		var username = player_data.username
+		var carte = player_data.carte
+		var numero = carte.numero
+
+		var card_info = _find_card_data(numero)
+		var target_container = null
+		if card_info:
+			var card_instance = card_ui_scene.instantiate()
+			if left_player_container.has_node(username):
+				target_container = left_player_container.get_node(username)
+			elif right_player_container.has_node(username):
+				target_container = right_player_container.get_node(username)
+			else:
+				push_warning("No container found for user: %s" % username)
+				continue
+
+			target_container.add_child(card_instance)
+			card_instance.set_card_data(card_info["path"], numero)
+			card_instance.texture_rect.visible = true
+			#card_instance.start_flip_timer(2.0)
+
+			played_card_instances[numero] = card_instance
+
+
 	
 func _on_open_pause_button_pressed() -> void:
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
 
-		add_child(pause_instance)
+		var overlay_layer = CanvasLayer.new()
+		overlay_layer.layer = 10  # Higher layer to make sure it is on top of the cards
+		overlay_layer.add_child(pause_instance)
+		add_child(overlay_layer)
 
 		await get_tree().process_frame
-		pause_instance.position = pause_instance.size
+		#pause_instance.position = pause_instance.size #no longer needed because of canvas layer
 
 	pause_instance.move_to_front()
 	pause_instance.visible = true
@@ -370,68 +405,121 @@ func _on_card_selected(card_number):
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
 	
-	
+
 func update_table_ui(table_data, settingup_deck):
-	for row in [row1, row2, row3, row4]:
-		for child in row.get_children():
-			if child is not Button:
-				child.queue_free()
-		
-	if table_data.size() > 0 :
+	var row_containers = [row1, row2, row3, row4]
+	var new_cards_global: Array = []
+
+	if table_data.size() > 0:
 		var rows = table_data[0]
-		var row_containers = [row1, row2, row3, row4]
-		
+
 		for i in range(4):
 			var row_data = rows[i]
 			var container = row_containers[i]
+			var previous_row = last_table_state[i]
+			var removed_card_ids = []
 
-			for card_id in row_data:				
+			for old_card_id in previous_row:
+				if not row_data.has(old_card_id):
+					removed_card_ids.append(old_card_id)
+
+			for child in container.get_children():
+				if child.has_method("get_card_id") and removed_card_ids.has(child.get_card_id()):
+					var tw2 = create_tween()
+					tw2.parallel()
+					tw2.tween_property(child, "modulate:a", 0.0, 0.2)
+					tw2.tween_property(child, "scale", Vector2(0.5, 0.5), 0.2)
+					tw2.chain()
+					await tw2.finished
+					if is_instance_valid(child):
+						child.queue_free()
+
+			clear_children_except_buttons(container)
+
+			var cards_to_add := []
+
+			for card_id in row_data:
+				var is_new = not previous_row.has(card_id)
 				var card_info = _find_card_data(card_id)
-				if card_info:
+				if not card_info:
+					continue
+
+				cards_to_add.append({
+					"card_id": card_id,
+					"card_info": card_info,
+					"is_new": is_new
+				})
+
+			# Sort cards before adding to ensure correct order
+			cards_to_add.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
+
+			for card_data in cards_to_add:
+				var card_id = card_data["card_id"]
+				var card_info = card_data["card_info"]
+				var is_new = card_data["is_new"]
+
+				if is_new and played_card_instances.has(card_id):
+					var player_card = played_card_instances[card_id]
+					var global_start = player_card.get_global_position()
+					var global_target = container.get_global_position()
+
+					player_card.get_parent().remove_child(player_card)
+					get_tree().root.add_child(player_card)
+					player_card.global_position = global_start
+
+					var tw = create_tween()
+					tw.tween_property(player_card, "global_position", global_target, 0.5)
+					await tw.finished
+
+					get_tree().root.remove_child(player_card)
+					container.add_child(player_card)
+					player_card.global_position = Vector2.ZERO
+					player_card.position = Vector2.ZERO
+					player_card.flip_card()
+
+					played_card_instances.erase(card_id)
+
+				elif is_new:
 					var card_instance = card_ui_scene.instantiate()
-					#card_instance.mouse_filter = Control.MOUSE_FILTER_PASS
+					card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
 					container.add_child(card_instance)
-					
-					if card_instance.has_method("set_card_data"):
-						card_instance.set_card_data(card_info["path"], card_id)
-						card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+					card_instance.set_card_data(card_info["path"], card_id)
+					card_instance.modulate.a = 0
+					card_instance.scale = Vector2(0.5, 0.5)
 
-						if setting_up_deck:
-							card_instance.start_flip_timer(2.0)
-						else:
-							card_instance.texture_rect.visible = true
+					new_cards_global.append({
+						"card_id": card_id,
+						"card_instance": card_instance
+					})
 				else:
-					print("No card info found for id:", card_id)
-					
-	settingup_deck = false
+					var card_instance = card_ui_scene.instantiate()
+					card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+					container.add_child(card_instance)
+					card_instance.set_card_data(card_info["path"], card_id)
+					card_instance.texture_rect.visible = true
 
+			last_table_state[i] = row_data.duplicate()
 
-#func highlight_row(boolean): #, is_selected: bool) -> void:
-	#var style = StyleBoxFlat.new()
-	#style.set_border_width_all(4)
-	#style.bg_color = Color.TRANSPARENT
-	#
-	#if boolean:
-		#style.border_color = Color.BLUE
-	#else:
-		#style.border_color = Color.TRANSPARENT
-	#
-	#for i in range(row_panels.size()):
-		#var panel = row_panels[i]
-		#var btn   = row_buttons[i]
-		#panel.add_theme_stylebox_override("panel", style)
-	#selection_buttons(false)
+	if new_cards_global.size() > 0:
+		new_cards_global.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
+		for card_dict in new_cards_global:
+			var card_instance = card_dict["card_instance"]
+			card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			var tw = create_tween()
+			tw.tween_property(card_instance, "modulate:a", 1.0, 0.25)
+			tw.tween_property(card_instance, "scale", Vector2(1, 1), 0.25)
+			await tw.finished
+			if is_instance_valid(card_instance):
+				card_instance.flip_card()
 	
 
-#func selection_buttons(visibility):
-	#for i in range(row_buttons.size()):
-		#var btn = row_buttons[i]
-		#btn.visible = visibility
-	
 	
 func _on_select_row_button_pressed(row_index):
 	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
+	
+		# Animate row removal
+	#await animate_row_removal(row_index)
 	
 	SocketManager.emit("choisir-rangee", {
 		"roomId": room_id_global,
@@ -506,25 +594,38 @@ func setup_players(player_data):
 
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
-		var slot = VBoxContainer.new()
+		var slot = HBoxContainer.new()
+		vis.name = "PlayerVisual"
+		slot.name = user.username
 		slot.add_child(vis)
 		
 		if i % 2 == 0:
 			left_player_container.add_child(slot)
 		else:
+			slot.layout_direction = BoxContainer.LAYOUT_DIRECTION_RTL
 			right_player_container.add_child(slot)
 
 
 	if current_player:
 		var player_visual_instance = player_visual_scene.instantiate()
 		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
-		right_player_container.add_child(me_vis)
+		var slot = HBoxContainer.new()
+		me_vis.name = "PlayerVisual"
+		slot.name = current_player.get("username","")
+		slot.layout_direction = BoxContainer.LAYOUT_DIRECTION_RTL
+		slot.add_child(me_vis)
+		right_player_container.add_child(slot)
+		
+	else:
+		print("Couldn’t find current_player in %s" , players)
+		return
 			
 	players_displayed = true
 
 
 func _handle_end_game(data):
 	game_ended = true
+	GameState.first_game = false
 	GameState.rankings = data[0].get("classement")
 	print("Game ended event ", data[0].get("classement"))
 	show_label("Game Ended !")
@@ -543,6 +644,50 @@ func _handle_end_game(data):
 	
 	get_tree().current_scene.add_child(score_instance)
 	
+@onready var tween = $Tween  # Reference to Tween node
+
+func animate_row_removal(row_index: int) -> void:
+	var row = row_panels[row_index]
+	var cards = row.get_children()
+	
+	# Sort cards from right to left
+	cards = cards.sorted_custom(func(a, b):
+		return a.global_position.x > b.global_position.x
+	)
+	
+	var delay_step := 0.1  # seconds between each card animation
+	var duration := 0.4    # duration of each card's fade
+	
+	for i in range(cards.size()):
+		var card = cards[i]
+		var delay = i * delay_step
+		
+		tween.tween_property(card, "modulate:a", 0.0, duration).set_delay(delay)
+		tween.tween_property(card, "scale", Vector2(0.0, 0.0), duration, Tween.TRANS_BACK, Tween.EASE_IN_OUT).set_delay(delay)
+	
+	# Wait until last animation is done
+	var total_duration = (cards.size() - 1) * delay_step + duration
+	await get_tree().create_timer(total_duration).timeout
+	
+	row.visible = false
+	for card in cards:
+		card.scale = Vector2(1, 1)
+		card.modulate = Color(1, 1, 1, 1)
+
+func clear_children_except_buttons(node: Node) -> void:
+	for child in node.get_children():
+		if child is Button:
+			continue
+		child.queue_free()
+
+func _clear_card_containers():
+	for container in [left_player_container, right_player_container]:
+		for player_container in container.get_children():
+			if player_container is HBoxContainer:
+				for child in player_container.get_children():
+				# Keep the base visual, assumed to be named "PlayerVisual"
+					if child.name != "PlayerVisual":
+						child.queue_free()
 
 func _on_sort_cards_pressed() -> void:
 	SocketManager.emit("sort-cards", {
