@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://qmba1u8g3y1o"]
+[gd_scene load_steps=14 format=3 uid="uid://qmba1u8g3y1o"]
 
 [ext_resource type="Script" path="res://scripts/create_lobby.gd" id="1_t2o4j"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_ocxai"]
@@ -39,12 +39,30 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrct7"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7q86s"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrct7"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
 shadow_offset = Vector2(0, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6oowm"]
@@ -67,11 +85,11 @@ script = ExtResource("1_t2o4j")
 [node name="BgDimming" type="ColorRect" parent="."]
 z_index = -1
 layout_mode = 0
-offset_left = -968.0
-offset_top = -544.0
-offset_right = 974.0
-offset_bottom = 554.0
-color = Color(0, 0, 0, 0.117647)
+offset_left = -960.0
+offset_top = -536.0
+offset_right = 960.0
+offset_bottom = 544.0
+color = Color(0, 0, 0, 0.490196)
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -82,8 +100,8 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -318.5
 offset_top = -366.0
-offset_right = 318.5
-offset_bottom = 366.0
+offset_right = 321.5
+offset_bottom = 364.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -109,7 +127,7 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
 theme_override_constants/outline_size = 25
 theme_override_fonts/font = ExtResource("3_yv3f1")
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "Create a Lobby!"
 
 [node name="AvailableOptions" type="HBoxContainer" parent="PanelContainer/MainVertical"]
@@ -124,7 +142,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Lobby Name"
 
@@ -132,7 +150,7 @@ text = "Lobby Name"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Player Limit"
 
@@ -140,7 +158,7 @@ text = "Player Limit"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Number of Cards"
 
@@ -148,7 +166,7 @@ text = "Number of Cards"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Round Timer"
 
@@ -156,7 +174,7 @@ text = "Round Timer"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "End by Points"
 
@@ -164,7 +182,7 @@ text = "End by Points"
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Rounds"
 
@@ -173,7 +191,7 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
 text = "Maximum Points"
 
@@ -183,6 +201,7 @@ layout_mode = 2
 [node name="EditLobbyName" type="LineEdit" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_j0hpf")
 max_length = 8
 
@@ -190,9 +209,10 @@ max_length = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/pressed = ExtResource("5_2j0pr")
 theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
 selected = 8
 item_count = 9
 popup/item_0/text = "2"
@@ -217,8 +237,9 @@ popup/item_8/id = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
 selected = 9
 item_count = 10
 popup/item_0/text = "1"
@@ -245,8 +266,9 @@ popup/item_9/id = 9
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
 selected = 1
 item_count = 3
 popup/item_0/text = "30"
@@ -259,8 +281,9 @@ popup/item_2/id = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
 selected = 0
 item_count = 2
 popup/item_0/text = "No"
@@ -271,8 +294,9 @@ popup/item_1/id = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
 selected = 0
 item_count = 5
 popup/item_0/text = "1"
@@ -290,7 +314,7 @@ visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = ExtResource("5_2j0pr")
 selected = 0
 item_count = 2
@@ -306,10 +330,15 @@ alignment = 1
 [node name="PrivateCheckButton" type="CheckButton" parent="PanelContainer/MainVertical/PublicPrivate"]
 layout_mode = 2
 size_flags_horizontal = 6
+theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_lrct7")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_7q86s")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7q86s")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_lrct7")
 theme_override_styles/normal = SubResource("StyleBoxFlat_lrct7")
 text = "Public  "
@@ -322,7 +351,7 @@ theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_g1min")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 35
 theme_override_styles/hover = ExtResource("6_roeac")
 theme_override_styles/normal = ExtResource("7_7jr4d")
 text = "Create Lobby"
@@ -334,9 +363,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 280.0
+offset_left = 284.0
 offset_top = -366.0
-offset_right = 319.0
+offset_right = 323.0
 offset_bottom = -317.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -345,5 +374,6 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_6oowm")
 text = "X"
 
+[connection signal="toggled" from="PanelContainer/MainVertical/PublicPrivate/PrivateCheckButton" to="." method="_on_private_check_button_toggled"]
 [connection signal="pressed" from="PanelContainer/MainVertical/CreateLobbyButton" to="." method="_on_create_lobby"]
 [connection signal="pressed" from="Close" to="." method="_on_close_pressed"]

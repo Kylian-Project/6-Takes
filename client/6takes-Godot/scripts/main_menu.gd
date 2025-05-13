@@ -34,11 +34,14 @@ const USER_SETTINGS : String = "user://settings.cfg"
 	rules_button,
 	accessibility_button,
 ]
+
 # CHECK BAN
+@onready var message_control = $mssgControl
 var ban_time_left = 0  # Variable globale pour stocker le temps restant
 var base_url = Global.get_base_url()
 var base_http = Global.get_base_http()
 var api_url = base_http + base_url + "/api/player/ban-status/"
+
 
 var login_instance = null
 var rules_instance = null 
@@ -363,3 +366,8 @@ func _on_reset_button_accessibility_pressed() -> void:
 	_on_brightness_slider_value_changed(DEFAULT_BRIGHTNESS)
 	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
 	_on_color_blind_options_item_selected(0)
+
+
+func show_ban_mssg():
+	message_control.get_node("mssg").text = "You have been banned from Multi-player for not respecting game rules \n and leaving an active game!"
+	message_control.visible = true

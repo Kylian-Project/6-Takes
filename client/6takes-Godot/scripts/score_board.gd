@@ -23,7 +23,7 @@ func _ready():
 	rankings_list = get_node("/root/GameState").rankings
 	update_rankings(rankings_list)
 	
-	if !gameboard.game_ended:
+	if gameboard and !gameboard.game_ended:
 		start_auto_close_timer()
 	
 	
