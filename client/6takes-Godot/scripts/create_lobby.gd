@@ -21,6 +21,8 @@ var uname
 func _ready():	
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	uname = Global.player_name
+	# Set initial text based on check state
+	private_check_button.text = "Private" if private_check_button.button_pressed else "Public"
 
 
 func _on_socket_connected(ns: String):
@@ -86,3 +88,6 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 func _on_close_pressed() -> void:
 	self.visible = false
 	queue_free()
+
+func _on_private_check_button_toggled(button_pressed: bool) -> void:
+	private_check_button.text = "Private" if button_pressed else "Public"
