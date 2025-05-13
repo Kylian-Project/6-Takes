@@ -302,7 +302,7 @@ export const PlayGame = (socket, io) =>
 	/***************************/
 	/*  6. rejouer une partie  */
 	/***************************/
-	socket.on("restart-game", ({ roomId }) => 
+	socket.on("restart-game", (roomId) => 
 	{
 		const jeu = getGame(roomId);
 		jeu.resetGame();
@@ -600,10 +600,10 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 			}
         }
 		//pour le cas de la 6eme carte
-		else if (res=== "ramassage_rang")
+		else if (res.action=== "ramassage_rang")
 		{
 			const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-			io.to(roomId).emit("ramassage_rang", { username });
+			io.to(roomId).emit("ramassage-rang", { username , index:res.index });
 		}
 
 
@@ -620,35 +620,36 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 	//si jamais ya pas eu de 'play-card' et que c'etais automatique
 	//comme ca on est sur de faire un check end game meme si ya pas eu de 'play-card'
 	if(jeu.checkEndManche())
+	{
+		jeu.mancheActuelle++;
+		if(!jeu.checkEndGame())
 		{
-			jeu.mancheActuelle++;
-			if(!jeu.checkEndGame())
+			console.log("fin de manche");
+			envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
+
+			const classement = jeu.joueurs
+			.map(j => ({ nom: j.nom, score: j.score }))
+			.sort((a, b) => a.score - b.score); // tri cdes scores
+
+			io.to(roomId).emit("score-manche",{classement});//suggestion du prof!!!
+
+			jeu.mancheSuivante();
+			envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
+			io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
+	
+		}
+		else
+		{
+			const classement = jeu.joueurs
+			.map(j => ({ nom: j.nom, score: j.score }))
+			.sort((a, b) => a.score - b.score); // tri cdes scores
+			if(! username.startsWith("Bot"))
 			{
-				console.log("fin de manche");
-				envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
-
-				const classement = jeu.joueurs
-				.map(j => ({ nom: j.nom, score: j.score }))
-				.sort((a, b) => a.score - b.score); // tri cdes scores
-
-				io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
-
-				jeu.mancheSuivante();
-				envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
-				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
-		
-			}
-			else
-			{
-				const classement = jeu.joueurs
-				.map(j => ({ nom: j.nom, score: j.score }))
-				.sort((a, b) => a.score - b.score); // tri cdes scores
-
 				console.log("🏁 Fin de partie");
 				io.to(roomId).emit("end-game", { classement });
-
 			}
 		}
+	}
 }
 
 
