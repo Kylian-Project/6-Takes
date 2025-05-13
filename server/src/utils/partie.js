@@ -1,7 +1,7 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
 import BanInfo from "../models/ban_info.js"
-
+import Player from "../models/player.js"
 
 class Game
 {
@@ -325,17 +325,16 @@ export const PlayGame = (socket, io) =>
 		const jeu = getGame(roomId);
 
 		const joueur = jeu.joueurs.find(j => j.nom === username);
+		console.log("JOUEUR QUI QUITTE: ",joueur.nom);
 		if (!joueur) return console.error(`❌ Joueur ${username} introuvable`);
 	
 		// Ajouter en base de données
-		try {
-			const player = await Player.findOne({ where: { username: joueur.nom } });
-			if (player) {
-				await issueBan(player.id);
-				console.log(`🚫 Ban enregistré pour le joueur : ${username}`);
-			}
-		} catch (err) {
-			console.error(`❌ Erreur d'enregistrement du ban pour ${username} : ${err.message}`);
+		const player = await Player.findOne({ where: { username: joueur.nom } });
+		console.log("affichage du player", player);
+		console.log("PLATER NOM: ",player.username);
+		if (player) {
+			await issueBan(player.id);
+			console.log(`🚫 Ban enregistré pour le joueur : ${username}`);
 		}
 	
 		// Supprimer le joueur de la room et de la partie
@@ -748,17 +747,20 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
  * @param {number} playerId - L'ID du joueur à bannir.
  */
 
-async function issueBan(playerId) 
-{
-    try
-	{
-        const created = await sequelize.query(`CALL apply_ban(?)`, { replacements: [playerId] });
-		if (!created) console.log(`Ban non appliqué pour l'ID du joueur : ${playerId}`);
-		//await BanInfo.create({ playerId });
+async function issueBan(playerId) {
+    try {
+        const existingBan = await BanInfo.findOne({ where: { player_id: playerId } });
+
+        if (existingBan) {
+            console.log(`🔄 Mise à jour du ban pour l'ID du joueur : ${playerId}`);
+            await sequelize.query(`CALL apply_ban(${playerId})`);
+        } else {
+            console.log(`🆕 Création d'un nouveau ban pour l'ID du joueur : ${playerId}`);
+            await BanInfo.create({ player_id: playerId, ban_count: 1, ban_duration: 120 });
+        }
+        
         console.log(`🚫 Ban enregistré pour l'ID du joueur : ${playerId}`);
-    }
-	catch (err) 
-	{
+    } catch (err) {
         console.error(`Erreur lors de l'application du ban : ${err.message}`);
     }
 }
