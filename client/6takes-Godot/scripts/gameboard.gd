@@ -40,6 +40,7 @@ extends Node2D
 @onready var left_player_container = $LPlayer_container
 @onready var right_player_container = $RPlayer_container
 @onready var rows_manager := $deckContainer/rowsContainer
+@onready var mssg_panel    = $mssgControl
 
 # Listes de cartes
 var all_cards = []  # Liste de toutes les cartes disponibles
@@ -156,11 +157,13 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_handle_remove_room()
 			
 		"sorted-cards":
-			print("sorted cards received :", data)
 			if !cards_sorted:
 				cards_sorted = true
 				_handle_your_hand(data)
-				
+		
+		"user-left":
+			_handle_user_left(data)
+
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
 	
@@ -172,7 +175,26 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 
 
 func _handle_remove_room():
-	pass
+	mssg_panel.get_node("mssg").text = "\n Host Left the Game "
+	mssg_panel.visible = true
+	#game_ended = true
+
+
+func _handle_user_left(data):
+	#if data[0].size == 1:
+	print("user left , ", data)
+	GameState.players_count -= 1
+	
+	mssg_panel.get_node("mssg").text = "\n Opponent left the game"
+	mssg_panel.visible = true
+	
+	if GameState.is_public:
+		SocketManager.emit("users-in-public-room", room_id_global)
+	else:
+		SocketManager.emit("users-in-private-room", room_id_global)
+		
+	if GameState.players_count == 1:
+		game_ended = true
 
 
 func _handle_next_round(data):
@@ -202,8 +224,8 @@ func show_turn_score(data):
 	
 	
 func takes_row(data):
+	print("takes row event ", data)
 	var user_takes = data[0].username
-	var row_index = data[0].indexRangee
 	
 	print("player takes ", user_takes)
 	if user_takes == player_username:
@@ -211,7 +233,7 @@ func takes_row(data):
 	else:
 		show_label(user_takes + " Takes 6!")
 	# Animate removal of the selected row
-	await animate_row_removal(row_index)
+	#await animate_row_removal(row_index)
 
 func start_game():
 
@@ -225,7 +247,8 @@ func start_game():
 
 func _start_turn():
 	can_select_card = true
-	cards_sorted = false
+	#cards_sorted = false
+	rows_manager.reset_selection()
 	if room_id_global != null:
 		print("emit tour")
 		SocketManager.emit("tour", {
@@ -694,3 +717,13 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
+	get_node("sortCards").visible = false
+
+func _on_close_button_pressed() -> void:
+	if game_ended:
+		if !is_host:
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+		else:
+			get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+	else:
+		mssg_panel.visible = false

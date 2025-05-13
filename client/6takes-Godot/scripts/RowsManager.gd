@@ -30,6 +30,11 @@ var selected_row := -1
 var selected_area : Area2D
 var row_selection_enabled := false
 
+var hover_style := StyleBoxFlat.new()
+var select_style := StyleBoxFlat.new()
+
+const CURSOR_POINT_HAND  = Input.CURSOR_POINTING_HAND
+
 
 func _ready():
 
@@ -39,17 +44,30 @@ func _ready():
 		row_areas[i].connect("input_event", Callable(self, "_on_row_input_event").bind(i))
 		row_buttons[i].connect("pressed", Callable(self, "_on_row_button_pressed").bind(i))
 	hide_all_buttons()
+	
+
+func make_style_box():
+	#style box for border coloring
+	
+	hover_style.border_width_all = 2
+	hover_style.border_color     = Color(1,0.8,0,1)
+	
+	select_style.border_width_all = 3
+	select_style.border_color     = Color(0,1,0,1)
 
 
 func _on_row_hover(index):
 	if not row_selection_enabled or selected_row == index:
 		return
 	row_panels[index].scale = Vector2(1.1, 1.1)
+	_handle_row_click(index)
+	#(row_panels[index] as PanelContainer).add_theme_stylebox_override("panel", hover_style)
 
 func _on_row_unhover(index):
 	if not row_selection_enabled or selected_row == index:
 		return
 	row_panels[index].scale = Vector2(1, 1)
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 
 func show_row_selection_ui():
 	row_selection_enabled = true
@@ -61,35 +79,15 @@ func hide_all_buttons():
 	row_selection_enabled = false
 	for btn in row_buttons:
 		btn.visible = false
-#
-#func _on_row_input_event(viewport, event, shape_idx, index):
-	#print("--- ROW ", index, " GOT EVENT:", event)
-	#if not row_selection_enabled:
-		#return
-	#
-	#
-	#print("  → MouseButton: pressed=", event.pressed, "  button_index=", event.button_index)
-	#if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		## Player clicked a row → show button
-		#print("row selected input detected")
-		#
-		#if selected_row != -1:
-			#row_panels[selected_row].scale = Vector2(1, 1)
-			#row_buttons[selected_row].visible = false
-		#selected_row = index
-		#row_buttons[index].visible = true
-		#row_panels[index].scale = Vector2(1.1, 1.1)
 
 func _on_row_input_event(viewport, event, shape_idx, index):
-
 	if event is InputEventMouseButton:
-		print("    → MouseButton event: pressed=", event.pressed, " button_index=", event.button_index)
 		if row_selection_enabled and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			_handle_row_click(index)
-		return  # we’re done with mouse events
+			emit_signal("row_selected", index)
+			
+		return 
 
 func _handle_row_click(index):
-	print("row selected input detected for row", index)
 	# Deselect old
 	if selected_row != -1 and selected_row != index:
 		row_buttons[selected_row].visible = false
@@ -101,8 +99,16 @@ func _handle_row_click(index):
 	row_panels[index].scale = HOVER_SCALE
 
 func _on_row_button_pressed(index):
+	send_select_row(index)
+
+
+func send_select_row(index):
 	row_selection_enabled = false
 	emit_signal("row_selected", index)
 	print("row button clicked and signal emitted")
 	hide_all_buttons()
 	row_panels[index].scale = Vector2(1, 1)
+	
+func reset_selection():
+	hide_all_buttons()
+	row_selection_enabled = false
