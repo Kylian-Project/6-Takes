@@ -200,7 +200,6 @@ func _handle_remove_room():
 func _handle_game_starting():
 	if !is_host and !scene_changed:
 		scene_changed = true
-		#get_node("/root/Transition").fade_to_black_then_change_scene("res://scenes/GameBoard.tscn")
 		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 
@@ -292,17 +291,14 @@ func _refresh_player_list(data):
 
 
 func _on_start_button_pressed() -> void:
-	#TRANSITIN ANIMATION TO FIX
-	#var transition_scene = load("res://scenes/Transition.tscn")
-	#var transition_instance = transition_scene.instantiate()
-	#get_tree().current_scene.add_child(transition_instance)
-	#await transition_instance.ready
-	#queue_free()
+	if GameState.first_game:
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	else:
+		print("emitting restart game")
+		SocketManager.emit("restart-game", GameState.id_lobby)
+		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
-	#transition_instance.fade_out("res://scenes/gameboard.tscn")
-	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-
-
+	
 func _on_quit_button_pressed() -> void:
 	confirm_panel.action_type    = "quit"
 	confirm_panel.scene = self
@@ -400,7 +396,7 @@ func _on_canceled():
 func reinit_gameState():
 	GameState.players_count = 0
 	GameState.data = null
-	GameState.id_lobby = ""
+	#GameState.id_lobby = ""
 	GameState.lobby_name = ""
 	GameState.other_players = []
 	GameState.rankings = null 
