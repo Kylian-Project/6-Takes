@@ -244,6 +244,13 @@ class Jeu6Takes {
             //on attend que le joueurs choisisse un rang
             return "choix_rang_obligatoire";
         }
+        let index_rang;
+        for (let i = 0; i < 4; i++) 
+        {
+            if(this.table.rangs[i].estPleine())
+                index_rang = i;
+        }
+
         const cartesRamassees = this.table.ramasserCartes();
         const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
         joueur.updateScore(penalite);
@@ -251,7 +258,7 @@ class Jeu6Takes {
         //comme ca je pourrai le dire aux autres
         if(cartesRamassees.length >0)
         {
-            return "ramassage_rang";
+            return {action: "ramassage_rang" , index: index_rang};
         }
 
     }

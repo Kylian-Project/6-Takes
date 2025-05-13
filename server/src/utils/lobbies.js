@@ -222,7 +222,7 @@ export const roomHandler = (socket, io) =>
         socket.to(roomId).emit("user-left", getUsers(roomId));
         socket.leave(roomId);
         socket.emit("room-left");
-      };
+    };
       
 
     /**
