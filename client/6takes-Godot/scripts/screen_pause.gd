@@ -60,8 +60,7 @@ func _on_leave_pressed():
 func _on_confirmed(action_type:String, payload) -> void:
 	match action_type:
 		"quit":
-			SocketManager.emit("leave-room", { "roomId": id_lobby })
-			#scene.reinit_gameState()
+			SocketManager.emit("leave-room-in-game", { "roomId": id_lobby, "username": Global.player_name })
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 

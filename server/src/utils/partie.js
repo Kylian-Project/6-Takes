@@ -1,6 +1,8 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
-
+import BanInfo from "../models/ban_info.js";
+import Player from "../models/player.js";
+import sequelize from "../config/db.js"
 
 class Game
 {
@@ -292,6 +294,58 @@ export const PlayGame = (socket, io) =>
 		joueur.trierCarte();
 		socket.emit("sorted-cards", joueur.getHand().map(c => c.numero));
 	});
+
+
+	/***************************/
+	/*  6. rejouer une partie  */
+	/***************************/
+	socket.on("restart-game", (roomId) => 
+	{
+		const jeu = getGame(roomId);
+		jeu.resetGame();
+		envoyerMainEtTable(io, roomId, jeu, rooms);
+	})
+
+
+
+
+	/***************************/
+	/*  7. quitter une partie  */
+	/***************************/
+
+	socket.on("leave-room-in-game", async ({ roomId, username }) => 
+	{
+		console.log(`🚪 ${username} quitte la partie en cours dans la room ${roomId}`);
+	
+		// Récupérer l'ID du joueur
+		const jeu = getGame(roomId);
+
+		const joueur = jeu.joueurs.find(j => j.nom === username);
+		console.log("JOUEUR QUI QUITTE: ",joueur.nom);
+		if (!joueur) return console.error(`❌ Joueur ${username} introuvable`);
+	
+		// Ajouter en base de données
+		const player = await Player.findOne({ where: { username: joueur.nom } });
+		console.log("affichage du player", player);
+		console.log("PLATER NOM: ",player.username);
+		if (player) {
+			await issueBan(player.id);
+			console.log(`🚫 Ban enregistré pour le joueur : ${username}`);
+		}
+	
+		// Supprimer le joueur de la room et de la partie
+		const room = rooms.find(r => r.id === roomId);
+		if (room) 
+		{
+			room.removeUser(socket.id);
+			socket.leave(roomId);
+			console.log(`✅ ${username} a quitté la room ${roomId}`);
+			io.to(roomId).emit("user-left", { username });
+		}
+	});
+
+
+
 
 
 }
@@ -665,4 +719,33 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
 			console.log(`🖐️ Main envoyée à ${joueur.nom}`);
 		}
 	}
+}
+
+
+
+/**
+ * Enregistre un ban pour l'ID du joueur fourni.
+ * La fonction effectue une requête SQL pour appeler la procédure stockée `apply_ban` qui
+ * met à jour la table `Player` pour indiquer que le joueur est banni.
+ * Si la requête aboutit, un message est affiché indiquant que le ban a été enregistré.
+ * Si une erreur survient, un message d'erreur est affiché.
+ * @param {number} playerId - L'ID du joueur à bannir.
+ */
+
+async function issueBan(playerId) {
+    try {
+        const existingBan = await BanInfo.findOne({ where: { player_id: playerId } });
+
+        if (existingBan) {
+            console.log(`Mise à jour du ban pour l'ID du joueur : ${playerId}`);
+            await sequelize.query(`CALL apply_ban(${playerId})`);
+        } else {
+            console.log(`Création d'un nouveau ban pour l'ID du joueur : ${playerId}`);
+            await BanInfo.create({ player_id: playerId, ban_count: 1, ban_duration: 120 });
+        }
+        
+        console.log(`Ban enregistré pour l'ID du joueur : ${playerId}`);
+    } catch (err) {
+        console.error(`Erreur lors de l'application du ban : ${err.message}`);
+    }
 }
