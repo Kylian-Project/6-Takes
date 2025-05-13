@@ -84,11 +84,26 @@ func get_rankings():
 func end_game():
 	print("🎉 Partie terminée !")
 	var rankings = get_rankings()
-	# Arrêter le timer via le gameboard
+	
+	# Vérifier si on est en mode max_points et si le max n'est pas atteint
+	var settings = Global.game_settings
+	if settings.get("use_max_points", false):
+		var max_points = settings.get("max_points", 999)
+		var highest_score = 0
+		for player in rankings:
+			if player.score > highest_score:
+				highest_score = player.score
+		
+		if highest_score < max_points:
+			print("Le score maximum n'est pas encore atteint, la partie continue")
+			return  # Ne pas arrêter le jeu
+	
+	# Si on arrive ici, soit le max_points est atteint, soit ce n'est pas le mode max_points
 	var board = get_tree().current_scene
 	if board and board.has_method("stop_timer"):
 		board.stop_timer()
-	await get_tree().create_timer(5.0).timeout
+	
+	await get_tree().create_timer(3.0).timeout
 	if board:
 		board.update_game_state("            FINISH")
 		board.show_scoreboard(rankings)
@@ -140,7 +155,7 @@ func reprendre_tour():
 	cartes_choisies.sort_custom(func(a, b): return a["carte"].numero < b["carte"].numero)
 
 	# Jouer les cartes une par une
-	# Jouer les cartes une par une avec animations
+	
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var carte = choix["carte"]
@@ -352,9 +367,24 @@ func get_scores():
 	return jeu.joueurs
 
 # Ajoutez ces méthodes
-func is_game_over() -> bool:
-	return jeu.check_end_game() if jeu else false
+# Dans sp_game.gd
+func get_players():
+	return jeu.get_players() if jeu and jeu.has_method("get_players") else []
 
+func is_game_over() -> bool:
+	if not jeu:
+		return false
+		
+	var settings = Global.game_settings
+	if settings.get("use_max_points", false):
+		var max_points = settings.get("max_points", 999)
+		for player in get_players():
+			if player.score >= max_points:
+				return true
+		return false
+	
+	return jeu.check_end_game()
+	
 func get_current_player_name() -> String:
 	if jeu and jeu.joueurs.size() > 0:
 		return jeu.joueurs[jeu.joueur_actif].nom

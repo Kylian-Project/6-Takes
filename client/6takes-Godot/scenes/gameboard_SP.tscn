@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bs2dnxpx8yi80"]
+[gd_scene load_steps=25 format=3 uid="uid://d0k5msucx3r0e"]
 
 [ext_resource type="Script" path="res://scripts/gameboardSP.gd" id="1_m51t2"]
 [ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
 [ext_resource type="PackedScene" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
+[ext_resource type="Script" path="res://scripts/hand_card_hoverSP.gd" id="8_rgomg"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="9_c013t"]
 [ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="10_op4uk"]
 [ext_resource type="PackedScene" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
@@ -282,6 +283,7 @@ offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
+script = ExtResource("8_rgomg")
 
 [node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
 layout_mode = 2

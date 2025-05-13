@@ -54,6 +54,7 @@ var round_active = false
 
 
 func _ready():
+	# Initialisation UI
 	var left_name = $"spplayerleft/HBoxContainer/icon&name/name_bot"
 	var right_name = $"spplayerright/HBoxContainer/icon&name/name_bot"
 	
@@ -62,23 +63,24 @@ func _ready():
 	left_name.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	right_name.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	
-	 # Force le positionnement initial à 50px de la gauche
 	$HBoxContainer/gameStateLabel.position.x = 450
 	$HBoxContainer/gameStateLabel.set_anchors_preset(Control.PRESET_LEFT_WIDE)
-	
-	# Désactive le repositionnement automatique
 	$HBoxContainer/gameStateLabel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	# Initialisation des tours
+	
+	# Initialisation du timer
 	if game_timer == null:
-		game_timer = $Timer  # Assurez-vous que le chemin est correct
+		game_timer = $Timer
 		print("Timer initialisé : ", game_timer != null)
 		
-	
-	# Initialise max_turns en fonction du mode
+	# Initialisation des tours en fonction du mode
 	if Global.game_settings.get("use_max_points", false):
-		max_turns = 999  # Ou un nombre très grand pour le mode points
+		# Mode "Fin par têtes"
+		max_turns = 999  # Nombre très grand
 	else:
-		max_turns = Global.game_settings["nb_cartes"]
+		# Mode "Fin par rounds"
+		var nb_cartes = Global.game_settings.get("nb_cartes", 10)
+		var rounds_multiplier = Global.game_settings.get("rounds_multiplier", 1)
+		max_turns = nb_cartes * rounds_multiplier
 	
 	current_turn = 1
 	update_turn_label()
@@ -101,9 +103,13 @@ func _ready():
 	sp_game.start_game(Global.game_settings)
 
 	# Synchronisation des tours
-	if max_turns != sp_game.jeu.nb_cartes:
-		max_turns = sp_game.jeu.nb_cartes
-		update_turn_label()
+	if not Global.game_settings.get("use_max_points", false):
+		# Seulement en mode rounds
+		var nb_cartes = Global.game_settings.get("nb_cartes", 10)
+		var rounds_multiplier = Global.game_settings.get("rounds_multiplier", 1)
+		if max_turns != nb_cartes * rounds_multiplier:
+			max_turns = nb_cartes * rounds_multiplier
+			update_turn_label()
 
 	# Initialisation des composants
 	_setup_bot_ui()
@@ -132,10 +138,8 @@ func _ready():
 	sp_game.start_round()
 	round_active = false
 	cards_clickable = true
-	# Activer les cartes immédiatement
-	cards_clickable = true
-	_update_hand_clickability(true)  # Nouvelle fonction à créer
-
+	_update_hand_clickability(true)
+	
 func _update_hand_clickability(clickable: bool):
 	cards_clickable = clickable
 	for card in hbox_container.get_children():
@@ -157,13 +161,28 @@ func _animate_card_play(joueur, carte):
 			await tween.finished		
 
 func _process(delta):
-	if not sp_game :
+	if not sp_game:
 		return
 		
 	if sp_game.is_game_over():
-		update_game_state("            FINISH")
+		var settings = Global.game_settings
+		if settings.get("use_max_points", false):
+			# Accédez aux joueurs différemment selon votre architecture
+			var players = sp_game.jeu.players if sp_game.jeu else []
+			var max_points = settings.get("max_points", 999)
+			var game_should_continue = true
+			
+			for player in players:
+				if player.score >= max_points:
+					game_should_continue = false
+					break
+			
+			if game_should_continue:
+				return
 		
-
+		
+		update_game_state("            FINISH")
+		show_label("END GAME")
 
 		
 func show_scoreboard(rankings):
@@ -176,6 +195,7 @@ func show_scoreboard(rankings):
 	
 	$ScoreBoard.visible = true
 	$ScoreBoard.update_rankings(rankings)
+	
 var rang_auto_choisi = false		
 signal rang_selectionne(rang_index)
 func _on_choix_rang_obligatoire(joueur, carte):
@@ -215,13 +235,40 @@ func _handle_human_choice(joueur, carte):
 
 func _handle_bot_choice(joueur, carte):
 	"""Gère le choix de rang pour un bot"""
-	await show_label("%s réfléchit..." % joueur.nom)
-	await get_tree().create_timer(1.0).timeout  # Délai plus naturel
+	# Animation de réflexion
+	var bot_layer = get_display_data_for_joueur(joueur)["card_layer"]
+	var bot_icon = bot_layer.get_parent().get_node("BotIcon")
 	
+	# Animation de pulsation de l'icône
+	var tween = create_tween()
+	tween.tween_property(bot_icon, "scale", Vector2(0.6, 0.6), 0.5)
+	tween.tween_property(bot_icon, "scale", Vector2(0.5, 0.5), 0.5)
+	tween.set_loops(2)
+	
+	await show_label("%s is thinking..." % joueur.nom)
+	await tween.finished
+	await get_tree().create_timer(1.0).timeout
+	
+	# Choisir un rang aléatoire
 	var rang_a_ramasser = randi() % sp_game.jeu.table.rangs.size()
-	await _animate_full_pickup_sequence(joueur, carte, rang_a_ramasser)
 	
-	await show_label("%s a choisi le rang %d" % [joueur.nom, rang_a_ramasser + 1])
+	# Animation de sélection du rang
+	var row_panel = row_panels[rang_a_ramasser]
+	var original_modulate = row_panel.modulate
+	var highlight_tween = create_tween()
+	highlight_tween.tween_property(row_panel, "modulate", Color(1, 0.5, 0.5, 1), 0.3)
+	highlight_tween.tween_property(row_panel, "modulate", original_modulate, 0.3)
+	highlight_tween.set_loops(2)
+	
+	await highlight_tween.finished
+	await show_label("%s chose row %d" % [joueur.nom, rang_a_ramasser + 1])
+	
+	# Animation complète
+	await _animate_full_pickup_sequence(joueur, carte, rang_a_ramasser)
+
+
+	
+	
 
 func _animate_full_pickup_sequence(joueur, carte, rang_index):
 	"""Version optimisée qui réutilise les cartes visuelles"""
@@ -497,21 +544,39 @@ func _setup_bot_ui():
 		"bot": human,
 		"card_layer": human_card_layer
 	})
-	
 func _update_hand():
+	print("\n=== Mise à jour de la main ===")
+	print("Cartes dans la main du joueur:", sp_game.jeu.joueurs[0].hand.cartes.size())
+	
+	# Nettoyage
 	for child in hbox_container.get_children():
 		child.queue_free()
+	print("Anciennes cartes nettoyées")
 	
-	var moi = sp_game.jeu.joueurs[0]
-	for carte in moi.hand.cartes:
+	# Ajout des nouvelles cartes
+	var x_offset = 0
+	for carte in sp_game.jeu.joueurs[0].hand.cartes:
 		var card_ui = CARD_UI_SCENE.instantiate()
 		hbox_container.add_child(card_ui)
-		card_ui.set_card_data("res://assets/images/cartes/%d.png" % carte.numero, carte.numero)
-		card_ui.connect("card_selected", Callable(self, "_on_carte_cliquee"))
 		
-		# Désactive le réarrangement automatique
-		card_ui.position = Vector2.ZERO
-		card_ui.set_anchors_preset(Control.PRESET_CENTER)
+		# Positionnement
+		card_ui.position = Vector2(x_offset, 0)
+		x_offset += card_ui.size.x * 0.8
+		
+		# Texture
+		var tex_path = "res://assets/images/cartes/%d.png" % carte.numero
+		if ResourceLoader.exists(tex_path):
+			card_ui.set_card_data(tex_path, carte.numero)
+			print("Carte", carte.numero, "affichée avec texture")
+		
+		# Interactions
+		card_ui.gameboard = self
+		if not card_ui.is_connected("card_selected", _on_carte_cliquee):
+			card_ui.connect("card_selected", _on_carte_cliquee)
+		
+		print("Carte", carte.numero, "ajoutée à la position", x_offset)
+	
+	print("=== Fin mise à jour main ===\n")
 
 func _on_Button_order_pressed():
 	if not is_player_turn() or not cards_clickable:
@@ -537,7 +602,7 @@ func _on_Button_order_pressed():
 		for card_ui in hbox_container.get_children():
 			if card_ui.global_card_id == carte_selectionnee:
 				card_ui.is_lifted = true
-				card_ui.show_selection_container(true)
+				#card_ui.show_selection_container(true)
 				card_ui.z_index = 100
 				card_ui.scale = card_ui.original_scale * card_ui.SCALE_FACTOR
 				break
@@ -549,7 +614,7 @@ func _on_Button_order_pressed():
 	var tween = create_tween()
 	tween.tween_property($Button_order, "scale", Vector2(1.2, 1.2), 0.1)
 	tween.tween_property($Button_order, "scale", Vector2(1.0, 1.0), 0.1)
-	
+
 
 func _update_plateau(animate: bool = false):
 	for i in range(vbox_container.get_child_count()):
@@ -627,50 +692,50 @@ func set_cards_clickable(clickable: bool):
 
 var card_played_this_round = false
 func start_round():
-	print("Début du round - Activation des cartes")
+	print("=== Début Round ===")
+	print("Cartes cliquables:", cards_clickable)
+	
 	cards_clickable = true
 	
-	# Active physiquement chaque carte
 	for card in hbox_container.get_children():
 		if card.has_method("set_clickable"):
 			card.set_clickable(true)
-			card.mouse_filter = Control.MOUSE_FILTER_PASS  # <-- Important
-			print("Carte ", card.global_card_id, " activée")
+			card.mouse_filter = Control.MOUSE_FILTER_PASS
+			print("Carte", card.global_card_id, "activée - Visible:", card.visible)
 	
 	update_game_state("Pick your cards - READY")
+	print("=== Fin Round ===")
+	
 	
 var carte_deja_cliquee = false	
 func _on_carte_cliquee(global_card_id):
-	if not cards_clickable or carte_deja_cliquee:
-		return
-
-	# Désactiver toutes les cartes immédiatement
-	_update_hand_clickability(false)
-
-	carte_deja_cliquee = true
-	cards_clickable = false
-	sp_game.round_started = false
-	
-	update_game_state("            You chose card %d" % global_card_id)
-	if global_card_id == null:
-		print("❌ Erreur : global_card_id est null")
+	if not cards_clickable:
 		return
 
 	var moi = sp_game.jeu.joueurs[0]
 	var index = moi.hand.trouver_index(global_card_id)
-
-	if index == -1 or sp_game.carte_choisie_moi != null:
-		print("❌ Carte déjà choisie ou non trouvée (index invalide ou déjà pris)")
+	
+	if index == -1:
+		print("Erreur: Carte introuvable")
 		return
 
+	# Désactiver les interactions
+	_update_hand_clickability(false)
+	
+	# Retirer la carte de la main visuelle
+	for card in hbox_container.get_children():
+		if card.global_card_id == global_card_id:
+			card.queue_free()
+			break
+	
+	# Logique de jeu
 	sp_game.carte_choisie_moi = {
 		"joueur": moi,
 		"carte": moi.hand.cartes[index],
 		"index": index
 	}
-
-	_place_card_next_to_icon(moi, moi.hand.cartes[index].numero)
-	sp_game.attente_joueur = false
+	
+	_place_card_next_to_icon(moi, global_card_id)
 	sp_game.reprendre_tour()
 	
 
@@ -771,6 +836,7 @@ func timer_timeout():
 		}
 		_place_card_next_to_icon(sp_game.joueur_moi, random_card.numero)
 		sp_game.reprendre_tour()
+		
 func choix_rang_auto():
 	# Choisir un rang aléatoire
 	var rang_index = randi() % vbox_container.get_child_count()
@@ -785,31 +851,30 @@ func stop_timer():
 		print("Timer arrêté")
 	
 func update_turn_label():
-	if turn_label == null:
-		push_error("Turn Label non trouvé!")
+	if turn_label == null: 
 		return
 	
-	# Vérifie si on est en mode "Fin par points"
 	var end_by_points = Global.game_settings.get("use_max_points", false)
-	var max_points = Global.game_settings.get("nb_max_heads", 999)
 	var current_score = sp_game.jeu.joueurs[0].score if sp_game and sp_game.jeu else 0
 	
 	if end_by_points:
-		# Mode Points - Affiche le score actuel / score max
-		var display_turn = clamp(current_turn, 1, max_turns)
-		turn_label.text = "Turn %d" % [display_turn]
+		# Mode Points
+		var max_points = Global.game_settings.get("nb_max_heads", 999)
+		turn_label.text = "Turn %d " % [current_turn]
 		turn_label.add_theme_color_override("font_color", 
 			Color.RED if current_score >= max_points else Color.WHITE)
 	else:
-		# Mode Tours - Affiche Tour X/Y
-		var display_turn = clamp(current_turn, 1, max_turns)
-		turn_label.text = "Turn %d/%d" % [display_turn, max_turns]
-		
-		# Changement de couleur pour le dernier tour
-		turn_label.add_theme_color_override("font_color", 
+		# Mode Rounds
+		var max_turns = Global.game_settings.get("nb_cartes", 10)
+		var nb_rounds = Global.game_settings.get("nb_max_manches",5)
+		if nb_rounds==1:
+			turn_label.text = "Turn %d/%d" % [current_turn, max_turns]
+		else:
+			turn_label.text = "Turn %d/%d" % [current_turn, max_turns*nb_rounds]
+			
+		turn_label.add_theme_color_override("font_color",
 			Color.GOLD if current_turn >= max_turns else Color.WHITE)
-				
-
+			
 func _on_tour_repris(cartes_choisies):
 	carte_deja_cliquee = false
 	current_turn += 1
@@ -818,35 +883,38 @@ func _on_tour_repris(cartes_choisies):
 	update_game_state("            New round")
 	await get_tree().create_timer(1.5).timeout
 	
+	# Mise à jour CRUCIALE de la main avant toute autre opération
+	_update_hand()  # <-- Ajoutez cette ligne
+	
 	# Activer les clics seulement si c'est le tour du joueur
 	if sp_game.joueur_moi == sp_game.jeu.joueurs[0]:
-		_update_hand_clickability(true)  # Utilisez la nouvelle fonction
+		_update_hand_clickability(true)
 		update_game_state("            Pick your cards")
 	else:
 		_update_hand_clickability(false)
 		update_game_state("%s's turn" % sp_game.get_current_player_name())
 	
-	# 4. Réinitialiser le timer
+	# Réinitialiser le timer
 	game_timer.stop()
 	time_left = Global.game_settings["round_timer"]
 	timer_label.text = str(time_left)
 	timer_active = true
 	game_timer.start(1.0)
 	
-	# 5. Supprimer toutes les cartes devant les icônes
+	# Nettoyage des cartes jouées
 	for choix in cartes_choisies:
 		var joueur = choix["joueur"]
 		var layer = get_display_data_for_joueur(joueur)["card_layer"]
 		for child in layer.get_children():
 			child.queue_free()
 	
-	# 6. Mettre à jour l'affichage sans flash
+	# Mise à jour de l'affichage
 	_update_plateau(false)
 	_update_heads()
 	
-	# 7. Démarrer le nouveau round
+	# Démarrer le nouveau round
 	sp_game.start_round()
-	
+		
 
 func show_label(text: String) -> void:
 	state_label.text = text

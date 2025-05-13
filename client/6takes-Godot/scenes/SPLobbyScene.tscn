@@ -878,7 +878,6 @@ icon = ExtResource("9_eoxuu")
 icon_alignment = 1
 
 [node name="SettingsOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

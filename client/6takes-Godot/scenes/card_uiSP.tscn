@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bee23skewc62b"]
+[gd_scene load_steps=8 format=3 uid="uid://dyp0jko3enl5d"]
 
 [ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="1_8c31k"]
 [ext_resource type="Script" path="res://scripts/card_ui_sp.gd" id="2_iqkwp"]
@@ -34,7 +34,7 @@ priority = 1
 position = Vector2(67.6168, 89.7304)
 shape = SubResource("RectangleShape2D_1peor")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Front_texture" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(149, 170)
 layout_mode = 1
 anchors_preset = 15

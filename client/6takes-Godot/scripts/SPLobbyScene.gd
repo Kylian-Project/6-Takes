@@ -107,16 +107,18 @@ func update_bot_slots():
 	add_bot_button.visible = bot_count < 9
 
 # Démarrer le jeu
+# Démarrer le jeu
 func start_game():
 	var settings = settings_overlay.get_settings()
-
-	# Sauvegarde des paramètres dans le singleton Global
+	
 	Global.game_settings = {
 		"nb_cartes": settings["card_number"],
 		"nb_max_heads": settings["max_points"] if settings["use_max_points"] else 999,
-		"nb_max_manches": settings["rounds"] if not settings["use_max_points"] else 999,
+		"nb_max_manches": settings["rounds"],  # Nombre de manches choisi (1, 2, 3, etc.)
+		"total_rounds": settings["total_rounds"],  # Tours totaux (cartes × manches si manches > 1)
 		"bot_count": bot_count,
-		"round_timer": settings["round_timer"]
+		"round_timer": settings["round_timer"],
+		"use_max_points": settings["use_max_points"]
 	}
 
 	print("Lancement du jeu solo avec les paramètres :", Global.game_settings)
@@ -128,10 +130,10 @@ func start_game():
 
 	var players = []
 
-	# ➕ Ajouter le joueur principal
+	# Ajouter le joueur principal
 	players.append(player_name)
 
-	# ➕ Ajouter les bots
+	# Ajouter les bots
 	for i in range(bot_count):
 		players.append("Bot " + str(i + 1))
 
@@ -145,7 +147,7 @@ func start_game():
 	get_tree().root.add_child(game_scene)
 	get_tree().current_scene.queue_free()
 	get_tree().current_scene = game_scene
-
+	
 func return_to_main_menu():
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
