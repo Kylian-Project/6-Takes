@@ -37,3 +37,19 @@ func _on_reset_button_pressed():
 			0: $TabContainer/AudioSettings/HorizontalAlign/VSettings/MsterSlider.value = vol
 			1: $TabContainer/AudioSettings/HorizontalAlign/VSettings/MusicSlider.value = vol
 			2: $TabContainer/AudioSettings/HorizontalAlign/VSettings/SFXSlider.value = vol
+	
+	# --- SERVER ---
+	# Réinitialiser la section Server uniquement si l'utilisateur N'EST PAS connecté
+	if not get_node("/root/Global").logged_in:
+		if defaults.has_section("Server"):
+			defaults.erase_section("Server")
+			defaults.save("user://settings.cfg")
+
+		# Mettre à jour l'UI serveur avec les valeurs par défaut
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/PresetOptionButton.select(0)
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvURL.text = "localhost"
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvPORT.value = 80
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/HTTPOption.select(0)
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvURL.editable = false
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvPORT.editable = false
+		$TabContainer/ServerSettings/HorizontalAlign/VSettings/HTTPOption.disabled = true

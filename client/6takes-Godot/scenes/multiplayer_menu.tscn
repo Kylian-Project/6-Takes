@@ -391,6 +391,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="SettingsOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -425,14 +426,13 @@ theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216
 theme_override_colors/font_hovered_color = Color(1, 1, 1, 1)
 theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 35
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jsm2")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_udiwy")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_iww2l")
-current_tab = 2
+current_tab = 0
 
 [node name="MainSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("8_db6nl")
 metadata/_tab_index = 0
@@ -602,95 +602,6 @@ layout_mode = 2
 size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
-
-[node name="ServerSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
-layout_mode = 2
-metadata/_tab_index = 2
-
-[node name="HorizontalAlign" type="HBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = -1.0
-offset_top = 17.0
-offset_right = -40.0
-offset_bottom = 190.0
-grow_horizontal = 2
-alignment = 1
-
-[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-alignment = 1
-
-[node name="Preset" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
-text = "Server Preset"
-
-[node name="SRV_URL" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
-text = "SRV_URL"
-
-[node name="SRV_PORT" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
-text = "SRV_PORT
-"
-
-[node name="HTTP_PREFIX" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("3_y4pek")
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_2rhfm")
-text = "HTTP_PREFIX
-"
-
-[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-alignment = 1
-
-[node name="PresetOptionButton" type="OptionButton" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-selected = 0
-item_count = 3
-popup/item_0/text = "Default"
-popup/item_1/text = "BASTION"
-popup/item_1/id = 1
-popup/item_2/text = "Custom"
-popup/item_2/id = 2
-
-[node name="LineEditSrvURL" type="LineEdit" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-placeholder_text = "localhost"
-
-[node name="LineEditSrvPORT" type="LineEdit" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-placeholder_text = "14001"
-
-[node name="HTTPOption" type="OptionButton" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-selected = 0
-item_count = 2
-popup/item_0/text = "HTTPS"
-popup/item_1/text = "HTTP"
-popup/item_1/id = 1
 
 [node name="ResetButton" type="Button" parent="SettingsOverlay"]
 layout_mode = 1

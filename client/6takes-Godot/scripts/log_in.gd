@@ -16,6 +16,8 @@ var ws = WebSocketPeer.new()
 var ws_connected = false
 
 var API_URL  
+var login_timeout_timer : Timer
+var request_timed_out := false
 
 #pop Up panel 
 @onready var popup_overlay = $popUp_error
@@ -48,6 +50,14 @@ func _ready():
 	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
+	# Création du timer pour le timeout login
+	login_timeout_timer = Timer.new()
+	login_timeout_timer.wait_time = 3.0
+	login_timeout_timer.one_shot = true
+	login_timeout_timer.autostart = false
+	add_child(login_timeout_timer)
+	login_timeout_timer.timeout.connect(_on_login_timeout)
+
 
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
@@ -73,9 +83,16 @@ func _on_login_button_pressed():
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	print("ID de l'appareil :", device_id)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
+	request_timed_out = false
+	login_timeout_timer.start()
 
 
 func _on_http_request_completed(result, response_code, headers, body):
+	if login_timeout_timer.is_stopped() == false:
+		login_timeout_timer.stop()
+	if request_timed_out:
+		return
+		
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
 
@@ -199,3 +216,8 @@ func _on_visibility_button_pressed() -> void:
 	showing_password1 = !showing_password1
 	password_input.secret = not showing_password1
 	visibility_button.icon = ICON_INVISIBLE if showing_password1 else ICON_VISIBLE
+
+func _on_login_timeout():
+	request_timed_out = true
+	popup_message.text = "Server Connexion Error"
+	popup_overlay.visible = true

@@ -12,6 +12,8 @@ var ws = WebSocketPeer.new()
 var ws_connected = false
 
 var API_URL
+var request_timeout_timer : Timer
+var request_timed_out := false
 
 #new password
 @onready var new_password = $VBoxContainer/password
@@ -42,6 +44,13 @@ func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
 	var base_http = get_node("/root/Global").get_base_http()
 	API_URL = base_http + base_url + "/api/player/inscription"
+
+	request_timeout_timer = Timer.new()
+	request_timeout_timer.wait_time = 3.0
+	request_timeout_timer.one_shot = true
+	request_timeout_timer.autostart = false
+	add_child(request_timeout_timer)
+	request_timeout_timer.timeout.connect(_on_request_timeout)
 
 
 func hash_password(password: String) -> String:
@@ -87,9 +96,16 @@ func _on_signup_pressed():
 
 	print(" Envoi de la requête HTTP de connexion à:", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
+	request_timed_out = false
+	request_timeout_timer.start()
 
 
 func _on_http_request_completed(result, response_code, headers, body):
+	if request_timeout_timer.is_stopped() == false:
+		request_timeout_timer.stop()
+	if request_timed_out:
+		return
+		
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
 	
@@ -238,3 +254,9 @@ func _on_visibility_button_2_pressed() -> void:
 	showing_password2 = !showing_password2
 	password_confirm.secret = not showing_password2
 	visibility_button2.icon = ICON_INVISIBLE if showing_password2 else ICON_VISIBLE
+
+
+func _on_request_timeout():
+	request_timed_out = true
+	popup_message.text = "Server Connexion Error"
+	popup_overlay.visible = true
