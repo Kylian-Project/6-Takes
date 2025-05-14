@@ -25,3 +25,7 @@ func _on_end_points_selected(index: int):
 	
 	end_points_dropdown.button_pressed = false 
 	
+
+
+func _on_save_button_pressed() -> void:
+	pass # Replace with function body.

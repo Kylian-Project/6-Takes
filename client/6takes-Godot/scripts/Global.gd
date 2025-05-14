@@ -5,6 +5,10 @@ var saved_token
 var player_id
 var player_name = ""
 var icon_id = 0
+var ban_info = {
+	"banned": false,
+	"timeLeft": 0
+}
 
 var config = ConfigFile.new()
 var file_path = "res://config/config.cfg"
@@ -98,9 +102,6 @@ func get_player_id():
 func get_saved_token():
 	return saved_token
 
-func set_logged_in(state):
-	logged_in = state
-
 func save_session(token: String, uid, uname, icon):
 	#var config = ConfigFile.new()
 	config.set_value("session", "token", token)
@@ -115,7 +116,7 @@ func save_session(token: String, uid, uname, icon):
 	player_id = uid
 	player_name = uname
 	icon_id = icon
-	
+
 	logged_in = true
 
 #load session data from file on startup
@@ -175,3 +176,27 @@ func _on_request_completed(_result, response_code, _headers, body):
 	else:
 		print("Session invalid. Forcing logout.")
 		logged_in = false
+
+func issue_ban(player_id):
+	print("[INFO] Tentative de bannissement du joueur avec l'ID :", player_id)
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+
+	var url = BASE_HTTP + BASE_URL + "/api/player/ban-status/" + str(player_id)
+	var error = http_request.request(url, [], HTTPClient.METHOD_POST)
+
+	if error != OK:
+		print("[ERREUR] Erreur lors de l'envoi de la requête de bannissement :", error)
+	else:
+		print("[INFO] Requête de bannissement envoyée avec succès pour le joueur ID :", player_id)
+
+func update_ban_info(banned: bool, time_left: int):
+	ban_info["banned"] = banned
+	ban_info["timeLeft"] = time_left
+	print("Ban info updated: ", ban_info)
+
+func is_banned():
+	return ban_info.get("banned", false)
+
+func get_ban_time_left():
+	return ban_info.get("timeLeft", 0)

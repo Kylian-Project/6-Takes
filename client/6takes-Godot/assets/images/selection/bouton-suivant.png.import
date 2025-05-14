@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhyaayrlq4gdq"
-path="res://.godot/imported/bleu.png-eeb95c487ff839d4c2562f80f51edc73.ctex"
+uid="uid://by6dwc5g35u7r"
+path="res://.godot/imported/bouton-suivant.png-58cee5198b55cc044446e3d3ad2d82a7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bleu.png"
-dest_files=["res://.godot/imported/bleu.png-eeb95c487ff839d4c2562f80f51edc73.ctex"]
+source_file="res://assets/images/selection/bouton-suivant.png"
+dest_files=["res://.godot/imported/bouton-suivant.png-58cee5198b55cc044446e3d3ad2d82a7.ctex"]
 
 [params]
 

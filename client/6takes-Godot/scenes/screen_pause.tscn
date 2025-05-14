@@ -1,15 +1,17 @@
-[gd_scene load_steps=19 format=3 uid="uid://c1bikqhwekjd3"]
+[gd_scene load_steps=23 format=3 uid="uid://c1bikqhwekjd3"]
 
 [ext_resource type="Texture2D" uid="uid://sd3g2yiuqsxo" path="res://assets/images/Pause Menu(1).png" id="1_m4vej"]
 [ext_resource type="Script" path="res://scripts/screen_pause.gd" id="1_slec1"]
 [ext_resource type="Texture2D" uid="uid://cftlx8ptukwu6" path="res://assets/images/Player Icons_black 1.png" id="2_tw1er"]
-[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="5_amim0"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_qk851"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_alrgk"]
 [ext_resource type="Script" path="res://scripts/reset_settings.gd" id="6_uxr2t"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="7_386n2"]
 [ext_resource type="Script" path="res://scripts/main_settings.gd" id="8_mla8k"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="9_cxnqk"]
+[ext_resource type="Script" path="res://scripts/confirm_control.gd" id="11_8y80p"]
+[ext_resource type="Texture2D" uid="uid://j1dgweq32xnf" path="res://assets/images/selection/verifier.png" id="12_jjdnu"]
+[ext_resource type="Texture2D" uid="uid://d4k8xhixraomr" path="res://assets/images/selection/fermer.png" id="13_745kj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rx1hg"]
 bg_color = Color(0.729412, 0.215686, 0.215686, 1)
@@ -84,7 +86,24 @@ border_width_left = 5
 border_width_right = 5
 border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrgmo"]
+bg_color = Color(0.0365646, 0.0678412, 0.191338, 0.792157)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(1, 0, 0, 0.521569)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1bam"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 0.917647)
+border_blend = true
+
 [node name="ScreenPause" type="Control"]
+z_index = 30
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -106,6 +125,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.588235)
@@ -155,7 +175,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -169,7 +189,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -183,7 +203,7 @@ theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
 theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
-theme_override_fonts/font = ExtResource("5_amim0")
+theme_override_fonts/font = ExtResource("7_386n2")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/hover = ExtResource("5_qk851")
 theme_override_styles/normal = ExtResource("6_alrgk")
@@ -201,7 +221,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 1250.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
@@ -439,6 +459,94 @@ theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_5c47e")
 text = "X"
+
+[node name="ConfirmControl" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 955.0
+offset_top = 670.0
+offset_right = 955.0
+offset_bottom = 670.0
+script = ExtResource("11_8y80p")
+
+[node name="dimming" type="ColorRect" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -970.0
+offset_top = -714.5
+offset_right = 970.0
+offset_bottom = 547.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.184314)
+
+[node name="mssg" type="Label" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -956.0
+offset_top = -122.0
+offset_right = 965.0
+offset_bottom = 213.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("7_386n2")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_lrgmo")
+text = "."
+horizontal_alignment = 1
+
+[node name="buttonContainer" type="HBoxContainer" parent="ConfirmControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -297.5
+offset_top = 110.0
+offset_right = 297.5
+offset_bottom = 173.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 120
+
+[node name="confirmButton" type="Button" parent="ConfirmControl/buttonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_j1bam")
+theme_override_styles/normal = ExtResource("6_alrgk")
+text = "Confirm"
+icon = ExtResource("12_jjdnu")
+icon_alignment = 2
+expand_icon = true
+
+[node name="cancelButton" type="Button" parent="ConfirmControl/buttonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_j1bam")
+theme_override_styles/normal = ExtResource("6_alrgk")
+text = "Cancel"
+icon = ExtResource("13_745kj")
+icon_alignment = 2
+expand_icon = true
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
 
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption" to="SettingsOverlay/TabContainer/MainSettings" method="_on_display_option_item_selected"]
 [connection signal="item_selected" from="SettingsOverlay/TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions" to="SettingsOverlay/TabContainer/MainSettings" method="_on_resolution_options_item_selected"]
