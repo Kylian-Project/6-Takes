@@ -113,6 +113,7 @@ func save_session(token: String, uid, uname, icon):
 	if error != OK:
 		print("error saving session")
 
+	saved_token = token
 	player_id = uid
 	player_name = uname
 	icon_id = icon
