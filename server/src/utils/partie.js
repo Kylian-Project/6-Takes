@@ -1,7 +1,7 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
-import BanInfo from "../models/ban_info.js"
 import Player from "../models/player.js"
+import sequelize from '../config/db.js';
 
 class Game
 {
@@ -302,8 +302,19 @@ export const PlayGame = (socket, io) =>
 		joueur.nom = botName; // Mettre à jour le nom du joueur avec le nom du bot
 		rooms.find(r => r.id === roomId).users.find(u => u.username === username).username = botName;
 		io.to(roomId).emit("bot-replaced", { username, botName });
-		
+		console.log("Le joueur est remplacer par un bot", botName);
+		// // Supprimer le joueur de la room et de la partie
+		// const room = rooms.find(r => r.id === roomId);
+		// if (room)
+		// {
+		// 	room.removeUser(socket.id);
+		// 	socket.leave(roomId);
+		// 	console.log(`✅ ${username} a quitté la room ${roomId}`);
+		// 	io.to(roomId).emit("user-left", { username });
+		// }
 	});
+
+
 
 
 
@@ -705,15 +716,8 @@ async function issueBan(playerId)
 {
     try 
 	{
-        const existingBan = await BanInfo.findOne({ where: { player_id: playerId } });
-
-        if (existingBan) {
-            console.log(`🔄 Mise à jour du ban pour l'ID du joueur : ${playerId}`);
-            await sequelize.query(`CALL apply_ban(${playerId})`);
-        } else {
-            console.log(`🆕 Création d'un nouveau ban pour l'ID du joueur : ${playerId}`);
-            await BanInfo.create({ player_id: playerId, ban_count: 1, ban_duration: 120 });
-        }
+		console.log(`🔄 Mise à jour du ban pour l'ID du joueur : ${playerId}`);
+		await sequelize.query(`CALL apply_ban(${playerId})`);
         
         console.log(`🚫 Ban enregistré pour l'ID du joueur : ${playerId}`);
     } 

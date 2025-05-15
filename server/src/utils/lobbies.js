@@ -216,6 +216,7 @@ export const roomHandler = (socket, io) =>
             socket.to(roomId).emit("remove-room");
             socket.leave(roomId);
             socket.emit("room-left");
+            console.log("📦 Room supprimée :", room.id);
             return;
         }
         room.removeUser(socket.id);
