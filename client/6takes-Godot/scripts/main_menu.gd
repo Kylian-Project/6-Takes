@@ -47,6 +47,7 @@ var api_url = base_http + base_url + "/api/player/ban-status/"
 var login_instance = null
 var rules_instance = null 
 var logged_in 
+var timer = Timer.new()
 
 func _ready() -> void:
 	if OS.get_name() == "Web":
@@ -201,7 +202,6 @@ func _on_ban_status_received(result, response_code, headers, body):
 func start_ban_timer(time_left):
 	print("[DEBUG] Démarrage du timer de ban pour : ", time_left, " secondes.")
 	ban_time_left = time_left
-	var timer = Timer.new()
 	add_child(timer)
 	timer.wait_time = 1
 	timer.one_shot = false
@@ -229,13 +229,17 @@ func _update_ban_timer():
 	ban_time_left -= 1
 	if ban_time_left <= 0:
 		print("[INFO] Fin du ban. Réactivation du bouton multijoueur.")
+		# Arreter le timer
+		timer.stop()
+		timer.queue_free()
+		# Réactiver le bouton multijoueur
 		multiplayer_button.disabled = false
 		multiplayer_button.text = "Multiplayer"
 		get_tree().call_group("timers", "stop")
 		get_tree().call_group("timers", "queue_free")
 	else:
 		multiplayer_button.text = _format_time(ban_time_left)
-		print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
+		# print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
 
 func _on_multi_player_button_pressed() -> void:
 	#get_node("/root/Global").load_session()
