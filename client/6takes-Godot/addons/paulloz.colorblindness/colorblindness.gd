@@ -18,6 +18,11 @@ var rect := ColorRect.new()
 func _ready():
 	# 1) Add the full-screen filter above all UI
 	add_child(rect)
+	# Forcer les anchors pour remplir tout le viewport
+	rect.anchor_left = 0.0
+	rect.anchor_top = 0.0
+	rect.anchor_right = 1.0
+	rect.anchor_bottom = 1.0
 
 	# 2) Load its shader material
 	rect.material = load("res://addons/paulloz.colorblindness/colorblindness.material")
@@ -35,9 +40,13 @@ func _ready():
 	# 5) Watch for window/viewport resizes
 	get_tree().root.size_changed.connect(_on_viewport_size_changed)
 
+func _process(_delta):
+	_update_rect_size()
+
 func _on_viewport_size_changed():
 	_update_rect_size()
 
 func _update_rect_size():
-	# Godot 4: get_viewport().size returns the current view size
-	rect.custom_minimum_size = get_viewport().size
+	rect.position = Vector2.ZERO
+	rect.size = Vector2(10000, 10000)
+	rect.scale = Vector2.ONE
