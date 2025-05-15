@@ -54,7 +54,7 @@ function getGame(roomId)
 
 const games = [];		// tableau de Game
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
-const timers = {};  // un timer par room
+export const timers = {};  // un timer par room
 const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 const joueursPretPourTour = {};
@@ -90,6 +90,7 @@ export const PlayGame = (socket, io) =>
 		const usersWithSocket = getUsersAndSocketId(roomId);
 
 		const room = rooms.find(r => r.id === roomId);
+		room.visibility = false;
 		const settings = room.settings; // settings récupérés de la room
 
 		// Initialisation du jeu
@@ -268,6 +269,8 @@ export const PlayGame = (socket, io) =>
 	/***************************/
 	socket.on("restart-game", (roomId) => 
 	{
+		// On notifie players que le jeu va commencer
+		io.to(roomId).emit("game-starting");
 		const jeu = getGame(roomId);
 		jeu.resetGame();
 		envoyerMainEtTable(io, roomId, jeu, rooms);
@@ -652,6 +655,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 			if(! username.startsWith("Bot"))
 			{
 				console.log("🏁 Fin de partie");
+				envoyerMainEtTable(io, roomId, jeu, rooms);	///!!!
 				io.to(roomId).emit("end-game", { classement });
 			}
 		}
