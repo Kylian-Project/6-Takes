@@ -101,15 +101,13 @@ func _on_http_request_completed(result, response_code, headers, body):
 		player_data = response["player"]
 		print(" Connexion réussie ! ")
 
-		var raw_response = body.get_string_from_utf8()
-		var result_string = JSON.parse_string(raw_response)
+
+		var player_id = response["player"]["id"]
+		var player_name = response["player"]["username"]
+		var icon_id = response["player"]["icon"]
+
 		
-		var player_id = result_string["player"]["id"]
-		var player_name = result_string["player"]["username"]
-		var icon_id = result_string["player"]["icon"]
-		
-		get_node("/root/Global").save_session(jwt_token, player_id, player_name, icon_id)
-		_connect_to_websocket()
+		Global.save_session(jwt_token, player_id, player_name, icon_id)
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
