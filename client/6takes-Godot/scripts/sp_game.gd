@@ -104,7 +104,11 @@ func end_game():
 		board.stop_timer()
 	
 	await get_tree().create_timer(3.0).timeout
+	
 	if board:
+		
+		await get_tree().create_timer(1.5).timeout
+	
 		board.update_game_state("            FINISH")
 		board.show_scoreboard(rankings)
 		
@@ -170,9 +174,14 @@ func reprendre_tour():
 			# Cas spécial : choix manuel
 			if joueur == joueur_moi:
 				emit_signal("choix_rang_obligatoire", joueur, carte)
+				
 				joueur_en_attente = joueur
+				
 				carte_en_attente = carte
+				
 				return
+				
+				
 			else:
 				if board:
 					await board.update_game_state("            %s Pick a row to take" % [joueur.nom])
@@ -187,6 +196,7 @@ func reprendre_tour():
 					total_tetes += c.tetes
 				joueur.score += total_tetes
 				jeu.table.forcer_nouvelle_rangée(rang_a_ramasser, carte)
+				await board.move_card_to_row(joueur, carte.numero, rang_index)
 
 				if board:
 					await board.update_game_state("            %s chose rank" % [joueur.nom])
@@ -198,6 +208,7 @@ func reprendre_tour():
 			
 			jeu.table.ajouter_carte(carte, joueur)
 			await board.move_card_to_row(joueur, carte.numero, rang_index)
+			
 			await board.update_game_state("            Collecting cards...")	
 			# Vérifie dépassement
 			if jeu.table.rangs[rang_index].est_pleine():
@@ -215,12 +226,12 @@ func reprendre_tour():
 					
 					if joueur == joueur_moi:
 						
-						await board.show_label("%s put down 6th card → picks up rank %d (+%d têtes)" % [joueur.nom,rang_index + 1, total_tetes])
+						await board.show_label("%s put down 6th card → picks up rank %d" % [joueur.nom,rang_index + 1, total_tetes])
 						
 					
 					else:
 						
-						await board.show_label("%s put down 6th card → picks up rank %d (+%d têtes)" % [joueur.nom, rang_index + 1, total_tetes])
+						await board.show_label("%s put down 6th card → picks up rank %d" % [joueur.nom, rang_index + 1, total_tetes])
 					await board.update_game_state("             %s put down 6th card" % [joueur.nom])
 					
 				
@@ -329,6 +340,8 @@ func reprendre_avec_rang(rang_index: int):
 			jeu.table.ajouter_carte(bot_carte, bot)
 			if board:
 				await board.move_card_to_row(bot, bot_carte.numero, rang_index_bot)
+				  
+
 			
 			if jeu.table.rangs[rang_index_bot].est_pleine():
 				var cartes_a_ramasser = jeu.table.rangs[rang_index_bot].recuperer_cartes()

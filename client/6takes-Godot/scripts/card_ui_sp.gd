@@ -49,14 +49,14 @@ func _process(_delta):
 	
 # Méthode pour assigner les données de la carte
 func set_card_data(image_path, card_id):
-	global_card_id = card_id
-	var texture = load(image_path)  
+	# Précharger la texture avant de l'assigner
+	var texture = ResourceLoader.load(image_path, "Texture2D", ResourceLoader.CACHE_MODE_REUSE)
 	if texture:
-		$Front_texture.texture = texture  
-		texture_rect.visible = true
+		$Front_texture.texture = texture
+		$Front_texture.visible = true
+		global_card_id = card_id
 	else:
-		print(" Erreur : Impossible de charger l'image", image_path)
-
+		push_error("Failed to load card texture: " + image_path)
 
 func _on_detector_mouse_entered() -> void:
 	if !is_in_hand_grp() or is_lifted:

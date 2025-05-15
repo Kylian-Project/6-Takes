@@ -36,14 +36,14 @@ func _on_card_clicked(card: TCardUIsp) -> void:
 	card.is_lifted = !card.is_lifted
 	
 	if card.is_lifted:
-		# Animation de sélection
+		# Enregistrer la carte sélectionnée
+		selected_card = card
 		card.z_index = 100
 		if !card.has_meta("orig_pos"):
 			card.set_meta("orig_pos", card.position)
 		
-		var lift_tween = get_tree().create_tween()
-		lift_tween.tween_property(card, "position", card.position + Vector2(0, -40), 0.2)
-		selected_card = card
+		# Animation très subtile sans délai
+		card.position = card.position + Vector2(0, -40)
 	else:
 		card._on_deselect_card()
 		selected_card = null

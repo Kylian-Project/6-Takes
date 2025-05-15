@@ -179,10 +179,10 @@ func _process(delta):
 			
 			if game_should_continue:
 				return
-		
-		
-		update_game_state("            FINISH")
+		await get_tree().create_timer(1.5).timeout
 		show_label("END GAME")
+		update_game_state("            FINISH")
+		
 
 		
 func show_scoreboard(rankings):
@@ -209,8 +209,10 @@ func _on_choix_rang_obligatoire(joueur, carte):
 		await _handle_human_choice(joueur, carte)
 	else:
 		await _handle_bot_choice(joueur, carte)
+		
 
 	choix_rang_panel.visible = false
+	
 	sp_game.reprendre_tour()
 
 func _start_timer_for_rang_choice():
@@ -231,7 +233,10 @@ func _handle_human_choice(joueur, carte):
 	var rang_selectionne = await self.rang_selectionne
 	
 	# Animation complète
+	
 	await _animate_full_pickup_sequence(joueur, carte, rang_selectionne)
+	await move_card_to_row(joueur, carte.numero, rang_selectionne)
+	
 
 func _handle_bot_choice(joueur, carte):
 	"""Gère le choix de rang pour un bot"""
@@ -271,37 +276,42 @@ func _handle_bot_choice(joueur, carte):
 	
 
 func _animate_full_pickup_sequence(joueur, carte, rang_index):
-	"""Version optimisée qui réutilise les cartes visuelles"""
 	cards_clickable = false
-	
+
 	# 1. Ramasser les cartes du jeu
 	var cartes_ramassees = sp_game.jeu.table.ramasser_rang(rang_index)
 	var total_tetes = 0
 	for c in cartes_ramassees:
 		total_tetes += c.tetes
-	
+
 	# 2. Récupérer les cartes visuelles existantes
 	var row = vbox_container.get_child(rang_index).get_child(0)
 	var cartes_visuelles = []
 	for child in row.get_children():
 		if child.has_method("get_card_id"):
 			cartes_visuelles.append(child)
-	
+
 	# 3. Animation des cartes existantes vers le joueur
 	await _animate_existing_cards_to_player(joueur, cartes_visuelles)
-	
+
 	# 4. Gérer la carte du joueur
 	await _place_card_next_to_icon(joueur, carte.numero)
 	await _animate_card_to_row(joueur, carte.numero, rang_index)
-	
+
+	# ✅ Pause très courte pour permettre à la carte d'être visible
+	await get_tree().create_timer(0.2).timeout
+
 	# 5. Mise à jour du jeu
 	joueur.score += total_tetes
 	sp_game.jeu.table.forcer_nouvelle_rangée(rang_index, carte)
-	
+	_update_plateau()  # 👈 Mise à jour immédiate du visuel
+
 	# 6. Mise à jour minimale
 	_update_heads()
 	if sp_game.joueur_moi == sp_game.jeu.joueurs[0]:
 		cards_clickable = true
+
+	
 
 func _animate_existing_cards_to_player(joueur, cartes_visuelles):
 	var end_pos = get_display_data_for_joueur(joueur)["card_layer"].global_position
@@ -515,7 +525,7 @@ func _setup_bot_ui():
 	
 	# Espace de 35px pour le joueur
 	var human_flex_spacer = Control.new()
-	human_flex_spacer.custom_minimum_size = Vector2(65, 0)
+	human_flex_spacer.custom_minimum_size = Vector2(70, 0)
 	
 	# Structure côté droit
 	human_hbox.add_child(human_card_layer)
@@ -544,51 +554,94 @@ func _setup_bot_ui():
 		"bot": human,
 		"card_layer": human_card_layer
 	})
+var selected_card: TCardUIsp = null
+
 func _update_hand():
-	print("\n=== Mise à jour de la main ===")
-	print("Cartes dans la main du joueur:", sp_game.jeu.joueurs[0].hand.cartes.size())
-	
-	# Nettoyage
+	# Sauvegarder les états actuels des cartes
+	var saved_states = {}
 	for child in hbox_container.get_children():
-		child.queue_free()
-	print("Anciennes cartes nettoyées")
+		if child is TCardUIsp:
+			saved_states[child.global_card_id] = {
+				"position": child.position,
+				"lifted": child.is_lifted,
+				"z_index": child.z_index
+			}
 	
-	# Ajout des nouvelles cartes
+	# Créer un mapping des cartes existantes
+	var existing_cards = {}
+	for child in hbox_container.get_children():
+		if child is TCardUIsp:
+			existing_cards[child.global_card_id] = child
+			child.visible = false  # Masquer temporairement
+	
+	# Préparer les nouvelles cartes
+	var new_cards = []
 	var x_offset = 0
-	for carte in sp_game.jeu.joueurs[0].hand.cartes:
-		var card_ui = CARD_UI_SCENE.instantiate()
-		hbox_container.add_child(card_ui)
-		
-		# Positionnement
-		card_ui.position = Vector2(x_offset, 0)
-		x_offset += card_ui.size.x * 0.8
-		
-		# Texture
-		var tex_path = "res://assets/images/cartes/%d.png" % carte.numero
-		if ResourceLoader.exists(tex_path):
-			card_ui.set_card_data(tex_path, carte.numero)
-			print("Carte", carte.numero, "affichée avec texture")
-		
-		# Interactions
-		card_ui.gameboard = self
-		if not card_ui.is_connected("card_selected", _on_carte_cliquee):
-			card_ui.connect("card_selected", _on_carte_cliquee)
-		
-		print("Carte", carte.numero, "ajoutée à la position", x_offset)
 	
-	print("=== Fin mise à jour main ===\n")
+	for carte in sp_game.jeu.joueurs[0].hand.cartes:
+		var card_ui = existing_cards.get(carte.numero)
+		
+		if not card_ui:
+			# Créer une nouvelle carte si nécessaire
+			card_ui = CARD_UI_SCENE.instantiate()
+			hbox_container.add_child(card_ui)
+			var tex_path = "res://assets/images/cartes/%d.png" % carte.numero
+			if ResourceLoader.exists(tex_path):
+				card_ui.set_card_data(tex_path, carte.numero)
+			card_ui.gameboard = self
+			if not card_ui.is_connected("card_selected", _on_carte_cliquee):
+				card_ui.connect("card_selected", _on_carte_cliquee)
+		
+		# Restaurer l'état précédent ou initialiser
+		if saved_states.has(carte.numero):
+			var state = saved_states[carte.numero]
+			card_ui.position = state["position"]
+			card_ui.is_lifted = state["lifted"]
+			card_ui.z_index = state["z_index"]
+		else:
+			card_ui.position = Vector2(x_offset, 0)
+			card_ui.is_lifted = false
+			card_ui.z_index = 0
+		
+		# Mise à jour de la position
+		if card_ui.is_lifted:
+			card_ui.position.y = -40
+		else:
+			card_ui.position.y = 0
+		
+		new_cards.append(card_ui)
+		card_ui.visible = true
+		x_offset += card_ui.size.x * 0.8
+	
+	# Supprimer les cartes qui ne sont plus dans la main
+	for card_id in existing_cards:
+		var should_keep = false
+		for c in sp_game.jeu.joueurs[0].hand.cartes:
+			if c.numero == card_id:
+				should_keep = true
+				break
+		
+		if not should_keep:
+			existing_cards[card_id].queue_free()
+	
+	# Réorganiser l'ordre d'affichage
+	for i in range(new_cards.size()):
+		hbox_container.move_child(new_cards[i], i)
+		
+		
+		
 
 func _on_Button_order_pressed():
 	if not is_player_turn() or not cards_clickable:
-		return  # Ne pas trier si ce n'est pas le tour du joueur
+		return
 	
 	var joueur = sp_game.jeu.joueurs[0]
 	
 	# Sauvegarde l'état de sélection actuel
 	var carte_selectionnee = null
-	for card_ui in hbox_container.get_children():
-		if card_ui.is_lifted:
-			carte_selectionnee = card_ui.global_card_id
+	for child in hbox_container.get_children():
+		if child is TCardUIsp and child.is_lifted:  # Vérification du type
+			carte_selectionnee = child.global_card_id
 			break
 	
 	# Trie les cartes
@@ -599,21 +652,19 @@ func _on_Button_order_pressed():
 	
 	# Restaure la sélection si nécessaire
 	if carte_selectionnee:
-		for card_ui in hbox_container.get_children():
-			if card_ui.global_card_id == carte_selectionnee:
-				card_ui.is_lifted = true
-				#card_ui.show_selection_container(true)
-				card_ui.z_index = 100
-				card_ui.scale = card_ui.original_scale * card_ui.SCALE_FACTOR
+		for child in hbox_container.get_children():
+			if child is TCardUIsp and child.global_card_id == carte_selectionnee:
+				child.is_lifted = true
+				child.z_index = 100
+				child.scale = child.original_scale * child.SCALE_FACTOR
 				break
 	
-	# Réactive toutes les cartes
-	_update_hand_clickability(true)
-	
-	# Effet visuel
+	# Effet visuel du bouton
 	var tween = create_tween()
 	tween.tween_property($Button_order, "scale", Vector2(1.2, 1.2), 0.1)
 	tween.tween_property($Button_order, "scale", Vector2(1.0, 1.0), 0.1)
+
+
 
 
 func _update_plateau(animate: bool = false):
@@ -642,7 +693,8 @@ func _update_plateau(animate: bool = false):
 func move_card_to_row(joueur, card_number, row_index):
 	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	var end_row = vbox_container.get_child(row_index).get_child(0)
-	
+	print("🔴🔴🔴 la carte est *********** : ", card_number)
+
 	if start_layer and end_row:
 		# Supprimer immédiatement la carte devant l'icône (avant l'animation)
 		for child in start_layer.get_children():
@@ -751,12 +803,17 @@ func _place_card_next_to_icon(joueur, card_number):
 		card_ui.set_card_data("res://assets/images/cartes/%d.png" % card_number, card_number)
 
 		# Réduire la taille de la carte
-		card_ui.scale = Vector2(0.5, 0.5)
+		card_ui.scale = Vector2(0.75, 0.75)
+
+		# Ajuster la position pour la remonter légèrement
+		card_ui.position.y -= 50  # <-- Ajuste cette valeur selon ton besoin
 
 		# Animation d'apparition
 		card_ui.modulate.a = 0
 		var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card_ui, "modulate:a", 1.0, 1.0)
+
+
 
 				
 func afficher_cartes_bots():
@@ -890,6 +947,7 @@ func _on_tour_repris(cartes_choisies):
 	if sp_game.joueur_moi == sp_game.jeu.joueurs[0]:
 		_update_hand_clickability(true)
 		update_game_state("            Pick your cards")
+		
 	else:
 		_update_hand_clickability(false)
 		update_game_state("%s's turn" % sp_game.get_current_player_name())
@@ -950,7 +1008,7 @@ func rang_button_pressed(index):
 			bouton.pressed.disconnect(rang_button_pressed.bind(i))
 		bouton.hide()
 		bouton.disabled = true
-
+	await get_tree().create_timer(2).timeout
 	# Appeler le jeu pour continuer
 	var sp_game = get_node("/root/GameBoardSP").sp_game
 	if sp_game:

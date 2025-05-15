@@ -285,46 +285,6 @@ grow_vertical = 0
 alignment = 1
 script = ExtResource("8_rgomg")
 
-[node name="CardUI" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI2" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI3" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI4" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI5" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI6" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI7" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI8" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI9" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
-[node name="CardUI10" parent="CanvasLayer2/HBoxContainer" instance=ExtResource("3_8mab6")]
-layout_mode = 2
-script = null
-
 [node name="CardLayer" type="Control" parent="CanvasLayer2/HBoxContainer"]
 layout_mode = 2
 
@@ -399,7 +359,7 @@ offset_right = 1952.0
 offset_bottom = 709.0
 theme = SubResource("Theme_lwrla")
 theme_override_fonts/font = ExtResource("3_r0b0d")
-theme_override_font_sizes/font_size = 100
+theme_override_font_sizes/font_size = 90
 theme_override_styles/normal = SubResource("StyleBoxFlat_f52gu")
 text = "Game Start"
 horizontal_alignment = 1
