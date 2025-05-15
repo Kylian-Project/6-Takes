@@ -377,6 +377,7 @@ func _handle_your_hand(hand_data):
 
 	if !cards_animated:
 		can_select_card = false
+		get_node("sortCards").disabled = true
 
 	for card_id in hand_data[0]:
 		var card_info = _find_card_data(card_id)
@@ -415,6 +416,7 @@ func _handle_your_hand(hand_data):
 	
 	cards_animated = true
 	can_select_card = true
+	get_node("sortCards").disabled = false
 
 
 func _on_card_selected(card_number):
