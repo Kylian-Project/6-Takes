@@ -738,7 +738,12 @@ async function issueBan(playerId) {
 
         if (existingBan) {
             console.log(`Mise à jour du ban pour l'ID du joueur : ${playerId}`);
-            await sequelize.query(`CALL apply_ban(${playerId})`);
+            try {
+                await sequelize.query(`CALL apply_ban(${playerId})`);
+                console.log(`✅ Procédure apply_ban exécutée avec succès pour l'ID du joueur : ${playerId}`);
+            } catch (err) {
+                console.error(`❌ Erreur lors de l'exécution de la procédure apply_ban: ${err.message}`);
+            }
         } else {
             console.log(`Création d'un nouveau ban pour l'ID du joueur : ${playerId}`);
             await BanInfo.create({ player_id: playerId, ban_count: 1, ban_duration: 120 });
