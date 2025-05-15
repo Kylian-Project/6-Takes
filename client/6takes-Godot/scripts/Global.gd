@@ -5,15 +5,12 @@ var saved_token
 var player_id
 var player_name = ""
 var icon_id = 0
-<<<<<<< HEAD
 var rankings: Array = []   
-=======
 var ban_info = {
 	"banned": false,
 	"timeLeft": 0
 }
 
->>>>>>> develop
 var config = ConfigFile.new()
 var file_path = "res://config/config.cfg"
 var response_load = config.load(file_path)

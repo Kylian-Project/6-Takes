@@ -170,54 +170,30 @@ const login = async (req, res) => {
 
     const now = new Date();
 
-<<<<<<< HEAD
     // Vérifier s'il existe déjà une session active pour ce joueur sur un autre appareil
     const differentDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
         device_id: { [Op.ne]: device_id }, // Appareil différent
-=======
-    // V�rifier s'il existe d�j� une session active pour ce joueur sur un autre appareil
-    const differentDeviceSession = await Session.findOne({
-      where: {
-        id_player: player.id,
-        device_id: { [Op.ne]: device_id }, // Appareil diff�rent
->>>>>>> develop
       }
     });
 
 
-<<<<<<< HEAD
     // Refuser la connexion si une session est déjà active sur un autre appareil
-=======
-    // Refuser la connexion si une session est d�j� active sur un autre appareil
->>>>>>> develop
     if (differentDeviceSession) {
       return res.status(403).json({ message: "Account in use on another device !" });
     }
 
-<<<<<<< HEAD
     // Vérifier s'il existe une session active pour le même joueur et le même appareil
     const sameDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
         device_id: device_id, // Même appareil
-=======
-    // V�rifier s'il existe une session active pour le m�me joueur et le m�me appareil
-    const sameDeviceSession = await Session.findOne({
-      where: {
-        id_player: player.id,
-        device_id: device_id, // M�me appareil
->>>>>>> develop
         expire_at: { [Op.gt]: now } // Session encore valide
       }
     });
 
-<<<<<<< HEAD
     // Si une session avec le même appareil existe -> Delete
-=======
-    // Si une session avec le m�me appareil existe, la supprimer
->>>>>>> develop
     if (sameDeviceSession) {
       await Session.destroy({
         where: {
@@ -226,7 +202,6 @@ const login = async (req, res) => {
           expire_at: { [Op.gt]: now }
         }
       });
-<<<<<<< HEAD
       console.log(` Old session pour ${player.username} sur le même appareil supprimée.`);
     }
 
@@ -237,43 +212,22 @@ const login = async (req, res) => {
         username: player.username,
         email: player.email
       },
-=======
-      console.log(`\t\t?? Ancienne session pour ${player.username} sur le m�me appareil supprim�e.`);
-    }
-
-    // Cr�er une nouvelle session
-    const tokenDuration = 24 * 60 * 60; // 1 jour
-    const token = jwt.sign(
-      { id: player.id, username: player.username, email: player.email },
->>>>>>> develop
       process.env.JWT_SECRET,
       { expiresIn: tokenDuration }
     );
 
     const expireAt = new Date(now.getTime() + tokenDuration * 1000);
 
-<<<<<<< HEAD
     // Enregistrer new session dans bdd
     await Session.create({
       id_player: player.id,
       token: token,
       device_id: device_id,
-=======
-    // Enregistrer la nouvelle session dans la base de donn�es
-    await Session.create({
-      id_player: player.id,
-      token: token,
-      device_id: device_id,  // Enregistrer l'ID de l'appareil
->>>>>>> develop
       created_at: now,
       expire_at: expireAt
     });
 
-<<<<<<< HEAD
     console.log(`[EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
-=======
-    console.log(`\t\t? [EXPRESS] Connexion r�ussie : ${player.username} (ID ${player.id})`);
->>>>>>> develop
 
     res.status(200).json({
       message: "Connexion r�ussie",
@@ -299,11 +253,7 @@ const login = async (req, res) => {
 };
 
 
-<<<<<<< HEAD
 // ? DECONNEXION Volontairement
-=======
-// ? DECONNEXION Volontaire
->>>>>>> develop
 const logout = async (req, res) => {
   const userId = req.userId;
   const token = req.token; // On r�cup�re le token utilis� pour la requ�te
