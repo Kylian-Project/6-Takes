@@ -29,7 +29,6 @@ func _ready():
 	if gameboard and gameboard.game_ended:
 		start_leave_timer()
 		
-	get_node("restartButton").disabled = !GameState.is_host
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 func update_rankings(rankings_list):
