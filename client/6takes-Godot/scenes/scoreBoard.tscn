@@ -538,5 +538,21 @@ theme_override_styles/normal = ExtResource("10_gib8s")
 icon = ExtResource("11_136iv")
 expand_icon = true
 
+[node name="restartButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -69.0
+offset_right = 186.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_s5ir0")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/hover = ExtResource("9_c1skm")
+theme_override_styles/normal = ExtResource("10_gib8s")
+text = "RESTART"
+
 [connection signal="pressed" from="leaveButton" to="." method="_on_leave_button_pressed"]
 [connection signal="pressed" from="closeButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="restartButton" to="." method="_on_restart_button_pressed"]

@@ -86,23 +86,22 @@ func _ready():
 	add_bot_button.disabled = !is_host
 	
 	if is_host:
-		lobby_name = str(get_node("/root/GameState").lobby_name) 
+		lobby_name = str(GameState.lobby_name) 
 		lobby_name_panel.text = lobby_name + "  LOBBY"
-		players_limit = get_node("/root/GameState").players_limit
+		players_limit = GameState.players_limit
 		
 		quit_button.text = "Remove Lobby"
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
-	
-	else:
-		SocketManager.emit("get-lobby-info", id_lobby)
-
-	var data = get_node("/root/GameState").data
-	if data != null:
-		_refresh_player_list(get_node("/root/GameState").data)
 		
-	else:
-		get_users()
+	SocketManager.emit("get-lobby-info", id_lobby)
+
+	#var data = GameState.data
+	#if data != null:
+		#_refresh_player_list(GameState.data)
+		#
+	#else:
+	get_users()
 
 	#set confirmation panel
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
@@ -195,6 +194,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			message_control.get_node("mssg").text = "\nThis lobby has been removed!"
 			message_control.visible = true
 			await get_tree().create_timer(2.5).timeout
+			reinit_gameState()
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 			
 		_:
