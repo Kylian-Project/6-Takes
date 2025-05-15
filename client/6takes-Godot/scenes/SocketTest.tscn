@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbl5ux4dje7ju"]
+
+[ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="3_bj0xr"]
+
+[sub_resource type="GDScript" id="GDScript_3auvx"]
+script/source = "extends Node
+
+@onready var socket_io :SocketIO = $SocketIO
+
+func _ready():
+	socket_io.connect_socket()
+	
+#func _ready():
+	## Initialize the Socket.IO instance.
+	## Adjust initialization if your asset requires a different approach.
+	#socket_io = SocketIO.new()
+	#socket_io.connect_socket()
+	#
+	#socket_io.event_received.connect(_on_socket_io_event_received)
+	## Connect signals for handling connection success and errors.
+	#socket_io.connect(\"connected\", Callable(self, \"_on_socket_connected\"))
+	#socket_io.connect(\"error\", Callable(self, \"_on_socket_error\"))
+#
+	## Define the URL of your Socket.IO server.
+	#var server_url = \"http://185.155.93.105:1401\"
+	#print(\"Attempting connection to:\", server_url)
+#
+	## Connect to the Socket.IO server.
+	##socket_io.connect_to_url(server_url)
+#
+## Called when the connection is successfully established.
+#func _on_socket_connected():
+	#print(\"Socket.IO connected successfully!\")
+#
+## Called if there is an error connecting.
+#func _on_socket_error(error_msg):
+	#print(\"Socket.IO error:\", error_msg)
+#
+#func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> void:
+	#print(\"SocketIO event received: name=\", event, \" --- data = \", data, \" --- namespace = \", ns)
+"
+
+[node name="SocketTest" type="Node2D"]
+script = SubResource("GDScript_3auvx")
+
+[node name="SocketIO" type="Node" parent="."]
+script = ExtResource("3_bj0xr")

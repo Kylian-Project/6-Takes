@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://dopa4fttjck5f"]
+
+[ext_resource type="Script" path="res://scripts/BotSlot.gd" id="1_16d0h"]
+[ext_resource type="Texture2D" uid="uid://bq2yg37eovdtx" path="res://assets/images/bot.png" id="1_g2vy7"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="3_xsa0i"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f21i5"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pmxo8"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4gvs5"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[node name="BotSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(449, 109)
+offset_right = 449.0
+offset_bottom = 109.0
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_f21i5")
+script = ExtResource("1_16d0h")
+
+[node name="BotHContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="BotIcon" type="TextureRect" parent="BotHContainer"]
+layout_mode = 2
+texture = ExtResource("1_g2vy7")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="BotName" type="Label" parent="BotHContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_xsa0i")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_pmxo8")
+text = "BotName"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RemoveBotButton" type="Button" parent="BotHContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_xsa0i")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_4gvs5")
+text = "REMOVE"
+icon_alignment = 1
