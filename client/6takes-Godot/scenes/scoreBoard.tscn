@@ -524,7 +524,7 @@ theme_override_fonts/font = ExtResource("8_s5ir0")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/hover = ExtResource("9_c1skm")
 theme_override_styles/normal = ExtResource("10_gib8s")
-text = "LEAVE"
+text = "RETURN"
 
 [node name="closeButton" type="Button" parent="."]
 layout_mode = 1
