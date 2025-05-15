@@ -233,7 +233,7 @@ func _update_ban_timer():
 		get_tree().call_group("timers", "queue_free")
 	else:
 		multiplayer_button.text = _format_time(ban_time_left)
-		print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
+		# print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
 
 func _on_multi_player_button_pressed() -> void:
 	logged_in = Global.getLogged_in()
