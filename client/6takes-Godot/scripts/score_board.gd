@@ -26,6 +26,9 @@ func _ready():
 	if gameboard and !gameboard.game_ended:
 		start_auto_close_timer()
 	
+	if gameboard and gameboard.game_ended:
+		start_leave_timer()
+		
 	get_node("restartButton").disabled = !GameState.is_host
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
@@ -60,16 +63,15 @@ func _on_close_button_pressed() -> void:
 	if is_instance_valid(self):
 		queue_free()
 
+func start_leave_timer():
+	await get_tree().create_timer(8).timeout
+	if is_instance_valid(self):
+		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+		
 func start_auto_close_timer():
 	await get_tree().create_timer(8).timeout
 	if is_instance_valid(self):
 		queue_free()
-
-func _on_restart_button_pressed() -> void:
-	print("emitting restart game")
-	SocketManager.emit("restart-game", GameState.id_lobby)
-	queue_free()
-	#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	match event:
