@@ -72,6 +72,11 @@ var can_select_card
 var scores_handled
 var played_card_instances := {}  # key: card_id, value: card_instance
 
+
+#func _process(delta: float) -> void:
+	#while(!can_select_card):
+		#get_node("sortCards").disabled = true
+		
 func _ready():
 	_load_cards()
 	
@@ -98,7 +103,7 @@ func _ready():
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 	#start game
-	is_host = get_node("/root/GameState").is_host
+	is_host = GameState.is_host
 	if is_host:
 		SocketManager.emit("start-game", room_id_global)
 	start_game()
@@ -145,6 +150,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_cards_from_players(data)
 
 		"end-game":
+			await get_tree().create_timer(3).timeout
 			_handle_end_game(data)
 			
 		"manche-suivante":

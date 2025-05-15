@@ -31,6 +31,7 @@ func _on_room_selected(index: int):
 	print("ID du lobby sélectionné : ", selected_room_id)
 
 	self.selected_room_id = selected_room_id
+	#GameState.id_lobby = selected_room_id
 
 	btn.text = selected_room_id
 
@@ -68,7 +69,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 		if event == "public-room-joined":
 			get_node("/root/GameState").is_public = true
 		elif event == "private-room-joined" :
-			get_node("/root/GameState").is_public = false
+			GameState.is_public = false
 			
 		if typeof(data) == TYPE_ARRAY and data.size() > 0:
 			var room_info = data[0]
@@ -81,11 +82,11 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 				if self.selected_room_id != "":
 					_update_room_in_list(self.selected_room_id, count, usernames)
 				
-				get_node("/root/GameState").id_lobby = selected_room_id
-				get_node("/root/GameState").is_host = false
-				get_node("/root/GameState").other_players = usernames
-				get_node("/root/GameState").players_count = count				
-				get_node("/root/GameState").data = data
+				
+				GameState.is_host = false
+				GameState.other_players = usernames
+				GameState.players_count = count				
+				GameState.data = data
 
 				get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 		else:
@@ -118,8 +119,10 @@ func _on_join_lobby():
 			"roomId": selected_room_value,
 			"username": player_name
 		}
+		GameState.id_lobby = selected_room_value
+		print("DEBUG ", selected_room_value)
 		SocketManager.emit("join-room", message)
-		print("join room sent :", message)
+		print("jof room sent :", message)
 	else:
 		print(" Aucun lobby sélectionné ou valeur vide dans le LineEdit.")
 
