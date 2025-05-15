@@ -3,6 +3,7 @@ extends Control
 var top_ranks
 var others 
 var rankings_list
+var gameboard
 
 func _ready():
 	top_ranks = [$rankingsControl/Panel/rankingsList/first,
@@ -22,9 +23,15 @@ func _ready():
 	rankings_list = get_node("/root/GameState").rankings
 	update_rankings(rankings_list)
 	
+	if gameboard and !gameboard.game_ended:
+		start_auto_close_timer()
+	
+	if gameboard and gameboard.game_ended:
+		start_leave_timer()
+		
+	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 func update_rankings(rankings_list):
-
 	for i in range(len(rankings_list)):
 		var player = rankings_list[i]
 		
@@ -44,6 +51,30 @@ func update_rankings(rankings_list):
 			score_label.text = str(player["score"])
 			others[i -3].visible = true
 
-
 func _on_leave_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+	#if GameState.is_host:
+		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+	#else:
+		#get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
+func _on_close_button_pressed() -> void:
+	if is_instance_valid(self):
+		queue_free()
+
+func start_leave_timer():
+	await get_tree().create_timer(8).timeout
+	if is_instance_valid(self):
+		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+		
+func start_auto_close_timer():
+	await get_tree().create_timer(8).timeout
+	if is_instance_valid(self):
+		queue_free()
+
+func _on_socket_event(event: String, data: Variant, ns: String) -> void:
+	match event:
+		"game-starting":
+			queue_free()
+			#if !GameState.is_host:
+				#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")

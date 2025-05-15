@@ -1128,4 +1128,3 @@ text = "X"
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("15_oijlq")
 autoconnect = false
-base_url = "http://185.155.93.105:1401"

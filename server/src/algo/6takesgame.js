@@ -66,6 +66,7 @@ class Rang {
     {   
         return this.cartes.splice(0, 5);
     }
+
     recupererCartes_special_case() {
         let carte = [];
         for (let i = 0; i < this.cartes.length; i++) {
@@ -156,7 +157,7 @@ class Joueur {
         this.nom = nom;
         this.score = 0;
         this.hand = new Hand(deck.distribuer(nb_cartes));
-        this.carteEnAttente ;    //en stock la carte joué en attendant que le joueur choissient un rang
+        this.carteEnAttente ;    //on garde la carte joué en attendant que le joueur choississe un rang
     }
 
     updateScore(points) {
@@ -173,6 +174,10 @@ class Joueur {
 
     nouvelleMain(deck, nb_cartes) {
         this.hand = new Hand(deck.distribuer(nb_cartes));
+    }
+
+    trierCarte(){
+        this.hand.cartes.sort((a, b) => a.numero - b.numero);
     }
 }
 
@@ -243,11 +248,11 @@ class Jeu6Takes {
 
     existeBot() {
         return this.joueurs.some(j => j.nom.startsWith("Bot"));
-      }
+    }
       
-      nbBots() {
-        return this.joueurs.filter(j => j.nom.startsWith("Bot")).length;
-      }
+    nbBots() {
+    return this.joueurs.filter(j => j.nom.startsWith("Bot")).length;
+    }
       
     
 }

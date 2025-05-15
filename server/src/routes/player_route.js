@@ -4,7 +4,8 @@ import express from "express";
 import {inscription,
         requestPasswordReset, verifyResetCode, resetPassword, 
         login, logout, reconnect, 
-        updateProfile
+        updateProfile,
+	getBanStatus
         } from "../controllers/player.controller.js";
 import {verifyToken} from "../middleware/auth.js"
 
@@ -22,6 +23,11 @@ router.post("/logout", verifyToken, logout);            // protected route !impo
 router.post("/reconnect", verifyToken, reconnect);      // protected route !important to have Token for a specific USER and not just any user
 
 router.post("/updateProfile", verifyToken, updateProfile);   // protected route !important to have Token for a specific USER and not just any user
+
+// Vérifier le statut de bannissement (GET)
+router.get('/ban-status/:username', getBanStatus);
+
+
 // other routes gonna be added, DO NOT FORGET! 
 
 

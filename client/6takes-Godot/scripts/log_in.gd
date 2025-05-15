@@ -5,17 +5,14 @@ extends Control
 @onready var login_button = $LoginButton
 @onready var sign_up_button = $HBoxContainer/SignUp
 @onready var forgot_password_button = $ForgotPassword
-@onready var cancel_button = $Control/CancelButton
+@onready var cancel_button = $CancelButton
 
 @onready var http_request = $HTTPRequest_auth
 @onready var visibility_button = $VBoxContainer/password_input/visibility_button
 
 var jwt_token = null
 var player_data = {}
-var ws = WebSocketPeer.new()
-var ws_connected = false
 
-var WS_SERVER_URL 
 var API_URL  
 
 #pop Up panel 
@@ -32,9 +29,9 @@ func _ready():
 	self.visible = true
 	http_request.request_completed.connect(_on_http_request_completed)
 	
-	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/connexion"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_url = Global.get_base_url()
+	var base_http = Global.get_base_http()
+	API_URL = base_http + base_url + "/api/player/connexion"
 	
 	# Soundboard
 	login_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -50,10 +47,13 @@ func _ready():
 	cancel_button.pressed.connect(SoundManager.play_click_sound)
 	
 
+func _on_signup_placeholder(u_name_placeholder):
+	username_email_input.text = u_name_placeholder
+	
 func _on_login_button_pressed():
 	var username_email = username_email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
-	var password_hashed = hash_password(password)
+
 	
 	if username_email.is_empty() or password.is_empty():
 		popup_overlay.visible = true
@@ -64,7 +64,7 @@ func _on_login_button_pressed():
 	
 	var payload = {
 		"username": username_email,
-		"password": password_hashed,
+		"password": password,
 		"device_id": device_id
 	}
 
@@ -85,7 +85,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 
 	# Vérification si la réponse est une erreur
 	if response_code != 200:
-		if parsed == null or response_code == 0 :
+		if parsed == null or response_code == 0:
 			popup_message.text = "Server Connexion Error"
 		else:
 			# Affichage du message d'erreur retourné par le serveur
@@ -113,44 +113,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 		_move_to_multiplayer_pressed()
 	else:
 		print(" Connexion échouée :", response.get("message", "Erreur inconnue"))
-
-
-func _connect_to_websocket():
-	if jwt_token == null:
-		print(" Aucun token pour la connexion WebSocket")
-		return
-
-	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
-	var err = ws.connect_to_url(ws_url)
-	if err != OK:
-		print("!! Erreur de connexion WebSocket :", err)
-		return
-
-	print("WebSocket initialisé, en attente de connexion...")
-	ws_connected = false
-
-func _process(_delta):
-	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
-		ws_connected = true
-		print(" WebSocket connecté avec succès !")
-
-	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
-		if ws_connected:
-			ws_connected = false
-			print(" WebSocket déconnecté.")
-	
-	ws.poll()
-
-	if ws.get_available_packet_count() > 0:
-		var data = ws.get_packet().get_string_from_utf8()
-		_on_ws_data(data)
-
-func _on_ws_data(data):
-	print(" Données reçues :", data)
-	var response = JSON.parse_string(data)
-	if response == null:
-		print(" Donnée non-JSON :", data)
-		return
 
 
 var overlay_opened = false

@@ -5,7 +5,6 @@ class_name Player
 var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
-var WS_SERVER_URL
 var API_URL
 
 # --- External Data (Need to fecth from server)
@@ -37,8 +36,8 @@ const MAX_CARDS := 10
 
 func _ready():
 	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/playerinfo"
-	WS_SERVER_URL = "ws://" + base_url
+	var base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/playerinfo"
 	
 	#tsester
 	#name_label.text = ""
@@ -113,3 +112,7 @@ func create_player_visual(uname: String, icon_id: int, is_me := false) -> Contro
 	if is_me:
 		visual.add_theme_color_override("font_color", Color(1, 1, 0)) 
 	return visual
+
+func update_username(new_name: String) -> void:
+	var visual = self
+	visual.get_node("PlayerName").text = new_name  # Replace `$NameLabel` with the actual label path
