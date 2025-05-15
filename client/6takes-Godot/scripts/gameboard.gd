@@ -187,6 +187,8 @@ func _handle_remove_room():
 	mssg_panel.get_node("mssg").text = "\n Host Left the Game "
 	mssg_panel.visible = true
 	#game_ended = true
+	await get_tree().create_timer(6).timeout
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 
 func _handle_user_left(data):
@@ -460,6 +462,7 @@ func _on_card_selected(card_number):
 	} 
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
+	get_node("sortCards").disabled = true
 	
 
 func update_table_ui(table_data, settingup_deck):
