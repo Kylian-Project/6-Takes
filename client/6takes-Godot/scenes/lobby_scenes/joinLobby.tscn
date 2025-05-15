@@ -88,23 +88,21 @@ shadow_color = Color(0.0562916, 0.0562916, 0.0562916, 0.6)
 
 [node name="JoinLobby" type="Control"]
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7m17b")
 
 [node name="BgDimming" type="ColorRect" parent="."]
-z_index = -1
 layout_mode = 1
-offset_left = -968.0
-offset_top = -544.0
-offset_right = 974.0
-offset_bottom = 554.0
-color = Color(0, 0, 0, 0.117647)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.529412)
 
 [node name="JoinPanel" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -217,11 +215,18 @@ text = "X"
 
 [node name="Button2" type="Button" parent="."]
 custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 offset_left = -318.0
-offset_top = 277.0
+offset_top = 278.0
 offset_right = -226.0
-offset_bottom = 363.0
+offset_bottom = 364.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 theme_override_styles/hover = SubResource("StyleBoxFlat_cba7b")
 theme_override_styles/normal = SubResource("StyleBoxFlat_0etuy")
