@@ -163,6 +163,9 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		
 		"user-left":
 			_handle_user_left(data)
+		
+		"bot-replaced":
+			_switch_player_name(data)
 
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
@@ -366,7 +369,31 @@ func _find_card_data(card_id: int) -> Dictionary:
 			return card
 	return {}  
 
+func _switch_player_name(data):
+	print(data)
+	if data.size() == 0:
+		push_warning("Received empty data list")
+		return
 
+	var switched_names = data[0]
+	var player_left_name = switched_names.username
+	var replaced_bot = switched_names.botName
+
+	# Check both containers
+	for container in [left_player_container, right_player_container]:
+		for child in container.get_children():
+			# HBoxContainer is named after the username
+			if child.name == player_left_name:
+				child.name = replaced_bot
+				var player_visual = child.get_node_or_null("PlayerVisual")
+				if player_visual:
+					# Assuming the PlayerVisual has a label or method to update the name
+					player_visual.update_username(replaced_bot)
+				else:
+					push_warning("No PlayerVisual found in container named %s" % player_left_name)
+				return  # Done after replacing
+					
+	push_warning("Username '%s' not found in player containers." % player_left_name)
 
 # --- UI Update Functions ---
 
@@ -491,7 +518,7 @@ func update_table_ui(table_data, settingup_deck):
 					player_card.global_position = global_start
 
 					var tw = create_tween()
-					tw.tween_property(player_card, "global_position", global_target, 0.5)
+					tw.tween_property(player_card, "global_position", global_target, 1.5)
 					await tw.finished
 
 					get_tree().root.remove_child(player_card)
@@ -539,10 +566,10 @@ func update_table_ui(table_data, settingup_deck):
 		for leftover_card_id in played_card_instances.keys():
 			var leftover_card = played_card_instances[leftover_card_id]
 			if is_instance_valid(leftover_card):
-				var tw = create_tween()
+				var tw = create_tween()	
 				tw.parallel()
-				tw.tween_property(leftover_card, "modulate:a", 0.0, 0.4)
-				tw.tween_property(leftover_card, "scale", Vector2(0.5, 0.5), 0.4)
+				tw.tween_property(leftover_card, "modulate:a", 0.0, 0.2)
+				tw.tween_property(leftover_card, "scale", Vector2(0.5, 0.5), 0.2)
 				tw.chain()
 				await tw.finished
 				if is_instance_valid(leftover_card):

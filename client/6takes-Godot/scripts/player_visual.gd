@@ -112,3 +112,7 @@ func create_player_visual(uname: String, icon_id: int, is_me := false) -> Contro
 	if is_me:
 		visual.add_theme_color_override("font_color", Color(1, 1, 0)) 
 	return visual
+
+func update_username(new_name: String) -> void:
+	var visual = self
+	visual.get_node("PlayerName").text = new_name  # Replace `$NameLabel` with the actual label path
