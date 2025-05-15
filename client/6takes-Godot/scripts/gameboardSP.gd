@@ -179,14 +179,14 @@ func _process(delta):
 			
 			if game_should_continue:
 				return
-		await get_tree().create_timer(1.5).timeout
+		await get_tree().create_timer(2.0).timeout
 		show_label("END GAME")
 		update_game_state("            FINISH")
 		
 
 		
 func show_scoreboard(rankings):
-	# Arrêter définitivement le timer
+	# Arrête définitivement le timer
 	stop_timer()
 	timer_active = false
 	
@@ -298,13 +298,13 @@ func _animate_full_pickup_sequence(joueur, carte, rang_index):
 	await _place_card_next_to_icon(joueur, carte.numero)
 	await _animate_card_to_row(joueur, carte.numero, rang_index)
 
-	# ✅ Pause très courte pour permettre à la carte d'être visible
+	#  Pause très courte pour permettre à la carte d'être visible
 	await get_tree().create_timer(0.2).timeout
 
 	# 5. Mise à jour du jeu
 	joueur.score += total_tetes
 	sp_game.jeu.table.forcer_nouvelle_rangée(rang_index, carte)
-	_update_plateau()  # 👈 Mise à jour immédiate du visuel
+	_update_plateau()  #  Mise à jour immédiate du visuel
 
 	# 6. Mise à jour minimale
 	_update_heads()
@@ -693,7 +693,7 @@ func _update_plateau(animate: bool = false):
 func move_card_to_row(joueur, card_number, row_index):
 	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	var end_row = vbox_container.get_child(row_index).get_child(0)
-	print("🔴🔴🔴 la carte est *********** : ", card_number)
+	print("🔴🔴🔴  l'animation de la carte : ", card_number)
 
 	if start_layer and end_row:
 		# Supprimer immédiatement la carte devant l'icône (avant l'animation)
@@ -737,10 +737,6 @@ func set_cards_clickable(clickable: bool):
 	for row in vbox_container.get_children():
 		for card in row.get_child(0).get_children():
 			card.mouse_filter = Control.MOUSE_FILTER_IGNORE if not clickable else Control.MOUSE_FILTER_PASS
-
-
-
-
 
 var card_played_this_round = false
 func start_round():
@@ -991,15 +987,15 @@ func hide_label_and_show_panel() -> void:
 	var choix_rang_panel = $Panel/choix_rang
 	if choix_rang_panel:
 		choix_rang_panel.visible = true
-		print("✅ $Panel/choix_rang affiché après label.")
+		print(" $Panel/choix_rang affiché après label.")
 	else:
-		print("⚠ Erreur : $Panel/choix_rang introuvable.")
+		print(" Erreur : $Panel/choix_rang introuvable.")
 
 
 
 
 func rang_button_pressed(index):
-	print("✅ Joueur a choisi le rang :", index)
+	print(" Joueur a choisi le rang :", index)
 
 	# Déconnecter tous les boutons après le choix
 	for i in range(4):
@@ -1024,7 +1020,7 @@ func afficher_boutons_rang(rangs_disponibles):
 		elif typeof(r) == TYPE_OBJECT and r.has("index"):
 			indices.append(r.index)
 		else:
-			print("⚠ Attention : élément inattendu dans rangs_disponibles :", r)
+			print("Attention : élément inattendu dans rangs_disponibles :", r)
 
 
 	for i in range(4):
@@ -1037,7 +1033,7 @@ func afficher_boutons_rang(rangs_disponibles):
 				bouton.hide()
 				bouton.disabled = true
 		else:
-			print("⚠ Bouton à l’index", i, "non trouvé (null)")
+			print(" Bouton à l’index", i, "non trouvé (null)")
 
 func setup_from_lobby(players: Array):
 	Global.game_players = players
@@ -1127,7 +1123,7 @@ func _on_rang_button_pressed(rang_index):
 	if game_paused:
 		return
 	update_game_state("👉 Tu as choisi le rang %d" % (rang_index + 1))
-	print("✅ Joueur a choisi le rang :", rang_index)
+	print(" Joueur a choisi le rang :", rang_index)
 	choix_rang_panel.visible = false
 
 	# Désactiver les boutons

@@ -421,6 +421,7 @@ layout_mode = 2
 
 [node name="ScoreBoard" parent="." instance=ExtResource("10_tkc5i")]
 visible = false
+z_index = 3
 offset_left = 402.0
 offset_top = 79.0
 offset_right = 1569.0

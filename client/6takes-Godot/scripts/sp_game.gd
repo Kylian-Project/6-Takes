@@ -405,4 +405,4 @@ func get_current_player_name() -> String:
 	
 func is_player_turn() -> bool:
 	# Le joueur humain est toujours à l'index 0
-	return true  # Mode solo = toujours le tour du joueur
+	return true  # Mode solo  toujours le tour du joueur
