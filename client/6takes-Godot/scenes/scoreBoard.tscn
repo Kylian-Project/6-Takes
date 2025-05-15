@@ -539,6 +539,7 @@ icon = ExtResource("11_136iv")
 expand_icon = true
 
 [node name="restartButton" type="Button" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0

@@ -72,6 +72,11 @@ var can_select_card
 var scores_handled
 var played_card_instances := {}  # key: card_id, value: card_instance
 
+
+#func _process(delta: float) -> void:
+	#while(!can_select_card):
+		#get_node("sortCards").disabled = true
+		
 func _ready():
 	_load_cards()
 	

@@ -68,10 +68,12 @@ func start_auto_close_timer():
 func _on_restart_button_pressed() -> void:
 	print("emitting restart game")
 	SocketManager.emit("restart-game", GameState.id_lobby)
-	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	queue_free()
+	#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 	match event:
 		"game-starting":
-			if !GameState.is_host:
-				get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+			queue_free()
+			#if !GameState.is_host:
+				#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
