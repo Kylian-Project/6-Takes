@@ -236,43 +236,6 @@ export const PlayGame = (socket, io) =>
 
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 			
-			//!!a factoriser	
-			// if(jeu.checkEndManche())
-			// {
-			// 	jeu.mancheActuelle++;
-			// 	if(!jeu.checkEndGame())
-			// 	{
-			// 		console.log("fin de manche");
-			// 		envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
-
-			// 		const classement = jeu.joueurs
-			// 		.map(j => ({ nom: j.nom, score: j.score }))
-			// 		.sort((a, b) => a.score - b.score); // tri cdes scores
-
-			// 		io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
-
-
-			// 		jeu.mancheSuivante();
-			// 		envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
-			// 		io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
-			
-			// 	}
-			// 	else 
-			// 	{
-			// 		const classement = jeu.joueurs
-			// 		.map(j => ({ nom: j.nom, score: j.score }))
-			// 		.sort((a, b) => a.score - b.score); // tri cdes scores
-
-			// 		console.log("🏁 Fin de partie");
-			// 		io.to(roomId).emit("end-game", { classement });
-			// 		//on arrete le timer
-			// 		clearTimeout(timers[roomId]);
-			// 		delete timers[roomId];
-			// 		clearInterval(affichageTimers[roomId]);
-			// 		delete affichageTimers[roomId];
-
-			// 	}
-			// }
 			notifierScore(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
 		}
 
@@ -321,34 +284,26 @@ export const PlayGame = (socket, io) =>
 	{
 		console.log(`🚪 ${username} quitte la partie en cours dans la room ${roomId}`);
 	
-		// Récupérer l'ID du joueur
 		const jeu = getGame(roomId);
 
 		const joueur = jeu.joueurs.find(j => j.nom === username);
-		console.log("JOUEUR QUI QUITTE: ",joueur.nom);
 		if (!joueur) return console.error(`❌ Joueur ${username} introuvable`);
 	
 		// Ajouter en base de données
+
 		const player = await Player.findOne({ where: { username: joueur.nom } });
-		console.log("affichage du player", player);
-		console.log("PLATER NOM: ",player.username);
-		if (player) {
+		if (player) 
+		{
 			await issueBan(player.id);
 			console.log(`🚫 Ban enregistré pour le joueur : ${username}`);
 		}
-	
-		// Supprimer le joueur de la room et de la partie
-		const room = rooms.find(r => r.id === roomId);
-		if (room) 
-		{
-			room.removeUser(socket.id);
-			socket.leave(roomId);
-			console.log(`✅ ${username} a quitté la room ${roomId}`);
-			io.to(roomId).emit("user-left", { username });
-		}
+
+		const botName = 'Bot' + Math.floor(Math.random() * 1000);
+		joueur.nom = botName; // Mettre à jour le nom du joueur avec le nom du bot
+		rooms.find(r => r.id === roomId).users.find(u => u.username === username).username = botName;
+		io.to(roomId).emit("bot-replaced", { username, botName });
+		
 	});
-
-
 
 
 
@@ -570,8 +525,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     {
         const res = jeu.jouerCarte(username, carte);
 		
-		if (res === "choix_rang_obligatoire") 
+		if (res.action === "choix_rang_obligatoire" && res.index === -1) 
         {
+			console.log(" ⚠️⚠️ choix rang obligatoire");
             const joueur = jeu.joueurs.find(j => j.nom === username);
             joueur.carteEnAttente = carte;
 
@@ -643,10 +599,8 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 		//pour le cas de la 6eme carte
 		else if (res.action=== "ramassage_rang")
 		{
-			const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
 			io.to(roomId).emit("ramassage-rang", { username , index:res.index });
 		}
-
 
     }
     catch (err)
@@ -747,8 +701,10 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
  * @param {number} playerId - L'ID du joueur à bannir.
  */
 
-async function issueBan(playerId) {
-    try {
+async function issueBan(playerId) 
+{
+    try 
+	{
         const existingBan = await BanInfo.findOne({ where: { player_id: playerId } });
 
         if (existingBan) {
@@ -760,7 +716,9 @@ async function issueBan(playerId) {
         }
         
         console.log(`🚫 Ban enregistré pour l'ID du joueur : ${playerId}`);
-    } catch (err) {
+    } 
+	catch (err)
+	{
         console.error(`Erreur lors de l'application du ban : ${err.message}`);
     }
 }
