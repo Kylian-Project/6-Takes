@@ -69,6 +69,7 @@ func reinit_gameState():
 func start_leave_timer():
 	await get_tree().create_timer(8).timeout
 	if is_instance_valid(self):
+		queue_free()
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
 
