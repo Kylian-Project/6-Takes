@@ -8,19 +8,43 @@
 
 config_version=5
 
+[accessibility]
+
+colorblind_mode=0
+
 [application]
 
-config/name="6Takes"
-run/main_scene="res://scenes/gameboard.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/name="6Takes_main"
+run/main_scene="res://scenes/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SettingsManager="*res://scripts/settings_manager.gd"
+Global="*res://scripts/Global.gd"
+SoundManager="*res://scenes/SoundManager.tscn"
+GlobalWorldEnvironment="*res://scenes/world_environment.tscn"
+SocketManager="*res://scripts/SocketManager.gd"
+GameState="*res://scripts/GameState.gd"
+ColorBlindness="*res://addons/paulloz.colorblindness/colorblindness.gd"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
+[dotnet]
+
+project/assembly_name="6Takes_main"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg", "res://addons/paulloz.colorblindness/plugin.cfg")
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"

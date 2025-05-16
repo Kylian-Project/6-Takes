@@ -1,0 +1,265 @@
+[gd_scene load_steps=15 format=3 uid="uid://dgmgtvwq04hk7"]
+
+[ext_resource type="Script" path="res://scripts/log_in.gd" id="1_8677d"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="1_enwme"]
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_gofa2"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_js3f7"]
+[ext_resource type="Texture2D" uid="uid://ccdw5btr66au7" path="res://assets/images/visibility/visible.png" id="3_wfq1h"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="5_5g1vb"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="7_ruq61"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="8_emcms"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="8_xgmbc"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_17sna"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aphmc"]
+bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhw37"]
+bg_color = Color(0.4, 0.45098, 0.560784, 0.341176)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n23bi"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 20
+border_width_right = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.10748, 0.10748, 0.10748, 0.6)
+shadow_size = 2
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xum7"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_bottom_left = 7
+shadow_color = Color(0.144063, 0.144063, 0.144063, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(-2, 2)
+
+[node name="Control3" type="Control"]
+process_mode = 3
+z_index = 5
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = 170.0
+offset_right = -325.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8677d")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.254
+anchor_top = -0.222
+anchor_right = 1.253
+anchor_bottom = 1.128
+offset_left = 1.85001
+offset_top = 3.60002
+offset_right = 1.42493
+offset_bottom = 7.59998
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="ShadowBox" type="Label" parent="."]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = 1.0
+offset_right = 1283.0
+offset_bottom = 815.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_aphmc")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 1
+offset_right = 1275.0
+offset_bottom = 800.0
+mouse_filter = 2
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 1
+offset_right = 1275.0
+offset_bottom = 800.0
+mouse_filter = 2
+texture = ExtResource("1_gofa2")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+offset_left = 410.0
+offset_top = 397.0
+offset_right = 910.0
+offset_bottom = 577.0
+theme_override_constants/separation = 29
+
+[node name="username_email_input" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/clear_button_color_pressed = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxFlat_mhw37")
+theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
+placeholder_text = "  Username or email"
+
+[node name="password_input" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.619608)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxFlat_mhw37")
+theme_override_styles/normal = SubResource("StyleBoxFlat_n23bi")
+placeholder_text = "  Password"
+secret = true
+
+[node name="visibility_button" type="Button" parent="VBoxContainer/password_input"]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 20.0
+offset_right = 494.0
+offset_bottom = 69.0
+icon = ExtResource("3_wfq1h")
+flat = true
+expand_icon = true
+
+[node name="logo" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 0
+offset_left = 806.0
+offset_top = 60.0
+offset_right = 1122.0
+offset_bottom = 330.0
+texture = ExtResource("5_5g1vb")
+expand_mode = 1
+
+[node name="CancelButton" type="Button" parent="."]
+z_index = 3
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_bottom = 50.0
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_4xum7")
+icon = ExtResource("8_xgmbc")
+expand_icon = true
+
+[node name="back" type="Label" parent="."]
+layout_mode = 0
+offset_left = 404.0
+offset_top = 229.0
+offset_right = 629.0
+offset_bottom = 342.0
+theme_override_colors/font_color = Color(0.201527, 0.201527, 0.201527, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.92549)
+theme_override_constants/outline_size = 13
+theme_override_fonts/font = ExtResource("1_enwme")
+theme_override_font_sizes/font_size = 90
+text = "BACK"
+
+[node name="welcome2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 68.0
+offset_right = 788.0
+offset_bottom = 231.0
+theme_override_colors/font_color = Color(0.051971, 0.051971, 0.051971, 0.831373)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 30
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("1_enwme")
+theme_override_font_sizes/font_size = 130
+text = "WELCOME"
+
+[node name="ForgotPassword" type="Button" parent="."]
+layout_mode = 0
+offset_left = 503.0
+offset_top = 680.0
+offset_right = 803.0
+offset_bottom = 724.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "Forgot your Password ?"
+flat = true
+
+[node name="LoginButton" type="Button" parent="."]
+layout_mode = 2
+offset_left = 526.0
+offset_top = 609.0
+offset_right = 769.0
+offset_bottom = 678.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_js3f7")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = ExtResource("7_ruq61")
+theme_override_styles/normal = ExtResource("8_emcms")
+text = "Log In"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 535.0
+offset_top = 750.0
+offset_right = 755.0
+offset_bottom = 796.0
+theme_override_constants/separation = 3
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "New here ?"
+
+[node name="SignUp" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "Sign up !"
+flat = true
+
+[node name="HTTPRequest_auth" type="HTTPRequest" parent="."]
+
+[node name="popUp_error" parent="." instance=ExtResource("9_17sna")]
+visible = false
+offset_left = 294.0
+offset_top = 356.0
+offset_right = 994.0
+offset_bottom = 576.0
+
+[connection signal="pressed" from="VBoxContainer/password_input/visibility_button" to="." method="_on_visibility_button_pressed"]
+[connection signal="pressed" from="CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="ForgotPassword" to="." method="_on_forgot_password_pressed"]
+[connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/SignUp" to="." method="_on_sign_up_pressed"]

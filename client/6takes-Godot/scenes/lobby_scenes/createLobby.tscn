@@ -1,0 +1,377 @@
+[gd_scene load_steps=14 format=3 uid="uid://qmba1u8g3y1o"]
+
+[ext_resource type="Script" path="res://scripts/create_lobby.gd" id="1_t2o4j"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_ocxai"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_yv3f1"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_g1min"]
+[ext_resource type="StyleBox" uid="uid://cclwcahso1h12" path="res://assets/styleBox/settings_menu_dropdown_nroma.tres" id="5_2j0pr"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="6_roeac"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="7_7jr4d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1jv3r"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_klaye"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j0hpf"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7q86s"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrct7"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6oowm"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[node name="createLobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t2o4j")
+
+[node name="BgDimming" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.529412)
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -318.5
+offset_top = -366.0
+offset_right = 321.5
+offset_bottom = 364.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_1jv3r")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer"]
+self_modulate = Color(1, 1, 1, 0.0901961)
+layout_mode = 2
+texture = ExtResource("2_ocxai")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="PanelContainer"]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="CreateLobbyLabel" type="Label" parent="PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_constants/outline_size = 25
+theme_override_fonts/font = ExtResource("3_yv3f1")
+theme_override_font_sizes/font_size = 70
+text = "Create a Lobby!"
+
+[node name="AvailableOptions" type="HBoxContainer" parent="PanelContainer/MainVertical"]
+layout_mode = 2
+alignment = 1
+
+[node name="Options" type="VBoxContainer" parent="PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LobbyName" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Lobby Name"
+
+[node name="PlayerLimit" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Player Limit"
+
+[node name="NumberCards" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Number of Cards"
+
+[node name="RoundTimer" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Round Timer"
+
+[node name="EndByPoints" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "End by Points"
+
+[node name="Rounds" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Rounds"
+
+[node name="MaxPoints" type="Label" parent="PanelContainer/MainVertical/AvailableOptions/Options"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_klaye")
+text = "Maximum Points"
+
+[node name="Choices" type="VBoxContainer" parent="PanelContainer/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="EditLobbyName" type="LineEdit" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_j0hpf")
+max_length = 8
+
+[node name="PlayerLimitDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/pressed = ExtResource("5_2j0pr")
+theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
+selected = 8
+item_count = 9
+popup/item_0/text = "2"
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "4"
+popup/item_2/id = 2
+popup/item_3/text = "5"
+popup/item_3/id = 3
+popup/item_4/text = "6"
+popup/item_4/id = 4
+popup/item_5/text = "7"
+popup/item_5/id = 5
+popup/item_6/text = "8"
+popup/item_6/id = 6
+popup/item_7/text = "9"
+popup/item_7/id = 7
+popup/item_8/text = "10"
+popup/item_8/id = 8
+
+[node name="CardNumberDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
+selected = 9
+item_count = 10
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+popup/item_5/text = "6"
+popup/item_5/id = 5
+popup/item_6/text = "7"
+popup/item_6/id = 6
+popup/item_7/text = "8"
+popup/item_7/id = 7
+popup/item_8/text = "9"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+
+[node name="RoundTimerDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
+selected = 1
+item_count = 3
+popup/item_0/text = "30"
+popup/item_1/text = "45"
+popup/item_1/id = 1
+popup/item_2/text = "60"
+popup/item_2/id = 2
+
+[node name="EndPointsDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
+selected = 0
+item_count = 2
+popup/item_0/text = "No"
+popup/item_1/text = "Yes"
+popup/item_1/id = 1
+
+[node name="RoundsDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = ExtResource("5_2j0pr")
+alignment = 1
+selected = 0
+item_count = 5
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+
+[node name="MaxPointsDropdown" type="OptionButton" parent="PanelContainer/MainVertical/AvailableOptions/Choices"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = ExtResource("5_2j0pr")
+selected = 0
+item_count = 2
+popup/item_0/text = "60"
+popup/item_1/text = "80"
+popup/item_1/id = 1
+
+[node name="PublicPrivate" type="HBoxContainer" parent="PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="PrivateCheckButton" type="CheckButton" parent="PanelContainer/MainVertical/PublicPrivate"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_7q86s")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7q86s")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_lrct7")
+theme_override_styles/normal = SubResource("StyleBoxFlat_lrct7")
+text = "Public  "
+alignment = 1
+
+[node name="CreateLobbyButton" type="Button" parent="PanelContainer/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_g1min")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = ExtResource("6_roeac")
+theme_override_styles/normal = ExtResource("7_7jr4d")
+text = "Create Lobby"
+
+[node name="Close" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 284.0
+offset_top = -366.0
+offset_right = 323.0
+offset_bottom = -317.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_6oowm")
+text = "X"
+
+[connection signal="toggled" from="PanelContainer/MainVertical/PublicPrivate/PrivateCheckButton" to="." method="_on_private_check_button_toggled"]
+[connection signal="pressed" from="PanelContainer/MainVertical/CreateLobbyButton" to="." method="_on_create_lobby"]
+[connection signal="pressed" from="Close" to="." method="_on_close_pressed"]

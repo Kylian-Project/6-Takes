@@ -1,7 +1,7 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
-import Player from "../models/player.js"
-import sequelize from '../config/db.js';
+import Player from "../models/player.js";
+import sequelize from "../config/db.js"
 
 class Game
 {
@@ -705,7 +705,6 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
 		}
 	}
 }
-
 
 
 
