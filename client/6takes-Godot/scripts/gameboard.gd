@@ -125,7 +125,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			on_player_selects_row()
 			
 		"temps-room":
-			_handle_timer(data)
+			if !game_ended:
+				_handle_timer(data)
 			
 		"attente-choix-rangee":
 			_await_row_selection(data)
@@ -171,7 +172,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		turn_emitted = true
 		
 		scores_handled = false
-		_start_turn()
+		if !game_ended:
+			_start_turn()
 
 
 func _handle_remove_room():
