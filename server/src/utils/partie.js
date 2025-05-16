@@ -398,7 +398,9 @@ function jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms)
 		const joueur = jeu.joueurs.find(j => j.nom === username);
 		if (!joueur || joueur.getHand().length === 0) continue;		
 
-		const carte = joueur.getHand()[0]; // Joue la première carte !!
+		const indexCarte = Math.floor(Math.random() * joueur.getHand().length);
+		const carte = joueur.getHand()[indexCarte];
+		//const carte = joueur.getHand()[0]; // Joue la première carte !!
 		cartesAJoueesParRoom[roomId].push({ username, carte });
 
 		console.log(`🤖 ${username} a joué automatiquement la carte ${carte.numero}`);
@@ -440,7 +442,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 	let secondesRestantes = duration/1000 ;
 	console.log("le timer est lancé pour la room", roomId);
 
-	timers[roomId] = setTimeout(() => 
+	timers[roomId] = setTimeout(async () => 
 	{
 		console.log(`⏰ Timer écoulé pour room ${roomId}`);
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
@@ -452,7 +454,7 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		carte_animation[roomId] = cartesAJoueesParRoom[roomId];
 
         cartesAJoueesParRoom[roomId] = [];
-        traiterProchaineCarte(roomId, jeu, io, rooms);
+        await traiterProchaineCarte(roomId, jeu, io, rooms);
         
 
 		delete timers[roomId];
@@ -657,6 +659,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 				console.log("🏁 Fin de partie");
 				envoyerMainEtTable(io, roomId, jeu, rooms);	///!!!
 				io.to(roomId).emit("end-game", { classement });
+				let room = rooms.find(r => r.id === roomId);
+				if (!room) return;
+				rooms = rooms.filter(r => r.id !== roomId);
 			}
 		}
 	}
