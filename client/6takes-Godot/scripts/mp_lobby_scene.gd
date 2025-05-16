@@ -315,12 +315,7 @@ func _refresh_player_list(data):
 
 
 func _on_start_button_pressed() -> void:
-	if GameState.first_game:
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-	else:
-		print("emitting restart game")
-		SocketManager.emit("restart-game", GameState.id_lobby)
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 	
 func _on_quit_button_pressed() -> void:
@@ -420,7 +415,7 @@ func _on_canceled():
 func reinit_gameState():
 	GameState.players_count = 0
 	GameState.data = null
-	#GameState.id_lobby = ""
+	GameState.id_lobby = ""
 	GameState.lobby_name = ""
 	GameState.other_players = []
 	GameState.rankings = null 
