@@ -944,8 +944,7 @@ offset_right = 965.0
 offset_bottom = 144.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_m3ifw")
 text = "
 ?"

@@ -125,8 +125,6 @@ func _on_raw_packet(packet):
 func check_ban_status():
 	if Global.is_banned():
 		start_button.disabled = true
-		message_control.get_node("mssg").text = "You are banned for: " + str(Global.get_ban_time_left()) + " seconds"
-		message_control.visible = true
 	else:
 		start_button.disabled = false
 
