@@ -659,6 +659,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 				console.log("🏁 Fin de partie");
 				envoyerMainEtTable(io, roomId, jeu, rooms);	///!!!
 				io.to(roomId).emit("end-game", { classement });
+				let room = rooms.find(r => r.id === roomId);
+				if (!room) return;
+				rooms = rooms.filter(r => r.id !== roomId);
 			}
 		}
 	}
