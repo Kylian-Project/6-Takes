@@ -26,7 +26,9 @@ func _ready():
 	if gameboard and !gameboard.game_ended:
 		start_auto_close_timer()
 	
-	
+	if gameboard and gameboard.game_ended:
+		start_leave_timer()
+			
 func update_rankings(rankings_list):
 	for i in range(len(rankings_list)):
 		var player = rankings_list[i]
@@ -47,7 +49,6 @@ func update_rankings(rankings_list):
 			score_label.text = str(player["score"])
 			others[i -3].visible = true
 
-
 func _on_leave_button_pressed() -> void:
 	reinit_gameState()
 	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
@@ -65,8 +66,13 @@ func reinit_gameState():
 	GameState.other_players = []
 	GameState.rankings = null 
 
+func start_leave_timer():
+	await get_tree().create_timer(8).timeout
+	if is_instance_valid(self):
+		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+		
+
 func start_auto_close_timer():
 	await get_tree().create_timer(8).timeout
 	if is_instance_valid(self):
 		queue_free()
-	#get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")

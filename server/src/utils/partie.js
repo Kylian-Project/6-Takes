@@ -1,6 +1,5 @@
 import { rooms } from "./lobbies.js";
 import { Jeu6Takes ,Joueur, Carte, Rang } from "../algo/6takesgame.js";
-import BanInfo from "../models/ban_info.js";
 import Player from "../models/player.js";
 import sequelize from "../config/db.js"
 
@@ -41,7 +40,7 @@ function getUsersAndSocketId(roomId)
 
 
 /**
- * Retrieves the instance of Jeu6Takes for a specified room.
+ * recevoir l'instance de Jeu6Takes d'une room
  * 
  * @param {string} roomId
  * @returns {Jeu6Takes|null}
@@ -55,28 +54,28 @@ function getGame(roomId)
 
 const games = [];		// tableau de Game
 const cartesAJoueesParRoom = {}; // { roomId: [ { username, carte } ] }
-const timers = {};  // un timer par room
+export const timers = {};  // un timer par room
 const affichageTimers = {};
 const fileTraitementParRoom = {}; 
 const joueursPretPourTour = {};
-
+const carte_animation =  {};
 
 	  	//////////////////////////////////////////////////
 		/////// Deroulement du jeu ///////////////////////
   		//////////////////////////////////////////////////
 
 /**
- * Handles the game flow for a room using Socket.IO events.
+ * Gère le flux de jeu pour une salle en utilisant les événements Socket.IO
  * 
- * The function listens to several events including:
- * - "start-game": Initializes a game instance for the room, notifies players, and distributes initial hands.
- * - "tour": Prepares the room for a new round, checks player readiness, and manages bot actions.
- * - "play-card": Handles card playing actions, manages timers, and processes the played cards.
- * - "choisir-rangee": Manages the selection of rows by players.
- * - "restore-game", "new-game", "leave-room", and "disconnect" for additional game management tasks.
+ *	La fonction écoute plusieurs événements, notamment :
+ *	"start-game" : Initialise une instance de jeu pour la salle, notifie les joueurs et distribue les mains initiales.
+ *	"tour" : Prépare la salle pour un nouveau tour, vérifie la disponibilité des joueurs et gère les actions des bots.
+ *	"play-card" : Gère les actions de jeu de cartes, gère les minuteries et traite les cartes jouées.
+ *	"choisir-rangee" : Gère la sélection des rangées par les joueurs.
+ *	"restore-game", "new-game", "leave-room" et "disconnect" pour des tâches de gestion de jeu supplémentaires.
  * 
- * @param {Socket} socket - The Socket.IO socket instance for the connected client.
- * @param {SocketIO.Server} io - The Socket.IO server instance for emitting events to clients.
+ * @param {Socket} socket - L'instance de socket Socket.IO pour le client connecté.
+ * @param {SocketIO.Server} io - L'instance de serveur Socket.IO pour émettre des événements aux clients.
  */
 
 export const PlayGame = (socket, io) =>
@@ -91,6 +90,7 @@ export const PlayGame = (socket, io) =>
 		const usersWithSocket = getUsersAndSocketId(roomId);
 
 		const room = rooms.find(r => r.id === roomId);
+		room.visibility = false;
 		const settings = room.settings; // settings récupérés de la room
 
 		// Initialisation du jeu
@@ -163,7 +163,6 @@ export const PlayGame = (socket, io) =>
 		
 		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const joueursAttendus = usernames.length - nombreBots;
-		  
 
 		//on lance tour que si ils sont tous la 
 		//histoire de tout factoriser a l'interieur de tour 
@@ -209,12 +208,12 @@ export const PlayGame = (socket, io) =>
 
 		if (!cartesAJoueesParRoom[roomId]) cartesAJoueesParRoom[roomId] = [];
 		cartesAJoueesParRoom[roomId].push({ username, carte: carteJouee });
-	  
+
 	  
 		const room = rooms.find(r => r.id === roomId);	  
 		console.log(`🃏 ${username} a posé la carte ${carteJouee.numero}`);
 
-		const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
+		//const nombreBots = jeu.existeBot() ? jeu.nbBots() : 0;
 		const usernames = getUsers(roomId);
 		const joueursAttendus = usernames.length ;
 
@@ -230,46 +229,15 @@ export const PlayGame = (socket, io) =>
 			//on copie le contenu exct de CarteAJou dans fileTraitement
 			fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
 
+			//on copie le contenu exct de CarteAJouée dans carte_animation pour pouvoir l'envoyer au client pour l'animation
+			carte_animation[roomId] = [];
+			carte_animation[roomId] = cartesAJoueesParRoom[roomId];
+
 			await traiterProchaineCarte(roomId, jeu, io, rooms);
 
 			lancerTimer(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 			
-			//!!a factoriser	
-			if(jeu.checkEndManche())
-			{
-				jeu.mancheActuelle++;
-				if(!jeu.checkEndGame())
-				{
-					console.log("fin de manche");
-					envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
-
-					const classement = jeu.joueurs
-					.map(j => ({ nom: j.nom, score: j.score }))
-					.sort((a, b) => a.score - b.score); // tri cdes scores
-
-					io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
-
-
-					jeu.mancheSuivante();
-					envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
-					io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
-			
-				}
-				else 
-				{
-					const classement = jeu.joueurs
-					.map(j => ({ nom: j.nom, score: j.score }))
-					.sort((a, b) => a.score - b.score); // tri cdes scores
-
-					console.log("🏁 Fin de partie");
-					io.to(roomId).emit("end-game", { classement });
-
-				}
-			}
-			else
-			{
-				notifierScore(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
-			}
+			notifierScore(io, roomId, jeu);	//prsq dans mes test apres reception de update score j'envoie drct "toue"
 		}
 
     });
@@ -301,6 +269,8 @@ export const PlayGame = (socket, io) =>
 	/***************************/
 	socket.on("restart-game", (roomId) => 
 	{
+		// On notifie players que le jeu va commencer
+		io.to(roomId).emit("game-starting");
 		const jeu = getGame(roomId);
 		jeu.resetGame();
 		envoyerMainEtTable(io, roomId, jeu, rooms);
@@ -317,31 +287,34 @@ export const PlayGame = (socket, io) =>
 	{
 		console.log(`🚪 ${username} quitte la partie en cours dans la room ${roomId}`);
 	
-		// Récupérer l'ID du joueur
 		const jeu = getGame(roomId);
 
 		const joueur = jeu.joueurs.find(j => j.nom === username);
-		console.log("JOUEUR QUI QUITTE: ",joueur.nom);
 		if (!joueur) return console.error(`❌ Joueur ${username} introuvable`);
 	
 		// Ajouter en base de données
+
 		const player = await Player.findOne({ where: { username: joueur.nom } });
-		console.log("affichage du player", player);
-		console.log("PLATER NOM: ",player.username);
-		if (player) {
+		if (player) 
+		{
 			await issueBan(player.id);
 			console.log(`🚫 Ban enregistré pour le joueur : ${username}`);
 		}
-	
-		// Supprimer le joueur de la room et de la partie
-		const room = rooms.find(r => r.id === roomId);
-		if (room) 
-		{
-			room.removeUser(socket.id);
-			socket.leave(roomId);
-			console.log(`✅ ${username} a quitté la room ${roomId}`);
-			io.to(roomId).emit("user-left", { username });
-		}
+
+		const botName = 'Bot' + Math.floor(Math.random() * 1000);
+		joueur.nom = botName; // Mettre à jour le nom du joueur avec le nom du bot
+		rooms.find(r => r.id === roomId).users.find(u => u.username === username).username = botName;
+		io.to(roomId).emit("bot-replaced", { username, botName });
+		console.log("Le joueur est remplacer par un bot", botName);
+		// // Supprimer le joueur de la room et de la partie
+		// const room = rooms.find(r => r.id === roomId);
+		// if (room)
+		// {
+		// 	room.removeUser(socket.id);
+		// 	socket.leave(roomId);
+		// 	console.log(`✅ ${username} a quitté la room ${roomId}`);
+		// 	io.to(roomId).emit("user-left", { username });
+		// }
 	});
 
 
@@ -394,10 +367,6 @@ function notifierScore(io, roomId, jeu)
 {
 	//quand le client recoit ceci cela veut dire qu'on peut passer au prochain tour
 	const scores = jeu.joueurs.map(j => ({ nom: j.nom, score: j.score ?? 0 }));
-	let carteJouee = cartesAJoueesParRoom[roomId];
-	console.log("cartes jouees", carteJouee);
-
-	io.to(roomId).emit("cartes-jouees", carteJouee);
 	io.to(roomId).emit("update-scores", scores);
   
 	cartesAJoueesParRoom[roomId] = [];
@@ -477,6 +446,12 @@ function lancerTimer(roomId, jeu , io , cartesAJoueesParRoom, rooms)
 		jouerCartesAbsents(roomId, jeu, io, cartesAJoueesParRoom, rooms);
 
         fileTraitementParRoom[roomId] = [...cartesAJoueesParRoom[roomId]].sort((a, b) => a.carte.numero - b.carte.numero);
+
+		//on copie le contenu exct de CarteAJouée dans carte_animation pour pouvoir l'envoyer au client pour l'animation
+		carte_animation[roomId] = [];
+		carte_animation[roomId] = cartesAJoueesParRoom[roomId];
+
+        cartesAJoueesParRoom[roomId] = [];
         traiterProchaineCarte(roomId, jeu, io, rooms);
         
 
@@ -554,6 +529,7 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 async function traiterProchaineCarte(roomId, jeu, io, rooms) 
 {
     const file = fileTraitementParRoom[roomId];
+
     const room = rooms.find(r => r.id === roomId);
     if (!file || !file.length || !room) return;
 
@@ -563,8 +539,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
     {
         const res = jeu.jouerCarte(username, carte);
 		
-		if (res === "choix_rang_obligatoire") 
+		if (res.action === "choix_rang_obligatoire" && res.index === -1) 
         {
+			console.log(" ⚠️⚠️ choix rang obligatoire");
             const joueur = jeu.joueurs.find(j => j.nom === username);
             joueur.carteEnAttente = carte;
 
@@ -614,7 +591,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 					
 					//  Lancement écoute du choix
 					socketTarget.on("choisir-rangee", handler);
-					let timer=10;	// on laisse au joueur 15s pour choisir son rang
+					let timer=15;	// on laisse au joueur 15s pour choisir son rang
 
 					//si rien recu pendant 15s alors on arrete l'ecoute et on choisit aléatoirement un rang
 					const timeoutId = setTimeout(() =>  
@@ -634,12 +611,10 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 			}
         }
 		//pour le cas de la 6eme carte
-		else if (res=== "ramassage_rang")
+		else if (res.action=== "ramassage_rang")
 		{
-			const socketTargetId = room.users.find(u => u.username === username)?.idSocketUser;
-			io.to(roomId).emit("ramassage_rang", { username });
+			io.to(roomId).emit("ramassage-rang", { username , index:res.index });
 		}
-
 
     }
     catch (err)
@@ -654,35 +629,37 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 	//si jamais ya pas eu de 'play-card' et que c'etais automatique
 	//comme ca on est sur de faire un check end game meme si ya pas eu de 'play-card'
 	if(jeu.checkEndManche())
+	{
+		jeu.mancheActuelle++;
+		if(!jeu.checkEndGame())
 		{
-			jeu.mancheActuelle++;
-			if(!jeu.checkEndGame())
+			console.log("fin de manche");
+			envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
+
+			const classement = jeu.joueurs
+			.map(j => ({ nom: j.nom, score: j.score }))
+			.sort((a, b) => a.score - b.score); // tri cdes scores
+
+			io.to(roomId).emit("score-manche",{classement});//suggestion du prof!!!
+
+			jeu.mancheSuivante();
+			envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
+			io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
+	
+		}
+		else
+		{
+			const classement = jeu.joueurs
+			.map(j => ({ nom: j.nom, score: j.score }))
+			.sort((a, b) => a.score - b.score); // tri cdes scores
+			if(! username.startsWith("Bot"))
 			{
-				console.log("fin de manche");
-				envoyerMainEtTable(io, roomId, jeu, rooms);	// avoir la table finale
-
-				const classement = jeu.joueurs
-				.map(j => ({ nom: j.nom, score: j.score }))
-				.sort((a, b) => a.score - b.score); // tri cdes scores
-
-				io.to(roomId).emit("score-manche",{classement});	//suggestion du prof!!!
-
-				jeu.mancheSuivante();
-				envoyerMainEtTable(io, roomId, jeu, rooms);	//on envoie la nouvelle table 
-				io.to(roomId).emit("manche-suivante",jeu.mancheActuelle);
-		
-			}
-			else
-			{
-				const classement = jeu.joueurs
-				.map(j => ({ nom: j.nom, score: j.score }))
-				.sort((a, b) => a.score - b.score); // tri cdes scores
-
 				console.log("🏁 Fin de partie");
+				envoyerMainEtTable(io, roomId, jeu, rooms);	///!!!
 				io.to(roomId).emit("end-game", { classement });
-
 			}
 		}
+	}
 }
 
 
@@ -698,6 +675,12 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
  */
 function envoyerMainEtTable(io, roomId, jeu, rooms) 
 {
+	//les cartes jouées par salle poru faire l'animation
+	console.log("cartes jouees", carte_animation[roomId]);
+	io.to(roomId).emit("cartes-jouees", carte_animation[roomId]);
+	carte_animation[roomId] = [];
+
+	//puis envoie de la nouvelle table et de la nouvelle main (aprs retrait de la carte )
 	const table = jeu.table.rangs.map(r => r.cartes.map(c => c.numero));
 	console.log("🎯 Table mise à jour :", table);
 	io.to(roomId).emit("update-table", table);
@@ -732,20 +715,17 @@ function envoyerMainEtTable(io, roomId, jeu, rooms)
  * @param {number} playerId - L'ID du joueur à bannir.
  */
 
-async function issueBan(playerId) {
-    try {
-        const existingBan = await BanInfo.findOne({ where: { player_id: playerId } });
-
-        if (existingBan) {
-            console.log(`Mise à jour du ban pour l'ID du joueur : ${playerId}`);
-            await sequelize.query(`CALL apply_ban(${playerId})`);
-        } else {
-            console.log(`Création d'un nouveau ban pour l'ID du joueur : ${playerId}`);
-            await BanInfo.create({ player_id: playerId, ban_count: 1, ban_duration: 120 });
-        }
+async function issueBan(playerId) 
+{
+    try 
+	{
+		console.log(`🔄 Mise à jour du ban pour l'ID du joueur : ${playerId}`);
+		await sequelize.query(`CALL apply_ban(${playerId})`);
         
-        console.log(`Ban enregistré pour l'ID du joueur : ${playerId}`);
-    } catch (err) {
+        console.log(`🚫 Ban enregistré pour l'ID du joueur : ${playerId}`);
+    } 
+	catch (err)
+	{
         console.error(`Erreur lors de l'application du ban : ${err.message}`);
     }
 }
