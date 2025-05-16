@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cqxyv033jupcq"]
+[gd_scene load_steps=16 format=3 uid="uid://bfagedakxxejm"]
 
 [ext_resource type="Script" path="res://scripts/sign_up.gd" id="1_rkjvu"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_g1w5t"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="5_pos6h"]
 [ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="6_yv1ox"]
 [ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="9_ysitm"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="11_5wj7i"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nhx8b"]
 bg_color = Color(0.152941, 0.14902, 0.14902, 0.780392)
@@ -147,6 +148,7 @@ placeholder_text = "     Password"
 secret = true
 
 [node name="visibility_button" type="Button" parent="VBoxContainer/password"]
+layout_mode = 0
 offset_left = 444.0
 offset_top = 9.0
 offset_right = 494.0
@@ -169,6 +171,7 @@ placeholder_text = "     Confirm Password"
 secret = true
 
 [node name="visibility_button2" type="Button" parent="VBoxContainer/confirmPassword"]
+layout_mode = 0
 offset_left = 444.0
 offset_top = 9.0
 offset_right = 494.0
@@ -271,6 +274,7 @@ offset_right = 990.0
 offset_bottom = 564.0
 
 [node name="password_check" type="Label" parent="."]
+layout_mode = 0
 offset_left = 395.0
 offset_top = 534.0
 offset_right = 827.0
@@ -280,6 +284,31 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 1
 theme_override_font_sizes/font_size = 18
 text = "Has to contain a-z, A-Z, 0-9 and a special char"
+
+[node name="SavePopupLabel" type="Label" parent="."]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.5
+offset_top = 247.0
+offset_right = 211.5
+offset_bottom = 308.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("2_g1w5t")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = ExtResource("11_5wj7i")
+text = "Account  created !"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="text_changed" from="VBoxContainer/password" to="." method="_on_password_text_changed"]
 [connection signal="pressed" from="VBoxContainer/password/visibility_button" to="." method="_on_visibility_button_pressed"]

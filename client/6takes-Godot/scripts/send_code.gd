@@ -26,8 +26,9 @@ func _ready() -> void:
 	http_request.request_completed.connect(_on_http_request_completed)
 
 	var base_url = get_node("/root/Global").get_base_url()
-	API_VERIFY_URL = "http://" + base_url + "/api/player/password/verify"
-	API_RESEND_URL = "http://" + base_url + "/api/player/password/request"
+	var base_http = get_node("/root/Global").get_base_http()
+	API_VERIFY_URL = base_http + base_url + "/api/player/password/verify"
+	API_RESEND_URL = base_http + base_url + "/api/player/password/request"
 	
 	for i in code_fields.size():
 		var input = code_fields[i]
@@ -71,9 +72,10 @@ func _on_enter_pressed() -> void:
 
 
 func _on_http_request_completed(result, response_code, headers, body):
-	var json = JSON.parse_string(body.get_string_from_utf8())
+	var parsed = JSON.parse_string(body.get_string_from_utf8())
+	
 	if response_code == 200:
-		print("✅ Code valide, aller à newPassword")
+		print(" Code valide, aller à newPassword")
 		var newPass_scene = load("res://scenes/newPassword.tscn")
 		if newPass_scene == null:
 			print("couldn't load new pass scene")
@@ -92,7 +94,10 @@ func _on_http_request_completed(result, response_code, headers, body):
 		queue_free()
 		
 	else:
-		popup_message.text = json["message"]
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
 		popup_overlay.visible = true
 		return
 

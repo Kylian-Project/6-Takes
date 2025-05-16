@@ -15,8 +15,9 @@ extends Control
 @onready var http_request = $HTTPRequest
 
 
-var WS_SERVER_URL 
 var base_url
+var base_http
+var base_ws
 var API_URL  
 var RESET_SUBMIT_URL
 var overlay_opened = false
@@ -30,9 +31,9 @@ func _ready() -> void:
 		http_request.request_completed.connect(_on_http_request_completed)
 	
 	base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/password/request"
-	RESET_SUBMIT_URL = "http://" + base_url + "/api/player/password/reset"
-	WS_SERVER_URL = "ws://" + base_url
+	base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/password/request"
+	RESET_SUBMIT_URL = base_http + base_url + "/api/player/password/reset"
 	
 	# Sons pour hover + clic
 	cancel_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -106,7 +107,10 @@ func _on_http_request_completed(result, response_code, headers, body):
 	print("Contenu brut:", body.get_string_from_utf8())
 
 	if response_code != 200:
-		popup_message.text = parsed["message"]
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
 		popup_overlay.visible = true
 		return
 		

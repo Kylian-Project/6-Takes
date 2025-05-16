@@ -21,8 +21,9 @@ const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
 
 @onready var http_req_newpass = $HTTPRequest_newpass
 
-var WS_SERVER_URL 
 var base_url
+var base_http
+var base_ws
 var API_URL  
 var RESET_SUBMIT_URL
 var overlay_opened = false
@@ -37,9 +38,9 @@ func _ready() -> void:
 	http_req_newpass.request_completed.connect(_on_http_request_completed)
 	
 	base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/password/request"
-	RESET_SUBMIT_URL = "http://" + base_url + "/api/player/password/reset"
-	WS_SERVER_URL = "ws://" + base_url
+	base_http = get_node("/root/Global").get_base_http()
+	API_URL = base_http + base_url + "/api/player/password/request"
+	RESET_SUBMIT_URL = base_http + base_url + "/api/player/password/reset"
 	
 	
 func set_email(email):
@@ -69,7 +70,7 @@ func _on_confirm_pressed() -> void:
 		popup_overlay.visible = true
 		return  
 		
-	var hashed_password = hash_password(new_password_text)
+	var hashed_password = new_password_text
 	var payload = {
 		"email": global_email,
 		"code": global_code,
@@ -86,12 +87,18 @@ func _on_confirm_pressed() -> void:
 func _on_http_request_completed(result, response_code, headers, body):
 	print(" Réponse:", response_code)
 	print("Contenu brut:", body.get_string_from_utf8())
-
+	var parsed = JSON.parse_string(body.get_string_from_utf8())
+	
 	if response_code == 200:
 		print(" Mot de passe mis à jour. Redirection...")
 		queue_free()
 	else:
-		print("Code invalide ou expiré.")
+		if parsed == null or response_code == 0 :
+			popup_message.text = "Server Connexion Error"
+		else:
+			popup_message.text = parsed["message"]
+		popup_overlay.visible = true
+		return
 		
 			
 func hash_password(password: String) -> String:

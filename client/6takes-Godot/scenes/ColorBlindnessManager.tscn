@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4ludey343176"]
+
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="1_hoob6"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Colorblindness" type="CanvasLayer" parent="."]
+script = ExtResource("1_hoob6")
+Type = 2
