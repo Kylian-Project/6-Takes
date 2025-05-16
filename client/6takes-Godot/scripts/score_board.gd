@@ -20,7 +20,7 @@ func _ready():
 				$rankingsControl/Panel/rankingsList/player10
 				]
 
-	rankings_list = get_node("/root/GameState").rankings
+	rankings_list = GameState.rankings
 	update_rankings(rankings_list)
 	
 	if gameboard and !gameboard.game_ended:
@@ -28,9 +28,7 @@ func _ready():
 	
 	if gameboard and gameboard.game_ended:
 		start_leave_timer()
-		
-	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-	
+			
 func update_rankings(rankings_list):
 	for i in range(len(rankings_list)):
 		var player = rankings_list[i]
@@ -52,29 +50,30 @@ func update_rankings(rankings_list):
 			others[i -3].visible = true
 
 func _on_leave_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-	#if GameState.is_host:
-		#get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
-	#else:
-		#get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	reinit_gameState()
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
 
 func _on_close_button_pressed() -> void:
 	if is_instance_valid(self):
 		queue_free()
 
+func reinit_gameState():
+	GameState.players_count = 0
+	GameState.data = null
+	GameState.id_lobby = ""
+	GameState.lobby_name = ""
+	GameState.other_players = []
+	GameState.rankings = null 
+
 func start_leave_timer():
 	await get_tree().create_timer(8).timeout
 	if is_instance_valid(self):
-		get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
+		queue_free()
+		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 		
+
 func start_auto_close_timer():
 	await get_tree().create_timer(8).timeout
 	if is_instance_valid(self):
 		queue_free()
-
-func _on_socket_event(event: String, data: Variant, ns: String) -> void:
-	match event:
-		"game-starting":
-			queue_free()
-			#if !GameState.is_host:
-				#get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
