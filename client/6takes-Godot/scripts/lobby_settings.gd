@@ -44,6 +44,11 @@ func _initialize_settings() -> void:
 	var round_time_index = round_timer_dropdown.get_item_index(round_time_value)
 	if round_time_index != -1:
 		round_timer_dropdown.select(round_time_index)
+		
+	var rounds_value = int(GameState.rounds)
+	var rounds_index = rounds_dropdown.get_item_index(rounds_value)
+	if rounds_index != -1:
+		rounds_dropdown.select(rounds_index -1)
 
 
 

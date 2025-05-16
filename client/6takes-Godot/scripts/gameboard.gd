@@ -72,6 +72,7 @@ var can_select_card
 var scores_handled
 var played_card_instances := {}  # key: card_id, value: card_instance
 
+		
 func _ready():
 	_load_cards()
 	
@@ -98,7 +99,7 @@ func _ready():
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
 	#start game
-	is_host = get_node("/root/GameState").is_host
+	is_host = GameState.is_host
 	if is_host:
 		SocketManager.emit("start-game", room_id_global)
 	start_game()
@@ -125,7 +126,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			on_player_selects_row()
 			
 		"temps-room":
-			_handle_timer(data)
+			if !game_ended:
+				_handle_timer(data)
 			
 		"attente-choix-rangee":
 			_await_row_selection(data)
@@ -145,6 +147,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			_cards_from_players(data)
 
 		"end-game":
+			await get_tree().create_timer(3).timeout
 			_handle_end_game(data)
 			
 		"manche-suivante":
@@ -163,6 +166,9 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		
 		"user-left":
 			_handle_user_left(data)
+		
+		"bot-replaced":
+			_switch_player_name(data)
 
 		_:
 			print("Unhandled event received: ", event, "data: ", data)
@@ -171,13 +177,16 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		turn_emitted = true
 		
 		scores_handled = false
-		_start_turn()
+		if !game_ended:
+			_start_turn()
 
 
 func _handle_remove_room():
 	mssg_panel.get_node("mssg").text = "\n Host Left the Game "
 	mssg_panel.visible = true
 	#game_ended = true
+	await get_tree().create_timer(6).timeout
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 
 func _handle_user_left(data):
@@ -198,10 +207,14 @@ func _handle_user_left(data):
 
 
 func _handle_next_round(data):
-	print("next round event ereceived ", data)
+	await get_tree().create_timer(0.1).timeout
 	show_label("Next Round")
 	
-	current_turn = str(data[0])
+	cards_sorted = false
+	get_node("sortCards").visible = true
+	get_node("sortCards").disabled = false
+	
+	current_turn = str(data[0] +1)
 	turn_label.text = "Turn " + current_turn +" / " + str(turns)
 	
 	
@@ -212,7 +225,7 @@ func show_turn_score(data):
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("leaveButton").disabled = true
 	score_instance.gameboard = self
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(1.5).timeout
 
 	var overlay_layer = CanvasLayer.new()
 	overlay_layer.add_child(score_instance)
@@ -244,8 +257,9 @@ func start_game():
 	
 
 func _start_turn():
-	can_select_card = true
 	#cards_sorted = false
+	await get_tree().create_timer(0.1).timeout
+	can_select_card = true
 	rows_manager.reset_selection()
 	if room_id_global != null:
 		print("emit tour")
@@ -254,6 +268,8 @@ func _start_turn():
 			"username": player_username
 		})
 	
+	if !cards_sorted:
+		get_node("sortCards").disabled = false
 
 
 func _handle_timer(data):
@@ -279,6 +295,7 @@ func _handle_update_scores(data):
 
 
 func _await_row_selection(data):
+	can_select_card = false
 	var player = data[0]["username"]
 	show_label(player + " Is Choosing a Row")
 
@@ -366,7 +383,31 @@ func _find_card_data(card_id: int) -> Dictionary:
 			return card
 	return {}  
 
+func _switch_player_name(data):
+	print(data)
+	if data.size() == 0:
+		push_warning("Received empty data list")
+		return
 
+	var switched_names = data[0]
+	var player_left_name = switched_names.username
+	var replaced_bot = switched_names.botName
+
+	# Check both containers
+	for container in [left_player_container, right_player_container]:
+		for child in container.get_children():
+			# HBoxContainer is named after the username
+			if child.name == player_left_name:
+				child.name = replaced_bot
+				var player_visual = child.get_node_or_null("PlayerVisual")
+				if player_visual:
+					# Assuming the PlayerVisual has a label or method to update the name
+					player_visual.update_username(replaced_bot)
+				else:
+					push_warning("No PlayerVisual found in container named %s" % player_left_name)
+				return  # Done after replacing
+					
+	push_warning("Username '%s' not found in player containers." % player_left_name)
 
 # --- UI Update Functions ---
 
@@ -416,7 +457,8 @@ func _handle_your_hand(hand_data):
 	
 	cards_animated = true
 	can_select_card = true
-	get_node("sortCards").disabled = false
+	if !cards_sorted:
+		get_node("sortCards").disabled = false
 
 
 func _on_card_selected(card_number):
@@ -427,9 +469,13 @@ func _on_card_selected(card_number):
 	} 
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
+	can_select_card = false
+	get_node("sortCards").disabled = true
 	
 
 func update_table_ui(table_data, settingup_deck):
+	can_select_card = false
+	
 	var row_containers = [row1, row2, row3, row4]
 	var new_cards_global: Array = []
 
@@ -491,7 +537,7 @@ func update_table_ui(table_data, settingup_deck):
 					player_card.global_position = global_start
 
 					var tw = create_tween()
-					tw.tween_property(player_card, "global_position", global_target, 0.5)
+					tw.tween_property(player_card, "global_position", global_target, 1.5)
 					await tw.finished
 
 					get_tree().root.remove_child(player_card)
@@ -522,7 +568,8 @@ func update_table_ui(table_data, settingup_deck):
 					card_instance.texture_rect.visible = true
 
 			last_table_state[i] = row_data.duplicate()
-
+			
+	can_select_card = false
 	if new_cards_global.size() > 0:
 		new_cards_global.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
 		for card_dict in new_cards_global:
@@ -535,28 +582,28 @@ func update_table_ui(table_data, settingup_deck):
 			if is_instance_valid(card_instance):
 				card_instance.flip_card()
 		# Clean up leftover player cards (not placed on table)
+	can_select_card = false
 	if played_card_instances.size() > 0:
 		for leftover_card_id in played_card_instances.keys():
 			var leftover_card = played_card_instances[leftover_card_id]
 			if is_instance_valid(leftover_card):
-				var tw = create_tween()
+				var tw = create_tween()	
 				tw.parallel()
-				tw.tween_property(leftover_card, "modulate:a", 0.0, 0.4)
-				tw.tween_property(leftover_card, "scale", Vector2(0.5, 0.5), 0.4)
+				tw.tween_property(leftover_card, "modulate:a", 0.0, 0.2)
+				tw.tween_property(leftover_card, "scale", Vector2(0.5, 0.5), 0.2)
 				tw.chain()
 				await tw.finished
 				if is_instance_valid(leftover_card):
 					leftover_card.queue_free()
 
 		played_card_instances.clear()
-
+	
+	if cards_animated:
+		can_select_card = true
 	
 func _on_select_row_button_pressed(row_index):
 	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
-	
-		# Animate row removal
-	#await animate_row_removal(row_index)
 	
 	SocketManager.emit("choisir-rangee", {
 		"roomId": room_id_global,
@@ -661,6 +708,11 @@ func setup_players(player_data):
 
 
 func _handle_end_game(data):
+	#clear last card
+	await get_tree().create_timer(1).timeout
+	for child in hbox_container.get_children():
+		child.queue_free()
+		
 	game_ended = true
 	GameState.first_game = false
 	GameState.rankings = data[0].get("classement")
@@ -701,8 +753,9 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
+	
 	get_node("sortCards").visible = false
-
+	
 func _on_close_button_pressed() -> void:
 	if game_ended:
 		if !is_host:

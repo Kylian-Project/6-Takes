@@ -111,4 +111,6 @@ func send_select_row(index):
 	
 func reset_selection():
 	hide_all_buttons()
+	for row in row_panels:
+		row.scale = Vector2(1, 1)
 	row_selection_enabled = false
