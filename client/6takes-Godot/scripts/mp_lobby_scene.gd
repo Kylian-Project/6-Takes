@@ -93,23 +93,22 @@ func _ready():
 	add_bot_button.disabled = !is_host
 	
 	if is_host:
-		lobby_name = str(get_node("/root/GameState").lobby_name) 
+		lobby_name = str(GameState.lobby_name) 
 		lobby_name_panel.text = lobby_name + "  LOBBY"
-		players_limit = get_node("/root/GameState").players_limit
+		players_limit = GameState.players_limit
 		
 		quit_button.text = "Remove Lobby"
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
-	
-	else:
-		SocketManager.emit("get-lobby-info", id_lobby)
-
-	var data = get_node("/root/GameState").data
-	if data != null:
-		_refresh_player_list(get_node("/root/GameState").data)
 		
-	else:
-		get_users()
+	SocketManager.emit("get-lobby-info", id_lobby)
+
+	#var data = GameState.data
+	#if data != null:
+		#_refresh_player_list(GameState.data)
+		#
+	#else:
+	get_users()
 
 	#set confirmation panel
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
@@ -157,8 +156,6 @@ func _on_raw_packet(packet):
 func check_ban_status():
 	if Global.is_banned():
 		start_button.disabled = true
-		message_control.get_node("mssg").text = "You are banned for: " + str(Global.get_ban_time_left()) + " seconds"
-		message_control.visible = true
 	else:
 		start_button.disabled = false
 
@@ -229,6 +226,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			message_control.get_node("mssg").text = "\nThis lobby has been removed!"
 			message_control.visible = true
 			await get_tree().create_timer(2.5).timeout
+			reinit_gameState()
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 			
 		_:
@@ -349,12 +347,7 @@ func _refresh_player_list(data):
 
 
 func _on_start_button_pressed() -> void:
-	if GameState.first_game:
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-	else:
-		print("emitting restart game")
-		SocketManager.emit("restart-game", GameState.id_lobby)
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 	
 func _on_quit_button_pressed() -> void:
@@ -454,7 +447,7 @@ func _on_canceled():
 func reinit_gameState():
 	GameState.players_count = 0
 	GameState.data = null
-	#GameState.id_lobby = ""
+	GameState.id_lobby = ""
 	GameState.lobby_name = ""
 	GameState.other_players = []
 	GameState.rankings = null 

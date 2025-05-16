@@ -35,8 +35,9 @@ const USER_SETTINGS : String = "user://settings.cfg"
 	accessibility_button,
 ]
 
-# CHECK BAN
 @onready var message_control = $mssgControl
+@onready var closeButton = $mssgControl/closeButton
+# CHECK BAN
 var ban_time_left = 0  # Variable globale pour stocker le temps restant
 var base_url = Global.get_base_url()
 var base_http = Global.get_base_http()
@@ -46,6 +47,7 @@ var api_url = base_http + base_url + "/api/player/ban-status/"
 var login_instance = null
 var rules_instance = null 
 var logged_in 
+var timer = Timer.new()
 
 func _ready() -> void:
 	if OS.get_name() == "Web":
@@ -173,6 +175,7 @@ func _on_ban_status_received(result, response_code, headers, body):
 			# Vérifier si la réponse contient les champs attendus
 			if response.has("isBanned") and response.has("timeLeft"):
 				if response["isBanned"]:
+					show_ban_mssg()
 					var time_left = response["timeLeft"]
 					print("[INFO] Le joueur est banni pour encore ", time_left, " secondes.")
 					# Désactiver le bouton multijoueur et afficher le timer
@@ -199,7 +202,6 @@ func _on_ban_status_received(result, response_code, headers, body):
 func start_ban_timer(time_left):
 	print("[DEBUG] Démarrage du timer de ban pour : ", time_left, " secondes.")
 	ban_time_left = time_left
-	var timer = Timer.new()
 	add_child(timer)
 	timer.wait_time = 1
 	timer.one_shot = false
@@ -227,6 +229,10 @@ func _update_ban_timer():
 	ban_time_left -= 1
 	if ban_time_left <= 0:
 		print("[INFO] Fin du ban. Réactivation du bouton multijoueur.")
+		# Arreter le timer
+		timer.stop()
+		timer.queue_free()
+		# Réactiver le bouton multijoueur
 		multiplayer_button.disabled = false
 		multiplayer_button.text = "Multiplayer"
 		get_tree().call_group("timers", "stop")
@@ -374,7 +380,10 @@ func _on_reset_button_accessibility_pressed() -> void:
 	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
 	_on_color_blind_options_item_selected(0)
 
+func _on_close_button_pressed():
+	message_control.visible = false
 
 func show_ban_mssg():
-	message_control.get_node("mssg").text = "You have been banned from Multi-player for not respecting game rules \n and leaving an active game!"
+	message_control.get_node("mssg").text = "\nYou have been banned from Multiplayer for not respecting game rules and leaving an active game! \nRemember, our game is designed to provide a fair and enjoyable experience for everyone.\n"
 	message_control.visible = true
+	closeButton.pressed.connect(_on_close_button_pressed)
