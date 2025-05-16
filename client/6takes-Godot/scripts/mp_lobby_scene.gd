@@ -17,7 +17,7 @@ extends Control
 @onready var players_container = $MainVboxContainer/playersContainer
 @onready var player_entry_scene = preload("res://scenes/Player_slot.tscn")
 @onready var bot_scene = preload("res://scenes/BotSlot.tscn")
-@onready var message_label = $mssgLabel
+@onready var message_control = $mssgControl
 @onready var host_node = $MainVboxContainer/HBoxContainer/HostPlayer
 
 #lobby info 
@@ -27,9 +27,10 @@ extends Control
 
 #confirmation control
 @onready var confirm_panel = $ConfirmControl
+@onready var notif_label 	= $SavePopupLabel
 
 var player_username
-var bot_count = 0
+var bot_count
 var players_count
 var players_limit
 var id_lobby
@@ -41,9 +42,12 @@ var is_public
 func _ready():
 	settings_overlay.visible = false
 	scene_changed = false 
+	bot_count = 0
 	
-	player_username = get_node("/root/Global").player_name
-	players_count = get_node("/root/GameState").players_count
+	player_username = Global.player_name
+	players_count = GameState.players_count
+	
+	check_ban_status()
 	
 	# Hover sounds
 	start_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -68,35 +72,36 @@ func _ready():
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
 	
-	id_lobby = get_node("/root/GameState").id_lobby
-	is_host = get_node("/root/GameState").is_host
-	is_public = get_node("/root/GameState").is_public
-	lobby_code_panel.text = str(id_lobby)
-	print("id lobby DEBUG ", id_lobby)
+	id_lobby = GameState.id_lobby
+	is_host = GameState.is_host
+	is_public = GameState.is_public
+	
+	var code = ""
+	for i in range(len(str(id_lobby))):
+		code += (" " + str(id_lobby)[i])
+		
+	lobby_code_panel.text = str(code)
 	settings_button.disabled = !is_host
 	start_button.disabled = !is_host
 	add_bot_button.disabled = !is_host
 	
 	if is_host:
-		lobby_name = str(get_node("/root/GameState").lobby_name) 
+		lobby_name = str(GameState.lobby_name) 
 		lobby_name_panel.text = lobby_name + "  LOBBY"
-		players_limit = get_node("/root/GameState").players_limit
+		players_limit = GameState.players_limit
 		
 		quit_button.text = "Remove Lobby"
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
-	
-	else:
-		print("emit get lobby info")
-		#SocketManager.emit("users-in-private-room", id_lobby) 
-		SocketManager.emit("get-lobby-info", id_lobby)
-
-	var data = get_node("/root/GameState").data
-	if data != null:
-		_refresh_player_list(get_node("/root/GameState").data)
 		
-	else:
-		get_users()
+	SocketManager.emit("get-lobby-info", id_lobby)
+
+	#var data = GameState.data
+	#if data != null:
+		#_refresh_player_list(GameState.data)
+		#
+	#else:
+	get_users()
 
 	#set confirmation panel
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
@@ -106,16 +111,38 @@ func _ready():
 func get_users():
 	if is_public:
 		print("emit get users in public room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-public-room", id_lobby)
 	else:
 		print("emit get users in private room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-private-room", id_lobby)
 		
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
 	print("Raw packet string:", packet.get_string_from_utf8())
 	
-	
+func check_ban_status():
+	if Global.is_banned():
+		start_button.disabled = true
+		message_control.get_node("mssg").text = "You are banned for: " + str(Global.get_ban_time_left()) + " seconds"
+		message_control.visible = true
+	else:
+		start_button.disabled = false
+
+func update_player_list():
+	# Vider la liste actuelle des joueurs
+	for child in players_container.get_children():
+		child.queue_free()
+
+	# Récupérer les informations des joueurs depuis GameState
+	var players = GameState.other_players
+	for player in players:
+		var player_entry = player_entry_scene.instantiate()
+		player_entry.get_node("PlayerInfoContainer/PlayerName").text = player["username"]
+		player_entry.get_node("PlayerInfoContainer/Icon").texture = load("res://assets/icons/" + str(player["icon"]) + ".png")
+		players_container.add_child(player_entry)
+
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
 		"users-in-your-private-room", "users-in-your-public-room" :
@@ -134,34 +161,69 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			_handle_game_starting()
 			
 		"kicked":
-			message_label.visible = true
-			await get_tree().create_timer(3).timeout
-			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-			
+			message_control.get_node("mssg").text = "\nYou have been kicked from this lobby!"
+			message_control.visible = true
+
 		"public-room-joined", "private-room-joined":
 			_refresh_player_list(data)
+			
+		"remove-room", "remove-public-room", "remove-private-room":
+			_handle_remove_room()
+			
+		"room-settings-updated":
+			_handle_update_settings(data)
+			
+			notif_label.visible = true
+			await get_tree().create_timer(2.5).timeout
+			notif_label.visible = false
 			
 		"lobby-info":
 			print("lobby info received ", data)
 			if(data != null):
-				get_node("/root/GameState").lobby_name = data[0].get("room").get("settings").get("lobbyName")
-				get_node("/root/GameState").players_limit = data[0].get("room").get("settings").get("playerLimit")
-				get_node("/root/GameState").rounds = data[0].get("room").get("settings").get("rounds")
+				GameState.lobby_name = data[0].get("room").get("settings").get("lobbyName")
+				GameState.players_limit = data[0].get("room").get("settings").get("playerLimit")
+				GameState.rounds = data[0].get("room").get("settings").get("rounds")
 				
 				#set lobby info
-				lobby_name = str(get_node("/root/GameState").lobby_name) + "  LOBBY"
+				lobby_name = str(GameState.lobby_name) + "  LOBBY"
 				lobby_name_panel.text = lobby_name
-				players_limit = get_node("/root/GameState").players_limit
+				players_limit = GameState.players_limit
 				players_count_panel.text = str(players_count) + " / " + str(players_limit)
-				
+		
+		"remove-public-room", "remove-private-room":
+			message_control.get_node("mssg").text = "\nThis lobby has been removed!"
+			message_control.visible = true
+			await get_tree().create_timer(2.5).timeout
+			reinit_gameState()
+			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+			
 		_:
 			print("unhandled event received \n", event, data)
 
 
+func _handle_update_settings(data):
+	print("lobby settings updated ", data)
+	if(data != null):
+		GameState.players_limit = data[0].get("playerLimit")
+		GameState.rounds = data[0].get("rounds")
+		GameState.card_number = data[0].get("numberOfCards")
+		GameState.timer = data[0].get("roundTimer")
+		
+		#set lobby info
+		lobby_name = str(GameState.lobby_name) + "  LOBBY"
+		lobby_name_panel.text = lobby_name
+		players_limit = GameState.players_limit
+		players_count_panel.text = str(players_count) + " / " + str(players_limit)
+
+	
+	
+func _handle_remove_room():
+	message_control.get_node("mssg").text = "\n Lobby has been removed"
+	message_control.visible = true
+	
 func _handle_game_starting():
 	if !is_host and !scene_changed:
 		scene_changed = true
-		#get_node("/root/Transition").fade_to_black_then_change_scene("res://scenes/GameBoard.tscn")
 		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 
@@ -190,10 +252,11 @@ func _refresh_player_list(data):
 	var players_count = int(payload.get("count", 0))
 	var players       = payload.get("users", [])
 	
-	if players_count == 1:
-		start_button.disabled = true
-	else:
+	if players_count > 1 and is_host:
 		start_button.disabled = false
+	else:
+		start_button.disabled = true
+		
 	players_count_panel.text = str(players_count) + " / " + str(players_limit)
 	
 	## Update HostPlayer node
@@ -209,6 +272,7 @@ func _refresh_player_list(data):
 		host_user.get("icon", 0),
 		true # is_host = true
 	)
+	
 	#add players to scene
 	for i in range(1, players_count):
 		var user_dict = players[i] as Dictionary
@@ -251,22 +315,14 @@ func _refresh_player_list(data):
 
 
 func _on_start_button_pressed() -> void:
-	#TRANSITIN ANIMATION TO FIX
-	#var transition_scene = load("res://scenes/Transition.tscn")
-	#var transition_instance = transition_scene.instantiate()
-	#get_tree().current_scene.add_child(transition_instance)
-	#await transition_instance.ready
-	#queue_free()
-	
-	print("emit start game and move to gameboard")
-	#transition_instance.fade_out("res://scenes/gameboard.tscn")
 	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
-
+	
 func _on_quit_button_pressed() -> void:
 	confirm_panel.action_type    = "quit"
+	confirm_panel.scene = self
 	if is_host:
-		confirm_panel.message = "Remove \""+ lobby_name+ "\" ?"
+		confirm_panel.message = "Remove \""+ lobby_name+ "\" Lobby ?"
 	else :
 		confirm_panel.message = "Quit lobby ?"
 	confirm_panel.action_payload = {}
@@ -277,7 +333,8 @@ func remove_bot(bot_instance):
 	if bot_count > 0:
 		bot_count -= 1
 		players_count -= 1
-		get_node("/root/GameState").players_count = players_count
+		GameState.players_count = players_count
+		GameState.bot_count = bot_count
 		#send remove bot to server
 		var bot_name = "Bot" + str(bot_instance.bot_index)
 		kick_player(bot_name)
@@ -304,8 +361,9 @@ func _on_add_bot_button_pressed() -> void:
 	bot_count += 1
 	
 	players_count += 1
-	get_node("/root/GameState").players_count = players_count
-	#update_bot_slots()
+	GameState.players_count = players_count
+	GameState.bot_count = bot_count
+	
 	SocketManager.emit("join-room", 
 	{
 		"roomId" : id_lobby,
@@ -335,7 +393,8 @@ func _on_confirmed(action_type:String, payload) -> void:
 	match action_type:
 		"quit":
 			SocketManager.emit("leave-room", { "roomId": id_lobby })
-			get_node("/root/GameState").data = null
+			reinit_gameState()
+			
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 
 		"kick":
@@ -351,3 +410,20 @@ func _on_confirmed(action_type:String, payload) -> void:
 func _on_canceled():
 	#hide panel handled in confirm panel script
 	pass
+
+
+func reinit_gameState():
+	GameState.players_count = 0
+	GameState.data = null
+	GameState.id_lobby = ""
+	GameState.lobby_name = ""
+	GameState.other_players = []
+	GameState.rankings = null 
+
+
+func _on_close_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+
+
+func _on_settings_button_pressed() -> void:
+	get_node("lobbySettings").visible = true

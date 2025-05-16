@@ -11,8 +11,8 @@ var jwt_token = null
 var ws = WebSocketPeer.new()
 var ws_connected = false
 
-var WS_SERVER_URL
 var API_URL
+var username_placeholder
 
 #new password
 @onready var new_password = $VBoxContainer/password
@@ -24,34 +24,28 @@ var API_URL
 @onready var popup_overlay = $popUp_error
 @onready var popup_clear = $popUp_error/Button
 @onready var popup_message = $popUp_error/message
-
+@onready var notif_label = $SavePopupLabel
 
 #password input visibility
 @onready var visibility_button1 = $VBoxContainer/password/visibility_button
 @onready var visibility_button2 = $VBoxContainer/confirmPassword/visibility_button2
+
 var showing_password1 := false
 var showing_password2 := false
 const ICON_VISIBLE = preload("res://assets/images/visibility/visible.png")
 const ICON_INVISIBLE = preload("res://assets/images/visibility/invisible.png")
 
+var login_scene = preload("res://scenes/logIn.tscn")
+signal account_created(uname : String)
 
 func _ready():
 	self.visible = false
 	signup_button.pressed.connect(_on_signup_pressed)
 	http_request.request_completed.connect(_on_http_request_completed)
 	
-	var base_url = get_node("/root/Global").get_base_url()
-	API_URL = "http://" + base_url + "/api/player/inscription"
-	WS_SERVER_URL = "ws://" + base_url
-
-
-func hash_password(password: String) -> String:
-	var ctx = HashingContext.new()
-	ctx.start(HashingContext.HASH_SHA256)
-	ctx.update(password.to_utf8_buffer())  # Convertit en buffer binaire UTF-8
-	var hashed_password = ctx.finish()
-	
-	return hashed_password.hex_encode()
+	var base_url = Global.get_base_url()
+	var base_http = Global.get_base_http()
+	API_URL = base_http + base_url + "/api/player/inscription"
 	
 	
 func _on_signup_pressed():
@@ -75,13 +69,13 @@ func _on_signup_pressed():
 		popup_overlay.visible = true
 		return 
 	
-	var hashed_password = hash_password(password)
-	
+
 	var payload = {
 		"username": username,
 		"email": email,
-		"password": hashed_password #password
+		"password": password #password
 	}
+	username_placeholder = username
 
 	var json_body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
@@ -96,7 +90,6 @@ func _on_http_request_completed(result, response_code, headers, body):
 	
 	print(" Réponse HTTP reçue : code =", response_code)
 	print(" Contenu brut:", response_str)
-	var response
 
 	if response_code != 200:
 		if parsed == null or response_code == 0 :
@@ -106,51 +99,14 @@ func _on_http_request_completed(result, response_code, headers, body):
 		popup_overlay.visible = true
 		return
 		
+	##sign up successefuls
+	notif_label.visible = true
+	await get_tree().create_timer(2).timeout
+	notif_label.visible = false
 	
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	response = json
 	self.hide_overlay()
 	self._on_log_in_pressed()
 	return
-
-
-func _connect_to_websocket():
-	if jwt_token == null:
-		print(" Aucun token pour la connexion WebSocket")
-		return
-
-	var ws_url = WS_SERVER_URL + "/?token=" + jwt_token
-	var err = ws.connect_to_url(ws_url)
-	if err != OK:
-		print("!! Erreur de connexion WebSocket :", err)
-		return
-
-	print(" WebSocket initialisé, en attente de connexion...")
-	ws_connected = false
-
-
-func _process(_delta):
-	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN and not ws_connected:
-		ws_connected = true
-		print(" WebSocket connecté avec succès !")
-
-	if ws.get_ready_state() in [WebSocketPeer.STATE_CLOSING, WebSocketPeer.STATE_CLOSED]:
-		if ws_connected:
-			ws_connected = false
-			print("WebSocket déconnecté.")
-	
-	ws.poll()
-
-	if ws.get_available_packet_count() > 0:
-		var data = ws.get_packet().get_string_from_utf8()
-		_on_ws_data(data)
-
-func _on_ws_data(data):
-	print(" Données reçues :", data)
-	var response = JSON.parse_string(data)
-	if response == null:
-		print(" Donnée non-JSON :", data)
-		return
 
 
 var overlay_opened = false
@@ -166,7 +122,7 @@ func hide_overlay():
 	self.visible = false 
 	
 func _on_log_in_pressed() -> void:
-	var login_scene = load("res://scenes/logIn.tscn")
+	
 	if login_scene == null:
 		print("couldn't load scene")
 		

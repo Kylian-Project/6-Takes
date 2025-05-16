@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bcjhf4sva1ypb"]
+[gd_scene load_steps=30 format=3 uid="uid://bcjhf4sva1ypb"]
 
 [ext_resource type="Script" path="res://scripts/mp_lobby_scene.gd" id="1_h4b0v"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_mqvhc"]
@@ -13,6 +13,8 @@
 [ext_resource type="Script" path="res://scripts/confirm_control.gd" id="11_s370a"]
 [ext_resource type="Texture2D" uid="uid://j1dgweq32xnf" path="res://assets/images/selection/verifier.png" id="12_42uao"]
 [ext_resource type="Texture2D" uid="uid://d4k8xhixraomr" path="res://assets/images/selection/fermer.png" id="13_qxa8q"]
+[ext_resource type="Script" path="res://scripts/lobby_settings.gd" id="14_do78i"]
+[ext_resource type="StyleBox" uid="uid://cclwcahso1h12" path="res://assets/styleBox/settings_menu_dropdown_nroma.tres" id="15_vxajd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7n0kn"]
 bg_color = Color(0.85098, 0.85098, 0.85098, 1)
@@ -107,6 +109,36 @@ border_width_right = 8
 border_width_bottom = 8
 border_color = Color(0, 0, 0, 0.917647)
 border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b5qk0"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bl2bg"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3w62"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
 
 [node name="MPLobbyScene" type="Control"]
 layout_mode = 3
@@ -608,27 +640,6 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="mssgLabel" type="Label" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -963.0
-offset_top = -82.0
-offset_right = 962.0
-offset_bottom = 205.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_utsmw")
-theme_override_font_sizes/font_size = 40
-theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
-text = "You have been kicked from this lobby!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="ConfirmControl" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -676,8 +687,7 @@ grow_vertical = 2
 theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
-text = "
-?"
+text = "."
 horizontal_alignment = 1
 
 [node name="buttonContainer" type="HBoxContainer" parent="ConfirmControl"]
@@ -721,6 +731,391 @@ icon = ExtResource("13_qxa8q")
 icon_alignment = 2
 expand_icon = true
 
+[node name="mssgControl" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -966.0
+offset_top = -86.0
+offset_right = 960.0
+offset_bottom = 207.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="dimming" type="ColorRect" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -970.0
+offset_top = -714.5
+offset_right = 970.0
+offset_bottom = 547.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.301961)
+
+[node name="mssg" type="Label" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -142.5
+offset_right = 965.0
+offset_bottom = 144.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_8iwxy")
+text = "
+?"
+horizontal_alignment = 1
+
+[node name="closeButton" type="Button" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -99.0
+offset_top = -107.0
+offset_right = 128.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_jo1wa")
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Close"
+icon = ExtResource("13_qxa8q")
+icon_alignment = 2
+expand_icon = true
+
+[node name="lobbySettings" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -321.0
+offset_top = -370.0
+offset_right = 321.0
+offset_bottom = 366.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_do78i")
+
+[node name="ColorRect" type="ColorRect" parent="lobbySettings"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="BgDimming" type="ColorRect" parent="lobbySettings"]
+z_index = -1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -971.0
+offset_top = -549.0
+offset_right = 971.0
+offset_bottom = 549.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.117647)
+
+[node name="TextureRect" type="TextureRect" parent="lobbySettings"]
+self_modulate = Color(1, 1, 1, 0.0901961)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_mqvhc")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="lobbySettings"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="CreateLobbyLabel" type="Label" parent="lobbySettings/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_constants/outline_size = 25
+theme_override_fonts/font = ExtResource("10_eex3c")
+theme_override_font_sizes/font_size = 60
+text = "Lobby Settings"
+
+[node name="AvailableOptions" type="HBoxContainer" parent="lobbySettings/MainVertical"]
+layout_mode = 2
+alignment = 1
+
+[node name="Options" type="VBoxContainer" parent="lobbySettings/MainVertical/AvailableOptions"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LobbyName" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Lobby Name"
+
+[node name="PlayerLimit" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Player Limit"
+
+[node name="NumberCards" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Number of Cards"
+
+[node name="RoundTimer" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Round Timer"
+
+[node name="EndByPoints" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "End by Points"
+
+[node name="Rounds" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Rounds"
+
+[node name="MaxPoints" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Options"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_b5qk0")
+text = "Maximum Points"
+
+[node name="Choices" type="VBoxContainer" parent="lobbySettings/MainVertical/AvailableOptions"]
+layout_mode = 2
+
+[node name="EditLobbyName" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_bl2bg")
+
+[node name="PlayerLimitDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/pressed = ExtResource("15_vxajd")
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 8
+item_count = 9
+popup/item_0/text = "2"
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "4"
+popup/item_2/id = 2
+popup/item_3/text = "5"
+popup/item_3/id = 3
+popup/item_4/text = "6"
+popup/item_4/id = 4
+popup/item_5/text = "7"
+popup/item_5/id = 5
+popup/item_6/text = "8"
+popup/item_6/id = 6
+popup/item_7/text = "9"
+popup/item_7/id = 7
+popup/item_8/text = "10"
+popup/item_8/id = 8
+
+[node name="CardNumberDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 9
+item_count = 10
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+popup/item_5/text = "6"
+popup/item_5/id = 5
+popup/item_6/text = "7"
+popup/item_6/id = 6
+popup/item_7/text = "8"
+popup/item_7/id = 7
+popup/item_8/text = "9"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+
+[node name="RoundTimerDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 1
+item_count = 3
+popup/item_0/text = "30"
+popup/item_1/text = "45"
+popup/item_1/id = 1
+popup/item_2/text = "60"
+popup/item_2/id = 2
+
+[node name="EndPointsDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 0
+item_count = 2
+popup/item_0/text = "No"
+popup/item_1/text = "Yes"
+popup/item_1/id = 1
+
+[node name="RoundsDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 0
+item_count = 5
+popup/item_0/text = "1"
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+
+[node name="MaxPointsDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("15_vxajd")
+selected = 0
+item_count = 2
+popup/item_0/text = "60"
+popup/item_1/text = "80"
+popup/item_1/id = 1
+
+[node name="saveButton" type="Button" parent="lobbySettings/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_hover_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0.666667, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = ExtResource("5_nhk61")
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Save   Settings"
+
+[node name="close" type="Button" parent="lobbySettings"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -67.0
+offset_bottom = 62.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_g3w62")
+icon = ExtResource("13_qxa8q")
+expand_icon = true
+
+[node name="SavePopupLabel" type="Label" parent="."]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -240.0
+offset_right = 210.0
+offset_bottom = -179.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_utsmw")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = ExtResource("6_cj54l")
+text = "Settings  Changed !"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="pressed" from="BottomButtons/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="BottomButtons/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="BottomButtons/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="MainVboxContainer/AddBotButton" to="." method="_on_add_bot_button_pressed"]
+[connection signal="pressed" from="mssgControl/closeButton" to="." method="_on_close_pressed"]
+[connection signal="pressed" from="lobbySettings/MainVertical/saveButton" to="lobbySettings" method="_on_save_settings"]
+[connection signal="pressed" from="lobbySettings/close" to="lobbySettings" method="_on_close_pressed"]

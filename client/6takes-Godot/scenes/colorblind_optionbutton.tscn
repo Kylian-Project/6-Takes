@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://cguk4a36k45og"]
+
+[ext_resource type="Script" path="res://addons/accesibilitytools/shaders/daltonismo_optionbutton.gd" id="1_vo138"]
+
+[node name="ColorBlindOptions" type="VBoxContainer"]
+
+[node name="DaltonismoItemList" type="OptionButton" parent="."]
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "Normal"
+popup/item_1/text = "Deuteranopía"
+popup/item_1/id = 1
+popup/item_2/text = "Protanopía"
+popup/item_2/id = 2
+popup/item_3/text = "Tritanopía"
+popup/item_3/id = 3
+script = ExtResource("1_vo138")

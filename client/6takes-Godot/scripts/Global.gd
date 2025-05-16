@@ -5,12 +5,18 @@ var saved_token
 var player_id
 var player_name = ""
 var icon_id = 0
+var ban_info = {
+	"banned": false,
+	"timeLeft": 0
+}
 
 var config = ConfigFile.new()
 var file_path = "res://config/config.cfg"
 var response_load = config.load(file_path)
 
 var BASE_URL := ""
+var BASE_HTTP := ""
+var WS_PREFIX := ""
 var header := ""
 @onready var popup_scene = preload("res://scenes/popUp.tscn")
 
@@ -48,17 +54,31 @@ func _ready():
 		return 
 		
 	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
+	var srv_http = config.get_value("DEFAULT", "SRV_HTTP", "")
 	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
+	var ws_prefix = config.get_value("DEFAULT", "WS_PREFIX", "")
 	var header_prefix =config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "")
 	
 	header = "Authorization: " + header_prefix +" "
-	BASE_URL = srv_url + ":" + srv_port 
+	# si un port est spécifié, on l'ajoute à l'url
+	if srv_port != "":
+		srv_url = srv_url + ":" + srv_port
+	
+	BASE_URL = srv_url
+	BASE_HTTP = srv_http
+	WS_PREFIX = ws_prefix
 	print("BASE URL ", BASE_URL)
 
 	
 	
 func get_base_url():
 	return BASE_URL 
+
+func get_base_http():
+	return BASE_HTTP
+
+func get_ws_prefix():
+	return WS_PREFIX
 	
 func getLogged_in():
 	return logged_in
@@ -68,9 +88,6 @@ func get_player_id():
 	
 func get_saved_token():
 	return saved_token
-
-func set_logged_in(state):
-	logged_in = state
 
 func save_session(token: String, uid, uname, icon):
 	#var config = ConfigFile.new()
@@ -86,6 +103,8 @@ func save_session(token: String, uid, uname, icon):
 	player_id = uid
 	player_name = uname
 	icon_id = icon
+
+	logged_in = true
 
 #load session data from file on startup
 func load_session():
@@ -109,7 +128,8 @@ func session_validation(token : String):
 	var headers = ["Authorization: Bearer " + token]
 	var json_body = JSON.stringify(token)
 	
-	var url = "http://" + BASE_URL+ "/api/player/reconnect"
+	var url = BASE_HTTP + BASE_URL + "/api/player/reconnect"
+	print("\n url debug ", url)
 	var error = http_request.request(url , headers, HTTPClient.METHOD_POST, json_body)
 	
 	if error != OK:
@@ -137,3 +157,27 @@ func _on_request_completed(result, response_code, headers, body):
 	else:
 		print("Session invalid. Forcing logout.")
 		logged_in = false
+
+func issue_ban(player_id):
+	print("[INFO] Tentative de bannissement du joueur avec l'ID :", player_id)
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+
+	var url = BASE_HTTP + BASE_URL + "/api/player/ban-status/" + str(player_id)
+	var error = http_request.request(url, [], HTTPClient.METHOD_POST)
+
+	if error != OK:
+		print("[ERREUR] Erreur lors de l'envoi de la requête de bannissement :", error)
+	else:
+		print("[INFO] Requête de bannissement envoyée avec succès pour le joueur ID :", player_id)
+
+func update_ban_info(banned: bool, time_left: int):
+	ban_info["banned"] = banned
+	ban_info["timeLeft"] = time_left
+	print("Ban info updated: ", ban_info)
+
+func is_banned():
+	return ban_info.get("banned", false)
+
+func get_ban_time_left():
+	return ban_info.get("timeLeft", 0)
