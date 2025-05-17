@@ -298,10 +298,13 @@ func _refresh_player_list(data):
 	
 	var host_entry = player_entry_scene.instantiate()
 	host_node.add_child(host_entry)
+
+	var host_icon_id = host_user.get("icon", null)
+	host_icon_id = host_icon_id if host_icon_id != null else 0
 	
 	host_entry.create_player_visual(
 		host_user.get("username", "Unknown"),
-		host_user.get("icon", 0),
+		host_icon_id,
 		true # is_host = true
 	)
 	
