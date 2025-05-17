@@ -676,7 +676,7 @@ func setup_players(player_data):
 		if user.username.begins_with("Bot"):
 			user_icon = 10
 		else:
-			user_icon = user.icon
+			user_icon = user.icon if user.has("icon") and user.icon != null else 0
 
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
@@ -694,7 +694,9 @@ func setup_players(player_data):
 
 	if current_player:
 		var player_visual_instance = player_visual_scene.instantiate()
-		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
+		var my_icon = current_player.get("icon", null)
+		my_icon = my_icon if my_icon != null else 0
+		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), my_icon, true)
 		var slot = HBoxContainer.new()
 		me_vis.name = "PlayerVisual"
 		slot.name = current_player.get("username","")
