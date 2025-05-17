@@ -25,7 +25,7 @@ var icons = {
 	1: "res://assets/images/icons/blue.png",
 	2: "res://assets/images/icons/brown.png",
 	3: "res://assets/images/icons/cyan.png",
-	4: "res://assets/images/icons/icons/pink.png",
+	4: "res://assets/images/icons/pink.png",
 	5: "res://assets/images/icons/green.png",
 	6: "res://assets/images/icons/orange.png",
 	7: "res://assets/images/icons/purple.png",
