@@ -928,10 +928,10 @@ theme_override_constants/margin_bottom = 15
 
 [node name="ContrastSlider" type="HSlider" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2"]
 layout_mode = 2
-min_value = 0.01
+min_value = 0.5
 max_value = 4.0
 step = 0.01
-value = 0.01
+value = 1.0
 
 [node name="ColorBlindOptions" type="OptionButton" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings"]
 layout_mode = 2
@@ -961,10 +961,10 @@ theme_override_constants/margin_top = 15
 
 [node name="BrightnessSlider" type="HSlider" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer"]
 layout_mode = 2
-min_value = 0.01
+min_value = 0.5
 max_value = 4.0
 step = 0.01
-value = 0.01
+value = 1.0
 
 [node name="Close" type="Button" parent="AccessibilityOverlay"]
 layout_mode = 1
