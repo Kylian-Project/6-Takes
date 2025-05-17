@@ -58,14 +58,19 @@ func _on_leave_pressed():
 
 
 func _on_confirmed(action_type:String, payload) -> void:
-	match action_type:
-		"quit":
-			SocketManager.emit("leave-room-in-game", {
-				 "roomId": id_lobby,
-				"username": Global.player_name
-			 })
-			#scene.reinit_gameState()
-			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
+	if !GameState.is_host:
+		SocketManager.emit("leave-room-in-game", { "roomId": id_lobby, "username": Global.player_name })
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	else:
+		SocketManager.emit("leave-room", { "roomId": id_lobby })
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	#match action_type:
+		#"quit":
+			#if !GameState.is_host:
+				#SocketManager.emit("leave-room-in-game", { "roomId": id_lobby, "username": Global.player_name })
+				#get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+			#else:
+				#SocketManager.emit("leave-room", { "roomId": id_lobby })
 
 
 func _on_canceled():

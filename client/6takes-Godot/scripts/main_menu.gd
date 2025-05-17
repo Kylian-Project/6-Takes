@@ -36,16 +36,25 @@ const USER_SETTINGS : String = "user://settings.cfg"
 ]
 
 @onready var message_control = $mssgControl
-#validate token 
-var API_URL 
+@onready var closeButton = $mssgControl/closeButton
+# CHECK BAN
+var ban_time_left = 0  # Variable globale pour stocker le temps restant
+var base_url = Global.get_base_url()
+var base_http = Global.get_base_http()
+var api_url = base_http + base_url + "/api/player/ban-status/"
+
 
 var login_instance = null
 var rules_instance = null 
 var logged_in 
+var timer = Timer.new()
 
 func _ready() -> void:
 	if OS.get_name() == "Web":
 		quit_button.hide()
+	
+	# CHECK BAN
+	check_ban_status()
 	
 	rules_overlay.visible = false
 	settings_overlay.visible = false
@@ -129,24 +138,133 @@ func _process(_delta):
 		#accessibility_overlay.visible
 	#)
 	
+func check_ban_status():
+	var username = Global.player_name  # Récupérer dynamiquement le nom de l'utilisateur
+	if username == "":
+		print("[ERREUR] Nom d'utilisateur non défini")
+		return
+	print("[DEBUG] Appel de check_ban_status pour l'ID: ", username)
+
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+	http_request.connect("request_completed", Callable(self, "_on_ban_status_received"))
+	
+	var url = api_url + username
+	print("[DEBUG] URL construite : ", url)
+	var error = http_request.request(url)
+
+	if error != OK:
+		print("[ERREUR] Erreur lors de l'envoi de la requête : ", error)
+	else:
+		print("[DEBUG] Requête envoyée avec succès.")
+	
+
+func _on_ban_status_received(result, response_code, headers, body):
+	print("[DEBUG] Réponse HTTP reçue : code =", response_code)
+	print("[DEBUG] Réponse brute : ", body.get_string_from_utf8())
+	if response_code == 200:
+		var json = JSON.new()
+		var parsed = json.parse(body.get_string_from_utf8())
+		print("[DEBUG] Code de retour du parsing JSON : ", parsed)
+
+		# Vérification si le parsing a réussi
+		if parsed == OK:
+			var response = json.get_data()
+			print("[DEBUG] Parsing JSON réussi. Contenu : ", response)
+
+			# Vérifier si la réponse contient les champs attendus
+			if response.has("isBanned") and response.has("timeLeft"):
+				if response["isBanned"]:
+					show_ban_mssg()
+					var time_left = response["timeLeft"]
+					print("[INFO] Le joueur est banni pour encore ", time_left, " secondes.")
+					# Désactiver le bouton multijoueur et afficher le timer
+					if multiplayer_button:
+						multiplayer_button.disabled = true
+						multiplayer_button.text = str(time_left) + "sec"
+					else:
+						print("[ERREUR] Bouton Multijoueur non trouvé !")
+
+					start_ban_timer(time_left)
+				else:
+					print("[INFO] Le joueur n'est pas banni.")
+					multiplayer_button.disabled = false
+					multiplayer_button.text = "Multiplayer"
+			else:
+				print("[DEBUG] Erreur : Champs 'isBanned' ou 'timeLeft' manquants dans la réponse.")
+		else:
+			print("[DEBUG] Erreur lors du parsing JSON : ", json.get_error_message())
+			print("[DEBUG] Ligne de l'erreur : ", parsed)
+	else:
+		print("[DEBUG] Erreur HTTP : ", response_code)
+
+
+func start_ban_timer(time_left):
+	print("[DEBUG] Démarrage du timer de ban pour : ", time_left, " secondes.")
+	ban_time_left = time_left
+	add_child(timer)
+	timer.wait_time = 1
+	timer.one_shot = false
+	timer.connect("timeout", Callable(self, "_update_ban_timer"))
+	timer.start()
+	print("[DEBUG] Timer démarré avec intervalle de 1 seconde.")
+
+
+func _format_time(seconds: int) -> String:
+	var days = int(seconds / 86400)  # 86400 seconds in a day
+	var hours = int((seconds % 86400) / 3600)  # 3600 seconds in an hour
+	var minutes = int((seconds % 3600) / 60)  # 60 seconds in a minute
+	var secs = seconds % 60
+
+	if days > 0:
+		return str(days) + "d:" + str(hours).pad_zeros(2) + "h:" + str(minutes).pad_zeros(2) + "m:" + str(secs).pad_zeros(2) + "s"
+	elif hours > 0:
+		return str(hours).pad_zeros(2) + "h:" + str(minutes).pad_zeros(2) + "m:" + str(secs).pad_zeros(2) + "s"
+	elif minutes > 0:
+		return str(minutes).pad_zeros(2) + "m:" + str(secs).pad_zeros(2) + "s"
+	else:
+		return str(secs) + "s"
+
+func _update_ban_timer():
+	ban_time_left -= 1
+	if ban_time_left <= 0:
+		print("[INFO] Fin du ban. Réactivation du bouton multijoueur.")
+		# Arreter le timer
+		timer.stop()
+		timer.queue_free()
+		# Réactiver le bouton multijoueur
+		multiplayer_button.disabled = false
+		multiplayer_button.text = "Multiplayer"
+		get_tree().call_group("timers", "stop")
+		get_tree().call_group("timers", "queue_free")
+	else:
+		multiplayer_button.text = _format_time(ban_time_left)
+		# print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
 
 func _on_multi_player_button_pressed() -> void:
-	#get_node("/root/Global").load_session()
 	logged_in = Global.getLogged_in()
-	
+	var socket_manager = get_node("/root/SocketManager")
+	if not socket_manager.cust_is_connected():
+		socket_manager.reconnect()
+		if not socket_manager.cust_is_connected():
+			var popup_scene = preload("res://scenes/popUp.tscn")
+			var popup_instance = popup_scene.instantiate()
+			var label = popup_instance.get_node("message")
+			if label:
+				label.text = "Server connection error"
+				await get_tree().process_frame
+				add_child(popup_instance)
+				popup_instance.make_visible()
+			return
 	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-		
 	else:
 		if login_instance == null:
 			login_instance = login_scene.instantiate()
 			add_child(login_instance)
-
-			# Centrer l'écran de pause
 			await get_tree().process_frame  
-			
-		login_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
-		login_instance.visible = true  # Afficher la pause
+		login_instance.move_to_front()
+		login_instance.visible = true
 	
 
 func go_to_singleplayer():
@@ -262,7 +380,10 @@ func _on_reset_button_accessibility_pressed() -> void:
 	_on_contrast_slider_value_changed(DEFAULT_CONTRAST)
 	_on_color_blind_options_item_selected(0)
 
+func _on_close_button_pressed():
+	message_control.visible = false
 
 func show_ban_mssg():
-	message_control.get_node("mssg").text = "You have been banned from Multi-player for not respecting game rules \n and leaving an active game!"
+	message_control.get_node("mssg").text = "\nYou have been banned from Multiplayer for not respecting game rules and leaving an active game! \nRemember, our game is designed to provide a fair and enjoyable experience for everyone.\n"
 	message_control.visible = true
+	closeButton.pressed.connect(_on_close_button_pressed)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://b731ylwap623e"]
+[gd_scene load_steps=44 format=3 uid="uid://b731ylwap623e"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_wwhcw"]
 [ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_eqybt"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://14ogqi74qg0j" path="res://assets/images/settings.png" id="10_mcrd4"]
 [ext_resource type="Texture2D" uid="uid://d1retdvnppn7q" path="res://assets/images/accessibilite.png" id="11_3dgwy"]
 [ext_resource type="Script" path="res://scripts/audio_settings.gd" id="11_aye1x"]
+[ext_resource type="Script" path="res://scripts/server_settings.gd" id="11_fljuk"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="11_tnfns"]
 [ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="15_3wg6b"]
 [ext_resource type="Texture2D" uid="uid://d4k8xhixraomr" path="res://assets/images/selection/fermer.png" id="17_h705a"]
@@ -153,6 +154,21 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hv0j0"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_s6hmh"]
+default_font_size = 35
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7pv28"]
 bg_color = Color(0.239216, 0.239216, 0.239216, 1)
@@ -447,7 +463,7 @@ theme_override_colors/font_unselected_color = Color(0.239216, 0.239216, 0.239216
 theme_override_colors/font_hovered_color = Color(1, 1, 1, 1)
 theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 22
 theme_override_styles/panel = SubResource("StyleBoxFlat_umhtq")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_khlxb")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_yyply")
@@ -622,6 +638,115 @@ layout_mode = 2
 size_flags_vertical = 3
 max_value = 1.0
 step = 0.05
+
+[node name="ServerSettings" type="TabBar" parent="SettingsOverlay/TabContainer"]
+visible = false
+layout_mode = 2
+script = ExtResource("11_fljuk")
+metadata/_tab_index = 2
+
+[node name="HorizontalAlign" type="HBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -1.0
+offset_top = 17.0
+offset_right = -40.0
+offset_bottom = 190.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="VLabels" type="VBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Preset" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_hv0j0")
+text = "Server Preset"
+
+[node name="SRV_URL" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_hv0j0")
+text = "SRV_URL"
+
+[node name="SRV_PORT" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_hv0j0")
+text = "SRV_PORT
+"
+
+[node name="HTTP_PREFIX" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VLabels"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("4_0m83s")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_hv0j0")
+text = "HTTP_PREFIX
+"
+
+[node name="VSettings" type="VBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="PresetOptionButton" type="OptionButton" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+selected = 0
+item_count = 3
+popup/item_0/text = "Default"
+popup/item_1/text = "BASTION"
+popup/item_1/id = 1
+popup/item_2/text = "Custom"
+popup/item_2/id = 2
+
+[node name="LineEditSrvURL" type="LineEdit" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+placeholder_text = "localhost"
+
+[node name="LineEditSrvPORT" type="SpinBox" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
+layout_mode = 2
+theme = SubResource("Theme_s6hmh")
+max_value = 65535.0
+rounded = true
+custom_arrow_step = 1.0
+
+[node name="HTTPOption" type="OptionButton" parent="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+selected = 0
+item_count = 2
+popup/item_0/text = "HTTPS"
+popup/item_1/text = "HTTP"
+popup/item_1/id = 1
+
+[node name="LabelInfoContainer" type="HBoxContainer" parent="SettingsOverlay/TabContainer/ServerSettings"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -35.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="LogoutInformation" type="Label" parent="SettingsOverlay/TabContainer/ServerSettings/LabelInfoContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 23
+text = "*Please log out to modify server settings"
 
 [node name="Close" type="Button" parent="SettingsOverlay"]
 layout_mode = 1
@@ -803,10 +928,10 @@ theme_override_constants/margin_bottom = 15
 
 [node name="ContrastSlider" type="HSlider" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2"]
 layout_mode = 2
-min_value = 0.01
+min_value = 0.5
 max_value = 4.0
 step = 0.01
-value = 0.01
+value = 1.0
 
 [node name="ColorBlindOptions" type="OptionButton" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings"]
 layout_mode = 2
@@ -836,10 +961,10 @@ theme_override_constants/margin_top = 15
 
 [node name="BrightnessSlider" type="HSlider" parent="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer"]
 layout_mode = 2
-min_value = 0.01
+min_value = 0.5
 max_value = 4.0
 step = 0.01
-value = 0.01
+value = 1.0
 
 [node name="Close" type="Button" parent="AccessibilityOverlay"]
 layout_mode = 1
@@ -944,8 +1069,7 @@ offset_right = 965.0
 offset_bottom = 144.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_0m83s")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_m3ifw")
 text = "
 ?"
@@ -984,6 +1108,10 @@ expand_icon = true
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MsterSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_mster_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/MusicSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_music_slider_value_changed"]
 [connection signal="value_changed" from="SettingsOverlay/TabContainer/AudioSettings/HorizontalAlign/VSettings/SFXSlider" to="SettingsOverlay/TabContainer/AudioSettings" method="_on_sfx_slider_value_changed"]
+[connection signal="text_changed" from="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvURL" to="SettingsOverlay/TabContainer/ServerSettings" method="_on_line_edit_srv_url_text_changed"]
+[connection signal="value_changed" from="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings/LineEditSrvPORT" to="SettingsOverlay/TabContainer/ServerSettings" method="_on_line_edit_srv_port_value_changed"]
+[connection signal="item_selected" from="SettingsOverlay/TabContainer/ServerSettings/HorizontalAlign/VSettings/HTTPOption" to="SettingsOverlay/TabContainer/ServerSettings" method="_on_http_option_item_selected"]
+[connection signal="pressed" from="SettingsOverlay/Close" to="SettingsOverlay/TabContainer/ServerSettings" method="_on_close_pressed"]
 [connection signal="pressed" from="AccessibilityButton" to="." method="_on_accessibility_button_pressed"]
 [connection signal="value_changed" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/MarginContainer2/ContrastSlider" to="." method="_on_contrast_slider_value_changed"]
 [connection signal="item_selected" from="AccessibilityOverlay/TabContainer/Accessibility/Accessibility/VSettings/ColorBlindOptions" to="." method="_on_color_blind_options_item_selected"]

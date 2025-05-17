@@ -28,3 +28,13 @@ func _on_event(event, data, ns):
 # helper to emit
 func emit(event_name: String, payload):
 	socket_io.emit(event_name, payload)
+
+# Nouvelle méthode pour relancer la connexion websocket
+func reconnect():
+	socket_io.disconnect_socket()
+	await get_tree().process_frame
+	socket_io.base_url = Global.get_base_http() + Global.get_base_url()
+	socket_io.connect_socket()
+
+func cust_is_connected() -> bool:
+	return socket_io.state == EngineIO.State.CONNECTED

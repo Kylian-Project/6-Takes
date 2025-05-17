@@ -39,6 +39,11 @@ var is_host
 var scene_changed
 var is_public
 
+var connection_timer: Timer
+var connection_lost_handled := false
+var ping_timer: Timer
+var pong_timeout_timer: Timer
+
 func _ready():
 	settings_overlay.visible = false
 	scene_changed = false 
@@ -46,6 +51,8 @@ func _ready():
 	
 	player_username = Global.player_name
 	players_count = GameState.players_count
+	
+	check_ban_status()
 	
 	# Hover sounds
 	start_button.mouse_entered.connect(SoundManager.play_hover_sound)
@@ -69,6 +76,8 @@ func _ready():
 	
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
+	# Ajout : gestion de la déconnexion websocket
+	SocketManager.connect("disconnected", Callable(self, "_on_socket_disconnected"))
 	
 	id_lobby = GameState.id_lobby
 	is_host = GameState.is_host
@@ -84,44 +93,90 @@ func _ready():
 	add_bot_button.disabled = !is_host
 	
 	if is_host:
-		lobby_name = str(get_node("/root/GameState").lobby_name) 
+		lobby_name = str(GameState.lobby_name) 
 		lobby_name_panel.text = lobby_name + "  LOBBY"
-		players_limit = get_node("/root/GameState").players_limit
+		players_limit = GameState.players_limit
 		
 		quit_button.text = "Remove Lobby"
 		if  players_count >= players_limit:
 			add_bot_button.disabled = true
-	
-	else:
-		SocketManager.emit("get-lobby-info", id_lobby)
-
-	var data = get_node("/root/GameState").data
-	if data != null:
-		_refresh_player_list(get_node("/root/GameState").data)
 		
-	else:
-		get_users()
+	SocketManager.emit("get-lobby-info", id_lobby)
+
+	#var data = GameState.data
+	#if data != null:
+		#_refresh_player_list(GameState.data)
+		#
+	#else:
+	get_users()
 
 	#set confirmation panel
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
 	confirm_panel.connect("canceled",  Callable(self, "_on_canceled"))
 	
+	# Timer de vérification de connexion
+	connection_timer = Timer.new()
+	connection_timer.wait_time = 2.0
+	connection_timer.one_shot = false
+	connection_timer.autostart = true
+	add_child(connection_timer)
+	connection_timer.timeout.connect(_check_connection)
+	connection_lost_handled = false
+
+	# Timer pour ping manuel
+	ping_timer = Timer.new()
+	ping_timer.wait_time = 2.0
+	ping_timer.one_shot = false
+	ping_timer.autostart = true
+	add_child(ping_timer)
+	ping_timer.timeout.connect(_send_ping)
+
+	# Timer pour timeout pong
+	pong_timeout_timer = Timer.new()
+	pong_timeout_timer.wait_time = 4.0
+	pong_timeout_timer.one_shot = true
+	pong_timeout_timer.autostart = false
+	add_child(pong_timeout_timer)
+	pong_timeout_timer.timeout.connect(_on_pong_timeout)
 	
 func get_users():
 	if is_public:
 		print("emit get users in public room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-public-room", id_lobby)
 	else:
 		print("emit get users in private room :", id_lobby)
+		await get_tree().create_timer(0.1).timeout  # Délai pour laisser le temps au serveur
 		SocketManager.emit("users-in-private-room", id_lobby)
 		
 func _on_raw_packet(packet):
 	print("Raw packet bytes:", packet)
 	print("Raw packet string:", packet.get_string_from_utf8())
 	
-	
+func check_ban_status():
+	if Global.is_banned():
+		start_button.disabled = true
+	else:
+		start_button.disabled = false
+
+func update_player_list():
+	# Vider la liste actuelle des joueurs
+	for child in players_container.get_children():
+		child.queue_free()
+
+	# Récupérer les informations des joueurs depuis GameState
+	var players = GameState.other_players
+	for player in players:
+		var player_entry = player_entry_scene.instantiate()
+		player_entry.get_node("PlayerInfoContainer/PlayerName").text = player["username"]
+		player_entry.get_node("PlayerInfoContainer/Icon").texture = load("res://assets/icons/" + str(player["icon"]) + ".png")
+		players_container.add_child(player_entry)
+
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
+		"pong":
+			pong_timeout_timer.stop()
+			return
 		"users-in-your-private-room", "users-in-your-public-room" :
 			print("event users in room received ")
 			_refresh_player_list(data)
@@ -171,6 +226,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 			message_control.get_node("mssg").text = "\nThis lobby has been removed!"
 			message_control.visible = true
 			await get_tree().create_timer(2.5).timeout
+			reinit_gameState()
 			get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
 			
 		_:
@@ -242,10 +298,13 @@ func _refresh_player_list(data):
 	
 	var host_entry = player_entry_scene.instantiate()
 	host_node.add_child(host_entry)
+
+	var host_icon_id = host_user.get("icon", null)
+	host_icon_id = host_icon_id if host_icon_id != null else 0
 	
 	host_entry.create_player_visual(
 		host_user.get("username", "Unknown"),
-		host_user.get("icon", 0),
+		host_icon_id,
 		true # is_host = true
 	)
 	
@@ -291,12 +350,7 @@ func _refresh_player_list(data):
 
 
 func _on_start_button_pressed() -> void:
-	if GameState.first_game:
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
-	else:
-		print("emitting restart game")
-		SocketManager.emit("restart-game", GameState.id_lobby)
-		get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
+	get_tree().change_scene_to_file("res://scenes/gameboard.tscn")
 
 	
 func _on_quit_button_pressed() -> void:
@@ -396,7 +450,7 @@ func _on_canceled():
 func reinit_gameState():
 	GameState.players_count = 0
 	GameState.data = null
-	#GameState.id_lobby = ""
+	GameState.id_lobby = ""
 	GameState.lobby_name = ""
 	GameState.other_players = []
 	GameState.rankings = null 
@@ -408,3 +462,41 @@ func _on_close_pressed() -> void:
 
 func _on_settings_button_pressed() -> void:
 	get_node("lobbySettings").visible = true
+
+# Ajout : gestion de la déconnexion websocket
+func _on_socket_disconnected():
+	if connection_lost_handled == false:
+		connection_lost_handled = true
+	# Arrêter les timers
+	connection_timer.stop()
+	ping_timer.stop()
+	pong_timeout_timer.stop()
+	# Afficher le message d'erreur
+	var popup_scene = preload("res://scenes/popUp.tscn")
+	var popup_instance = popup_scene.instantiate()
+	var label = popup_instance.get_node("message")
+	if label:
+		label.text = "Server connection error"
+		get_tree().current_scene.add_child(popup_instance)
+		popup_instance.make_visible()
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func _check_connection():
+	if connection_lost_handled:
+		return
+	if not SocketManager.cust_is_connected():
+		connection_lost_handled = true
+		_on_socket_disconnected()
+
+func _send_ping():
+	if connection_lost_handled:
+		return
+	SocketManager.emit("ping", {})
+	pong_timeout_timer.start()
+
+func _on_pong_timeout():
+	if connection_lost_handled:
+		return
+	connection_lost_handled = true
+	_on_socket_disconnected()
