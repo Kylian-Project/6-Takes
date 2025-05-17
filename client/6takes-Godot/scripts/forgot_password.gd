@@ -23,6 +23,8 @@ var RESET_SUBMIT_URL
 var overlay_opened = false
 var code 
 var email_text
+var request_timeout_timer : Timer
+var request_timed_out := false
 	 
 func _ready() -> void:
 	self.visible = false
@@ -45,6 +47,12 @@ func _ready() -> void:
 	send_code_button.mouse_entered.connect(SoundManager.play_hover_sound)
 	send_code_button.pressed.connect(SoundManager.play_click_sound)
 
+	request_timeout_timer = Timer.new()
+	request_timeout_timer.wait_time = 3.0
+	request_timeout_timer.one_shot = true
+	request_timeout_timer.autostart = false
+	add_child(request_timeout_timer)
+	request_timeout_timer.timeout.connect(_on_request_timeout)
 
 
 func set_code(sent_code):
@@ -97,9 +105,16 @@ func _on_send_code_pressed() -> void:
 
 	print(" Envoi de requête de reset à :", API_URL)
 	http_request.request(API_URL, headers, HTTPClient.METHOD_POST, json_body)
+	request_timed_out = false
+	request_timeout_timer.start()
 	
 	
 func _on_http_request_completed(result, response_code, headers, body):
+	if request_timeout_timer.is_stopped() == false:
+		request_timeout_timer.stop()
+	if request_timed_out:
+		return
+		
 	var response_str = body.get_string_from_utf8()
 	var parsed = JSON.parse_string(response_str)
 	
@@ -140,3 +155,8 @@ func is_valid_email(email: String) -> bool:
 		print("Regex compile error!")
 		return false
 	return regex.search(email) != null
+
+func _on_request_timeout():
+	request_timed_out = true
+	popup_message.text = "Server Connexion Error"
+	popup_overlay.visible = true

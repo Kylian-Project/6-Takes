@@ -16,7 +16,6 @@ var response_load = config.load(file_path)
 
 var BASE_URL := ""
 var BASE_HTTP := ""
-var WS_PREFIX := ""
 var header := ""
 @onready var popup_scene = preload("res://scenes/popUp.tscn")
 
@@ -52,34 +51,48 @@ func _ready():
 				print("can't get message label in pop up scene ")
 				return 
 		return 
-		
-	var srv_url = config.get_value("DEFAULT", "SRV_URL", "")
-	var srv_http = config.get_value("DEFAULT", "SRV_HTTP", "")
-	var srv_port = config.get_value("DEFAULT", "SRV_PORT", "")	
-	var ws_prefix = config.get_value("DEFAULT", "WS_PREFIX", "")
-	var header_prefix =config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "")
 	
-	header = "Authorization: " + header_prefix +" "
-	# si un port est spécifié, on l'ajoute à l'url
+	# --- Gestion des settings serveur ---
+	var settings_cfg = ConfigFile.new()
+	var preset_idx = 0
+	var srv_port = ""
+	var header_prefix = ""
+	if settings_cfg.load("user://settings.cfg") == OK:
+		preset_idx = settings_cfg.get_value("Server", "Preset", 0)
+	else:
+		preset_idx = 0
+
+	if preset_idx == 2:
+		# Custom
+		BASE_URL = settings_cfg.get_value("Server", "SRV_URL", "localhost")
+		BASE_HTTP = ("https://" if settings_cfg.get_value("Server", "HTTP_IDX", 0) == 0 else "http://")
+		srv_port = settings_cfg.get_value("Server", "SRV_PORT", "14001")
+	else:
+		var section = ("DEFAULT" if preset_idx == 0 else "BASTION")
+		BASE_URL = config.get_value(section, "SRV_URL", "")
+		BASE_HTTP = config.get_value(section, "SRV_HTTP", "https://")
+		srv_port = config.get_value(section, "SRV_PORT", "")
+
+	header_prefix = config.get_value("DEFAULT", "AUTH_HEADER_PREFIX", "Bearer")
+	header = "Authorization: " + header_prefix + " "
 	if srv_port != "":
-		srv_url = srv_url + ":" + srv_port
-	
-	BASE_URL = srv_url
-	BASE_HTTP = srv_http
-	WS_PREFIX = ws_prefix
+		BASE_URL = BASE_URL + ":" + srv_port
+
 	print("BASE URL ", BASE_URL)
 
 	
-	
+# Server Info GET
 func get_base_url():
 	return BASE_URL 
-
 func get_base_http():
 	return BASE_HTTP
-
-func get_ws_prefix():
-	return WS_PREFIX
 	
+# Server Info SET
+func set_base_url(url):
+	BASE_URL = url
+func set_base_http(http):
+	BASE_HTTP = http
+
 func getLogged_in():
 	return logged_in
 	
@@ -100,6 +113,7 @@ func save_session(token: String, uid, uname, icon):
 	if error != OK:
 		print("error saving session")
 
+	saved_token = token
 	player_id = uid
 	player_name = uname
 	icon_id = icon
@@ -113,7 +127,13 @@ func load_session():
 	if error == OK:
 		saved_token = config.get_value("session", "token")		
 		print("successfully loaded session, now validating")
-		session_validation(saved_token)
+		if saved_token != "" and saved_token != null:
+			print("successfully loaded session, now validating")
+			session_validation(saved_token)
+		else:
+			print("No session token found")
+			logged_in = false
+			return
 	
 	else:
 		logged_in = false #no valid session found
@@ -136,7 +156,7 @@ func session_validation(token : String):
 		print("An error occurred sending the session validation request.")
 
 
-func _on_request_completed(result, response_code, headers, body):
+func _on_request_completed(_result, response_code, _headers, body):
 	print("Réponse HTTP reçue : code =", response_code)
 	
 	var raw_response = body.get_string_from_utf8()

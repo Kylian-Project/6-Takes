@@ -117,7 +117,7 @@ func _on_http_request_completed(result, response_code, headers, body):
 				popup_message.text = "Server Connexion Error"
 			else:
 				popup_message.text = parsed["message"]
-			popup_label.make_visible()
+			popup_label.visible = true
 			return
 			
 	elif current_action == "update_icon":
@@ -138,9 +138,10 @@ func _on_http_request_completed(result, response_code, headers, body):
 			if parsed == null:
 				popup_message.text = "Config File Error"
 			else:
-				popup_message.text = parsed["message"]
-				print("Erreur serveur lors de la déconnexion")
-			popup_label.make_visible()
+				if popup_message:
+					popup_message.text = parsed["message"]
+			popup_label.visible = true
+			print("Erreur serveur lors de la requete")
 
 # Refresh icon in current panel
 func update_profile_icon_preview():

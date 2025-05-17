@@ -42,6 +42,14 @@ func save_audio_settings(idx, volume):
 	config.set_value("Audio", "Bus" + str(idx), volume)
 	config.save(FILE_PATH)
 
+# Save server settings
+func save_server_settings(preset, url, port, http_idx):
+	config.set_value("Server", "Preset", preset)
+	config.set_value("Server", "SRV_URL", url)
+	config.set_value("Server", "SRV_PORT", port)
+	config.set_value("Server", "HTTP_IDX", http_idx)
+	config.save(FILE_PATH)
+
 func write_default_settings():
 	if not config.has_section("Default"):
 		config.set_value("Default", "Mode", DisplayServer.WINDOW_MODE_FULLSCREEN)

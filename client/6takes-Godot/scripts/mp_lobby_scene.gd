@@ -39,6 +39,11 @@ var is_host
 var scene_changed
 var is_public
 
+var connection_timer: Timer
+var connection_lost_handled := false
+var ping_timer: Timer
+var pong_timeout_timer: Timer
+
 func _ready():
 	settings_overlay.visible = false
 	scene_changed = false 
@@ -71,6 +76,8 @@ func _ready():
 	
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
+	# Ajout : gestion de la déconnexion websocket
+	SocketManager.connect("disconnected", Callable(self, "_on_socket_disconnected"))
 	
 	id_lobby = GameState.id_lobby
 	is_host = GameState.is_host
@@ -107,6 +114,30 @@ func _ready():
 	confirm_panel.connect("confirmed", Callable(self, "_on_confirmed"))
 	confirm_panel.connect("canceled",  Callable(self, "_on_canceled"))
 	
+	# Timer de vérification de connexion
+	connection_timer = Timer.new()
+	connection_timer.wait_time = 2.0
+	connection_timer.one_shot = false
+	connection_timer.autostart = true
+	add_child(connection_timer)
+	connection_timer.timeout.connect(_check_connection)
+	connection_lost_handled = false
+
+	# Timer pour ping manuel
+	ping_timer = Timer.new()
+	ping_timer.wait_time = 2.0
+	ping_timer.one_shot = false
+	ping_timer.autostart = true
+	add_child(ping_timer)
+	ping_timer.timeout.connect(_send_ping)
+
+	# Timer pour timeout pong
+	pong_timeout_timer = Timer.new()
+	pong_timeout_timer.wait_time = 4.0
+	pong_timeout_timer.one_shot = true
+	pong_timeout_timer.autostart = false
+	add_child(pong_timeout_timer)
+	pong_timeout_timer.timeout.connect(_on_pong_timeout)
 	
 func get_users():
 	if is_public:
@@ -143,6 +174,9 @@ func update_player_list():
 
 func _on_socket_event(event: String, data: Variant, ns: String):
 	match event:
+		"pong":
+			pong_timeout_timer.stop()
+			return
 		"users-in-your-private-room", "users-in-your-public-room" :
 			print("event users in room received ")
 			_refresh_player_list(data)
@@ -425,3 +459,41 @@ func _on_close_pressed() -> void:
 
 func _on_settings_button_pressed() -> void:
 	get_node("lobbySettings").visible = true
+
+# Ajout : gestion de la déconnexion websocket
+func _on_socket_disconnected():
+	if connection_lost_handled == false:
+		connection_lost_handled = true
+	# Arrêter les timers
+	connection_timer.stop()
+	ping_timer.stop()
+	pong_timeout_timer.stop()
+	# Afficher le message d'erreur
+	var popup_scene = preload("res://scenes/popUp.tscn")
+	var popup_instance = popup_scene.instantiate()
+	var label = popup_instance.get_node("message")
+	if label:
+		label.text = "Server connection error"
+		get_tree().current_scene.add_child(popup_instance)
+		popup_instance.make_visible()
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func _check_connection():
+	if connection_lost_handled:
+		return
+	if not SocketManager.cust_is_connected():
+		connection_lost_handled = true
+		_on_socket_disconnected()
+
+func _send_ping():
+	if connection_lost_handled:
+		return
+	SocketManager.emit("ping", {})
+	pong_timeout_timer.start()
+
+func _on_pong_timeout():
+	if connection_lost_handled:
+		return
+	connection_lost_handled = true
+	_on_socket_disconnected()

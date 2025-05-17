@@ -97,6 +97,8 @@ func _ready():
 	rows_manager.connect("row_selected", Callable(self, "_on_row_confirmed"))
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
+	# Ajout : écoute la déconnexion du websocket
+	SocketManager.connect("disconnected", Callable(self, "_on_socket_disconnected"))
 	
 	#start game
 	is_host = GameState.is_host
@@ -764,3 +766,16 @@ func _on_close_button_pressed() -> void:
 			get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 	else:
 		mssg_panel.visible = false
+
+# Ajout : gestion de la déconnexion websocket
+func _on_socket_disconnected():
+	if not game_ended:
+		var popup_scene = preload("res://scenes/popUp.tscn")
+		var popup_instance = popup_scene.instantiate()
+		var label = popup_instance.get_node("message")
+		if label:
+			label.text = "Server connection error"
+			get_tree().current_scene.add_child(popup_instance)
+			popup_instance.make_visible()
+		await get_tree().create_timer(5.0).timeout
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

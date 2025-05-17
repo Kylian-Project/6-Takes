@@ -242,22 +242,29 @@ func _update_ban_timer():
 		# print("[DEBUG] Texte du bouton mis à jour : ", multiplayer_button.text)
 
 func _on_multi_player_button_pressed() -> void:
-	#get_node("/root/Global").load_session()
 	logged_in = Global.getLogged_in()
-	
+	var socket_manager = get_node("/root/SocketManager")
+	if not socket_manager.cust_is_connected():
+		socket_manager.reconnect()
+		if not socket_manager.cust_is_connected():
+			var popup_scene = preload("res://scenes/popUp.tscn")
+			var popup_instance = popup_scene.instantiate()
+			var label = popup_instance.get_node("message")
+			if label:
+				label.text = "Server connection error"
+				await get_tree().process_frame
+				add_child(popup_instance)
+				popup_instance.make_visible()
+			return
 	if logged_in == true:
 		get_tree().change_scene_to_file("res://scenes/multiplayer_menu.tscn")
-		
 	else:
 		if login_instance == null:
 			login_instance = login_scene.instantiate()
 			add_child(login_instance)
-
-			# Centrer l'écran de pause
 			await get_tree().process_frame  
-			
-		login_instance.move_to_front()  # S'assurer que l'écran de pause est tout en haut
-		login_instance.visible = true  # Afficher la pause
+		login_instance.move_to_front()
+		login_instance.visible = true
 	
 
 func go_to_singleplayer():
