@@ -358,6 +358,7 @@ func _cards_from_players(data) -> void:
 
 	
 func _on_open_pause_button_pressed() -> void:
+	
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
 

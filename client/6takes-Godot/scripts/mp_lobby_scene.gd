@@ -65,7 +65,7 @@ func _ready():
 	quit_button.pressed.connect(SoundManager.play_click_sound)
 	settings_button.pressed.connect(SoundManager.play_click_sound)
 	settings_close_button.pressed.connect(SoundManager.play_click_sound)
-	
+	add_bot_button.pressed.connect(SoundManager.play_click_sound)
 	# Hover sounds for dropdowns
 	player_limit_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)
 	card_number_dropdown.mouse_entered.connect(SoundManager.play_hover_sound)

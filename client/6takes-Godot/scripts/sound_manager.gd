@@ -5,6 +5,7 @@ extends Node
 @onready var music = $Music
 @onready var flip_card = $FlipCard
 @onready var move_card = $MoveCard
+@onready var pause_sound = $PauseButton
 
 func _ready():
 	# Assign audio buses
@@ -13,6 +14,7 @@ func _ready():
 	music.bus = "Music"
 	flip_card.bus = "SFX"
 	move_card.bus = "SFX"
+	pause_sound.bus = "SFX"
 
 func play_hover_sound():
 	if hover_sound.playing:
@@ -41,3 +43,8 @@ func play_move_card():
 	if move_card.playing:
 		move_card.stop()
 	move_card.play()
+
+func play_pause_button():
+	if pause_sound.playing:
+		pause_sound.stop()
+	pause_sound.play()
