@@ -638,9 +638,6 @@ func _update_hand():
 		
 
 func _on_Button_order_pressed():
-	get_tree().paused = true
-	stop_timer()
-	cards_clickable = false
 	if not is_player_turn() or not cards_clickable:
 		return
 	

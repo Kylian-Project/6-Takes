@@ -119,9 +119,9 @@ text = "00:00  sec"
 [node name="Timer" type="Timer" parent="."]
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="."]
-offset_left = 1828.0
+offset_left = 1800.0
 offset_top = -13.0
-offset_right = 1938.0
+offset_right = 1910.0
 offset_bottom = 137.0
 
 [node name="Button" type="Button" parent="HBoxContainer3"]
@@ -351,12 +351,11 @@ layout_mode = 2
 text = "rang 4"
 
 [node name="State_label" type="Label" parent="."]
-visible = false
 z_index = 2
-offset_left = 20.0
-offset_top = 269.0
-offset_right = 1952.0
-offset_bottom = 709.0
+offset_left = -9.0
+offset_top = 273.0
+offset_right = 1923.0
+offset_bottom = 713.0
 theme = SubResource("Theme_lwrla")
 theme_override_fonts/font = ExtResource("3_r0b0d")
 theme_override_font_sizes/font_size = 90
@@ -393,9 +392,9 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="spplayerright" type="VBoxContainer" parent="."]
-offset_left = 1652.0
-offset_top = 54.0
-offset_right = 1954.0
+offset_left = 1600.0
+offset_top = 106.0
+offset_right = 1902.0
 offset_bottom = 983.0
 alignment = 1
 
