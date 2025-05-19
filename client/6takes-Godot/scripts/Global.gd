@@ -5,6 +5,7 @@ var saved_token
 var player_id
 var player_name = ""
 var icon_id = 0
+var rankings: Array = []   
 var ban_info = {
 	"banned": false,
 	"timeLeft": 0
@@ -18,6 +19,9 @@ var BASE_URL := ""
 var BASE_HTTP := ""
 var header := ""
 @onready var popup_scene = preload("res://scenes/popUp.tscn")
+
+var game_settings = {}
+var game_players: Array = []
 
 var icons = {
 	# NOTE: optimize using preload or load() caching if performance not good.

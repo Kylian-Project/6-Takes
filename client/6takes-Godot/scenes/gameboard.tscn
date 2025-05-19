@@ -85,6 +85,7 @@ border_blend = true
 [node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container")]
 script = ExtResource("1_yvybn")
 hbox_container = NodePath("CanvasLayer2/HBoxContainer")
+top_bar = NodePath("CanvasLayer2/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -5

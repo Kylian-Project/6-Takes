@@ -170,30 +170,30 @@ const login = async (req, res) => {
 
     const now = new Date();
 
-    // V�rifier s'il existe d�j� une session active pour ce joueur sur un autre appareil
+    // Vérifier s'il existe déjà une session active pour ce joueur sur un autre appareil
     const differentDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
-        device_id: { [Op.ne]: device_id }, // Appareil diff�rent
+        device_id: { [Op.ne]: device_id }, // Appareil différent
       }
     });
 
 
-    // Refuser la connexion si une session est d�j� active sur un autre appareil
+    // Refuser la connexion si une session est déjà active sur un autre appareil
     if (differentDeviceSession) {
       return res.status(403).json({ message: "Account in use on another device !" });
     }
 
-    // V�rifier s'il existe une session active pour le m�me joueur et le m�me appareil
+    // Vérifier s'il existe une session active pour le même joueur et le même appareil
     const sameDeviceSession = await Session.findOne({
       where: {
         id_player: player.id,
-        device_id: device_id, // M�me appareil
+        device_id: device_id, // Même appareil
         expire_at: { [Op.gt]: now } // Session encore valide
       }
     });
 
-    // Si une session avec le m�me appareil existe, la supprimer
+    // Si une session avec le même appareil existe -> Delete
     if (sameDeviceSession) {
       await Session.destroy({
         where: {
@@ -202,29 +202,32 @@ const login = async (req, res) => {
           expire_at: { [Op.gt]: now }
         }
       });
-      console.log(`\t\t?? Ancienne session pour ${player.username} sur le m�me appareil supprim�e.`);
+      console.log(` Old session pour ${player.username} sur le même appareil supprimée.`);
     }
 
-    // Cr�er une nouvelle session
-    const tokenDuration = 24 * 60 * 60; // 1 jour
+    // Créer une nouvelle session
+    const tokenDuration = 24 * 60 * 60;   // 1 jour
     const token = jwt.sign(
-      { id: player.id, username: player.username, email: player.email },
+      { id: player.id,
+        username: player.username,
+        email: player.email
+      },
       process.env.JWT_SECRET,
       { expiresIn: tokenDuration }
     );
 
     const expireAt = new Date(now.getTime() + tokenDuration * 1000);
 
-    // Enregistrer la nouvelle session dans la base de donn�es
+    // Enregistrer new session dans bdd
     await Session.create({
       id_player: player.id,
       token: token,
-      device_id: device_id,  // Enregistrer l'ID de l'appareil
+      device_id: device_id,
       created_at: now,
       expire_at: expireAt
     });
 
-    console.log(`\t\t? [EXPRESS] Connexion r�ussie : ${player.username} (ID ${player.id})`);
+    console.log(`[EXPRESS] Connexion réussie : ${player.username} (ID ${player.id})\n`);
 
     res.status(200).json({
       message: "Connexion r�ussie",
@@ -250,7 +253,7 @@ const login = async (req, res) => {
 };
 
 
-// ? DECONNEXION Volontaire
+// ? DECONNEXION Volontairement
 const logout = async (req, res) => {
   const userId = req.userId;
   const token = req.token; // On r�cup�re le token utilis� pour la requ�te

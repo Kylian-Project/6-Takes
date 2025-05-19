@@ -97,6 +97,7 @@ func _on_socket_event(event: String, data: Variant, ns: String):
 	else:
 		print("unhandled event received ", event, data)
 
+
 func _update_room_in_list(room_id: String, count: int, usernames: Array):
 	var room_found = false
 	for i in range(available_rooms_list.item_count):
