@@ -540,7 +540,7 @@ func update_table_ui(table_data, settingup_deck):
 					player_card.global_position = global_start
 
 					var tw = create_tween()
-					tw.tween_property(player_card, "global_position", global_target, 0.5)
+					tw.tween_property(player_card, "global_position", global_target, 1.5)
 					SoundManager.play_move_card()
 					await tw.finished
 
