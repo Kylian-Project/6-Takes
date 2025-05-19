@@ -276,6 +276,9 @@ func _handle_bot_choice(joueur, carte):
 	
 
 func _animate_full_pickup_sequence(joueur, carte, rang_index):
+	stop_timer()  
+	timer_active = false  
+	
 	cards_clickable = false
 
 	# 1. Ramasser les cartes du jeu
@@ -691,6 +694,8 @@ func _update_plateau(animate: bool = false):
 
 				
 func move_card_to_row(joueur, card_number, row_index):
+	stop_timer()  
+	timer_active = false 
 	var start_layer = get_display_data_for_joueur(joueur)["card_layer"]
 	var end_row = vbox_container.get_child(row_index).get_child(0)
 	print("🔴🔴🔴  l'animation de la carte : ", card_number)

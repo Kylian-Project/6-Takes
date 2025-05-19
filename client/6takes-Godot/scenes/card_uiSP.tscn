@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dyp0jko3enl5d"]
 
-[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="1_8c31k"]
+[ext_resource type="FontFile" uid="uid://dv2ohq4ljb4sa" path="res://kenvector_future.ttf" id="1_8c31k"]
 [ext_resource type="Script" path="res://scripts/card_ui_sp.gd" id="2_iqkwp"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="3_c6akw"]
 [ext_resource type="Texture2D" uid="uid://bafmy430fpok4" path="res://assets/images/CardBack.resized.png" id="3_h10ga"]
