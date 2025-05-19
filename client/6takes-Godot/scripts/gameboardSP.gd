@@ -134,6 +134,8 @@ func _ready():
 	update_game_state("                           Pick your cards")
 	await get_tree().create_timer(1.0).timeout
 	
+	
+
 	# Début de la partie
 	sp_game.start_round()
 	round_active = false
@@ -631,10 +633,14 @@ func _update_hand():
 	for i in range(new_cards.size()):
 		hbox_container.move_child(new_cards[i], i)
 		
-		
+	if hbox_container.get_child_count() > 0:
+		$Button_order.visible = true
 		
 
 func _on_Button_order_pressed():
+	get_tree().paused = true
+	stop_timer()
+	cards_clickable = false
 	if not is_player_turn() or not cards_clickable:
 		return
 	
@@ -863,7 +869,7 @@ func _on_Timer_timeout():
 		return
 		
 	time_left -= 1
-	timer_label.text = str(time_left)
+	timer_label.text = str(time_left) + " sec"
 	
 	if time_left <= 0:
 		timer_timeout()

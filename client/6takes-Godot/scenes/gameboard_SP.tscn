@@ -7,11 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
 [ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
 [ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="7_88qrw"]
-[ext_resource type="PackedScene" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" uid="uid://dbs4uy1a3a52t" path="res://scenes/screen_pauseSP.tscn" id="7_ibf33"]
 [ext_resource type="Script" path="res://scripts/hand_card_hoverSP.gd" id="8_rgomg"]
 [ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="9_c013t"]
-[ext_resource type="FontFile" uid="uid://dp4h8qx63b57p" path="res://kenvector_future.ttf" id="10_op4uk"]
-[ext_resource type="PackedScene" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
+[ext_resource type="FontFile" uid="uid://dv2ohq4ljb4sa" path="res://kenvector_future.ttf" id="10_op4uk"]
+[ext_resource type="PackedScene" uid="uid://btkcwru58g8yx" path="res://scenes/scoreBoardSP.tscn" id="10_tkc5i"]
 [ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="11_7shf8"]
 [ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="12_xxojd"]
 
@@ -114,7 +114,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 34
-text = "00:00"
+text = "00:00  sec"
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -428,6 +428,7 @@ offset_right = 1569.0
 offset_bottom = 1013.0
 
 [node name="Button_order" type="Button" parent="."]
+visible = false
 offset_left = 1586.0
 offset_top = 954.0
 offset_right = 1724.0
