@@ -23,6 +23,8 @@ func _ready():
 	uname = Global.player_name
 	# Set initial text based on check state
 	private_check_button.text = "Private" if private_check_button.button_pressed else "Public"
+	create_button.pressed.connect(SoundManager.play_click_sound)
+	private_check_button.pressed.connect(SoundManager.play_click_sound)
 
 
 func _on_socket_connected(ns: String):

@@ -72,10 +72,6 @@ var can_select_card
 var scores_handled
 var played_card_instances := {}  # key: card_id, value: card_instance
 
-
-#func _process(delta: float) -> void:
-	#while(!can_select_card):
-		#get_node("sortCards").disabled = true
 		
 func _ready():
 	_load_cards()
@@ -101,6 +97,8 @@ func _ready():
 	rows_manager.connect("row_selected", Callable(self, "_on_row_confirmed"))
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
+	# Ajout : écoute la déconnexion du websocket
+	SocketManager.connect("disconnected", Callable(self, "_on_socket_disconnected"))
 	
 	#start game
 	is_host = GameState.is_host
@@ -130,7 +128,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 			on_player_selects_row()
 			
 		"temps-room":
-			_handle_timer(data)
+			if !game_ended:
+				_handle_timer(data)
 			
 		"attente-choix-rangee":
 			_await_row_selection(data)
@@ -180,7 +179,8 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		turn_emitted = true
 		
 		scores_handled = false
-		_start_turn()
+		if !game_ended:
+			_start_turn()
 
 
 func _handle_remove_room():
@@ -209,10 +209,14 @@ func _handle_user_left(data):
 
 
 func _handle_next_round(data):
-	print("next round event ereceived ", data)
+	await get_tree().create_timer(0.1).timeout
 	show_label("Next Round")
 	
-	current_turn = str(data[0])
+	cards_sorted = false
+	get_node("sortCards").visible = true
+	get_node("sortCards").disabled = false
+	
+	current_turn = str(data[0] +1)
 	turn_label.text = "Turn " + current_turn +" / " + str(turns)
 	
 	
@@ -223,7 +227,7 @@ func show_turn_score(data):
 	var score_instance = load("res://scenes/scoreBoard.tscn").instantiate()
 	score_instance.get_node("leaveButton").disabled = true
 	score_instance.gameboard = self
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(1.5).timeout
 
 	var overlay_layer = CanvasLayer.new()
 	overlay_layer.add_child(score_instance)
@@ -255,8 +259,9 @@ func start_game():
 	
 
 func _start_turn():
-	can_select_card = true
 	#cards_sorted = false
+	await get_tree().create_timer(0.1).timeout
+	can_select_card = true
 	rows_manager.reset_selection()
 	if room_id_global != null:
 		print("emit tour")
@@ -265,6 +270,8 @@ func _start_turn():
 			"username": player_username
 		})
 	
+	if !cards_sorted:
+		get_node("sortCards").disabled = false
 
 
 func _handle_timer(data):
@@ -290,6 +297,7 @@ func _handle_update_scores(data):
 
 
 func _await_row_selection(data):
+	can_select_card = false
 	var player = data[0]["username"]
 	show_label(player + " Is Choosing a Row")
 
@@ -350,6 +358,7 @@ func _cards_from_players(data) -> void:
 
 	
 func _on_open_pause_button_pressed() -> void:
+	
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
 
@@ -451,7 +460,8 @@ func _handle_your_hand(hand_data):
 	
 	cards_animated = true
 	can_select_card = true
-	get_node("sortCards").disabled = false
+	if !cards_sorted:
+		get_node("sortCards").disabled = false
 
 
 func _on_card_selected(card_number):
@@ -462,10 +472,13 @@ func _on_card_selected(card_number):
 	} 
 	print("emitting card selected event", data)
 	SocketManager.emit("play-card", data)
+	can_select_card = false
 	get_node("sortCards").disabled = true
 	
 
 func update_table_ui(table_data, settingup_deck):
+	can_select_card = false
+	
 	var row_containers = [row1, row2, row3, row4]
 	var new_cards_global: Array = []
 
@@ -528,6 +541,7 @@ func update_table_ui(table_data, settingup_deck):
 
 					var tw = create_tween()
 					tw.tween_property(player_card, "global_position", global_target, 1.5)
+					SoundManager.play_move_card()
 					await tw.finished
 
 					get_tree().root.remove_child(player_card)
@@ -558,7 +572,8 @@ func update_table_ui(table_data, settingup_deck):
 					card_instance.texture_rect.visible = true
 
 			last_table_state[i] = row_data.duplicate()
-
+			
+	can_select_card = false
 	if new_cards_global.size() > 0:
 		new_cards_global.sort_custom(func(a, b): return a["card_id"] < b["card_id"])
 		for card_dict in new_cards_global:
@@ -571,6 +586,7 @@ func update_table_ui(table_data, settingup_deck):
 			if is_instance_valid(card_instance):
 				card_instance.flip_card()
 		# Clean up leftover player cards (not placed on table)
+	can_select_card = false
 	if played_card_instances.size() > 0:
 		for leftover_card_id in played_card_instances.keys():
 			var leftover_card = played_card_instances[leftover_card_id]
@@ -585,14 +601,13 @@ func update_table_ui(table_data, settingup_deck):
 					leftover_card.queue_free()
 
 		played_card_instances.clear()
-
+	
+	if cards_animated:
+		can_select_card = true
 	
 func _on_select_row_button_pressed(row_index):
 	print("choose row event selected :", row_index)
 	_clear_row_selection_ui()
-	
-		# Animate row removal
-	#await animate_row_removal(row_index)
 	
 	SocketManager.emit("choisir-rangee", {
 		"roomId": room_id_global,
@@ -663,7 +678,7 @@ func setup_players(player_data):
 		if user.username.begins_with("Bot"):
 			user_icon = 10
 		else:
-			user_icon = user.icon
+			user_icon = user.icon if user.has("icon") and user.icon != null else 0
 
 		var player_visual_instance = player_visual_scene.instantiate()
 		var vis = player_visual_instance.create_player_visual(user.username, user_icon, false)
@@ -681,7 +696,9 @@ func setup_players(player_data):
 
 	if current_player:
 		var player_visual_instance = player_visual_scene.instantiate()
-		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), current_player.get("icon", 0), true)
+		var my_icon = current_player.get("icon", null)
+		my_icon = my_icon if my_icon != null else 0
+		var me_vis = player_visual_instance.create_player_visual(current_player.get("username",""), my_icon, true)
 		var slot = HBoxContainer.new()
 		me_vis.name = "PlayerVisual"
 		slot.name = current_player.get("username","")
@@ -697,6 +714,11 @@ func setup_players(player_data):
 
 
 func _handle_end_game(data):
+	#clear last card
+	await get_tree().create_timer(1).timeout
+	for child in hbox_container.get_children():
+		child.queue_free()
+		
 	game_ended = true
 	GameState.first_game = false
 	GameState.rankings = data[0].get("classement")
@@ -737,8 +759,9 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
+	
 	get_node("sortCards").visible = false
-
+	
 func _on_close_button_pressed() -> void:
 	if game_ended:
 		if !is_host:
@@ -747,3 +770,16 @@ func _on_close_button_pressed() -> void:
 			get_tree().change_scene_to_file("res://scenes/mp_lobby_scene.tscn")
 	else:
 		mssg_panel.visible = false
+
+# Ajout : gestion de la déconnexion websocket
+func _on_socket_disconnected():
+	if not game_ended:
+		var popup_scene = preload("res://scenes/popUp.tscn")
+		var popup_instance = popup_scene.instantiate()
+		var label = popup_instance.get_node("message")
+		if label:
+			label.text = "Server connection error"
+			get_tree().current_scene.add_child(popup_instance)
+			popup_instance.make_visible()
+		await get_tree().create_timer(5.0).timeout
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

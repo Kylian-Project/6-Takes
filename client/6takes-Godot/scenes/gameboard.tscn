@@ -399,7 +399,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="State_label" type="Label" parent="."]
-z_index = 30
+z_index = 4096
 offset_left = -9.0
 offset_top = 269.0
 offset_right = 1920.0

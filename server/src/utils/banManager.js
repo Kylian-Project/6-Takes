@@ -12,7 +12,9 @@ async function checkBan(playerId) {
         const [result] = await sequelize.query(
             `SELECT ban_duration, last_ban 
             FROM ban_info 
-            WHERE player_id = ?;`,
+            WHERE player_id = ?
+            ORDER BY last_ban DESC 
+            LIMIT 1 ;`,
             { replacements: [playerId] });
 
         // Vérification du résultat de la requête SQL

@@ -2,6 +2,8 @@ import { Server } from "socket.io";
 import randomstring from "randomstring";
 import Lobby from "../models/lobbies.js"; // <-- Le modèle Sequelize
 import Player from "../models/player.js"
+import { timers } from "./partie.js";
+
 
 const ID_LENGTH = 4;
 
@@ -42,6 +44,7 @@ class Room {
             rounds: settings.rounds || 3,
             lobbyName: settings.lobbyName || "Lobby"
         };
+        this.visibility=true;
     }
   
     addUser(username, idSocketUser) {
@@ -165,13 +168,16 @@ export const roomHandler = (socket, io) =>
         rooms = rooms.filter(r => r.id !== roomId);
         if (room.private) 
         {
-            io.to(roomId).emit("remove-private-room");  //pour tout les membres
+            io.to(roomId).emit("remove-private-room");  //pour tous les membres
         } 
         else 
         {
             io.to(roomId).emit("remove-public-room");
         }
         io.emit("available-rooms", getAvailableRooms());
+        clearTimeout(timers[roomId]);
+		delete timers[roomId];
+        return ;
     };
 
     /**
@@ -210,19 +216,21 @@ export const roomHandler = (socket, io) =>
         const room = rooms.find(r => r.id === roomId);
         if (!room) return;
         const isHost = room.idSocketHost === socket.id;
-        if (isHost) 
+        if (isHost)
         {
+            console.log("📦 Suppression de la room par le host:", room.id); //!!!
             removeRoom(roomId);
             socket.to(roomId).emit("remove-room");
             socket.leave(roomId);
             socket.emit("room-left");
+            console.log("📦 Room supprimée :", room.id);
             return;
         }
         room.removeUser(socket.id);
         socket.to(roomId).emit("user-left", getUsers(roomId));
         socket.leave(roomId);
         socket.emit("room-left");
-      };
+    };
       
 
     /**
@@ -271,7 +279,7 @@ export const roomHandler = (socket, io) =>
     });
 
 
-    socket.on("leave-room", leaveRoom);
+    socket.on("leave-room", (roomId) => leaveRoom(roomId));
 
     socket.on("disconnect", () => {leaveRoomWithSocketId(socket.id);});
 
@@ -311,7 +319,9 @@ export const roomHandler = (socket, io) =>
                 socket.emit("public-room-joined", users);
                 socket.to(roomId).emit("users-in-your-public-room", users);
             }
-        } 
+
+        }
+
         else
         {
             socket.emit("room-join-failed");
@@ -380,28 +390,14 @@ export const roomHandler = (socket, io) =>
     {
         const room = rooms.find(r => r.id === roomId);
         if (!room) return socket.emit("error", "Lobby introuvable");
-        
     
         // Mettre à jour en mémoire (rooms[])
         room.settings = { ...room.settings, ...newSettings };
-        console.log(`🔧 Paramètres du lobby ${roomId} mis à jour:`, room.settings);
-    
-        // // Mettre à jour dans la base de données
-        // try {
-        //     await Lobby.update(newSettings, { where: { id: roomId } });
-        //     console.log("✅ Paramètres du lobby mis à jour en BDD");
-        // } catch (err) {
-        //     console.error("❌ Erreur lors de la mise à jour des paramètres en BDD :", err.message);
-        //     return socket.emit("error", "Erreur lors de la mise à jour des paramètres");
-        // }
-    
+        // console.log(`🔧 Paramètres du lobby ${roomId} mis à jour:`, room.settings);
+
         // Notifier tous les membres de la room
-        io.to(roomId).emit("room-settings-updated", room.settings);
+        io.to(roomId).emit("room-settings-updated", room.settings);    
     });
-    
-
-
-
 
 }
 
@@ -421,7 +417,7 @@ export const roomHandler = (socket, io) =>
 const getAvailableRooms = () => 
 {
     return rooms
-    .filter(room => room.private === false)
+    .filter(room => room.private === false && room.visibility === true)
     .map(room => ({
     id: room.id,
     name: room.settings?.lobbyName || "Lobby",

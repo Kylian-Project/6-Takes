@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://cai3b27idhm7d"]
+[gd_scene load_steps=3 format=3 uid="uid://bvc472u5oqe2o"]
 
 [ext_resource type="Script" path="res://addons/godot-socketio/socketio.gd" id="1_chhpj"]
 

@@ -1,5 +1,3 @@
-// LOGIQUE DU JEU 6 TAKES - VERSION CORRIGÉE ET PRÊTE POUR BACKEND
-
 // 1. Classe Carte
 class Carte {
     constructor(numero) {
@@ -215,12 +213,23 @@ class Jeu6Takes {
         }
     }
     
-
     resetGame() {
-        this.constructor(this.nbJoueurs, this.joueurs.map(j => j.nom), this.nbMaxManches, this.nbMaxHeads, this.nbCarte);
+        this.deck = new Deck(true);
+        this.table = new Table(this.deck);
+        this.mancheActuelle = 0;
+    
+        this.joueurs.forEach(joueur => {
+            joueur.hand = new Hand(this.deck.distribuer(this.nbCarte));
+            joueur.resetScore();
+        });
+    
+        console.log("Nouvelle partie");
     }
+    
+    
 
     jouerCarte(nomJoueur, carte) {
+
         const joueur = this.joueurs.find(j => j.nom === nomJoueur);
         if (!joueur) throw new Error("Joueur introuvable");
 
@@ -232,16 +241,23 @@ class Jeu6Takes {
         if(rang === -1)
         {
             //on attend que le joueurs choisisse un rang
-            return "choix_rang_obligatoire";
+            return {action: "choix_rang_obligatoire" , index: -1}; //choix_rang_obligatoire";
         }
+        let index_rang;
+        for (let i = 0; i < 4; i++) 
+        {
+            if(this.table.rangs[i].estPleine())
+                index_rang = i;
+        }
+
         const cartesRamassees = this.table.ramasserCartes();
         const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
         joueur.updateScore(penalite);
         //pour savoir si un joueurs vient de se prendre un 6quiprend
-        //comme ca je pourrai le dire aux autres
+        //comme ca je pourrai le dire aux autres et aussi pouvoir envoer au client l'index du rend
         if(cartesRamassees.length >0)
         {
-            return "ramassage_rang";
+            return {action: "ramassage_rang" , index: index_rang};
         }
 
     }
