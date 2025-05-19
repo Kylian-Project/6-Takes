@@ -45,17 +45,14 @@ func _initialize_settings() -> void:
 	if round_time_index != -1:
 		round_timer_dropdown.select(round_time_index)
 		
-	var rounds_value = int(GameState.rounds)
-	var rounds_index = rounds_dropdown.get_item_index(rounds_value)
-	if rounds_index != -1:
-		rounds_dropdown.select(rounds_index -1)
+	rounds_dropdown.text = str(GameState.rounds)
 
 
 
 func _on_save_settings() -> void:
 		
 	var player_limit = int(player_limit_dropdown.get_item_text(player_limit_dropdown.get_selected()))
-	var rounds = int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected()))
+	#var rounds = int(rounds_dropdown.get_item_text(rounds_dropdown.get_selected()))
 	
 	if GameState.players_count > player_limit:
 		player_limit = GameState.players_limit
@@ -68,7 +65,7 @@ func _on_save_settings() -> void:
 		"numberOfCards": int(card_number_dropdown.get_item_text(card_number_dropdown.get_selected())),
 		"roundTimer": int(round_timer_dropdown.get_item_text(round_timer_dropdown.get_selected())),
 		"endByPoints": int(end_points_dropdown.get_item_text(end_points_dropdown.get_selected())),
-		"rounds": rounds,
+		"rounds": GameState.rounds,
 	}
 	
 	SocketManager.emit("update-room-settings", {
