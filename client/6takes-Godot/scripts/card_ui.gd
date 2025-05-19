@@ -116,11 +116,13 @@ func flip_card() -> void:
 	if self == null:
 		print("this is a null card !!!!")
 		return
-		
+	
 	back_texture.visible = true
 	
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "scale:x", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	SoundManager.play_flip_sound()
+
 	await tween.finished
 	
 	toggle_texture_visibility(true)

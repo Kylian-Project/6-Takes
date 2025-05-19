@@ -358,6 +358,7 @@ func _cards_from_players(data) -> void:
 
 	
 func _on_open_pause_button_pressed() -> void:
+	
 	if pause_instance == null:
 		pause_instance = pause_screen_scene.instantiate()
 
@@ -540,6 +541,7 @@ func update_table_ui(table_data, settingup_deck):
 
 					var tw = create_tween()
 					tw.tween_property(player_card, "global_position", global_target, 1.5)
+					SoundManager.play_move_card()
 					await tw.finished
 
 					get_tree().root.remove_child(player_card)
