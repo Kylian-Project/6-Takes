@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://rgren65hho4r"]
+
+[ext_resource type="AudioStream" uid="uid://c5u0ngub4ei63" path="res://assets/sounds/mixkit-fast-air-sweep-transition-168.wav" id="2_qxlkf"]
+
+[sub_resource type="GDScript" id="GDScript_q3xnt"]
+script/source = "extends Control
+
+@onready var anim = $AnimationPlayer
+@onready var audio_player = $AudioStreamPlayer
+
+signal transition_finished
+	
+func fade_out(new_scene: String):
+	if audio_player:
+		audio_player.play()
+	anim.play(\"fade_out\")
+	await anim.animation_finished
+	queue_free() 
+	get_tree().change_scene_to_file(new_scene)
+
+func play_fade_in():
+	anim.play(\"fade_in\")
+	await anim.animation_finished
+	queue_free()  
+"
+
+[node name="Transition" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_q3xnt")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_qxlkf")
+autoplay = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0249558, 0.0247825, 0.138546, 0.831373)

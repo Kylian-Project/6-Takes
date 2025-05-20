@@ -1,0 +1,542 @@
+[gd_scene load_steps=14 format=3 uid="uid://btkcwru58g8yx"]
+
+[ext_resource type="Script" path="res://scripts/score_board.gd" id="1_4ullc"]
+[ext_resource type="Texture2D" uid="uid://cg483dwdrktcw" path="res://assets/images/back.png" id="1_w28lv"]
+[ext_resource type="Texture2D" uid="uid://ch4bxlc4h42kt" path="res://assets/images/scoreboard/cup.png" id="2_gykth"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_gwvnw"]
+[ext_resource type="Texture2D" uid="uid://bxec0nhbpwwh" path="res://assets/images/scoreboard/medal1.png" id="4_s3lmw"]
+[ext_resource type="Texture2D" uid="uid://s4xtij5nnecl" path="res://assets/images/scoreboard/medal2.png" id="5_vtcfa"]
+[ext_resource type="Texture2D" uid="uid://drevf1evdc1cm" path="res://assets/images/scoreboard/medal3.png" id="6_ikr82"]
+[ext_resource type="Texture2D" uid="uid://bjllyidvqypde" path="res://assets/images/scoreboard/medaille.png" id="8_82tcj"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="8_s5ir0"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="9_c1skm"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="10_gib8s"]
+[ext_resource type="Texture2D" uid="uid://bu1jy0clvmo3y" path="res://assets/images/fermer.png" id="11_136iv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jlhy1"]
+bg_color = Color(0.921569, 0.921569, 0.921569, 0.133333)
+border_width_left = 1
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+shadow_color = Color(0, 0, 0, 0)
+
+[node name="ScoreBoard" type="Control"]
+custom_minimum_size = Vector2(1000, 600)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 495.0
+offset_top = 100.0
+offset_right = -425.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4ullc")
+
+[node name="dimming" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -519.0
+offset_top = -130.0
+offset_right = 440.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.720468, 0.720467, 0.720467, 0.0392157)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_w28lv")
+expand_mode = 1
+
+[node name="titleContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -279.0
+offset_top = 20.0
+offset_right = 279.0
+offset_bottom = 120.0
+grow_horizontal = 2
+theme_override_constants/separation = 60
+
+[node name="TextureRect2" type="TextureRect" parent="titleContainer"]
+custom_minimum_size = Vector2(120, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_gykth")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="titleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.2, 0.2, 0.2, 0.415686)
+theme_override_colors/font_outline_color = Color(0.942823, 0.942823, 0.942823, 1)
+theme_override_constants/shadow_offset_x = 10
+theme_override_constants/shadow_offset_y = 10
+theme_override_constants/outline_size = 24
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 80
+text = "Scores"
+
+[node name="TextureRect" type="TextureRect" parent="titleContainer"]
+custom_minimum_size = Vector2(120, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_gykth")
+expand_mode = 1
+
+[node name="rankingsControl" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -305.0
+offset_top = -285.0
+offset_right = 315.0
+offset_bottom = 408.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="rankingsControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jlhy1")
+
+[node name="rankingsList" type="VBoxContainer" parent="rankingsControl/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -199.0
+offset_top = 14.0
+offset_right = 201.0
+offset_bottom = 673.0
+grow_horizontal = 2
+theme_override_constants/separation = 15
+
+[node name="first" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/first"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("4_s3lmw")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/first"]
+layout_mode = 2
+size_flags_horizontal = 11
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.632964, 0.530674, 0, 0.976471)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 65
+text = "Player 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/first"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 60
+text = "0"
+horizontal_alignment = 2
+
+[node name="second" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/second"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+texture = ExtResource("5_vtcfa")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/second"]
+layout_mode = 2
+size_flags_horizontal = 11
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.52114, 0.521141, 0.52114, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 55
+text = "Player 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/second"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 50
+text = "0"
+horizontal_alignment = 2
+
+[node name="third" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/third"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("6_ikr82")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/third"]
+layout_mode = 2
+size_flags_horizontal = 11
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.728476, 0.444652, 0.15971, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 45
+text = "Player 3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/third"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 45
+text = "0"
+horizontal_alignment = 2
+
+[node name="player4" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player4"]
+custom_minimum_size = Vector2(70, 60)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player4"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player4"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player5" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player5"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player5"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player6" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player6"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player6"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player6"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player7" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player7"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player7"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player7"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player8" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player8"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player8"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player8"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player9" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player9"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player9"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player9"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="player10" type="HBoxContainer" parent="rankingsControl/Panel/rankingsList"]
+visible = false
+layout_mode = 2
+
+[node name="medal" type="TextureRect" parent="rankingsControl/Panel/rankingsList/player10"]
+custom_minimum_size = Vector2(70, 50)
+layout_mode = 2
+texture = ExtResource("8_82tcj")
+expand_mode = 1
+
+[node name="name" type="Label" parent="rankingsControl/Panel/rankingsList/player10"]
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 35
+text = "Player"
+horizontal_alignment = 1
+
+[node name="score" type="Label" parent="rankingsControl/Panel/rankingsList/player10"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_shadow_color = Color(0.187176, 0.187176, 0.187176, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_gwvnw")
+theme_override_font_sizes/font_size = 30
+text = "0"
+horizontal_alignment = 2
+
+[node name="leaveButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -186.0
+offset_top = -69.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_s5ir0")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/hover = ExtResource("9_c1skm")
+theme_override_styles/normal = ExtResource("10_gib8s")
+text = "RETURN"
+
+[node name="closeButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -59.0
+offset_bottom = 55.0
+grow_horizontal = 0
+theme_override_styles/normal = ExtResource("10_gib8s")
+icon = ExtResource("11_136iv")
+expand_icon = true
+
+[connection signal="pressed" from="leaveButton" to="." method="_on_leave_button_pressed"]
+[connection signal="pressed" from="closeButton" to="." method="_on_close_button_pressed"]

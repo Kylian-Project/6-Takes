@@ -1,0 +1,28 @@
+# === Node.js (Server) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.*.local
+package-lock.json
+.pnpm-debug.log
+.dockerignore
+
+# === Global exclusions ===
+*.swp
+*.swo
+*.bak
+*.tmp
+*.~*
+.DS_Store
+Thumbs.db
+
+# === Environment Files (.env) ===
+.env
+.env.local
+.env.*.local
+
+# === CFG files ===
+*.cfg

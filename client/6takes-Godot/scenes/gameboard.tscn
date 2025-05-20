@@ -1,0 +1,503 @@
+[gd_scene load_steps=27 format=3 uid="uid://duifho84rqy3k"]
+
+[ext_resource type="Script" path="res://scripts/gameboard.gd" id="1_yvybn"]
+[ext_resource type="Texture2D" uid="uid://bd2nf86imlj6u" path="res://assets/images/back_blue.png" id="2_jdcid"]
+[ext_resource type="FontFile" uid="uid://0nrf8fb7tftm" path="res://assets/fonts/Lobster 1.4.otf" id="3_r0b0d"]
+[ext_resource type="Texture2D" uid="uid://blwnak5d8vlwf" path="res://assets/images/Pause Button.png" id="4_7flow"]
+[ext_resource type="Texture2D" uid="uid://i3ik12l1nnvl" path="res://assets/images/Table.png" id="5_uo4x1"]
+[ext_resource type="Script" path="res://scripts/RowsManager.gd" id="6_f6td0"]
+[ext_resource type="PackedScene" uid="uid://c1bikqhwekjd3" path="res://scenes/screen_pause.tscn" id="7_ibf33"]
+[ext_resource type="PackedScene" uid="uid://bby1mp8j81yar" path="res://scenes/card_ui.tscn" id="7_o0b56"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="8_b6qql"]
+[ext_resource type="Texture2D" uid="uid://by6dwc5g35u7r" path="res://assets/images/selection/bouton-suivant.png" id="8_ponxq"]
+[ext_resource type="Script" path="res://scripts/hand_card_hover.gd" id="8_tuggc"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="9_wh5ub"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="11_flvkk"]
+[ext_resource type="Texture2D" uid="uid://d4k8xhixraomr" path="res://assets/images/selection/fermer.png" id="12_c8qrd"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_bf7xg"]
+line_spacing = 30.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_5oo11"]
+line_spacing = 16.0
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_7rt8c"]
+font = ExtResource("3_r0b0d")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_8de43"]
+font = ExtResource("3_r0b0d")
+font_size = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1c86"]
+content_margin_left = 50.0
+content_margin_top = 30.0
+content_margin_bottom = 60.0
+bg_color = Color(0.329412, 0.607843, 0.341176, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujish"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2khg6"]
+bg_color = Color(0, 0.231656, 0.472665, 0.811765)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh6iy"]
+bg_color = Color(0.00392157, 0.00392157, 0.639216, 0.870588)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_43tnk"]
+size = Vector2(805, 132)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f52gu"]
+bg_color = Color(0, 0, 0, 0.65098)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(0.2484, 0.2484, 0.2484, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1pxlw"]
+bg_color = Color(0.0365646, 0.0678412, 0.191338, 0.792157)
+border_width_top = 10
+border_width_bottom = 10
+border_color = Color(1, 0, 0, 0.521569)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xg7nw"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 0.917647)
+border_blend = true
+
+[node name="gameboard" type="Node2D" node_paths=PackedStringArray("hbox_container")]
+script = ExtResource("1_yvybn")
+hbox_container = NodePath("CanvasLayer2/HBoxContainer")
+top_bar = NodePath("CanvasLayer2/HBoxContainer")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -5
+
+[node name="background_board" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_jdcid")
+expand_mode = 1
+
+[node name="top_bar" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 12.0
+offset_right = -1492.0
+offset_bottom = 77.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="heads" type="Label" parent="CanvasLayer/top_bar"]
+layout_mode = 2
+text = "Heads          "
+label_settings = SubResource("LabelSettings_bf7xg")
+
+[node name="nbheads" type="Label" parent="CanvasLayer/top_bar"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_5oo11")
+horizontal_alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_left = 635.0
+offset_top = 8.0
+offset_right = 1400.0
+offset_bottom = 73.0
+alignment = 1
+
+[node name="turnLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Turn 1/10"
+label_settings = SubResource("LabelSettings_7rt8c")
+
+[node name="gameStateLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "              Do not Take 6!
+"
+label_settings = SubResource("LabelSettings_8de43")
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="timer" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_font_sizes/font_size = 34
+text = "00:00"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+offset_left = 1812.0
+offset_right = 1920.0
+offset_bottom = 108.0
+
+[node name="Button" type="Button" parent="HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 1
+icon = ExtResource("4_7flow")
+flat = true
+
+[node name="deckContainer" type="PanelContainer" parent="." groups=["deck_grp"]]
+show_behind_parent = true
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 455.0
+offset_top = 170.0
+offset_right = 1551.0
+offset_bottom = 862.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_i1c86")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="deckContainer"]
+layer = -1
+visible = false
+
+[node name="background_depose" type="TextureRect" parent="deckContainer/CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -557.0
+offset_top = -417.0
+offset_right = 597.0
+offset_bottom = 331.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_uo4x1")
+expand_mode = 1
+
+[node name="rowsContainer" type="VBoxContainer" parent="deckContainer"]
+custom_minimum_size = Vector2(75, 100)
+layout_mode = 2
+theme_override_constants/separation = 40
+alignment = 1
+script = ExtResource("6_f6td0")
+
+[node name="row1_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ujish")
+
+[node name="row1" type="HBoxContainer" parent="deckContainer/rowsContainer/row1_panel"]
+layout_mode = 1
+offset_left = 20.0
+offset_right = 120.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row1_panel/row1" instance=ExtResource("7_o0b56")]
+layout_mode = 2
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row1_panel"]
+custom_minimum_size = Vector2(20, 50)
+layout_mode = 1
+offset_left = -40.0
+offset_top = 25.0
+offset_right = 10.0
+offset_bottom = 135.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("8_ponxq")
+flat = true
+expand_icon = true
+
+[node name="Area2D" type="Area2D" parent="deckContainer/rowsContainer/row1_panel" groups=["row_areas"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="deckContainer/rowsContainer/row1_panel/Area2D"]
+position = Vector2(420, 87)
+shape = SubResource("RectangleShape2D_43tnk")
+
+[node name="row2_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ujish")
+
+[node name="row2" type="HBoxContainer" parent="deckContainer/rowsContainer/row2_panel"]
+layout_mode = 1
+offset_left = 20.0
+offset_right = 120.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row2_panel/row2" instance=ExtResource("7_o0b56")]
+layout_mode = 2
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row2_panel"]
+custom_minimum_size = Vector2(20, 50)
+layout_mode = 2
+offset_left = -40.0
+offset_top = 25.0
+offset_right = 10.0
+offset_bottom = 135.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("8_ponxq")
+flat = true
+expand_icon = true
+
+[node name="Area2D" type="Area2D" parent="deckContainer/rowsContainer/row2_panel" groups=["row_areas"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="deckContainer/rowsContainer/row2_panel/Area2D"]
+position = Vector2(420, 80)
+shape = SubResource("RectangleShape2D_43tnk")
+
+[node name="row3_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ujish")
+
+[node name="row3" type="HBoxContainer" parent="deckContainer/rowsContainer/row3_panel"]
+layout_mode = 1
+offset_left = 20.0
+offset_right = 120.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row3_panel/row3" instance=ExtResource("7_o0b56")]
+layout_mode = 2
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row3_panel"]
+custom_minimum_size = Vector2(20, 50)
+layout_mode = 2
+offset_left = -40.0
+offset_top = 25.0
+offset_right = 10.0
+offset_bottom = 135.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("8_ponxq")
+flat = true
+expand_icon = true
+
+[node name="Area2D" type="Area2D" parent="deckContainer/rowsContainer/row3_panel" groups=["row_areas"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="deckContainer/rowsContainer/row3_panel/Area2D"]
+position = Vector2(420, 80)
+shape = SubResource("RectangleShape2D_43tnk")
+
+[node name="row4_panel" type="Panel" parent="deckContainer/rowsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ujish")
+
+[node name="row4" type="HBoxContainer" parent="deckContainer/rowsContainer/row4_panel"]
+layout_mode = 1
+offset_left = 20.0
+offset_right = 120.0
+offset_bottom = 170.0
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CardUI" parent="deckContainer/rowsContainer/row4_panel/row4" instance=ExtResource("7_o0b56")]
+layout_mode = 2
+
+[node name="selectRowButton" type="Button" parent="deckContainer/rowsContainer/row4_panel"]
+custom_minimum_size = Vector2(20, 50)
+layout_mode = 2
+offset_left = -40.0
+offset_top = 25.0
+offset_right = 10.0
+offset_bottom = 135.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_2khg6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_uh6iy")
+icon = ExtResource("8_ponxq")
+flat = true
+expand_icon = true
+
+[node name="Area2D" type="Area2D" parent="deckContainer/rowsContainer/row4_panel" groups=["row_areas"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="deckContainer/rowsContainer/row4_panel/Area2D"]
+position = Vector2(420, 92)
+shape = SubResource("RectangleShape2D_43tnk")
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." groups=["ui_layer"]]
+layer = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2" groups=["hand_grp"]]
+z_index = -5
+custom_minimum_size = Vector2(75, 80)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -561.0
+offset_top = -170.0
+offset_right = 610.0
+offset_bottom = 21.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+script = ExtResource("8_tuggc")
+
+[node name="sortCards" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1709.0
+offset_top = 1002.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/hover = ExtResource("8_b6qql")
+theme_override_styles/normal = ExtResource("9_wh5ub")
+text = "Sort Cards"
+
+[node name="ScreenPause" parent="." instance=ExtResource("7_ibf33")]
+visible = false
+z_index = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="State_label" type="Label" parent="."]
+z_index = 4096
+offset_left = -9.0
+offset_top = 269.0
+offset_right = 1920.0
+offset_bottom = 709.0
+theme_override_fonts/font = ExtResource("3_r0b0d")
+theme_override_font_sizes/font_size = 130
+theme_override_styles/normal = SubResource("StyleBoxFlat_f52gu")
+text = "Game Start"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 40.0
+offset_top = 140.0
+offset_right = 320.0
+offset_bottom = 852.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="RPlayer_container" type="VBoxContainer" parent="."]
+offset_left = 1612.0
+offset_top = 140.0
+offset_right = 1892.0
+offset_bottom = 852.0
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="mssgControl" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 962.0
+offset_top = 592.0
+offset_right = 962.0
+offset_bottom = 592.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="dimming" type="ColorRect" parent="mssgControl"]
+custom_minimum_size = Vector2(1920, 1500)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.301961)
+
+[node name="mssg" type="Label" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -142.5
+offset_right = 965.0
+offset_bottom = 144.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_flvkk")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_1pxlw")
+text = "
+?"
+horizontal_alignment = 1
+
+[node name="closeButton" type="Button" parent="mssgControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = 48.0
+offset_right = 117.0
+offset_bottom = 117.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_xg7nw")
+theme_override_styles/normal = ExtResource("9_wh5ub")
+text = "Close"
+icon = ExtResource("12_c8qrd")
+icon_alignment = 2
+expand_icon = true
+
+[connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_open_pause_button_pressed"]
+[connection signal="pressed" from="sortCards" to="." method="_on_sort_cards_pressed"]
+[connection signal="pressed" from="mssgControl/closeButton" to="." method="_on_close_button_pressed"]

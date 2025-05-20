@@ -1,0 +1,37 @@
+[gd_scene load_steps=8 format=3 uid="uid://2ef11u7qwcp7"]
+
+[ext_resource type="AudioStream" uid="uid://cms3bs3skcmom" path="res://assets/sounds/hover.wav" id="1_7h8s6"]
+[ext_resource type="Script" path="res://scripts/sound_manager.gd" id="1_rs7eg"]
+[ext_resource type="AudioStream" uid="uid://bhu5wj7082qsn" path="res://assets/sounds/click.wav" id="2_rs7eg"]
+[ext_resource type="AudioStream" uid="uid://bbssp20fokwko" path="res://assets/sounds/Time_street.mp3" id="4_rs7eg"]
+[ext_resource type="AudioStream" uid="uid://d1o81hm6l038t" path="res://assets/sounds/flipCard.mp3" id="5_0nqg6"]
+[ext_resource type="AudioStream" uid="uid://buuixynm6qm0w" path="res://assets/sounds/moveCard.mp3" id="5_eyhrt"]
+[ext_resource type="AudioStream" uid="uid://bg5pfvhsvm4y3" path="res://assets/sounds/pausebutton.mp3" id="7_ox2bi"]
+
+[node name="SoundManager" type="Node"]
+script = ExtResource("1_rs7eg")
+
+[node name="HoverSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_7h8s6")
+volume_db = 5.0
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_rs7eg")
+volume_db = 10.0
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_rs7eg")
+volume_db = -10.0
+autoplay = true
+parameters/looping = true
+
+[node name="FlipCard" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_0nqg6")
+volume_db = 24.0
+
+[node name="MoveCard" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_eyhrt")
+volume_db = 24.0
+
+[node name="PauseButton" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_ox2bi")
