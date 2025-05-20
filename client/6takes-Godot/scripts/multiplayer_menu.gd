@@ -65,7 +65,17 @@ func _on_socket_io_event_received(event: String, data: Variant, ns: String) -> v
 	print("SocketIO event received: name=", event, " --- data = ", data, " --- namespace = ", ns)
 	
 func _on_return_pressed():
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")  # Change scene
+	# Sauvegarde l'état actuel du mode d'affichage avant le changement de scène
+	var current_mode = get_window().mode
+	var current_resolution = DisplayServer.window_get_size()
+	var current_vsync = DisplayServer.window_get_vsync_mode()
+	
+	# Sauvegardons ces paramètres avant de changer de scène
+	SettingsManager.save_display_settings(current_mode, current_resolution, current_vsync)
+	
+	# Change la scène
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
 # Function to open a specific overlay and hide the others
 
 func open_overlay(overlay: Control):
