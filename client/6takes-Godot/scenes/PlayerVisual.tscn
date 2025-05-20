@@ -1,0 +1,93 @@
+[gd_scene load_steps=7 format=3 uid="uid://cbrl6i5f5hfuu"]
+
+[ext_resource type="Script" path="res://scripts/player_visual.gd" id="1_d68q4"]
+[ext_resource type="Texture2D" uid="uid://c27kcxf7vderc" path="res://assets/images/icons/dark_grey.png" id="1_rnmgo"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="2_24ian"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mnal3"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_p42ua"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo34f"]
+bg_color = Color(4.13924e-06, 0.7144, 0.423031, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[node name="PlayerVisual" type="Control"]
+custom_minimum_size = Vector2(160, 112)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1759.0
+offset_bottom = -968.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_d68q4")
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -49.5
+offset_top = -1.0
+offset_right = 48.5
+offset_bottom = 87.0
+grow_horizontal = 2
+texture = ExtResource("1_rnmgo")
+expand_mode = 1
+
+[node name="PlayerName" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -74.0
+offset_top = -28.0
+offset_right = 74.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("2_24ian")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_mnal3")
+text = "PlayerName"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ReadyCheck" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.752
+anchor_top = 0.424
+anchor_right = 0.752
+anchor_bottom = 0.424
+offset_left = -10.424
+offset_top = -10.52
+offset_right = 10.576
+offset_bottom = 10.48
+theme = SubResource("Theme_p42ua")
+theme_override_styles/panel = SubResource("StyleBoxFlat_jo34f")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]

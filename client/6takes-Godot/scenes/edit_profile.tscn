@@ -1,0 +1,231 @@
+[gd_scene load_steps=16 format=3 uid="uid://fwrwwy8t1e2u"]
+
+[ext_resource type="Script" path="res://scripts/edit_profile.gd" id="1_in2s6"]
+[ext_resource type="Texture2D" uid="uid://cbpabvbncsrqv" path="res://assets/images/bg.png" id="2_17if4"]
+[ext_resource type="Texture2D" uid="uid://by8n8uapqyxmx" path="res://assets/images/clown.png" id="2_36ldt"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="4_lv30f"]
+[ext_resource type="StyleBox" uid="uid://ccqgv0dsve6l0" path="res://assets/styleBox/logIn_button_hover.tres" id="5_n3637"]
+[ext_resource type="StyleBox" uid="uid://dsmipxadgfpou" path="res://assets/styleBox/logIn_button_normal.tres" id="6_do1go"]
+[ext_resource type="PackedScene" uid="uid://cxe2j8yylr24h" path="res://scenes/popUp.tscn" id="7_nkusj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6hv8q"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xtysa"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p88d8"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snw1d"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ilxc5"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 0.298039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_6wto1"]
+default_font = ExtResource("4_lv30f")
+Button/styles/hover = SubResource("StyleBoxFlat_p88d8")
+Button/styles/normal = SubResource("StyleBoxFlat_snw1d")
+Button/styles/pressed = SubResource("StyleBoxFlat_ilxc5")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lkhjb"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+border_width_left = 8
+border_width_right = 8
+border_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8x7t0"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+border_width_left = 8
+border_width_right = 8
+border_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[node name="EditProfile" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_in2s6")
+
+[node name="BGDimming" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.529412)
+
+[node name="EditProfilePanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -757.5
+offset_top = -432.5
+offset_right = 757.5
+offset_bottom = 432.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6hv8q")
+
+[node name="BGDetails" type="TextureRect" parent="EditProfilePanel"]
+self_modulate = Color(1, 1, 1, 0.0980392)
+layout_mode = 2
+texture = ExtResource("2_17if4")
+expand_mode = 1
+
+[node name="MainVertical" type="VBoxContainer" parent="EditProfilePanel"]
+layout_mode = 2
+
+[node name="HRow" type="HBoxContainer" parent="EditProfilePanel/MainVertical"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="PlayerIcon" type="TextureRect" parent="EditProfilePanel/MainVertical/HRow"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+texture = ExtResource("2_36ldt")
+expand_mode = 5
+stretch_mode = 4
+
+[node name="UserNameLabel" type="Label" parent="EditProfilePanel/MainVertical/HRow"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_xtysa")
+text = "UserNameFromDB"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LogOutButton" type="Button" parent="EditProfilePanel/MainVertical/HRow"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = ExtResource("5_n3637")
+theme_override_styles/pressed = ExtResource("6_do1go")
+theme_override_styles/normal = ExtResource("6_do1go")
+text = "LogOut"
+
+[node name="IconSelection" type="GridContainer" parent="EditProfilePanel/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = SubResource("Theme_6wto1")
+columns = 5
+
+[node name="SaveIconButton" type="Button" parent="EditProfilePanel/MainVertical"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/hover_pressed_mirrored = ExtResource("5_n3637")
+theme_override_styles/hover = ExtResource("5_n3637")
+theme_override_styles/pressed = ExtResource("6_do1go")
+theme_override_styles/normal = ExtResource("6_do1go")
+text = "Save Icon"
+
+[node name="SavePopupLabel" type="Label" parent="EditProfilePanel"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_fonts/font = ExtResource("4_lv30f")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = ExtResource("6_do1go")
+text = "Icon Saved!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PopupTimer" type="Timer" parent="EditProfilePanel"]
+wait_time = 2.0
+one_shot = true
+
+[node name="Close" type="Button" parent="."]
+layout_mode = 2
+anchor_left = 0.881
+anchor_top = 0.167
+anchor_right = 0.881
+anchor_bottom = 0.167
+offset_left = -24.52
+offset_top = -34.36
+offset_right = 25.48
+offset_bottom = 15.64
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_hover_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/hover = SubResource("StyleBoxFlat_lkhjb")
+theme_override_styles/normal = SubResource("StyleBoxFlat_8x7t0")
+text = "X"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="popupPanel" parent="." instance=ExtResource("7_nkusj")]

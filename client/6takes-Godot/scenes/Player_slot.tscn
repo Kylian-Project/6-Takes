@@ -1,0 +1,64 @@
+[gd_scene load_steps=8 format=3 uid="uid://8vn3wq1njoww"]
+
+[ext_resource type="Script" path="res://scripts/player_slot.gd" id="1_s3203"]
+[ext_resource type="Texture2D" uid="uid://c27kcxf7vderc" path="res://assets/images/icons/dark_grey.png" id="2_n024l"]
+[ext_resource type="FontFile" uid="uid://cf3a7mowy5fgl" path="res://assets/fonts/kenvector_future.ttf" id="3_snhlk"]
+[ext_resource type="Texture2D" uid="uid://bj1vuwpwwdciw" path="res://assets/images/crown.png" id="4_je7o0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f21i5"]
+bg_color = Color(0.85098, 0.85098, 0.85098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pmxo8"]
+bg_color = Color(0.729412, 0.215686, 0.215686, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.729412, 0.215686, 0.215686, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4gvs5"]
+bg_color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[node name="PlayerSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(400, 50)
+offset_right = 424.0
+offset_bottom = 107.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_f21i5")
+script = ExtResource("1_s3203")
+
+[node name="PlayerInfoContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="playerIcon" type="TextureRect" parent="PlayerInfoContainer"]
+layout_mode = 2
+texture = ExtResource("2_n024l")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="playerName" type="Label" parent="PlayerInfoContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_snhlk")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_pmxo8")
+text = "Player
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="KickButton" type="Button" parent="PlayerInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_snhlk")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_4gvs5")
+text = "QUICK"
+icon = ExtResource("4_je7o0")
+icon_alignment = 1
+
+[connection signal="pressed" from="PlayerInfoContainer/KickButton" to="." method="_on_kick_button_pressed"]

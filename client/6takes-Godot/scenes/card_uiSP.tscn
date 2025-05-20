@@ -1,0 +1,92 @@
+[gd_scene load_steps=8 format=3 uid="uid://dyp0jko3enl5d"]
+
+[ext_resource type="FontFile" uid="uid://dv2ohq4ljb4sa" path="res://kenvector_future.ttf" id="1_8c31k"]
+[ext_resource type="Script" path="res://scripts/card_ui_sp.gd" id="2_iqkwp"]
+[ext_resource type="Texture2D" uid="uid://csxql072i1gi8" path="res://assets/images/selection/select.png" id="3_c6akw"]
+[ext_resource type="Texture2D" uid="uid://bafmy430fpok4" path="res://assets/images/CardBack.resized.png" id="3_h10ga"]
+[ext_resource type="Texture2D" uid="uid://bbovkvur836lr" path="res://assets/images/selection/deselect.png" id="4_fvx5b"]
+
+[sub_resource type="Theme" id="Theme_hcot1"]
+default_font = ExtResource("1_8c31k")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1peor"]
+size = Vector2(131.64, 176.59)
+
+[node name="CardUI" type="Control"]
+custom_minimum_size = Vector2(100, 170)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 29.0
+offset_top = 23.0
+offset_right = 156.0
+offset_bottom = 200.0
+scale = Vector2(0.773297, 0.696528)
+mouse_filter = 2
+theme = SubResource("Theme_hcot1")
+script = ExtResource("2_iqkwp")
+
+[node name="detector" type="Area2D" parent="."]
+position = Vector2(-8, -2.871)
+collision_mask = 2
+priority = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
+position = Vector2(67.6168, 89.7304)
+shape = SubResource("RectangleShape2D_1peor")
+
+[node name="Front_texture" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(149, 170)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.893192, 0.817651)
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Back_texture" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -31.0
+offset_right = 150.0
+offset_bottom = 175.0
+mouse_filter = 2
+texture = ExtResource("3_h10ga")
+expand_mode = 1
+
+[node name="SelectionContainer" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -5.0
+offset_right = 77.0
+offset_bottom = 47.0
+grow_horizontal = 0
+
+[node name="selectButton" type="Button" parent="SelectionContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.65
+icon = ExtResource("3_c6akw")
+flat = true
+expand_icon = true
+
+[node name="deselectButton" type="Button" parent="SelectionContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_fvx5b")
+flat = true
+expand_icon = true
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="input_event" from="detector" to="." method="_on_detector_input_event"]
+[connection signal="mouse_entered" from="detector" to="." method="_on_detector_mouse_entered"]
+[connection signal="mouse_exited" from="detector" to="." method="_on_detector_mouse_exited"]
+[connection signal="pressed" from="SelectionContainer/selectButton" to="." method="_on_select_button_pressed"]
+[connection signal="pressed" from="SelectionContainer/deselectButton" to="." method="_on_deselect_button_pressed"]
