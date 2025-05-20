@@ -500,11 +500,12 @@ function handleChoixRangee(roomId, indexRangee, username, io)
 	const carte = joueur?.carteEnAttente;
 	if (!joueur || !carte) return;
 
-	const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-	const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
+	// On récupère une COPIE des cartes à pénaliser AVANT de remplacer la rangée
+	const cartesARamasser = [...jeu.table.rangs[indexRangee].cartes];
+	const penalite = Rang.calculerPenalite(cartesARamasser); // Log debug
 	joueur.updateScore(penalite);
-	let temp_carte = new Carte(carte.numero);
-	jeu.table.rangs[indexRangee] = new Rang(temp_carte);
+	// On remplace la rangée par une nouvelle contenant uniquement la carte du joueur
+	jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
 	delete joueur.carteEnAttente;
 }
 
@@ -559,11 +560,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 				io.to(roomId).emit("attente-choix-rangee", { username });
 				await new Promise(resolve => setTimeout(resolve, 5000));
 				const indexRangee = Math.floor(Math.random() * 4);
-				const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-				const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-				joueur.updateScore(penalite);
-				jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
-				delete joueur.carteEnAttente;
+				handleChoixRangee(roomId, indexRangee, username, io);
 				traiterProchaineCarte(roomId, jeu, io, rooms);
 			}
 			else
@@ -579,13 +576,9 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 					{
 						if (rid === roomId && uname === username) 
 						{
-							clearTimeout(timeoutId); // annulation ici du timer
+							clearTimeout(timeoutId);
 							socketTarget.off("choisir-rangee", handler);
-							const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-							const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-							joueur.updateScore(penalite);
-							jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
-							delete joueur.carteEnAttente;
+							handleChoixRangee(roomId, indexRangee, username, io);
 							resolve();
 							traiterProchaineCarte(roomId, jeu, io, rooms);
 						}
@@ -602,11 +595,7 @@ async function traiterProchaineCarte(roomId, jeu, io, rooms)
 						console.log(`⚠️ ${username} n'a pas choisi de rangée à temps, on choisit aléatoirement`);
 					
 						const indexRangee = Math.floor(Math.random() * 4);
-						const cartesARamasser = jeu.table.rangs[indexRangee].recupererCartes_special_case();
-						const penalite = cartesARamasser.reduce((sum, c) => sum + c.tetes, 0);
-						joueur.updateScore(penalite);
-						jeu.table.rangs[indexRangee] = new Rang(new Carte(carte.numero));
-						delete joueur.carteEnAttente;
+						handleChoixRangee(roomId, indexRangee, username, io);
 						resolve();		//on arrete la promesse
 					}, timer*1000);
 				});
