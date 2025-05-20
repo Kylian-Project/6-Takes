@@ -37,12 +37,29 @@ document.getElementById("playerIcon").addEventListener("click", randomizePlayerI
 
 
 function updateCountdown() {
-    const endDate = new Date("May 18, 2025 00:00:00").getTime();
+    const endDate = new Date("May 21, 2025 00:00:00").getTime();
     const now = new Date().getTime();
     const timeLeft = endDate - now;
 
     if (timeLeft <= 0) {
-        document.getElementById("countdown").innerHTML = "🎉 Le jeu est sorti !";
+        // Afficher le message et le bouton de lancement du jeu (nouvel onglet)
+        document.getElementById("countdown").innerHTML = `
+            <div class="back-img"></div>
+            <div class="overlay">
+                <h2>The game is now available..</h2>
+                <div class="game-launch-btns">
+                  <button id="launchGameBtn" class="launch-btn">Launch the Game</button>
+                </div>
+            </div>
+        `;
+        setTimeout(() => {
+            const launchBtn = document.getElementById('launchGameBtn');
+            if (launchBtn) {
+                launchBtn.addEventListener('click', function() {
+                    window.open('./game/index.html', '_blank');
+                });
+            }
+        }, 100);
         clearInterval(timerInterval);
         return;
     }

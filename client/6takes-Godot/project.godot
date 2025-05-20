@@ -14,10 +14,12 @@ colorblind_mode=0
 
 [application]
 
-config/name="6Takes_main"
+config/name="6Takes_release"
+config/version="1.0"
 run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0, 0.305882, 0.596078, 1)
+config/icon="res://icon.png"
 
 [autoload]
 
