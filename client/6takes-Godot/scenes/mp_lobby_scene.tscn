@@ -1021,23 +1021,12 @@ popup/item_0/text = "No"
 popup/item_1/text = "Yes"
 popup/item_1/id = 1
 
-[node name="RoundsDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
+[node name="RoundsDropdown" type="Label" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.239216, 0.239216, 1)
 theme_override_fonts/font = ExtResource("4_utsmw")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = ExtResource("15_vxajd")
-selected = 0
-item_count = 5
-popup/item_0/text = "1"
-popup/item_1/text = "2"
-popup/item_1/id = 1
-popup/item_2/text = "3"
-popup/item_2/id = 2
-popup/item_3/text = "4"
-popup/item_3/id = 3
-popup/item_4/text = "5"
-popup/item_4/id = 4
 
 [node name="MaxPointsDropdown" type="OptionButton" parent="lobbySettings/MainVertical/AvailableOptions/Choices"]
 visible = false
