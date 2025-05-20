@@ -2,9 +2,20 @@ extends HBoxContainer
 
 var current_hovered_card: TCardUI = null
 var selected_card: TCardUI = null
+var hand_controller = null
+
+func _ready():
+	# Recherche d'un HandController dans la hiérarchie
+	for node in get_tree().get_nodes_in_group("hand_controller_grp"):
+		hand_controller = node
+		break
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
+	# Si la main est désactivée, on ne fait rien
+	if hand_controller and not hand_controller.is_enabled():
+		return
+
 	var mouse_pos = get_global_mouse_position()
 	var top_card: TCardUI = null
 	var top_z := -1
@@ -28,6 +39,9 @@ func _process(_delta):
 		current_hovered_card = top_card
 
 func _on_card_clicked(card: TCardUI) -> void:
+	if hand_controller and not hand_controller.is_enabled():
+		return
+
 	if is_instance_valid(selected_card) and selected_card != card:
 		selected_card._on_deselect_card()
 	
