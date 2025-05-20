@@ -2,76 +2,125 @@
 
 <div align="center">
 
+# 🎲 6 Takes!
 
+**An online multiplayer card game combining strategy, speed, and fun! Play with friends or solo against bots – available on PC and Web!**
 
-# 6 Qui Prend !
-
-**Un jeu de société multijoueur en ligne où stratégie et rapidité se mêlent pour offrir une expérience fun et immersive, disponible sur PC, (mobile / web) !**
-
+![Game Logo](https://i.imgur.com/nCQF9ws.png)
 
 </div>
 
 ---
 
-## 📃 Table des matières
+## 📃 Table of Contents
 
-- [6 Qui Prend !](#6-qui-prend-)
-  - [📃 Table des matières](#-table-des-matières)
-  - [📌 À propos du projet](#-à-propos-du-projet)
-  - [⭐️ Fonctionnalités](#️-fonctionnalités)
-  - [🛠 Stack Tech](#-stack-tech)
-  - [⚙️ Configuration](#️-configuration)
-    - [Installation](#installation)
-    - [Utilisation](#utilisation)
-  - [👨🏻‍ Auteurs](#-auteurs)
-  - [🔑 License](#-license)
-
----
-
-## 📌 À propos du projet
-
-6 qui prend ! est un jeu de société revisité pour être joué en ligne en mode multijoueur. L’objectif est de proposer une expérience de jeu en temps réel où les joueurs interagiront avec un serveur central. Le projet sera développé en utilisant Godot pour la version PC, et un serveur en Node JS. Une version mobile ou web est également prévue pour permettre une expérience fluide sur différents appareils.
+- [📌 About the Project](#-about-the-project)
+- [⭐️ Features](#️-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [🚀 Installation & Setup](#-installation--setup)
+  - [⚙️ Server Configuration](#️-server-configuration)
+  - [🎮 Client Launch (Godot)](#-client-launch-godot)
+- [🌐 Web Version](#-web-version)
+- [👥 Project Team](#-project-team)
+- [🔑 License](#-license)
 
 ---
 
-## ⭐️ Fonctionnalités
+## 📌 About the Project
 
-- **Mode multijoueur en ligne** : Les joueurs peuvent se connecter à tout moment pour jouer en mode tour par tour.
-- **Système de comptes** : Les joueurs peuvent créer un compte et sauvegarder leur progression et leurs scores.
-- **Développement multiplateforme** : Une version PC, ainsi qu'une versions mobiles ou web à venir.
-
----
-
-## 🛠 Stack Tech
-
-- **Godot** pour la version PC
-- **Node JS** pour le serveur
-- **MySQL** pour la gestion des comptes et des scores
-- **Version web/mobile à venir**
+**6 Takes!** is a faithful digital adaptation of the popular card game "6 qui prend!". Developed as a university project, it offers a **real-time online experience**, as well as a **solo mode with bots**, a responsive interface, and complete game logic.  
+The architecture is **client-server**, fully open-source, and designed with scalability and cross-platform deployment in mind.
 
 ---
 
-## ⚙️ Configuration
+## ⭐️ Features
 
-### Installation
-
-Working Progress
-
-### Utilisation
-
-Working Progress
+- 🎮 **Online Multiplayer** with public/private lobby system
+- 👤 **Account System** with persistent sessions via JWT tokens
+- 🤖 **Singleplayer Mode** with AI-controlled opponents
+- 🧠 **Full Game Logic** (official rules: 6-card rows, penalties, rounds)
+- 💬 **User-Friendly UI**: animations, accessibility features, sound feedback
+- 🌐 **Web Export**: Play directly from your browser (HTML5)
+- 📨 **Feedback Form** linked to Discord via bot integration
 
 ---
 
-## 👨🏻‍ Auteurs
+## 🛠 Tech Stack
 
-- [Elie](https://git.unistra.fr/antonios)
-- [Omer-Ali](https://git.unistra.fr/armagan)
-- [Mamadou-Mouctar](https://git.unistra.fr/bahmm)
-- [Lounas](https://git.unistra.fr/lounas.chikhi)
-- [Darren](https://git.unistra.fr/ddelgado)
-- [Neila](https://git.unistra.fr/nkrika)
-- [Kylian](https://git.unistra.fr/kylian.gerard)
+| Component        | Technology Used             |
+|------------------|-----------------------------|
+| 🎮 **Client**    | [Godot Engine](https://godotengine.org/) (GDScript, PC/Web exports) |
+| 🔌 **Server**    | Node.js + Socket.IO + Express |
+| 🗃 **Database**  | MySQL + Sequelize ORM        |
+| 🌍 **Hosting**   | OVH server (NGINX + HTTPS)   |
+| 🎨 **UI/Design** | Figma + Godot + Photoshop    |
+| 📬 **Discord Bot** | Webhook integration for feedback |
+| 🔐 **Security**  | JWT Tokens, password hashing, HTTPS |
+
+---
+
+## 🚀 Installation & Setup
+
+### ⚙️ Server Configuration
+
+```bash
+# Clone the server repo
+git clone https://git.unistra.fr/kylian.gerard/6-qui-prend-pji-3a.git
+cd server
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+cp .env.example .env
+# Then edit .env to set DB info, port, etc.
+
+# Start the server
+node server
+```
+
+> ⚠️ Make sure your MySQL server is set up and reachable, and SSL certificates are in place for production (HTTPS).
+
+---
+
+### 🎮 Client Launch (Godot)
+
+```bash
+# Clone the client repo
+git clone https://git.unistra.fr/kylian.gerard/6-qui-prend-pji-3a.git
+cd client
+
+# Open with Godot (v4.x recommended)
+godot .
+
+# You can export the project to HTML5, Windows, Linux.
+```
+
+---
+
+## 🌐 Web Version
+
+You can play the game directly online via our hosted site:
+
+👉 [https://6takes.fr/](https://6takes.fr/)
+
+- No installation needed  
+- PC, tablet, and mobile friendly  
+- Play as guest or with an account  
+
+---
+
+## 👥 Project Team
+
+| Name                     | Main Role                                      |
+|--------------------------|------------------------------------------------|
+| [Kylian GERARD](https://git.unistra.fr/kylian.gerard)       | 👑 Project Manager, website, deployment, integration |
+| [Omer Ali ARMAGAN](https://git.unistra.fr/armagan)          | 🧠 Backend API & Game Logic (Node.js + Godot)         |
+| [Mamadou Mouctar BAH](https://git.unistra.fr/bahmm)         | 🎮 Solo Mode & Client Support                         |
+| [Lounas CHIKHI](https://git.unistra.fr/lounas.chikhi)       | ⚙️ WebSocket, bots, game logic (Node.js)                  |
+| [Darren DELGADO](https://git.unistra.fr/ddelgado)           | 🎨 Visual Design, mascot, UI, animations                 |
+| [Neila KRIKA](https://git.unistra.fr/nkrika)                | 🗃 Database, Godot logic, multiplayer logic            |
+| [Elie ANTONIOS](https://git.unistra.fr/antonios)            | 🎛 Menus, trailer, accessibility                   |
 
 ---
 
@@ -80,3 +129,5 @@ Working Progress
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
+
+💬 *Found a bug or want to suggest a feature? Reach out via our [website](https://6takes.fr/) or open an issue on Git.*
