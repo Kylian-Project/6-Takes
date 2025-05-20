@@ -72,7 +72,9 @@ var can_select_card
 var scores_handled
 var played_card_instances := {}  # key: card_id, value: card_instance
 
-		
+# Gestion de la désactivation de la main
+@onready var hand_controller = preload("res://scripts/HandController.gd").new()
+
 func _ready():
 	_load_cards()
 	
@@ -97,7 +99,7 @@ func _ready():
 	rows_manager.connect("row_selected", Callable(self, "_on_row_confirmed"))
 	#connect to socket
 	SocketManager.connect("event_received", Callable(self, "_on_socket_event"))
-	# Ajout : écoute la déconnexion du websocket
+	# Ecoute la déconnexion du websocket
 	SocketManager.connect("disconnected", Callable(self, "_on_socket_disconnected"))
 	
 	#start game
@@ -105,6 +107,8 @@ func _ready():
 	if is_host:
 		SocketManager.emit("start-game", room_id_global)
 	start_game()
+	hand_controller.set_hand_container(hbox_container)
+	add_child(hand_controller)
 
 
 #event listener
@@ -164,7 +168,7 @@ func _on_socket_event(event: String, data: Variant, ns: String) -> void:
 		"sorted-cards":
 			if !cards_sorted:
 				cards_sorted = true
-				_handle_your_hand(data)
+				_handle_your_hand(data, true)
 		
 		"user-left":
 			_handle_user_left(data)
@@ -414,12 +418,15 @@ func _switch_player_name(data):
 
 # --- UI Update Functions ---
 
-func _handle_your_hand(hand_data):
+func _handle_your_hand(hand_data, from_sort := false):
 	print("Update hand UI ", hand_data)
 	for child in hbox_container.get_children():
 		child.queue_free()
 
-	if !cards_animated:
+	var was_first_animation = !cards_animated
+	var was_hand_enabled = hand_controller.is_enabled()
+
+	if !cards_animated and !from_sort:
 		can_select_card = false
 		get_node("sortCards").disabled = true
 
@@ -439,22 +446,15 @@ func _handle_your_hand(hand_data):
 			if !cards_animated:
 				card.modulate.a = 0
 				card.scale = Vector2(0.5, 0.5)
-			
 				var tw = create_tween()
 				tw.tween_property(card, "modulate:a", 1.0, 0.25)
 				tw.tween_property(card, "scale", Vector2(1,1), 0.25)
 				await tw.finished
-
 				this_card = card
-
-		# small delay before flip
 				await get_tree().create_timer(0.1).timeout
-
-		# only flip if it’s still a live node
 				if is_instance_valid(this_card) and this_card.is_inside_tree():
 					this_card.flip_card()
 					await get_tree().create_timer(0.05).timeout
-
 			else:
 				card.toggle_texture_visibility(true)
 	
@@ -462,6 +462,19 @@ func _handle_your_hand(hand_data):
 	can_select_card = true
 	if !cards_sorted:
 		get_node("sortCards").disabled = false
+	# Désactiver la main tant que l'animation n'est pas finie
+	if !from_sort:
+		hand_controller.set_hand_enabled(false)
+	# Réactiver la main à la fin de l'animation (y compris pour le tout premier tour)
+	if was_first_animation and !from_sort:
+		await get_tree().create_timer(0.1).timeout
+		hand_controller.set_hand_enabled(true)
+	elif !cards_animated and !from_sort:
+		await get_tree().create_timer(0.1).timeout
+		hand_controller.set_hand_enabled(true)
+	# Si c'est un tri, on restaure l'état précédent de la main
+	if from_sort:
+		hand_controller.set_hand_enabled(was_hand_enabled)
 
 
 func _on_card_selected(card_number):
@@ -603,6 +616,7 @@ func update_table_ui(table_data, settingup_deck):
 		played_card_instances.clear()
 	
 	if cards_animated:
+		hand_controller.set_hand_enabled(true)
 		can_select_card = true
 	
 func _on_select_row_button_pressed(row_index):
@@ -759,7 +773,6 @@ func _on_sort_cards_pressed() -> void:
 		"roomId" : room_id_global,
 		"username" : player_username
 	})
-	
 	get_node("sortCards").visible = false
 	
 func _on_close_button_pressed() -> void:
@@ -771,7 +784,7 @@ func _on_close_button_pressed() -> void:
 	else:
 		mssg_panel.visible = false
 
-# Ajout : gestion de la déconnexion websocket
+# Gestion de la déconnexion websocket
 func _on_socket_disconnected():
 	if not game_ended:
 		var popup_scene = preload("res://scenes/popUp.tscn")

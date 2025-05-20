@@ -17,6 +17,8 @@ signal card_selected
 var is_hovered: bool = false
 var hover_tween: Tween = null
 
+var is_card_enabled: bool = true # Ajouté pour gestion d'activation
+
 #card animation vars
 var orig_tex_pos:   Vector2
 var orig_tex_scale: Vector2
@@ -58,8 +60,16 @@ func set_card_data(image_path, card_id):
 		print(" Erreur : Impossible de charger l'image", image_path)
 
 
+func set_card_enabled(enabled: bool):
+	is_card_enabled = enabled
+	if enabled:
+		self.modulate = Color(1,1,1,1)
+	else:
+		self.modulate = Color(0.5,0.5,0.5,1) # Grisé
+
+
 func _on_detector_mouse_entered() -> void:
-	if !is_in_hand_grp() or is_lifted:
+	if !is_in_hand_grp() or is_lifted or !is_card_enabled:
 		return 
 		
 	is_hovered = true
@@ -73,7 +83,7 @@ func _on_detector_mouse_entered() -> void:
 
 
 func _on_detector_mouse_exited() -> void:
-	if  !is_in_hand_grp() or is_lifted:
+	if  !is_in_hand_grp() or is_lifted or !is_card_enabled:
 		return 
 	
 	is_hovered = false
@@ -84,6 +94,8 @@ func _on_detector_mouse_exited() -> void:
 
 
 func _on_detector_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if !is_card_enabled:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		#event.accept()
 		if gameboard and !gameboard.can_select_card:

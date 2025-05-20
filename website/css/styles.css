@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Spice&display=swap');
+@font-face {font-family: Poppins-Medium; src: url('../font/Poppins-Medium.ttf');}
 
 html {
     scroll-behavior: smooth;
@@ -795,6 +796,61 @@ main .thank-you-message h2 {
     pointer-events: none;
 }
 
+/* --- Game Launch Buttons & Iframe --- */
+.game-launch-btns {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.launch-btn, .fullscreen-btn {
+    background: linear-gradient(90deg, #004E98 0%, #549B57 100%);
+    color: #fff;
+    border: 2px white solid;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    padding: 15px 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.launch-btn:hover, .fullscreen-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+.launch-btn:active, .fullscreen-btn:active {
+    transform: scale(0.97);
+}
+
+.game-iframe {
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 15px;
+    margin: 0 auto;
+    display: block;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    background: #222;
+}
+@media (max-width: 1000px) {
+    .game-iframe {
+        max-width: 100vw;
+        height: 350px;
+    }
+}
+@media (max-width: 600px) {
+    .game-iframe {
+        height: 220px;
+    }
+}
+
+@media (max-width: 450px) {
+    #launchGameBtn{
+        margin-top: 20px;
+    }
+}
 
 /* Footer Section */
 

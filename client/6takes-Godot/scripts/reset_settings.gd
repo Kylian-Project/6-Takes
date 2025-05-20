@@ -16,17 +16,23 @@ func _on_reset_button_pressed():
 	var defaults = SettingsManager.config
 
 	# --- DISPLAY ---
-	var display_mode = defaults.get_value("Default", "Mode", 0)
-	$TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption.select(display_mode)
-	DisplayServer.window_set_mode(display_mode)
+	var display_mode = defaults.get_value("Default", "Mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/DisplayOption.select(0) # Set to fullscreen (index 0)
+	get_window().mode = Window.MODE_FULLSCREEN  # Assurer le passage en fullscreen
 
 	var resolution = defaults.get_value("Default", "Resolution", Vector2i(1920, 1080))
-	$TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions.select((0 if resolution == Vector2i(1920, 1080) else 1))
-	DisplayServer.window_set_size(resolution)
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions.select(0) # 1920x1080
+	# Pas besoin de modifier la résolution en mode fullscreen
 
-	var vsync = defaults.get_value("Default", "VSync", 1)
-	$TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions.select((0 if vsync == DisplayServer.VSYNC_ENABLED else 1))
-	DisplayServer.window_set_vsync_mode(vsync)
+	var vsync = defaults.get_value("Default", "VSync", DisplayServer.VSYNC_ENABLED)
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/VSyncOptions.select(0) # VSync enabled
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
+
+	# Désactiver la sélection de résolution en mode fullscreen
+	$TabContainer/MainSettings/HorzontalAlign/VSettings/ResolutionOptions.disabled = true
+	
+	# Enregistrer explicitement les réglages par défaut dans la section Display pour qu'ils persistent aux changements de scène
+	SettingsManager.save_display_settings(Window.MODE_FULLSCREEN, Vector2i(1920, 1080), DisplayServer.VSYNC_ENABLED)
 
 	# --- AUDIO ---
 	for i in range(3):

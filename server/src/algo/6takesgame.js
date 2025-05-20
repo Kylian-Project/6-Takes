@@ -76,6 +76,17 @@ class Rang {
     totalTetes() {
         return this.cartes.reduce((sum, c) => sum + c.tetes, 0);
     }
+
+    // Fonction utilitaire pour le calcul de pénalité
+    static calculerPenalite(cartes) {
+        const total = cartes.reduce((sum, c) => sum + c.tetes, 0);
+        console.log("[PENALITY DEBUG]", {
+            takenRow: cartes.map(c => c.numero),
+            bullHeads: cartes.map(c => c.tetes),
+            totalPenalty: total
+        });
+        return total;
+    }
 }
 
 // 4. Classe Table
@@ -241,7 +252,8 @@ class Jeu6Takes {
         if(rang === -1)
         {
             //on attend que le joueurs choisisse un rang
-            return {action: "choix_rang_obligatoire" , index: -1}; //choix_rang_obligatoire";
+            joueur.carteEnAttente = carte; // stocke la carte pour traitement ultérieur
+            return {action: "choix_rang_obligatoire" , index: -1};
         }
         let index_rang;
         for (let i = 0; i < 4; i++) 
@@ -250,11 +262,10 @@ class Jeu6Takes {
                 index_rang = i;
         }
 
+        // On ne prend que les 5 premières cartes de la rangée (sans la carte posée)
         const cartesRamassees = this.table.ramasserCartes();
-        const penalite = cartesRamassees.reduce((sum, c) => sum + c.tetes, 0);
+        const penalite = Rang.calculerPenalite(cartesRamassees);
         joueur.updateScore(penalite);
-        //pour savoir si un joueurs vient de se prendre un 6quiprend
-        //comme ca je pourrai le dire aux autres et aussi pouvoir envoer au client l'index du rend
         if(cartesRamassees.length >0)
         {
             return {action: "ramassage_rang" , index: index_rang};
