@@ -218,8 +218,11 @@ func _on_choix_rang_obligatoire(joueur, carte):
 	sp_game.reprendre_tour()
 
 func _start_timer_for_rang_choice():
+	time_left = Global.game_settings["round_timer"]
+	timer_label.text = str(time_left) + " sec"
+	timer_label.visible = true
 	timer_active = true
-	game_timer.start()
+	game_timer.start(1.0)
 
 func _handle_human_choice(joueur, carte):
 	"""Gère le choix de rang pour le joueur humain"""
@@ -638,9 +641,7 @@ func _update_hand():
 		
 
 func _on_Button_order_pressed():
-	get_tree().paused = true
-	stop_timer()
-	cards_clickable = false
+	
 	if not is_player_turn() or not cards_clickable:
 		return
 	
@@ -871,7 +872,7 @@ func _on_Timer_timeout():
 	time_left -= 1
 	timer_label.text = str(time_left) + " sec"
 	
-	if time_left <= 0:
+	if time_left == 0:
 		timer_timeout()
 	else:
 		game_timer.start(1.0)
@@ -1131,6 +1132,7 @@ func _on_choose_rang_4_pressed():
 	_on_rang_button_pressed(3)
 
 func _on_rang_button_pressed(rang_index):
+
 	if game_paused:
 		return
 	update_game_state("👉 Tu as choisi le rang %d" % (rang_index + 1))
@@ -1146,3 +1148,4 @@ func _on_rang_button_pressed(rang_index):
 	# Informer le jeu
 	if sp_game:
 		sp_game.reprendre_avec_rang(rang_index)
+		
